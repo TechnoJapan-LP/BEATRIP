@@ -4,7 +4,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Plane, Clock, TrendingDown, Users, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { FavoriteButton } from "@/components/deals/favorite-button";
 import type { DealSchema } from "@/data/deal-schema";
 
 const badgeConfig = {
@@ -67,8 +66,7 @@ export function DealCard({
             </Badge>
           )}
 
-          <div className="absolute top-2 right-2 flex items-center gap-1.5 sm:top-3 sm:right-3 sm:gap-2">
-            <FavoriteButton dealId={deal.id} />
+          <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
             <div className="flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 backdrop-blur-sm sm:gap-1 sm:px-2.5 sm:py-1 sm:text-xs">
               <TrendingDown className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               -{deal.discount_percent}%
