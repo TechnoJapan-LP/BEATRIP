@@ -1,0 +1,63 @@
+{
+  "sales": [
+    {
+      "id": "cathay-summer-2026-05",
+      "airlineCode": "CX",
+      "airlineName": "キャセイパシフィック航空",
+      "saleName": "キャセイ サマーセール",
+      "description": "夏の香港・東南アジア路線がお得。エコノミー＆ビジネス対象。",
+      "startDate": "2026-05-12",
+      "endDate": "2026-06-15",
+      "bookingDeadline": "2026-06-15",
+      "travelPeriodStart": "2026-07-01",
+      "travelPeriodEnd": "2026-09-30",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "香港",
+          "destinationCode": "HKG",
+          "price": 38000,
+          "originalPrice": 68000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 44,
+          "seatsRemaining": 15
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "香港",
+          "destinationCode": "HKG",
+          "price": 35000,
+          "originalPrice": 65000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 46
+        }
+      ],
+      "sourceUrl": "https://www.cathaypacific.com/cx/ja_JP/special-offers.html",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.533Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.533Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.865Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "cathay-summer-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

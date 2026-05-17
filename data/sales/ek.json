@@ -1,0 +1,74 @@
+{
+  "sales": [
+    {
+      "id": "emirates-global-2026-05",
+      "airlineCode": "EK",
+      "airlineName": "エミレーツ航空",
+      "saleName": "Emirates グローバルセール",
+      "description": "全クラス対象。ドバイ経由でヨーロッパ・アフリカへ。",
+      "startDate": "2026-05-10",
+      "endDate": "2026-06-10",
+      "bookingDeadline": "2026-06-09",
+      "travelPeriodStart": "2026-06-15",
+      "travelPeriodEnd": "2026-12-15",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "ドバイ",
+          "destinationCode": "DXB",
+          "price": 68000,
+          "originalPrice": 125000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 46,
+          "seatsRemaining": 30
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "ドバイ",
+          "destinationCode": "DXB",
+          "price": 298000,
+          "originalPrice": 520000,
+          "currency": "JPY",
+          "cabin": "Business",
+          "discount": 43
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "ドバイ",
+          "destinationCode": "DXB",
+          "price": 72000,
+          "originalPrice": 130000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 45
+        }
+      ],
+      "sourceUrl": "https://www.emirates.com/jp/japanese/special-offers/",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.532Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.532Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.864Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "emirates-global-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

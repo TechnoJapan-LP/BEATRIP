@@ -1,0 +1,16 @@
+{
+  "name": "BEATRIP - フライトセール速報",
+  "short_name": "BEATRIP",
+  "description": "航空会社のフライトセール情報をリアルタイムで配信",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#18181b",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

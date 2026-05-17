@@ -1,0 +1,73 @@
+{
+  "sales": [
+    {
+      "id": "sia-early-bird-2026-05",
+      "airlineCode": "SQ",
+      "airlineName": "シンガポール航空",
+      "saleName": "早期予約割引キャンペーン",
+      "description": "60日前までの予約でシンガポール線が割引。",
+      "startDate": "2026-05-01",
+      "endDate": "2026-05-31",
+      "bookingDeadline": "2026-05-31",
+      "travelPeriodStart": "2026-07-01",
+      "travelPeriodEnd": "2026-11-30",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "シンガポール",
+          "destinationCode": "SIN",
+          "price": 58000,
+          "originalPrice": 98000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 41
+        },
+        {
+          "origin": "東京",
+          "originCode": "HND",
+          "destination": "シンガポール",
+          "destinationCode": "SIN",
+          "price": 215000,
+          "originalPrice": 380000,
+          "currency": "JPY",
+          "cabin": "Business",
+          "discount": 43
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "シンガポール",
+          "destinationCode": "SIN",
+          "price": 55000,
+          "originalPrice": 95000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 42
+        }
+      ],
+      "sourceUrl": "https://www.singaporeair.com/en_UK/jp/special-offers/",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.533Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.533Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.865Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "sia-early-bird-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

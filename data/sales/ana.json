@@ -1,0 +1,170 @@
+{
+  "sales": [
+    {
+      "id": "ana-super-value-2026-05",
+      "airlineCode": "ANA",
+      "airlineName": "全日本空輸",
+      "saleName": "ANA スーパーバリュー SALE",
+      "description": "国際線エコノミークラス対象の期間限定セール。東南アジア・欧州路線が最大50%OFF。",
+      "startDate": "2026-05-10",
+      "endDate": "2026-05-25",
+      "bookingDeadline": "2026-05-24",
+      "travelPeriodStart": "2026-06-01",
+      "travelPeriodEnd": "2026-09-30",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "バンコク",
+          "destinationCode": "BKK",
+          "price": 38000,
+          "originalPrice": 72000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 47,
+          "seatsRemaining": 12
+        },
+        {
+          "origin": "東京",
+          "originCode": "HND",
+          "destination": "ニューヨーク",
+          "destinationCode": "JFK",
+          "price": 128000,
+          "originalPrice": 245000,
+          "currency": "JPY",
+          "cabin": "Business",
+          "discount": 48
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "ロンドン",
+          "destinationCode": "LHR",
+          "price": 78000,
+          "originalPrice": 142000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 45,
+          "seatsRemaining": 8
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "シンガポール",
+          "destinationCode": "SIN",
+          "price": 42000,
+          "originalPrice": 85000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 51,
+          "seatsRemaining": 5
+        }
+      ],
+      "sourceUrl": "https://www.ana.co.jp/ja/jp/promotionl/",
+      "scrapedAt": "2026-05-17T13:52:47.481Z",
+      "isActive": true
+    },
+    {
+      "id": "ana-biz-sale-2026-05",
+      "airlineCode": "ANA",
+      "airlineName": "全日本空輸",
+      "saleName": "ビジネスクラス タイムセール",
+      "description": "ビジネスクラス限定。ハワイ・北米路線が対象。",
+      "startDate": "2026-05-15",
+      "endDate": "2026-05-20",
+      "bookingDeadline": "2026-05-19",
+      "travelPeriodStart": "2026-07-01",
+      "travelPeriodEnd": "2026-12-31",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "HND",
+          "destination": "ホノルル",
+          "destinationCode": "HNL",
+          "price": 185000,
+          "originalPrice": 350000,
+          "currency": "JPY",
+          "cabin": "Business",
+          "discount": 47
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "ロサンゼルス",
+          "destinationCode": "LAX",
+          "price": 198000,
+          "originalPrice": 380000,
+          "currency": "JPY",
+          "cabin": "Business",
+          "discount": 48
+        }
+      ],
+      "sourceUrl": "https://www.ana.co.jp/ja/jp/promotionl/",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    },
+    {
+      "id": "ana-tabisale-2026-05",
+      "airlineCode": "ANA",
+      "airlineName": "全日本空輸",
+      "saleName": "ANA 旅割タイムセール",
+      "description": "国内線エコノミークラス対象。北海道・沖縄路線が特別価格。",
+      "startDate": "2026-05-15",
+      "endDate": "2026-05-28",
+      "bookingDeadline": "2026-05-25",
+      "travelPeriodStart": "2026-06-15",
+      "travelPeriodEnd": "2026-08-31",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "HND",
+          "destination": "札幌",
+          "destinationCode": "CTS",
+          "price": 12800,
+          "originalPrice": 38000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 66,
+          "seatsRemaining": 15
+        },
+        {
+          "origin": "東京",
+          "originCode": "HND",
+          "destination": "大阪",
+          "destinationCode": "ITM",
+          "price": 9800,
+          "originalPrice": 28000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 65,
+          "seatsRemaining": 25
+        }
+      ],
+      "sourceUrl": "https://www.ana.co.jp/ja/jp/promotionl/",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.526Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.526Z",
+      "success": true,
+      "salesCount": 3,
+      "newSales": [
+        "ana-tabisale-2026-05"
+      ],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.860Z",
+      "success": true,
+      "salesCount": 2,
+      "newSales": [
+        "ana-super-value-2026-05",
+        "ana-biz-sale-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

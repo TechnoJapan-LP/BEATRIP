@@ -1,0 +1,64 @@
+{
+  "sales": [
+    {
+      "id": "vietjet-sky-2026-05",
+      "airlineCode": "VJ",
+      "airlineName": "ベトジェットエア",
+      "saleName": "SKY SALE 全路線0円〜",
+      "description": "ベトナム全路線＆日本国内路線が対象のフラッシュセール。",
+      "startDate": "2026-05-14",
+      "endDate": "2026-05-15",
+      "bookingDeadline": "2026-05-15",
+      "travelPeriodStart": "2026-06-01",
+      "travelPeriodEnd": "2026-07-15",
+      "routes": [
+        {
+          "origin": "名古屋",
+          "originCode": "NGO",
+          "destination": "ホーチミン",
+          "destinationCode": "SGN",
+          "price": 12800,
+          "originalPrice": 28000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 54,
+          "seatsRemaining": 2
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "ハノイ",
+          "destinationCode": "HAN",
+          "price": 9800,
+          "originalPrice": 25000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 61,
+          "seatsRemaining": 5
+        }
+      ],
+      "sourceUrl": "https://www.vietjetair.com/promotion",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.532Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.532Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.864Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "vietjet-sky-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

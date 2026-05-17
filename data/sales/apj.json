@@ -1,0 +1,75 @@
+{
+  "sales": [
+    {
+      "id": "spring-flash-2026-05",
+      "airlineCode": "APJ",
+      "airlineName": "Spring Japan",
+      "saleName": "Spring 片道キャンペーン",
+      "description": "中国路線片道が驚きの価格。成田発全路線対象。",
+      "startDate": "2026-05-13",
+      "endDate": "2026-05-30",
+      "bookingDeadline": "2026-05-30",
+      "travelPeriodStart": "2026-06-15",
+      "travelPeriodEnd": "2026-08-31",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "上海",
+          "destinationCode": "PVG",
+          "price": 8800,
+          "originalPrice": 25000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 65,
+          "seatsRemaining": 18
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "ハルビン",
+          "destinationCode": "HRB",
+          "price": 9900,
+          "originalPrice": 28000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 65
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "広島",
+          "destinationCode": "HIJ",
+          "price": 3980,
+          "originalPrice": 18000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 78,
+          "seatsRemaining": 12
+        }
+      ],
+      "sourceUrl": "https://jp.ch.com/campaign",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.531Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.531Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.864Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "spring-flash-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

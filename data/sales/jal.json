@@ -1,0 +1,117 @@
+{
+  "sales": [
+    {
+      "id": "jal-special-saver-2026-05",
+      "airlineCode": "JAL",
+      "airlineName": "日本航空",
+      "saleName": "JAL スペシャルセーバー",
+      "description": "欧州・北米路線エコノミークラスが対象のスペシャル運賃。",
+      "startDate": "2026-05-12",
+      "endDate": "2026-05-30",
+      "bookingDeadline": "2026-05-29",
+      "travelPeriodStart": "2026-06-15",
+      "travelPeriodEnd": "2026-10-31",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "HND",
+          "destination": "パリ",
+          "destinationCode": "CDG",
+          "price": 89000,
+          "originalPrice": 158000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 44,
+          "seatsRemaining": 20
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "ヘルシンキ",
+          "destinationCode": "HEL",
+          "price": 82000,
+          "originalPrice": 148000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 45
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "ロサンゼルス",
+          "destinationCode": "LAX",
+          "price": 95000,
+          "originalPrice": 168000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 43
+        }
+      ],
+      "sourceUrl": "https://www.jal.co.jp/jp/ja/campaign/",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    },
+    {
+      "id": "jal-sakitoku-2026-05",
+      "airlineCode": "JAL",
+      "airlineName": "日本航空",
+      "saleName": "JAL 先得割引",
+      "description": "国内線のお得な先得割引。沖縄・鹿児島路線が対象。",
+      "startDate": "2026-05-16",
+      "endDate": "2026-06-05",
+      "bookingDeadline": "2026-06-01",
+      "travelPeriodStart": "2026-07-01",
+      "travelPeriodEnd": "2026-09-30",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "HND",
+          "destination": "沖縄",
+          "destinationCode": "OKA",
+          "price": 15800,
+          "originalPrice": 42000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 62,
+          "seatsRemaining": 8
+        },
+        {
+          "origin": "東京",
+          "originCode": "HND",
+          "destination": "鹿児島",
+          "destinationCode": "KOJ",
+          "price": 11800,
+          "originalPrice": 35000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 66,
+          "seatsRemaining": 20
+        }
+      ],
+      "sourceUrl": "https://www.jal.co.jp/jp/ja/campaign/",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.530Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.530Z",
+      "success": true,
+      "salesCount": 2,
+      "newSales": [
+        "jal-sakitoku-2026-05"
+      ],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.863Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "jal-special-saver-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

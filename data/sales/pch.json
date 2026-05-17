@@ -1,0 +1,99 @@
+{
+  "sales": [
+    {
+      "id": "peach-mega-2026-05",
+      "airlineCode": "PCH",
+      "airlineName": "Peach Aviation",
+      "saleName": "Peach メガセール",
+      "description": "全路線対象のメガセール！片道1,990円〜の衝撃価格。",
+      "startDate": "2026-05-14",
+      "endDate": "2026-05-16",
+      "bookingDeadline": "2026-05-16",
+      "travelPeriodStart": "2026-06-01",
+      "travelPeriodEnd": "2026-07-31",
+      "routes": [
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "台北",
+          "destinationCode": "TPE",
+          "price": 9800,
+          "originalPrice": 22000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 55,
+          "seatsRemaining": 3
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "ソウル",
+          "destinationCode": "ICN",
+          "price": 5980,
+          "originalPrice": 15000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 60,
+          "seatsRemaining": 7
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "バンコク",
+          "destinationCode": "BKK",
+          "price": 14800,
+          "originalPrice": 32000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 54
+        },
+        {
+          "origin": "福岡",
+          "originCode": "FUK",
+          "destination": "上海",
+          "destinationCode": "PVG",
+          "price": 8800,
+          "originalPrice": 19000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 54,
+          "seatsRemaining": 10
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "札幌",
+          "destinationCode": "CTS",
+          "price": 3490,
+          "originalPrice": 18000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 81,
+          "seatsRemaining": 3
+        }
+      ],
+      "sourceUrl": "https://www.flypeach.com/campaign",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.531Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.531Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.864Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "peach-mega-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

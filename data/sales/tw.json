@@ -1,0 +1,63 @@
+{
+  "sales": [
+    {
+      "id": "tway-happy-2026-05",
+      "airlineCode": "TW",
+      "airlineName": "ティーウェイ航空",
+      "saleName": "T'way ハッピーセール",
+      "description": "韓国路線が全便対象のハッピーセール。福岡・大阪・成田発。",
+      "startDate": "2026-05-11",
+      "endDate": "2026-05-20",
+      "bookingDeadline": "2026-05-20",
+      "travelPeriodStart": "2026-06-01",
+      "travelPeriodEnd": "2026-07-31",
+      "routes": [
+        {
+          "origin": "福岡",
+          "originCode": "FUK",
+          "destination": "ソウル",
+          "destinationCode": "ICN",
+          "price": 6900,
+          "originalPrice": 18000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 62,
+          "seatsRemaining": 10
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "ソウル",
+          "destinationCode": "ICN",
+          "price": 7500,
+          "originalPrice": 19000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 61
+        }
+      ],
+      "sourceUrl": "https://www.twayair.com/promotion",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.532Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.532Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.864Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "tway-happy-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

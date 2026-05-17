@@ -1,0 +1,74 @@
+{
+  "sales": [
+    {
+      "id": "jetstar-super-star-2026-05",
+      "airlineCode": "JJP",
+      "airlineName": "ジェットスター・ジャパン",
+      "saleName": "スーパースターセール",
+      "description": "国内線・国際線が対象の72時間限定セール。",
+      "startDate": "2026-05-13",
+      "endDate": "2026-05-16",
+      "bookingDeadline": "2026-05-16",
+      "travelPeriodStart": "2026-06-01",
+      "travelPeriodEnd": "2026-08-31",
+      "routes": [
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "マニラ",
+          "destinationCode": "MNL",
+          "price": 12800,
+          "originalPrice": 28000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 54
+        },
+        {
+          "origin": "大阪",
+          "originCode": "KIX",
+          "destination": "台北",
+          "destinationCode": "TPE",
+          "price": 8900,
+          "originalPrice": 20000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 56
+        },
+        {
+          "origin": "東京",
+          "originCode": "NRT",
+          "destination": "福岡",
+          "destinationCode": "FUK",
+          "price": 4990,
+          "originalPrice": 22000,
+          "currency": "JPY",
+          "cabin": "Economy",
+          "discount": 77,
+          "seatsRemaining": 5
+        }
+      ],
+      "sourceUrl": "https://www.jetstar.com/jp/ja/deals",
+      "scrapedAt": "2026-05-17T13:52:47.484Z",
+      "isActive": true
+    }
+  ],
+  "lastScraped": "2026-05-17T13:52:47.531Z",
+  "history": [
+    {
+      "timestamp": "2026-05-17T13:52:47.531Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [],
+      "endedSales": []
+    },
+    {
+      "timestamp": "2026-05-14T14:32:32.864Z",
+      "success": true,
+      "salesCount": 1,
+      "newSales": [
+        "jetstar-super-star-2026-05"
+      ],
+      "endedSales": []
+    }
+  ]
+}

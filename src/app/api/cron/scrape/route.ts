@@ -1,0 +1,80 @@
+import { NextRequest, NextResponse } from "next/server";
+import { scrapeAllAirlines, scrapeAirline } from "@/lib/scrapers";
+import { saveSalesAndDetectChanges } from "@/lib/store/sale-store";
+import { dispatchNotifications } from "@/lib/notifications/notifier";
+import { generateArticlesFromChanges } from "@/lib/articles/article-generator";
+import type { ChangeDetectionResult } from "@/lib/store/sale-store";
+
+export async function GET(request: NextRequest) {
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const airlineCode = request.nextUrl.searchParams.get("airline");
+  const startTime = Date.now();
+
+  try {
+    let results;
+    if (airlineCode) {
+      const result = await scrapeAirline(airlineCode);
+      results = [result];
+    } else {
+      results = await scrapeAllAirlines();
+    }
+
+    const changes: ChangeDetectionResult[] = [];
+    for (const result of results) {
+      const change = await saveSalesAndDetectChanges(result);
+      changes.push(change);
+    }
+
+    const { sent, errors } = await dispatchNotifications(changes);
+
+    let generatedArticles = 0;
+    for (const change of changes) {
+      if (!change.hasChanges) continue;
+      const newArticles = await generateArticlesFromChanges(change);
+      generatedArticles += newArticles.length;
+    }
+
+    const elapsed = Date.now() - startTime;
+
+    const summary = {
+      success: true,
+      elapsed: `${elapsed}ms`,
+      airlines: results.length,
+      totalSales: results.reduce((sum, r) => sum + r.sales.length, 0),
+      changes: {
+        newSales: changes.reduce((sum, c) => sum + c.newSales.length, 0),
+        endedSales: changes.reduce((sum, c) => sum + c.endedSales.length, 0),
+        priceChanges: changes.reduce((sum, c) => sum + c.priceChanges.length, 0),
+      },
+      notifications: { sent, errors },
+      generatedArticles,
+      details: changes.map((c) => ({
+        airline: c.airlineCode,
+        hasChanges: c.hasChanges,
+        newSales: c.newSales.map((s) => s.saleName),
+        endedSales: c.endedSales.map((s) => s.saleName),
+        priceChanges: c.priceChanges.map((p) => ({
+          route: p.routeKey,
+          from: p.oldPrice,
+          to: p.newPrice,
+        })),
+      })),
+      timestamp: new Date().toISOString(),
+    };
+
+    console.log(`[CRON] Scrape complete:`, JSON.stringify(summary, null, 2));
+    return NextResponse.json(summary);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    console.error(`[CRON] Scrape failed:`, message);
+    return NextResponse.json(
+      { success: false, error: message },
+      { status: 500 }
+    );
+  }
+}
