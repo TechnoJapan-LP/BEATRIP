@@ -60,58 +60,57 @@ export function DealFilters({
         ))}
       </div>
 
-      {/* 検索 + トグル */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
-          <Input
-            data-search-input
-            placeholder="都市・空港・航空会社で検索..."
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9 h-10 bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus-visible:ring-zinc-300"
+      {/* 検索 */}
+      <div className="relative w-full sm:max-w-xs">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+        <Input
+          data-search-input
+          placeholder="都市・空港・航空会社で検索..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="pl-9 h-10 bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus-visible:ring-zinc-300"
+        />
+      </div>
+
+      {/* トグル: モバイルでは2列グリッド、PCでは横並び */}
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-3">
+        <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+          <Switch
+            checked={groupByDestination}
+            onCheckedChange={onToggleGroupByDestination}
           />
-        </div>
+          <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
+            <Layers className="h-3.5 w-3.5" />
+            目的地でまとめる
+          </span>
+        </label>
 
-        <div className="flex items-center gap-4 overflow-x-auto text-sm sm:gap-5">
-          <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
-            <Switch
-              checked={groupByDestination}
-              onCheckedChange={onToggleGroupByDestination}
-            />
-            <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
-              <Layers className="h-3.5 w-3.5" />
-              目的地でまとめる
-            </span>
-          </label>
+        <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+          <Switch
+            checked={showTotalCost}
+            onCheckedChange={onToggleTotalCost}
+          />
+          <span className="text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">総額表示</span>
+        </label>
 
-          <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
-            <Switch
-              checked={showTotalCost}
-              onCheckedChange={onToggleTotalCost}
-            />
-            <span className="text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">総額表示</span>
-          </label>
+        <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+          <Switch checked={showNiche} onCheckedChange={onToggleNiche} />
+          <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
+            <Sparkles className="h-3.5 w-3.5" />
+            ニッチLCC
+          </span>
+        </label>
 
-          <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
-            <Switch checked={showNiche} onCheckedChange={onToggleNiche} />
-            <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
-              <Sparkles className="h-3.5 w-3.5" />
-              ニッチLCC
-            </span>
-          </label>
-
-          <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
-            <Switch
-              checked={showHiddenGem}
-              onCheckedChange={onToggleHiddenGem}
-            />
-            <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
-              <MapPin className="h-3.5 w-3.5" />
-              穴場
-            </span>
-          </label>
-        </div>
+        <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+          <Switch
+            checked={showHiddenGem}
+            onCheckedChange={onToggleHiddenGem}
+          />
+          <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
+            <MapPin className="h-3.5 w-3.5" />
+            穴場
+          </span>
+        </label>
       </div>
     </div>
   );
