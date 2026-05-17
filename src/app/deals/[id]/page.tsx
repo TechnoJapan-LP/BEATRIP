@@ -319,15 +319,6 @@ export default async function DealDetailPage({ params }: Props) {
               </div>
             )}
 
-            <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5 flex items-center justify-between">
-              <span className="text-xs text-zinc-400 dark:text-zinc-500">このディールを友達にシェア</span>
-              <ShareButtons
-                url={`https://beatrip.jp/deals/${deal.id}`}
-                title={`${deal.origin_code}→${deal.destination_code} ¥${formatPrice(deal.sale_price)} (-${deal.discount_percent}%)`}
-                description={`${deal.airline_name} ${deal.sale_name} | BEATRIP`}
-              />
-            </div>
-
             <div className="flex flex-col gap-2 px-1">
               <ViewCounter dealId={deal.id} />
               <RecentActivity dealId={deal.id} />
@@ -522,6 +513,15 @@ export default async function DealDetailPage({ params }: Props) {
                 </div>
               </div>
             )}
+
+            <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5 flex items-center justify-between">
+              <span className="text-xs text-zinc-400 dark:text-zinc-500">このディールを友達にシェア</span>
+              <ShareButtons
+                url={`https://beatrip.jp/deals/${deal.id}`}
+                title={`${deal.origin_code}→${deal.destination_code} ¥${formatPrice(deal.sale_price)} (-${deal.discount_percent}%)`}
+                description={`${deal.airline_name} ${deal.sale_name} | BEATRIP`}
+              />
+            </div>
           </div>
         </div>
 
