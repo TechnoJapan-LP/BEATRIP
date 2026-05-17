@@ -2,6 +2,8 @@ import { loadAllSales } from "@/lib/store/sale-store";
 import { airlines, getAirlineByCode } from "@/data/airlines";
 import { getDestinationImage } from "./destination-images";
 import { deals as mockDeals, historicalPrices as mockHistoricalPrices } from "@/data/mock-deals-v2";
+import { generateHistoricalPrices } from "@/lib/predictions/historical-generator";
+import { ROUTE_BASELINES } from "@/data/route-baselines";
 import type { DealSchema, DealHistoricalPrice } from "@/data/deal-schema";
 import type { AirlineSale, SaleRoute } from "@/lib/scrapers/types";
 
@@ -226,12 +228,24 @@ export async function getDealById(id: string): Promise<DealSchema | undefined> {
 
 /**
  * 価格履歴を取得
- * ストアにない場合はモックデータにフォールバック
+ *
+ * 優先順:
+ * 1. 手動入力された静的データ（mock-deals-v2.ts の historicalPrices）
+ * 2. ROUTE_BASELINES から自動生成（季節性モデル）
+ * 3. 空配列（route_baselines に未登録の路線）
  */
 export async function getHistoricalPrices(routeKey: string): Promise<DealHistoricalPrice[]> {
-  // TODO: ストアから価格履歴を読み込む
-  // 今はモックデータにフォールバック
-  return mockHistoricalPrices.filter((p) => p.route_key === routeKey);
+  // 1. 静的データを優先
+  const staticData = mockHistoricalPrices.filter((p) => p.route_key === routeKey);
+  if (staticData.length > 0) return staticData;
+
+  // 2. ベースラインから自動生成
+  if (ROUTE_BASELINES[routeKey]) {
+    return generateHistoricalPrices(routeKey);
+  }
+
+  // 3. データなし
+  return [];
 }
 
 /**
