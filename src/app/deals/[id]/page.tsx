@@ -27,6 +27,7 @@ import { ViewCounter } from "@/components/deals/view-counter";
 import { RecentActivity } from "@/components/deals/recent-activity";
 import { getActiveDeals, getDealById as getDealByIdFromService, getHistoricalPrices } from "@/lib/deals/deal-service";
 import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
+import { buildCompareLinksFromDeal } from "@/lib/affiliate/url-builder";
 import { SiteFooter } from "@/components/site-footer";
 import { StickyCTA } from "@/components/deals/sticky-cta";
 
@@ -313,6 +314,7 @@ export default async function DealDetailPage({ params }: Props) {
                   affiliateUrl={deal.affiliate_url}
                   affiliateProvider={deal.affiliate_provider ?? "パートナーサイト"}
                   saleName={deal.sale_name}
+                  compareLinks={buildCompareLinksFromDeal(deal)}
                 />
               </div>
             )}

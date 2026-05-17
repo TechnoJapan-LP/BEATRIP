@@ -4,6 +4,7 @@ import { getDestinationImage } from "./destination-images";
 import { deals as mockDeals, historicalPrices as mockHistoricalPrices } from "@/data/mock-deals-v2";
 import { generateHistoricalPrices } from "@/lib/predictions/historical-generator";
 import { ROUTE_BASELINES } from "@/data/route-baselines";
+import { buildAffiliateLink } from "@/lib/affiliate/url-builder";
 import type { DealSchema, DealHistoricalPrice } from "@/data/deal-schema";
 import type { AirlineSale, SaleRoute } from "@/lib/scrapers/types";
 
@@ -108,32 +109,10 @@ function convertToDeal(
     badge = "LOWEST_IN_2_YEARS";
   }
 
-  // Skyscanner アフィリエイトURL生成
-  const affiliateUrl =
-    sale.sourceUrl ||
-    `https://www.skyscanner.jp/transport/flights/${route.originCode.toLowerCase()}/${route.destinationCode.toLowerCase()}/?ref=beatrip`;
-
-  const affiliateProvider = sale.sourceUrl.includes("ana.co.jp")
-    ? "ANA公式"
-    : sale.sourceUrl.includes("jal.co.jp")
-      ? "JAL公式"
-      : sale.sourceUrl.includes("flypeach")
-        ? "Peach公式"
-        : sale.sourceUrl.includes("jetstar")
-          ? "Jetstar公式"
-          : sale.sourceUrl.includes("ch.com")
-            ? "Spring Japan公式"
-            : sale.sourceUrl.includes("twayair")
-              ? "T'way Air公式"
-              : sale.sourceUrl.includes("vietjetair")
-                ? "VietJet公式"
-                : sale.sourceUrl.includes("emirates")
-                  ? "Emirates公式"
-                  : sale.sourceUrl.includes("singaporeair")
-                    ? "Singapore Airlines公式"
-                    : sale.sourceUrl.includes("cathaypacific")
-                      ? "Cathay Pacific公式"
-                      : "Skyscanner";
+  // アフィリエイトURL生成（公式 → 航空会社直販 → Skyscanner の優先順）
+  const affiliateLink = buildAffiliateLink(route, sale);
+  const affiliateUrl = affiliateLink.url;
+  const affiliateProvider = affiliateLink.provider;
 
   return {
     id: `${sale.id}-${route.originCode}-${route.destinationCode}-${route.cabin.toLowerCase()}`.replace(/\s+/g, "-"),
