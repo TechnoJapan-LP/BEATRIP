@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Sparkles, MapPin, Layers } from "lucide-react";
+import { Search, Sparkles, MapPin, Flame, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
@@ -9,16 +9,16 @@ export type FlightType = "all" | "domestic" | "international";
 type DealFiltersProps = {
   flightType: FlightType;
   onFlightTypeChange: (v: FlightType) => void;
-  showTotalCost: boolean;
-  onToggleTotalCost: (v: boolean) => void;
+  showNew: boolean;
+  onToggleNew: (v: boolean) => void;
+  showEnding: boolean;
+  onToggleEnding: (v: boolean) => void;
   showNiche: boolean;
   onToggleNiche: (v: boolean) => void;
   showHiddenGem: boolean;
   onToggleHiddenGem: (v: boolean) => void;
   searchQuery: string;
   onSearchChange: (v: string) => void;
-  groupByDestination: boolean;
-  onToggleGroupByDestination: (v: boolean) => void;
 };
 
 const flightTabs: { value: FlightType; label: string }[] = [
@@ -30,16 +30,16 @@ const flightTabs: { value: FlightType; label: string }[] = [
 export function DealFilters({
   flightType,
   onFlightTypeChange,
-  showTotalCost,
-  onToggleTotalCost,
+  showNew,
+  onToggleNew,
+  showEnding,
+  onToggleEnding,
   showNiche,
   onToggleNiche,
   showHiddenGem,
   onToggleHiddenGem,
   searchQuery,
   onSearchChange,
-  groupByDestination,
-  onToggleGroupByDestination,
 }: DealFiltersProps) {
   return (
     <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4">
@@ -75,22 +75,19 @@ export function DealFilters({
       {/* トグル: モバイルでは2列グリッド、PCでは横並び */}
       <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-3">
         <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
-          <Switch
-            checked={groupByDestination}
-            onCheckedChange={onToggleGroupByDestination}
-          />
+          <Switch checked={showNew} onCheckedChange={onToggleNew} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
-            <Layers className="h-3.5 w-3.5" />
-            目的地でまとめる
+            <Flame className="h-3.5 w-3.5 text-emerald-500" />
+            新着
           </span>
         </label>
 
         <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
-          <Switch
-            checked={showTotalCost}
-            onCheckedChange={onToggleTotalCost}
-          />
-          <span className="text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">総額表示</span>
+          <Switch checked={showEnding} onCheckedChange={onToggleEnding} />
+          <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
+            <Clock className="h-3.5 w-3.5 text-amber-500" />
+            締切間近
+          </span>
         </label>
 
         <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">

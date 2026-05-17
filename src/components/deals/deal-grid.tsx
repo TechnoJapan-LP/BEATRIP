@@ -28,11 +28,11 @@ export function DealGrid({
   upcomingSales?: SaleEvent[];
 }) {
   const [flightType, setFlightType] = useState<FlightType>("all");
-  const [showTotalCost, setShowTotalCost] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showEnding, setShowEnding] = useState(false);
   const [showNiche, setShowNiche] = useState(false);
   const [showHiddenGem, setShowHiddenGem] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [groupByDestination, setGroupByDestination] = useState(true);
 
   useEffect(() => {
     function onSearch(e: Event) {
@@ -47,6 +47,8 @@ export function DealGrid({
     let result = deals;
     if (flightType === "domestic") result = result.filter(isDomesticDeal);
     if (flightType === "international") result = result.filter((d) => !isDomesticDeal(d));
+    if (showNew) result = result.filter((d) => d.badge === "NEW");
+    if (showEnding) result = result.filter((d) => d.badge === "ENDING_SOON");
     if (showNiche) result = result.filter((d) => d.is_niche_lcc);
     if (showHiddenGem) result = result.filter((d) => d.is_hidden_gem);
     if (searchQuery) {
@@ -61,15 +63,11 @@ export function DealGrid({
       );
     }
     return result;
-  }, [deals, flightType, showNiche, showHiddenGem, searchQuery]);
+  }, [deals, flightType, showNew, showEnding, showNiche, showHiddenGem, searchQuery]);
 
-  // 目的地ごとにグルーピング: 最安便を代表として、他便数と出発空港をメタ情報として保持
+  // 目的地ごとに常時グルーピング: 最安便を代表として、他便数と出発空港をメタ情報として保持
   type DisplayDeal = { deal: DealSchema; variantCount: number; variantOriginCodes: string[] };
   const displayDeals = useMemo<DisplayDeal[]>(() => {
-    if (!groupByDestination) {
-      return filteredDeals.map((d) => ({ deal: d, variantCount: 1, variantOriginCodes: [] }));
-    }
-
     // 目的地コード + キャビン でグループ化
     const groups = new Map<string, DealSchema[]>();
     for (const d of filteredDeals) {
@@ -95,10 +93,9 @@ export function DealGrid({
       });
     }
 
-    // 元のディール順を維持（同じ目的地で複数あれば最安便の位置で代表化）
     // 表示順: 割引率の高い順
     return result.sort((a, b) => b.deal.discount_percent - a.deal.discount_percent);
-  }, [filteredDeals, groupByDestination]);
+  }, [filteredDeals]);
 
   const visibleUpcoming = useMemo(() => {
     const cols = 4;
@@ -114,21 +111,21 @@ export function DealGrid({
       <DealFilters
         flightType={flightType}
         onFlightTypeChange={setFlightType}
-        showTotalCost={showTotalCost}
-        onToggleTotalCost={setShowTotalCost}
+        showNew={showNew}
+        onToggleNew={setShowNew}
+        showEnding={showEnding}
+        onToggleEnding={setShowEnding}
         showNiche={showNiche}
         onToggleNiche={setShowNiche}
         showHiddenGem={showHiddenGem}
         onToggleHiddenGem={setShowHiddenGem}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        groupByDestination={groupByDestination}
-        onToggleGroupByDestination={setGroupByDestination}
       />
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={`${flightType}-${showNiche}-${showHiddenGem}-${searchQuery}-${groupByDestination}`}
+          key={`${flightType}-${showNew}-${showEnding}-${showNiche}-${showHiddenGem}-${searchQuery}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -139,7 +136,6 @@ export function DealGrid({
             <DealCard
               key={deal.id}
               deal={deal}
-              showTotalCost={showTotalCost}
               index={i}
               variantCount={variantCount}
               variantOriginCodes={variantOriginCodes}
@@ -177,7 +173,6 @@ export function DealGrid({
                   <DealCard
                     key={deal.id}
                     deal={deal}
-                    showTotalCost={showTotalCost}
                     index={i}
                   />
                 ))}

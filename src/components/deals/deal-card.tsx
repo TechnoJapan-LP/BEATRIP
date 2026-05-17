@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Plane, Clock, TrendingDown, Users, Layers } from "lucide-react";
+import { Plane, TrendingDown, Users, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { DealSchema } from "@/data/deal-schema";
 
@@ -24,20 +24,17 @@ function daysUntil(dateStr: string) {
 
 export function DealCard({
   deal,
-  showTotalCost,
   index,
   variantCount,
   variantOriginCodes,
 }: {
   deal: DealSchema;
-  showTotalCost: boolean;
   index: number;
   /** 同じ目的地への他の便数（自分含む。1の場合はバッジ非表示） */
   variantCount?: number;
   /** 同じ目的地の他便の出発空港コード（最大3つ） */
   variantOriginCodes?: string[];
 }) {
-  const displayPrice = showTotalCost ? deal.total_cost : deal.sale_price;
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
   const deadlineDays = daysUntil(deal.booking_deadline);
 
@@ -97,7 +94,7 @@ export function DealCard({
                   ¥{formatPrice(deal.original_price)}
                 </div>
                 <div className="text-[16px] font-heading leading-none text-white tracking-wide sm:text-[26px]">
-                  ¥{formatPrice(displayPrice)}
+                  ¥{formatPrice(deal.sale_price)}
                 </div>
               </div>
             </div>
@@ -131,11 +128,6 @@ export function DealCard({
                 {variantOriginCodes.slice(0, 3).join("・")}
                 {variantOriginCodes.length > 3 ? "..." : ""}発
               </span>
-            ) : showTotalCost ? (
-              <div className="flex items-center gap-1 text-[10px] text-zinc-400">
-                <Clock className="h-3 w-3" />
-                税・燃油込
-              </div>
             ) : (
               <span className="text-[10px] text-zinc-400">
                 総額 ¥{formatPrice(deal.total_cost)}
