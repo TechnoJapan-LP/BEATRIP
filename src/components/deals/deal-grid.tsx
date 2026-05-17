@@ -32,6 +32,7 @@ export function DealGrid({
   const [showNiche, setShowNiche] = useState(false);
   const [showHiddenGem, setShowHiddenGem] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [groupByDestination, setGroupByDestination] = useState(true);
 
   useEffect(() => {
     function onSearch(e: Event) {
@@ -62,14 +63,51 @@ export function DealGrid({
     return result;
   }, [deals, flightType, showNiche, showHiddenGem, searchQuery]);
 
+  // 目的地ごとにグルーピング: 最安便を代表として、他便数と出発空港をメタ情報として保持
+  type DisplayDeal = { deal: DealSchema; variantCount: number; variantOriginCodes: string[] };
+  const displayDeals = useMemo<DisplayDeal[]>(() => {
+    if (!groupByDestination) {
+      return filteredDeals.map((d) => ({ deal: d, variantCount: 1, variantOriginCodes: [] }));
+    }
+
+    // 目的地コード + キャビン でグループ化
+    const groups = new Map<string, DealSchema[]>();
+    for (const d of filteredDeals) {
+      const key = `${d.destination_code}-${d.cabin}`;
+      const arr = groups.get(key) ?? [];
+      arr.push(d);
+      groups.set(key, arr);
+    }
+
+    // 各グループの最安便を選択 + 他便の出発空港コードを集計
+    const result: DisplayDeal[] = [];
+    for (const dealsInGroup of groups.values()) {
+      const sorted = [...dealsInGroup].sort((a, b) => a.sale_price - b.sale_price);
+      const cheapest = sorted[0];
+      const otherOrigins = sorted
+        .slice(1)
+        .map((d) => d.origin_code)
+        .filter((c, i, arr) => arr.indexOf(c) === i);
+      result.push({
+        deal: cheapest,
+        variantCount: sorted.length,
+        variantOriginCodes: otherOrigins,
+      });
+    }
+
+    // 元のディール順を維持（同じ目的地で複数あれば最安便の位置で代表化）
+    // 表示順: 割引率の高い順
+    return result.sort((a, b) => b.deal.discount_percent - a.deal.discount_percent);
+  }, [filteredDeals, groupByDestination]);
+
   const visibleUpcoming = useMemo(() => {
     const cols = 4;
-    const remainder = filteredDeals.length % cols;
+    const remainder = displayDeals.length % cols;
     const slotsToFill = remainder === 0 ? 0 : cols - remainder;
     return [...upcomingSales]
       .sort((a, b) => b.probability - a.probability)
       .slice(0, Math.max(slotsToFill, 0));
-  }, [filteredDeals.length, upcomingSales]);
+  }, [displayDeals.length, upcomingSales]);
 
   return (
     <div>
@@ -84,36 +122,40 @@ export function DealGrid({
         onToggleHiddenGem={setShowHiddenGem}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        groupByDestination={groupByDestination}
+        onToggleGroupByDestination={setGroupByDestination}
       />
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={`${flightType}-${showNiche}-${showHiddenGem}-${searchQuery}`}
+          key={`${flightType}-${showNiche}-${showHiddenGem}-${searchQuery}-${groupByDestination}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4"
         >
-          {filteredDeals.map((deal, i) => (
+          {displayDeals.map(({ deal, variantCount, variantOriginCodes }, i) => (
             <DealCard
               key={deal.id}
               deal={deal}
               showTotalCost={showTotalCost}
               index={i}
+              variantCount={variantCount}
+              variantOriginCodes={variantOriginCodes}
             />
           ))}
           {visibleUpcoming.map((event, i) => (
             <UpcomingDealCard
               key={event.id}
               event={event}
-              index={filteredDeals.length + i}
+              index={displayDeals.length + i}
             />
           ))}
         </motion.div>
       </AnimatePresence>
 
-      {filteredDeals.length === 0 && (
+      {displayDeals.length === 0 && (
         <div className="py-12 text-center">
           <p className="text-lg text-zinc-400 dark:text-zinc-500">
             該当するディールが見つかりませんでした

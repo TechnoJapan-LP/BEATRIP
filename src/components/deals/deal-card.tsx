@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Plane, Clock, TrendingDown, Users } from "lucide-react";
+import { Plane, Clock, TrendingDown, Users, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FavoriteButton } from "@/components/deals/favorite-button";
 import type { DealSchema } from "@/data/deal-schema";
@@ -27,10 +27,16 @@ export function DealCard({
   deal,
   showTotalCost,
   index,
+  variantCount,
+  variantOriginCodes,
 }: {
   deal: DealSchema;
   showTotalCost: boolean;
   index: number;
+  /** 同じ目的地への他の便数（自分含む。1の場合はバッジ非表示） */
+  variantCount?: number;
+  /** 同じ目的地の他便の出発空港コード（最大3つ） */
+  variantOriginCodes?: string[];
 }) {
   const displayPrice = showTotalCost ? deal.total_cost : deal.sale_price;
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
@@ -103,7 +109,16 @@ export function DealCard({
         <div className="mt-auto px-2.5 py-2 flex items-center justify-between sm:px-4 sm:py-2.5">
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             <span className="text-[10px] font-medium text-zinc-500 truncate sm:text-[11px]">{deal.airline_name}</span>
-            {deadlineDays > 0 && deadlineDays <= 7 && (
+            {variantCount && variantCount > 1 && (
+              <>
+                <span className="text-zinc-200 dark:text-zinc-700">·</span>
+                <span className="flex items-center gap-0.5 text-[10px] font-medium text-sky-600 dark:text-sky-400 sm:text-[11px]">
+                  <Layers className="h-2.5 w-2.5" />
+                  他{variantCount - 1}便
+                </span>
+              </>
+            )}
+            {deadlineDays > 0 && deadlineDays <= 7 && (!variantCount || variantCount <= 1) && (
               <>
                 <span className="text-zinc-200 dark:text-zinc-700">·</span>
                 <span className="text-[10px] font-medium text-amber-500 animate-pulse">
@@ -113,7 +128,12 @@ export function DealCard({
             )}
           </div>
           <div className="flex items-center gap-2">
-            {showTotalCost ? (
+            {variantOriginCodes && variantOriginCodes.length > 0 ? (
+              <span className="text-[9px] font-mono text-zinc-400 truncate sm:text-[10px]">
+                {variantOriginCodes.slice(0, 3).join("・")}
+                {variantOriginCodes.length > 3 ? "..." : ""}発
+              </span>
+            ) : showTotalCost ? (
               <div className="flex items-center gap-1 text-[10px] text-zinc-400">
                 <Clock className="h-3 w-3" />
                 税・燃油込

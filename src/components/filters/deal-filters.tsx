@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Sparkles, MapPin } from "lucide-react";
+import { Search, Sparkles, MapPin, Layers } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 
@@ -17,6 +17,8 @@ type DealFiltersProps = {
   onToggleHiddenGem: (v: boolean) => void;
   searchQuery: string;
   onSearchChange: (v: string) => void;
+  groupByDestination: boolean;
+  onToggleGroupByDestination: (v: boolean) => void;
 };
 
 const flightTabs: { value: FlightType; label: string }[] = [
@@ -36,6 +38,8 @@ export function DealFilters({
   onToggleHiddenGem,
   searchQuery,
   onSearchChange,
+  groupByDestination,
+  onToggleGroupByDestination,
 }: DealFiltersProps) {
   return (
     <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4">
@@ -70,6 +74,17 @@ export function DealFilters({
         </div>
 
         <div className="flex items-center gap-4 overflow-x-auto text-sm sm:gap-5">
+          <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+            <Switch
+              checked={groupByDestination}
+              onCheckedChange={onToggleGroupByDestination}
+            />
+            <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
+              <Layers className="h-3.5 w-3.5" />
+              目的地でまとめる
+            </span>
+          </label>
+
           <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
             <Switch
               checked={showTotalCost}
