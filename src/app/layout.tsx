@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Bebas_Neue } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/sw-register";
@@ -66,6 +67,13 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950">
         <ServiceWorkerRegister />
         {children}
+
+        {/* TravelPayouts Drive (アフィリエイトトラッキング・コンバージョン計測) */}
+        <Script
+          id="travelpayouts-drive"
+          strategy="afterInteractive"
+          src="https://emrld.ltd/NTMwMDgx.js?t=530081"
+        />
       </body>
     </html>
   );
