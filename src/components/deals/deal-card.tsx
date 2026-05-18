@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Plane, TrendingDown, Users, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode } from "@/data/airlines";
+import { cityNameJa } from "@/lib/airport-names";
 import type { DealSchema } from "@/data/deal-schema";
 
 const badgeConfig = {
@@ -134,12 +135,10 @@ export function DealCard({
               </>
             )}
           </div>
-          {variantOriginCodes && variantOriginCodes.length > 0 && (
-            <span className="flex-shrink-0 text-[9px] font-mono text-zinc-400 truncate sm:text-[10px]">
-              {variantOriginCodes.slice(0, 3).join("・")}
-              {variantOriginCodes.length > 3 ? "..." : ""}発
-            </span>
-          )}
+          <span className="flex-shrink-0 text-[10px] font-medium text-zinc-400 sm:text-[11px]">
+            {cityNameJa(deal.origin_code)}発
+            {variantOriginCodes && variantOriginCodes.length > 0 ? "ほか" : ""}
+          </span>
         </div>
       </Link>
     </div>
