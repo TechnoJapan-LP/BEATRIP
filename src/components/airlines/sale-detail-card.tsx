@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import { deals } from "@/data/mock-deals-v2";
+import { cityNameJa } from "@/lib/airport-names";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("ja-JP").format(price);
@@ -124,17 +125,18 @@ export function SaleDetailCard({
             );
             const Row = (
               <div className="flex items-center justify-between px-4 py-3 bg-white hover:bg-zinc-50 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 text-sm">
-                    <span className="font-mono text-zinc-500">
-                      {route.originCode}
-                    </span>
-                    <Plane className="h-3 w-3 text-zinc-300 rotate-45" />
-                    <span className="font-mono font-medium text-zinc-800">
-                      {route.destinationCode}
-                    </span>
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5 text-sm font-bold text-zinc-800">
+                      <span className="truncate">{cityNameJa(route.originCode)}</span>
+                      <Plane className="h-3 w-3 flex-shrink-0 text-zinc-300 rotate-45" />
+                      <span className="truncate">{cityNameJa(route.destinationCode)}</span>
+                    </div>
+                    <div className="text-[10px] font-mono text-zinc-400 mt-0.5">
+                      {route.originCode}→{route.destinationCode}
+                    </div>
                   </div>
-                  <Badge variant="secondary" className="text-[10px]">
+                  <Badge variant="secondary" className="text-[10px] flex-shrink-0">
                     {route.cabin}
                   </Badge>
                   {route.seatsRemaining !== undefined &&

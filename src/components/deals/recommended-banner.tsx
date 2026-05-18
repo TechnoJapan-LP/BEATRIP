@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Plane, TrendingDown, ArrowRight } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
+import { cityNameJa } from "@/lib/airport-names";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("ja-JP").format(price);
@@ -56,7 +57,7 @@ export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
                   <span>{deal.airline_name}</span>
                 </div>
                 <div className="text-sm font-bold text-zinc-800 truncate">
-                  {deal.destination}
+                  {cityNameJa(deal.origin_code)}→{deal.destination}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">

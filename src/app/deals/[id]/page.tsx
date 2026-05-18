@@ -353,18 +353,14 @@ export default async function DealDetailPage({ params }: Props) {
                       href={`/deals/${s.id}`}
                       className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
                     >
-                      <div>
-                        <div className="flex items-center gap-1.5 text-xs">
-                          <span className="font-mono text-zinc-500">
-                            {s.origin_code}
-                          </span>
-                          <Plane className="h-3 w-3 text-zinc-300 rotate-45" />
-                          <span className="font-mono font-medium text-zinc-800">
-                            {s.destination_code}
-                          </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                          <span className="truncate">{s.origin}</span>
+                          <Plane className="h-3 w-3 flex-shrink-0 text-zinc-300 rotate-45" />
+                          <span className="truncate">{s.destination}</span>
                         </div>
-                        <div className="text-[11px] text-zinc-400 mt-0.5">
-                          {s.destination} · {s.cabin}
+                        <div className="text-[11px] text-zinc-400 font-mono mt-0.5">
+                          {s.origin_code}→{s.destination_code} · {s.cabin}
                         </div>
                       </div>
                       <div className="text-right">

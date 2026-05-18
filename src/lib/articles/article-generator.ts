@@ -4,6 +4,7 @@ import type { AirlineSale } from "@/lib/scrapers/types";
 import type { PriceChange } from "@/lib/store/sale-store";
 import type { Article } from "@/data/mock-articles";
 import { deals } from "@/data/mock-deals-v2";
+import { cityNameJa } from "@/lib/airport-names";
 
 function findDealImage(airlineCode: string, routes: { originCode: string; destinationCode: string }[]): string {
   for (const route of routes) {
@@ -43,7 +44,7 @@ function generateSaleArticle(sale: AirlineSale): Article {
     const discountText = r.discount ? `（${r.discount}%OFF）` : "";
     const seatsText =
       r.seatsRemaining !== undefined ? ` — 残${r.seatsRemaining}席` : "";
-    return `- **${r.originCode}→${r.destinationCode}（${r.cabin}）**: ¥${formatPrice(r.price)}${discountText}${seatsText}`;
+    return `- **${cityNameJa(r.originCode)}→${cityNameJa(r.destinationCode)}（${r.originCode}→${r.destinationCode}・${r.cabin}）**: ¥${formatPrice(r.price)}${discountText}${seatsText}`;
   });
 
   const cheapest = routes[0];
@@ -74,7 +75,7 @@ ${cheapest ? `最安値は**${cheapest.originCode}→${cheapest.destinationCode}
 
   return {
     slug,
-    title: `${sale.airlineName}「${sale.saleName}」開始${cheapest ? ` ${cheapest.originCode}→${cheapest.destinationCode} ¥${formatPrice(cheapest.price)}〜` : ""}`,
+    title: `${sale.airlineName}「${sale.saleName}」開始${cheapest ? ` ${cityNameJa(cheapest.originCode)}→${cityNameJa(cheapest.destinationCode)} ¥${formatPrice(cheapest.price)}〜` : ""}`,
     excerpt: `${sale.airlineName}が${sale.saleName}を開催${highestDiscount > 0 ? `。最大${highestDiscount}%OFF` : ""}。${sale.routes.length}路線が対象${cheapest ? `、最安¥${formatPrice(cheapest.price)}〜` : ""}。`,
     body,
     image_url: findDealImage(sale.airlineCode, sale.routes),
