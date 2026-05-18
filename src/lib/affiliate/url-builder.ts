@@ -58,11 +58,11 @@ const AIRLINE_BOOKING_TEMPLATES: Record<
     build: (r) =>
       `https://www.jal.co.jp/jp/ja/dom/?ks=${r.originCode}&kf=${r.destinationCode}`,
   },
+  // airlines.ts の定義に一致させる: APJ=Spring Japan, PCH=Peach
   APJ: {
-    name: "Peach公式",
-    routeAware: true,
-    build: (r) =>
-      `https://www.flypeach.com/jp/book-a-flight?origin=${r.originCode}&destination=${r.destinationCode}`,
+    name: "Spring Japan公式",
+    routeAware: false, // jp.ch.com は路線プリフィル非対応 → Skyscannerにフォールバック
+    build: () => "https://jp.ch.com/",
   },
   PCH: {
     name: "Peach公式",
