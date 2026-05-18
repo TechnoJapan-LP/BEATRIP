@@ -1,6 +1,7 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import type { AirlineSale, ScrapeResult } from "@/lib/scrapers/types";
+import { getKV, KV_KEYS } from "./kv";
 
 // Vercel本番環境では `data/sales/` は読み取り専用
 // 書き込みは /tmp に行い、読み込みは両方を試す
@@ -34,27 +35,53 @@ function filePath(airlineCode: string, dir = DATA_DIR) {
   return join(dir, `${airlineCode.toLowerCase()}.json`);
 }
 
-export async function loadSales(airlineCode: string): Promise<StoredSaleData> {
-  // 書き込み先（/tmp など）を先に試し、なければ読み取り専用の同梱データから
-  try {
-    const raw = await readFile(filePath(airlineCode, WRITE_DIR), "utf-8");
-    return JSON.parse(raw);
-  } catch {
-    // フォールバック: ビルド時に同梱されたデータ
+const EMPTY: StoredSaleData = { sales: [], lastScraped: "", history: [] };
+
+async function loadFromFs(airlineCode: string): Promise<StoredSaleData | null> {
+  for (const dir of [WRITE_DIR, READ_DIR]) {
     try {
-      const raw = await readFile(filePath(airlineCode, READ_DIR), "utf-8");
+      const raw = await readFile(filePath(airlineCode, dir), "utf-8");
       return JSON.parse(raw);
     } catch {
-      return { sales: [], lastScraped: "", history: [] };
+      // 次を試す
     }
   }
+  return null;
+}
+
+export async function loadSales(airlineCode: string): Promise<StoredSaleData> {
+  // 優先: KV（永続）→ /tmp・同梱データ（FS）→ 空
+  const kv = getKV();
+  if (kv) {
+    try {
+      const data = await kv.get<StoredSaleData>(KV_KEYS.sale(airlineCode));
+      if (data && Array.isArray(data.sales)) return data;
+      // KVに未登録なら同梱データを初期値として返す（初回デプロイ時）
+      const seed = await loadFromFs(airlineCode);
+      return seed ?? EMPTY;
+    } catch (e) {
+      console.warn(`[SaleStore] KV read failed for ${airlineCode}:`, e);
+    }
+  }
+  return (await loadFromFs(airlineCode)) ?? EMPTY;
 }
 
 export async function loadAllSales(): Promise<Record<string, StoredSaleData>> {
-  const { readdir } = await import("fs/promises");
-
-  // /tmpと同梱データの両方から航空会社コードを収集
   const codes = new Set<string>();
+
+  // KVのインデックスから航空会社コードを収集
+  const kv = getKV();
+  if (kv) {
+    try {
+      const indexed = await kv.smembers(KV_KEYS.index);
+      for (const c of indexed) codes.add(String(c).toUpperCase());
+    } catch (e) {
+      console.warn("[SaleStore] KV index read failed:", e);
+    }
+  }
+
+  // 同梱データ + /tmp のコードも収集（KV未導入/初回でも動くように）
+  const { readdir } = await import("fs/promises");
   for (const dir of [WRITE_DIR, READ_DIR]) {
     try {
       const files = await readdir(dir);
@@ -143,12 +170,22 @@ export async function saveSalesAndDetectChanges(
     history: [logEntry, ...existing.history].slice(0, 100),
   };
 
-  // 書き込みは /tmp (Vercel) または data/sales (ローカル) に
-  try {
-    await writeFile(filePath(result.airlineCode), JSON.stringify(updated, null, 2));
-  } catch (e) {
-    // Vercel本番で書き込みが失敗してもエラーにはしない（読み取りは同梱データから動作する）
-    console.warn(`[SaleStore] Failed to persist ${result.airlineCode}:`, e);
+  // 永続化: KVがあればKVへ（本番で永続反映）、無ければ /tmp / data/sales へ
+  const kv = getKV();
+  if (kv) {
+    try {
+      await kv.set(KV_KEYS.sale(result.airlineCode), updated);
+      await kv.sadd(KV_KEYS.index, result.airlineCode.toUpperCase());
+    } catch (e) {
+      console.warn(`[SaleStore] KV write failed for ${result.airlineCode}:`, e);
+    }
+  } else {
+    try {
+      await writeFile(filePath(result.airlineCode), JSON.stringify(updated, null, 2));
+    } catch (e) {
+      // Vercel本番(KV未設定)で書き込み失敗してもエラーにしない（同梱データで動作）
+      console.warn(`[SaleStore] FS persist failed for ${result.airlineCode}:`, e);
+    }
   }
 
   return {
