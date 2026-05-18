@@ -1,8 +1,9 @@
 import { ImageResponse } from "next/og";
-import { getDealById } from "@/data/mock-deals-v2";
+import { getDealById } from "@/lib/deals/deal-service";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+export const alt = "BEATRIP フライトディール";
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("ja-JP").format(price);
@@ -14,7 +15,7 @@ export default async function OGImage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const deal = getDealById(id);
+  const deal = await getDealById(id);
 
   if (!deal) {
     return new ImageResponse(
@@ -177,7 +178,7 @@ export default async function OGImage({
               <span>→</span>
               <span>{deal.destination_code}</span>
               <span style={{ marginLeft: 8, fontSize: 18 }}>
-                {deal.airline_name} · {deal.cabin}
+                {`${deal.airline_name} · ${deal.cabin}`}
               </span>
             </div>
             <div
@@ -206,6 +207,7 @@ export default async function OGImage({
             <div style={{ display: "flex", alignItems: "baseline", gap: 20 }}>
               <div
                 style={{
+                  display: "flex",
                   fontSize: 72,
                   fontWeight: 700,
                   color: "white",
@@ -213,17 +215,18 @@ export default async function OGImage({
                   letterSpacing: 2,
                 }}
               >
-                ¥{formatPrice(deal.sale_price)}
+                {`¥${formatPrice(deal.sale_price)}`}
               </div>
               <div
                 style={{
+                  display: "flex",
                   fontSize: 28,
                   color: "rgba(255,255,255,0.4)",
                   textDecoration: "line-through",
                   lineHeight: 1,
                 }}
               >
-                ¥{formatPrice(deal.original_price)}
+                {`¥${formatPrice(deal.original_price)}`}
               </div>
             </div>
 
@@ -248,15 +251,16 @@ export default async function OGImage({
                   letterSpacing: 1,
                 }}
               >
-                -{deal.discount_percent}% OFF
+                {`-${deal.discount_percent}% OFF`}
               </div>
               <div
                 style={{
+                  display: "flex",
                   fontSize: 22,
                   color: "rgba(255,255,255,0.5)",
                 }}
               >
-                ¥{formatPrice(saving)} おトク
+                {`¥${formatPrice(saving)} おトク`}
               </div>
             </div>
           </div>
