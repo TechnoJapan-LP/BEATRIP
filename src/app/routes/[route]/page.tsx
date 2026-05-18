@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Plane, TrendingDown, Calendar } from "lucide-react";
@@ -185,10 +186,13 @@ export default async function RoutePage({ params }: Props) {
                   className="flex items-center justify-between rounded-xl border border-zinc-100 bg-white p-5 transition-colors hover:bg-zinc-50"
                 >
                   <div className="flex items-center gap-4">
-                    <img
+                    <Image
                       src={deal.image_url}
                       alt={deal.destination}
-                      className="h-16 w-24 rounded-lg object-cover"
+                      width={96}
+                      height={64}
+                      sizes="96px"
+                      className="h-16 w-24 rounded-lg object-cover flex-shrink-0"
                     />
                     <div>
                       <div className="flex items-center gap-2 mb-1">

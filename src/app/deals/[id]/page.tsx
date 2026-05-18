@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
@@ -165,10 +166,13 @@ export default async function DealDetailPage({ params }: Props) {
       <Header />
 
       <div className="relative h-[30vh] min-h-[240px] overflow-hidden sm:h-[40vh] sm:min-h-[320px]">
-        <img
+        <Image
           src={deal.image_url}
           alt={deal.destination}
-          className="h-full w-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 

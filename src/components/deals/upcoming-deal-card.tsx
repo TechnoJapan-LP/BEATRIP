@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { TrendingDown, Plane } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -65,10 +66,12 @@ export function UpcomingDealCard({
       <div className="relative flex h-full flex-col overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800">
         <div className="relative aspect-[4/3] overflow-hidden bg-zinc-200">
           {event.imageUrl ? (
-            <img
+            <Image
               src={event.imageUrl}
               alt={event.saleName}
-              className="absolute inset-0 h-full w-full object-cover"
+              fill
+              sizes="(max-width: 640px) 50vw, 25vw"
+              className="object-cover"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-zinc-100 via-zinc-50 to-zinc-200" />

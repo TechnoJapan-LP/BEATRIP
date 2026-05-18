@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Tag, ArrowRight } from "lucide-react";
@@ -200,10 +201,13 @@ export default async function ArticleDetailPage({ params }: Props) {
       <Header />
 
       <div className="relative h-[28vh] min-h-[220px] overflow-hidden sm:h-[35vh] sm:min-h-[280px]">
-        <img
+        <Image
           src={article.image_url}
           alt={article.title}
-          className="h-full w-full object-cover"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0">

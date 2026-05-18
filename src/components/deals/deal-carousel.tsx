@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight, Plane, TrendingDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { DealSchema } from "@/data/deal-schema";
@@ -17,10 +18,12 @@ function DealMiniCard({ deal }: { deal: DealSchema }) {
       className="group flex-shrink-0 w-[72vw] max-w-[256px] block rounded-xl border border-zinc-100 bg-white overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 sm:w-64 sm:max-w-none"
     >
       <div className="relative h-32 overflow-hidden sm:h-36">
-        <img
+        <Image
           src={deal.image_url}
           alt={deal.destination}
-          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+          fill
+          sizes="256px"
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-3">

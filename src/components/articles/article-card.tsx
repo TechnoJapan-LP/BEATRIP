@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Article } from "@/data/mock-articles";
@@ -35,10 +36,12 @@ export function ArticleCard({
       >
         <div className="grid grid-cols-1 sm:grid-cols-2">
           <div className="relative aspect-[4/3] sm:aspect-auto overflow-hidden">
-            <img
+            <Image
               src={article.image_url}
               alt={article.title}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              fill
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
           </div>
           <div className="p-6 flex flex-col justify-center">
@@ -74,10 +77,12 @@ export function ArticleCard({
       className="group block overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100 transition-all hover:shadow-lg hover:-translate-y-0.5"
     >
       <div className="relative aspect-[16/9] overflow-hidden">
-        <img
+        <Image
           src={article.image_url}
           alt={article.title}
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+          fill
+          sizes="(max-width: 640px) 100vw, 33vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <Badge
           className={`absolute top-3 left-3 text-[10px] font-bold tracking-wider ${categoryColor[article.category]}`}

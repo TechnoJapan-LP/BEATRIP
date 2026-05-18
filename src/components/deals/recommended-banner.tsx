@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Plane, TrendingDown, ArrowRight } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
 import { cityNameJa } from "@/lib/airport-names";
@@ -41,11 +42,13 @@ export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
               href={`/deals/${deal.id}`}
               className="flex items-center gap-3 rounded-lg bg-white px-3 py-2.5 border border-zinc-100 transition-all hover:shadow-md hover:-translate-y-0.5"
             >
-              <div className="h-12 w-12 flex-shrink-0 rounded-lg overflow-hidden">
-                <img
+              <div className="relative h-12 w-12 flex-shrink-0 rounded-lg overflow-hidden">
+                <Image
                   src={deal.image_url}
                   alt={deal.destination}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="48px"
+                  className="object-cover"
                 />
               </div>
               <div className="flex-1 min-w-0">
