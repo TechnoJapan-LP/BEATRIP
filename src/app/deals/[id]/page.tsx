@@ -547,6 +547,7 @@ export default async function DealDetailPage({ params }: Props) {
           discountPercent={deal.discount_percent}
           affiliateUrl={deal.affiliate_url}
           affiliateProvider={deal.affiliate_provider ?? "パートナーサイト"}
+          route={`${deal.origin_code}→${deal.destination_code}`}
         />
       )}
     </>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ExternalLink } from "lucide-react";
+import { trackAffiliateClick } from "@/components/analytics";
 
 export function StickyCTA({
   dealId,
@@ -9,17 +10,24 @@ export function StickyCTA({
   discountPercent,
   affiliateUrl,
   affiliateProvider,
+  route,
 }: {
   dealId: string;
   price: number;
   discountPercent: number;
   affiliateUrl: string;
   affiliateProvider: string;
+  /** GA4計測用: 路線（例 NRT→BKK） */
+  route?: string;
 }) {
   const [clicked, setClicked] = useState(false);
 
   function handleClick() {
     setClicked(true);
+
+    // GA4 コンバージョンイベント（モバイル予約導線）
+    trackAffiliateClick({ dealId, provider: affiliateProvider, price, route });
+
     try {
       fetch("/api/clicks", {
         method: "POST",

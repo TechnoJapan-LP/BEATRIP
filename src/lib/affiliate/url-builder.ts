@@ -41,8 +41,8 @@ const AIRLINE_BOOKING_TEMPLATES: Record<
 > = {
   ANA: {
     name: "ANA公式",
-    build: (r) =>
-      `https://aswbe-i.ana.co.jp/internet_app/pr/itnry_air?lang=JP&CONNECTION_KIND=JPN&DEP_CITY_CODE=${r.originCode}&ARR_CITY_CODE=${r.destinationCode}&ADULT_PASSENGER_NUMBER=1`,
+    // aswbe-i の itnry_air deep link は404になるため予約トップへ
+    build: () => "https://www.ana.co.jp/ja/jp/",
   },
   JAL: {
     name: "JAL公式",
@@ -79,8 +79,8 @@ const AIRLINE_BOOKING_TEMPLATES: Record<
   },
   EK: {
     name: "Emirates公式",
-    build: (r) =>
-      `https://www.emirates.com/jp/japanese/book/flight-search/?originAirport=${r.originCode}&destinationAirport=${r.destinationCode}`,
+    // flight-search の deep link は404になるため予約トップへ
+    build: () => "https://www.emirates.com/jp/japanese/book/",
   },
   SQ: {
     name: "Singapore Airlines公式",
