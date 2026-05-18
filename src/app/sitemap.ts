@@ -1,12 +1,15 @@
 import type { MetadataRoute } from "next";
-import { deals } from "@/data/mock-deals-v2";
+import { getActiveDeals } from "@/lib/deals/deal-service";
 import { airlines } from "@/data/airlines";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
 
 const BASE_URL = "https://beatrip.jp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const articles = await getAllArticles();
+  const [articles, deals] = await Promise.all([
+    getAllArticles(),
+    getActiveDeals(),
+  ]);
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -55,10 +58,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const dealPages: MetadataRoute.Sitemap = deals.map((deal) => ({
     url: `${BASE_URL}/deals/${deal.id}`,
-    lastModified: new Date(),
+    lastModified: new Date(deal.updated_at),
     changeFrequency: "daily" as const,
     priority: 0.7,
   }));
+
+  // 路線ページ（/routes/NRT-BKK 等）— ロングテールSEOの柱
+  const routeKeys = new Set<string>();
+  for (const d of deals) {
+    routeKeys.add(`${d.origin_code}-${d.destination_code}`);
+  }
+  const routePages: MetadataRoute.Sitemap = Array.from(routeKeys).map(
+    (route) => ({
+      url: `${BASE_URL}/routes/${route}`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    })
+  );
 
   const airlinePages: MetadataRoute.Sitemap = airlines.flatMap((airline) => [
     {
@@ -82,5 +99,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...dealPages, ...airlinePages, ...articlePages];
+  return [
+    ...staticPages,
+    ...dealPages,
+    ...routePages,
+    ...airlinePages,
+    ...articlePages,
+  ];
 }

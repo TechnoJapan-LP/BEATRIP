@@ -163,8 +163,40 @@ export default async function ArticleDetailPage({ params }: Props) {
     )
   );
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: article.title,
+    description: article.excerpt,
+    image: [article.image_url],
+    datePublished: article.published_at,
+    dateModified: article.published_at,
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP編集部",
+      url: "https://beatrip.jp",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://beatrip.jp/icon.svg",
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://beatrip.jp/articles/${slug}`,
+    },
+    articleSection: article.category,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <Header />
 
       <div className="relative h-[28vh] min-h-[220px] overflow-hidden sm:h-[35vh] sm:min-h-[280px]">

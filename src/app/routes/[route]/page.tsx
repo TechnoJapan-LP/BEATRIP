@@ -5,8 +5,9 @@ import { ArrowLeft, Plane, TrendingDown, Calendar } from "lucide-react";
 import { Header } from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { PriceChart } from "@/components/deals/price-chart";
-import { deals, getHistoricalPricesForRoute } from "@/data/mock-deals-v2";
+import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
 import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 type Props = { params: Promise<{ route: string }> };
 
@@ -22,6 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const parsed = parseRoute(route);
   if (!parsed) return { title: "Not Found" };
 
+  const deals = await getActiveDeals();
   const routeDeals = deals.filter(
     (d) =>
       d.origin_code === parsed.origin &&
@@ -36,12 +38,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${origin}（${parsed.origin}）→${dest}（${parsed.destination}）格安航空券セール`,
-    description: `${origin}から${dest}への格安フライトセール情報。${cheapest ? `最安¥${cheapest.toLocaleString()}〜。` : ""}複数航空会社の価格を比較して最安値を見つけよう。`,
+    description: `${origin}から${dest}への格安フライトセール情報。${cheapest ? `最安¥${cheapest.toLocaleString()}〜。` : ""}複数航空会社の価格を比較して最安値を見つけよう。航空券セール時期の予測も。`,
+    keywords: [
+      `${origin} ${dest} 格安`,
+      `${origin} ${dest} 航空券`,
+      `${origin} ${dest} セール`,
+      `${parsed.origin} ${parsed.destination} 最安`,
+      `${dest} 旅行 格安`,
+      "航空券セール",
+      "格安航空券",
+    ],
     openGraph: {
-      title: `${parsed.origin}→${parsed.destination} 格安航空券`,
+      title: `${origin}→${dest} 格安航空券セール`,
       description: cheapest
-        ? `最安¥${cheapest.toLocaleString()}〜 | 複数航空会社の比較`
+        ? `最安¥${cheapest.toLocaleString()}〜 | 複数航空会社の価格を比較`
         : `${origin}→${dest}のセール情報`,
+      type: "website",
     },
     alternates: {
       canonical: `https://beatrip.jp/routes/${route}`,
@@ -49,7 +61,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const deals = await getActiveDeals();
   const routes = new Set<string>();
   for (const d of deals) {
     routes.add(`${d.origin_code}-${d.destination_code}`);
@@ -73,6 +86,7 @@ export default async function RoutePage({ params }: Props) {
   const parsed = parseRoute(route);
   if (!parsed) notFound();
 
+  const deals = await getActiveDeals();
   const routeDeals = deals.filter(
     (d) =>
       d.origin_code === parsed.origin &&
@@ -81,7 +95,7 @@ export default async function RoutePage({ params }: Props) {
   if (routeDeals.length === 0) notFound();
 
   const routeKey = `${parsed.origin}→${parsed.destination}`;
-  const historicalData = getHistoricalPricesForRoute(routeKey);
+  const historicalData = await getHistoricalPrices(routeKey);
   const prediction =
     historicalData.length > 0
       ? calculateBestTimeToBook(routeKey, historicalData)
@@ -89,11 +103,51 @@ export default async function RoutePage({ params }: Props) {
 
   const origin = routeDeals[0].origin;
   const dest = routeDeals[0].destination;
+  const cheapest = Math.min(...routeDeals.map((d) => d.sale_price));
+
+  // ItemList 構造化データ（路線のセール一覧）
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${origin}→${dest} 格安航空券セール一覧`,
+    description: `${origin}から${dest}への航空券セール ${routeDeals.length}件。最安¥${cheapest.toLocaleString()}〜`,
+    numberOfItems: routeDeals.length,
+    itemListElement: routeDeals
+      .sort((a, b) => a.sale_price - b.sale_price)
+      .map((deal, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "Product",
+          name: `${deal.airline_name} ${origin}→${dest}`,
+          url: `https://beatrip.jp/deals/${deal.id}`,
+          image: deal.image_url,
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "JPY",
+            price: deal.sale_price,
+            availability: "https://schema.org/InStock",
+          },
+        },
+      })),
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+        <div className="mb-6">
+          <Breadcrumbs
+            items={[
+              { label: "Home", href: "/" },
+              { label: `${origin}→${dest}` },
+            ]}
+          />
+        </div>
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 transition-colors mb-6"
