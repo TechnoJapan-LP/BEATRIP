@@ -103,7 +103,7 @@ export function DealCard({
 
         <div className="mt-auto px-2.5 py-2 flex items-center justify-between sm:px-4 sm:py-2.5">
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
-            <span className="text-[10px] font-medium text-zinc-500 truncate sm:text-[11px]">{deal.airline_name}</span>
+            <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-100 truncate tracking-tight sm:text-xs">{deal.airline_name}</span>
             {variantCount && variantCount > 1 && (
               <>
                 <span className="text-zinc-200 dark:text-zinc-700">·</span>
