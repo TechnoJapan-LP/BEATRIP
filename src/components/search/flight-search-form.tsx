@@ -203,9 +203,10 @@ export function FlightSearchForm({ deals, onClose }: Props) {
             type="button"
             onClick={onClose}
             aria-label="検索を閉じる"
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+            className="flex flex-shrink-0 items-center gap-1 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
+            閉じる
           </button>
         )}
       </div>
