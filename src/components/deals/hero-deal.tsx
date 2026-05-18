@@ -26,7 +26,7 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
     >
       <div
         className="relative w-full"
-        style={{ aspectRatio: "16 / 10" }}
+        style={{ aspectRatio: "16 / 10", maxHeight: "min(60vh, 420px)" }}
       >
         <Image
           src={deal.image_url}
