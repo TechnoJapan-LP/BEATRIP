@@ -236,49 +236,6 @@ export default async function DealDetailPage({ params }: Props) {
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
-            <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-4 sm:p-6">
-              <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3 sm:text-xl sm:mb-4">
-                Price Breakdown
-              </h2>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between py-2 border-b border-zinc-50 dark:border-zinc-800">
-                  <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    <Plane className="h-4 w-4 text-zinc-400" />
-                    航空券（{deal.cabin}）
-                  </div>
-                  <span className="text-sm font-mono font-medium">
-                    ¥{formatPrice(deal.sale_price)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-zinc-50 dark:border-zinc-800">
-                  <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    <Fuel className="h-4 w-4 text-zinc-400" />
-                    燃油サーチャージ
-                  </div>
-                  <span className="text-sm font-mono text-zinc-500">
-                    +¥{formatPrice(deal.fuel_surcharge)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-zinc-50 dark:border-zinc-800">
-                  <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    <Receipt className="h-4 w-4 text-zinc-400" />
-                    諸税
-                  </div>
-                  <span className="text-sm font-mono text-zinc-500">
-                    +¥{formatPrice(deal.taxes)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                    支払総額
-                  </span>
-                  <span className="text-lg font-heading tracking-wide text-zinc-900 dark:text-zinc-100">
-                    ¥{formatPrice(deal.total_cost)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
             {prediction.historical_prices.length > 0 && (
               <div className="rounded-xl border border-zinc-100 bg-white p-4 sm:p-6">
                 <div className="flex items-center justify-between mb-3 sm:mb-4">
@@ -336,6 +293,49 @@ export default async function DealDetailPage({ params }: Props) {
                 />
               </div>
             )}
+
+            <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5">
+              <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
+                Price Breakdown
+              </h2>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2 border-b border-zinc-50 dark:border-zinc-800">
+                  <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                    <Plane className="h-4 w-4 text-zinc-400" />
+                    航空券（{deal.cabin}）
+                  </div>
+                  <span className="text-sm font-mono font-medium">
+                    ¥{formatPrice(deal.sale_price)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-zinc-50 dark:border-zinc-800">
+                  <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                    <Fuel className="h-4 w-4 text-zinc-400" />
+                    燃油サーチャージ
+                  </div>
+                  <span className="text-sm font-mono text-zinc-500">
+                    +¥{formatPrice(deal.fuel_surcharge)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-zinc-50 dark:border-zinc-800">
+                  <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                    <Receipt className="h-4 w-4 text-zinc-400" />
+                    諸税
+                  </div>
+                  <span className="text-sm font-mono text-zinc-500">
+                    +¥{formatPrice(deal.taxes)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                    支払総額
+                  </span>
+                  <span className="text-lg font-heading tracking-wide text-zinc-900 dark:text-zinc-100">
+                    ¥{formatPrice(deal.total_cost)}
+                  </span>
+                </div>
+              </div>
+            </div>
 
             <div className="flex flex-col gap-2 px-1">
               <ViewCounter dealId={deal.id} />
