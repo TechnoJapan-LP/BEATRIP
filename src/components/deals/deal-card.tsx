@@ -47,7 +47,7 @@ export function DealCard({
     >
       <Link
         href={`/deals/${deal.id}`}
-        className="group relative flex h-full flex-col overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 transition-all duration-300 hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1"
+        className="group relative flex h-full flex-col overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 transition-all duration-300 hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1 active:scale-[0.98] active:transition-transform active:duration-100"
       >
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image

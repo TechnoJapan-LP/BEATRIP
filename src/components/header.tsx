@@ -68,7 +68,7 @@ export function Header() {
       </div>
 
       {open && (
-        <nav className="border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 pb-4 pt-2 sm:hidden">
+        <nav className="animate-fade-in border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 pb-4 pt-2 sm:hidden">
           {navLinks.map((link) =>
             link.href.startsWith("/#") ? (
               <a
