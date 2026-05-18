@@ -219,9 +219,13 @@ export class TraicyScraper extends AirlineScraper {
 
     const fullText = item.title + " " + articleText;
 
-    // ルート抽出: タイトル限定（本文は価格・路線情報が広告等と混在するため精度が低い）
-    // 将来的にはJSON-LDやマイクロデータからの抽出に切り替え予定
-    const routes = this.extractRoutes(item.title, item.title);
+    // ルート抽出:
+    // 1. タイトルから抽出（最も信頼度が高い見出し路線）
+    // 2. 本文からも抽出（"東京/羽田〜大阪/伊丹線が9,130円" 等の運賃表）
+    // 3. マージ（同一路線は重複排除、タイトルの価格を優先）
+    const titleRoutes = this.extractRoutes(item.title, item.title);
+    const bodyRoutes = this.extractRoutes(articleText);
+    const routes = this.mergeRoutes(titleRoutes, bodyRoutes);
     if (routes.length === 0) return null;
 
     // 日付抽出
@@ -252,14 +256,94 @@ export class TraicyScraper extends AirlineScraper {
 
   /**
    * HTMLから記事本文を抽出
+   *
+   * Traicy (WordPress) の本文は `single-content` コンテナ内。
+   * 関連記事・広告・SNSシェア等のノイズを除外して本文だけを返す。
    */
   private extractArticleBody(html: string): string {
-    // <article> タグ or .entry-content を優先
-    const articleMatch = /<article[^>]*>([\s\S]*?)<\/article>/i.exec(html);
-    const body = articleMatch?.[1] ?? html;
+    // 本文コンテナ候補（優先順）
+    const containerPatterns = [
+      /<div[^>]*class="[^"]*single-content[^"]*"[^>]*>([\s\S]*?)<(?:footer|aside|div[^>]*class="[^"]*(?:related|sns|share|footer|sidebar))/i,
+      /<div[^>]*class="[^"]*entry-content[^"]*"[^>]*>([\s\S]*?)<(?:footer|aside)/i,
+      /<article[^>]*>([\s\S]*?)<\/article>/i,
+    ];
+
+    let body = html;
+    for (const pattern of containerPatterns) {
+      const match = pattern.exec(html);
+      if (match?.[1] && match[1].includes("円")) {
+        body = match[1];
+        break;
+      }
+    }
+
+    // ノイズ要素を除去（スクリプト・スタイル・関連記事ブロック）
+    body = body
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<(?:aside|nav|footer)[\s\S]*?<\/(?:aside|nav|footer)>/gi, " ");
 
     // HTMLタグを除去してテキスト抽出
-    return body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    let text = body
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&yen;/g, "¥")
+      .replace(/&#[0-9]+;/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    // 関連記事・他セールのティーザーを切り捨て（ノイズ路線の最大要因）
+    // Traicyは本文の後に「関連記事」「あわせて読みたい」「投稿 ○○ は」等が続く
+    const cutMarkers = [
+      "関連記事",
+      "あわせて読みたい",
+      "こちらの記事も",
+      "おすすめ記事",
+      "人気記事",
+      "投稿 ",
+      "の記事をもっと見る",
+      "ピックアップ",
+      "TRAICY（トライシー）に最初に表示されました",
+    ];
+    for (const marker of cutMarkers) {
+      const idx = text.indexOf(marker);
+      if (idx > 100) {
+        text = text.slice(0, idx);
+        break;
+      }
+    }
+
+    return text;
+  }
+
+  /**
+   * タイトル路線と本文路線をマージ
+   * - 同一路線（origin-dest）はタイトル側の価格を優先
+   * - 本文路線は最大20件まで（運賃表が長大な記事のノイズ抑制）
+   */
+  private mergeRoutes(
+    titleRoutes: SaleRoute[],
+    bodyRoutes: SaleRoute[]
+  ): SaleRoute[] {
+    const merged = new Map<string, SaleRoute>();
+    const valid = (r: SaleRoute) =>
+      r.originCode !== r.destinationCode &&
+      r.price >= 1000 &&
+      r.price <= 500000;
+
+    // タイトル優先
+    for (const r of titleRoutes) {
+      if (!valid(r)) continue;
+      merged.set(`${r.originCode}-${r.destinationCode}`, r);
+    }
+    // 本文で補完（既存路線は上書きしない、最大12件でノイズ抑制）
+    for (const r of bodyRoutes.slice(0, 12)) {
+      if (!valid(r)) continue;
+      const key = `${r.originCode}-${r.destinationCode}`;
+      if (!merged.has(key)) merged.set(key, r);
+    }
+
+    return Array.from(merged.values());
   }
 
   /**
@@ -306,7 +390,8 @@ export class TraicyScraper extends AirlineScraper {
         seen.add(key);
 
         const price = parseInt(m[3].replace(/,/g, ""), 10);
-        if (isNaN(price) || price <= 0 || price > 500000) continue;
+        // 航空券として現実的な範囲のみ（1,000円未満は誤検出、50万円超は外れ値）
+        if (isNaN(price) || price < 1000 || price > 500000) continue;
 
         routes.push({
           origin: m[1],
@@ -325,42 +410,10 @@ export class TraicyScraper extends AirlineScraper {
       }
     }
 
-    // パターン2: 価格のみ（"片道1,990円〜"）+ 都市名の列挙
-    if (routes.length === 0) {
-      const priceMatch = /(?:片道\s*)?[\s¥￥]?([0-9,]+)\s*円[〜～\-]?/g.exec(text);
-      const cities: string[] = [];
-      for (const [cityName, code] of Object.entries(CITY_TO_CODE)) {
-        if (text.includes(cityName) && !["東京", "成田", "大阪", "名古屋", "福岡"].includes(cityName)) {
-          cities.push(code);
-        }
-      }
-
-      if (priceMatch && cities.length > 0) {
-        const price = parseInt(priceMatch[1].replace(/,/g, ""), 10);
-        const origins = ["NRT", "KIX", "NGO", "FUK"].filter(
-          (c) => text.includes(DESTINATION_NAMES_REV[c] ?? "")
-        );
-        const origin = origins[0] ?? "NRT";
-
-        for (const destCode of cities.slice(0, 4)) {
-          const key = `${origin}-${destCode}`;
-          if (seen.has(key)) continue;
-          seen.add(key);
-
-          routes.push({
-            origin: CITY_TO_CODE_REV[origin] ?? "東京",
-            originCode: origin,
-            destination: CITY_TO_CODE_REV[destCode] ?? destCode,
-            destinationCode: destCode,
-            price,
-            originalPrice: Math.round(price * 2),
-            currency: "JPY",
-            cabin: "Economy",
-            discount: 50,
-          });
-        }
-      }
-    }
+    // 注: かつて「価格1つ + 都市名列挙」のパターン2フォールバックがあったが、
+    // 1つの価格を無関係な複数都市にばらまき大量の誤路線を生成していた
+    // （例: 韓国LCCに国内線NRT→CTSが付与される）ため廃止。
+    // 明示的な "A〜B X円" 形式（パターン1）のみを信頼する。
 
     return routes;
   }
