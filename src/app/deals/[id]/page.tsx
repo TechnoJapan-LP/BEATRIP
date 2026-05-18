@@ -317,6 +317,18 @@ export default async function DealDetailPage({ params }: Props) {
                   compareLinks={buildCompareLinksFromDeal(deal)}
                   price={deal.sale_price}
                   route={`${deal.origin_code}→${deal.destination_code}`}
+                  discountPercent={deal.discount_percent}
+                  bestMonthName={
+                    prediction.confidence_score > 0
+                      ? prediction.best_month_name
+                      : undefined
+                  }
+                  avgSavingPercent={
+                    prediction.confidence_score > 0
+                      ? prediction.avg_saving_percent
+                      : undefined
+                  }
+                  isLowest={deal.badge === "LOWEST_IN_2_YEARS"}
                 />
               </div>
             )}

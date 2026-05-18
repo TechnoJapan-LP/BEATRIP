@@ -35,89 +35,113 @@ export type AffiliateLink = {
 
 // ── 各航空会社の予約検索ページのテンプレート ──
 // {ORIGIN} {DEST} {YYYYMMDD} などのプレースホルダを置換する
+// routeAware=true: 路線プリフィル対応かつ検証済み（実ブラウザで該当路線の
+//   予約画面に着地→ユーザーが見たセール特価がそのまま表示される）。主CTAに使う。
+// routeAware=false: 汎用トップしか出せない（路線が伝わらず離脱を招く）。
+//   主CTAには使わず Skyscanner にフォールバック。比較リンクには出す。
 const AIRLINE_BOOKING_TEMPLATES: Record<
   string,
-  { name: string; build: (route: SaleRoute, sale: AirlineSale) => string }
+  {
+    name: string;
+    routeAware: boolean;
+    build: (route: SaleRoute, sale: AirlineSale) => string;
+  }
 > = {
   ANA: {
     name: "ANA公式",
-    // aswbe-i の itnry_air deep link は404になるため予約トップへ
+    routeAware: false, // aswbe-i deep linkが404のため予約トップのみ
     build: () => "https://www.ana.co.jp/ja/jp/",
   },
   JAL: {
     name: "JAL公式",
+    routeAware: true,
     build: (r) =>
       `https://www.jal.co.jp/jp/ja/dom/?ks=${r.originCode}&kf=${r.destinationCode}`,
   },
   APJ: {
     name: "Peach公式",
+    routeAware: true,
     build: (r) =>
       `https://www.flypeach.com/jp/book-a-flight?origin=${r.originCode}&destination=${r.destinationCode}`,
   },
   PCH: {
     name: "Peach公式",
+    routeAware: true,
     build: (r) =>
       `https://www.flypeach.com/jp/book-a-flight?origin=${r.originCode}&destination=${r.destinationCode}`,
   },
   JJP: {
     name: "Jetstar公式",
+    routeAware: true,
     build: (r) =>
       `https://www.jetstar.com/jp/ja/home?origin=${r.originCode}&destination=${r.destinationCode}`,
   },
   IJ: {
     name: "Spring Japan公式",
+    routeAware: false,
     build: () => "https://jp.ch.com/",
   },
   TW: {
     name: "T'way Air公式",
+    routeAware: false,
     build: () => "https://www.twayair.com/app/serviceInfo/contents/1228",
   },
   VJ: {
     name: "VietJet Air公式",
+    routeAware: true,
     build: (r) =>
       `https://www.vietjetair.com/ja/Pages/booking.aspx?origin=${r.originCode}&destination=${r.destinationCode}`,
   },
   EK: {
     name: "Emirates公式",
-    // flight-search の deep link は404になるため予約トップへ
+    routeAware: false, // flight-search deep linkが404のため予約トップのみ
     build: () => "https://www.emirates.com/jp/japanese/book/",
   },
   SQ: {
     name: "Singapore Airlines公式",
+    routeAware: true,
     build: (r) =>
       `https://www.singaporeair.com/jp_JP/jp/plan-and-book/?origin=${r.originCode}&destination=${r.destinationCode}`,
   },
   CX: {
     name: "Cathay Pacific公式",
+    routeAware: true,
     build: (r) =>
       `https://www.cathaypacific.com/cx/ja_JP/book-a-trip.html?origin=${r.originCode}&destination=${r.destinationCode}`,
   },
   BV: {
     name: "トキエア公式",
+    routeAware: false,
     build: () => "https://www.tokiair.com/",
   },
   HD: {
     name: "AIRDO公式",
+    routeAware: false,
     build: () => "https://www.airdo.jp/",
   },
   "6J": {
     name: "ソラシドエア公式",
+    routeAware: false,
     build: () => "https://www.solaseedair.jp/",
   },
   "7G": {
     name: "StarFlyer公式",
+    routeAware: false,
     build: () => "https://www.starflyer.jp/",
   },
   BC: {
     name: "スカイマーク公式",
+    routeAware: false,
     build: () => "https://www.skymark.co.jp/",
   },
   JH: {
     name: "FDA公式",
+    routeAware: false,
     build: () => "https://www.fujidream.co.jp/",
   },
   ZG: {
     name: "ZIPAIR公式",
+    routeAware: false,
     build: () => "https://www.zipair.net/ja",
   },
 };
@@ -215,19 +239,32 @@ export function buildAffiliateLink(
       strategy: "travelpayouts",
     };
   }
+  const template = AIRLINE_BOOKING_TEMPLATES[sale.airlineCode];
+
   if (options.preferProvider === "airline-direct") {
-    const t = AIRLINE_BOOKING_TEMPLATES[sale.airlineCode];
-    if (t) {
+    if (template) {
       return {
-        url: t.build(route, sale),
-        provider: t.name,
+        url: template.build(route, sale),
+        provider: template.name,
         strategy: "airline-direct",
       };
     }
   }
 
-  // デフォルト（予約CTA）: Skyscanner の路線+日付プリフィル
-  // 404にならず実在の便を予約でき、収益化もされる最も確実な導線
+  // 主CTA優先度:
+  // 1. 路線対応の航空会社直予約（ユーザーが見たセール航空会社の予約画面に
+  //    路線プリフィルで直行 → 見た特価がそのまま表示される最良の体験）
+  if (template && template.routeAware) {
+    return {
+      url: template.build(route, sale),
+      provider: template.name,
+      strategy: "airline-direct",
+    };
+  }
+
+  // 2. フォールバック: Skyscanner の路線+日付プリフィル
+  //    （汎用トップしか出せない航空会社・未対応キャリアはこちら。
+  //     404にならず実在便を予約でき収益化もされる確実な導線）
   return {
     url: buildSkyscannerUrl(route, sale),
     provider: "Skyscanner",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, Zap, Search } from "lucide-react";
+import { ExternalLink, Zap, Search, TrendingDown, CalendarCheck, BarChart3 } from "lucide-react";
 import { trackAffiliateClick } from "@/components/analytics";
 
 type CompareLink = {
@@ -17,6 +17,10 @@ export function BookingButton({
   compareLinks,
   price,
   route,
+  discountPercent,
+  bestMonthName,
+  avgSavingPercent,
+  isLowest,
 }: {
   dealId: string;
   affiliateUrl: string;
@@ -28,6 +32,14 @@ export function BookingButton({
   price?: number;
   /** GA4 計測用: 路線（例 NRT→BKK） */
   route?: string;
+  /** 価値表示: 割引率 */
+  discountPercent?: number;
+  /** 価値表示: ベスト予約月（例 "2月"） */
+  bestMonthName?: string;
+  /** 価値表示: 年間平均比の節約率 */
+  avgSavingPercent?: number;
+  /** 価値表示: 過去2年で最安水準か */
+  isLowest?: boolean;
 }) {
   const [clicked, setClicked] = useState(false);
 
@@ -95,11 +107,32 @@ export function BookingButton({
         </div>
       )}
 
-      <div className="flex items-center justify-center gap-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 px-3 py-2">
-        <Zap className="h-3 w-3 text-emerald-500" />
-        <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-          BEATRIPからの予約で最安値を保証
-        </span>
+      {/* BEATRIPだから分かる判断材料（実データ） */}
+      <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800/60 px-3 py-2.5 space-y-1.5">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+          BEATRIPの価格分析
+        </div>
+        {isLowest && (
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+            <BarChart3 className="h-3 w-3 flex-shrink-0" />
+            過去2年でも最安水準の価格です
+          </div>
+        )}
+        {discountPercent !== undefined && discountPercent > 0 && (
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
+            <TrendingDown className="h-3 w-3 flex-shrink-0 text-rose-500" />
+            通常価格より{discountPercent}%安いセール価格
+          </div>
+        )}
+        {bestMonthName && avgSavingPercent !== undefined && avgSavingPercent > 0 && (
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
+            <CalendarCheck className="h-3 w-3 flex-shrink-0 text-sky-500" />
+            この路線の底値は{bestMonthName}（年間平均比 約{avgSavingPercent}%安）
+          </div>
+        )}
+        <div className="text-[10px] text-zinc-400 dark:text-zinc-500 pt-0.5">
+          ※ 価格は予約サイトで最新の空席・運賃をご確認ください
+        </div>
       </div>
     </div>
   );
