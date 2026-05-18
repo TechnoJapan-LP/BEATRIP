@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { TrendingDown, Plane } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { SaleEvent } from "@/data/mock-deals";
@@ -53,15 +52,9 @@ export function UpcomingDealCard({
   const destinationCity = cityNames[destination] ?? destination;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.4,
-        delay: index * 0.06,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      }}
-      className="h-full"
+    <div
+      className="h-full animate-fade-up"
+      style={{ animationDelay: `${Math.min(index * 0.06, 0.6)}s` }}
     >
       <div className="relative flex h-full flex-col overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800">
         <div className="relative aspect-[4/3] overflow-hidden bg-zinc-200">
@@ -140,6 +133,6 @@ export function UpcomingDealCard({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

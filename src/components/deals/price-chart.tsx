@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { BestTimeToBook } from "@/data/deal-schema";
 
 function formatPrice(price: number) {
@@ -60,11 +59,9 @@ export function PriceChart({ prediction }: { prediction: BestTimeToBook }) {
                 <span className={`text-[8px] font-mono leading-none hidden sm:block ${priceLabelColor(ratio)}`}>
                   ¥{formatPrice(mp.avg_price)}
                 </span>
-                <motion.div
-                  initial={{ height: 0 }}
-                  animate={{ height: `${height}%` }}
-                  transition={{ duration: 0.6, delay: i * 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  className={`w-full rounded-t ${priceColor(ratio)}`}
+                <div
+                  className={`w-full rounded-t animate-grow-h ${priceColor(ratio)}`}
+                  style={{ height: `${height}%`, animationDelay: `${i * 0.05}s` }}
                 />
               </div>
             );

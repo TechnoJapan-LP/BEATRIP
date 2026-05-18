@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { DealCard } from "./deal-card";
 import { UpcomingDealCard } from "./upcoming-deal-card";
 import { DealFilters, type FlightType } from "@/components/filters/deal-filters";
@@ -123,15 +122,10 @@ export function DealGrid({
         onSearchChange={setSearchQuery}
       />
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={`${flightType}-${showNew}-${showEnding}-${showNiche}-${showHiddenGem}-${searchQuery}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4"
-        >
+      <div
+        key={`${flightType}-${showNew}-${showEnding}-${showNiche}-${showHiddenGem}-${searchQuery}`}
+        className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4 animate-fade-in"
+      >
           {displayDeals.map(({ deal, variantCount, variantOriginCodes }, i) => (
             <DealCard
               key={deal.id}
@@ -148,8 +142,7 @@ export function DealGrid({
               index={displayDeals.length + i}
             />
           ))}
-        </motion.div>
-      </AnimatePresence>
+      </div>
 
       {displayDeals.length === 0 && (
         <div className="py-12 text-center">

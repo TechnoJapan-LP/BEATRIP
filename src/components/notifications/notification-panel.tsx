@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Bell, X, MessageCircle, Trash2, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -74,22 +73,14 @@ export function NotificationPanel() {
         )}
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
+      {isOpen && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
+            <div
+              className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm animate-fade-in"
               onClick={() => setIsOpen(false)}
             />
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 20, scale: 0.95 }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed bottom-20 right-6 z-50 w-[340px] rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-zinc-100"
+            <div
+              className="fixed bottom-20 right-6 z-50 w-[340px] rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-zinc-100 animate-fade-up"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-zinc-900">通知設定</h3>
@@ -185,10 +176,9 @@ export function NotificationPanel() {
                   </div>
                 </div>
               )}
-            </motion.div>
+            </div>
           </>
         )}
-      </AnimatePresence>
     </>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import {
   Search,
   MapPin,
@@ -179,11 +178,8 @@ export function FlightSearchForm({ deals }: Props) {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-4 shadow-sm sm:p-6"
+    <div
+      className="animate-fade-up rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-4 shadow-sm sm:p-6"
     >
       <div className="mb-4 flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
@@ -335,6 +331,6 @@ export function FlightSearchForm({ deals }: Props) {
           </button>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

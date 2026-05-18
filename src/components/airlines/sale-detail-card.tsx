@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   Calendar,
   Clock,
@@ -44,15 +43,13 @@ export function SaleDetailCard({
   const isUrgent = days <= 3 && days > 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.08 }}
-      className={`rounded-xl border p-6 transition-all ${
+    <div
+      className={`animate-fade-up rounded-xl border p-6 transition-all ${
         isUrgent
           ? "border-rose-200 bg-rose-50/30"
           : "border-zinc-100 bg-white"
       }`}
+      style={{ animationDelay: `${Math.min(index * 0.08, 0.6)}s` }}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
         <div>
@@ -185,6 +182,6 @@ export function SaleDetailCard({
           <ExternalLink className="h-3 w-3" />
         </a>
       </div>
-    </motion.div>
+    </div>
   );
 }

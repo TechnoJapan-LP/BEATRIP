@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ExternalLink, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { AirlineProfile } from "@/lib/scrapers/types";
@@ -50,10 +49,9 @@ export function AirlineCard({
   const upcomingToShow = upcomingEvents.slice(0, remainingSlots);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.06 }}
+    <div
+      className="animate-fade-up"
+      style={{ animationDelay: `${Math.min(index * 0.06, 0.6)}s` }}
     >
       <Link
         href={`/airlines/${airline.code}`}
@@ -178,6 +176,6 @@ export function AirlineCard({
         </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }

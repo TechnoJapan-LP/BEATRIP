@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { CheckCircle, XCircle, History } from "lucide-react";
 import type { ScrapeLogEntry } from "@/lib/store/sale-store";
 
@@ -15,12 +14,10 @@ export function ScrapeHistory({ history }: { history: ScrapeLogEntry[] }) {
       <div className="rounded-xl border border-zinc-100 bg-white overflow-hidden">
         <div className="divide-y divide-zinc-50">
           {history.slice(0, 10).map((entry, i) => (
-            <motion.div
+            <div
               key={entry.timestamp}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: i * 0.05 }}
-              className="flex items-center justify-between px-4 py-3"
+              className="flex items-center justify-between px-4 py-3 animate-fade-in"
+              style={{ animationDelay: `${i * 0.05}s` }}
             >
               <div className="flex items-center gap-3">
                 {entry.success ? (
@@ -61,7 +58,7 @@ export function ScrapeHistory({ history }: { history: ScrapeLogEntry[] }) {
                   </span>
                 )}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

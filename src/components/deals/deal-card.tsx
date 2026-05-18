@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Plane, TrendingDown, Users, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode } from "@/data/airlines";
@@ -42,11 +41,9 @@ export function DealCard({
   const airlineLogo = getAirlineByCode(deal.airline_id)?.logo;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.06, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="h-full"
+    <div
+      className="h-full animate-fade-up"
+      style={{ animationDelay: `${Math.min(index * 0.06, 0.6)}s` }}
     >
       <Link
         href={`/deals/${deal.id}`}
@@ -150,6 +147,6 @@ export function DealCard({
           </div>
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }

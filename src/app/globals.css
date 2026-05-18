@@ -137,4 +137,40 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* framer-motion 置き換え用の純CSSアニメーション（JSバンドル削減）。
+     stagger は inline style の animationDelay で付与。 */
+  @keyframes beatrip-fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes beatrip-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes beatrip-slide-up {
+    from { opacity: 0; transform: translateY(100%); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  /* バー/プログレスの伸長（to はインラインの最終値） */
+  @keyframes beatrip-grow-h { from { height: 0; } }
+  @keyframes beatrip-grow-w { from { width: 0; } }
+  .animate-grow-h {
+    animation: beatrip-grow-h 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+  .animate-grow-w {
+    animation: beatrip-grow-w 0.8s ease-out both;
+  }
+  .animate-fade-up {
+    animation: beatrip-fade-up 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+  .animate-fade-in {
+    animation: beatrip-fade-in 0.3s ease-out both;
+  }
+  .animate-slide-up {
+    animation: beatrip-slide-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-up, .animate-fade-in, .animate-slide-up { animation: none; }
+  }
 }

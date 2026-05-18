@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { CalendarDays, TrendingUp, Zap } from "lucide-react";
 import type { SaleEvent } from "@/data/mock-deals";
 import type { AirlineProfile } from "@/lib/scrapers/types";
@@ -17,11 +16,9 @@ function ProbabilityMeter({ value }: { value: number }) {
   return (
     <div className="flex items-center gap-2">
       <div className="h-1.5 w-20 overflow-hidden rounded-full bg-zinc-100">
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: `${value}%` }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className={`h-full rounded-full ${color}`}
+        <div
+          className={`h-full rounded-full animate-grow-w ${color}`}
+          style={{ width: `${value}%` }}
         />
       </div>
       <span className="text-xs font-mono font-bold text-zinc-700">
@@ -86,11 +83,10 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
           const airlineCode = airlineCodeMap[event.airline] ?? "ANA";
 
           return (
-            <motion.div
+            <div
               key={event.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="animate-fade-up"
+              style={{ animationDelay: `${Math.min(i * 0.08, 0.6)}s` }}
             >
             <Link
               href={`/airlines/${airlineCode}/sales`}
@@ -179,7 +175,7 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
                 </div>
               </div>
             </Link>
-            </motion.div>
+            </div>
           );
         })}
       </div>
