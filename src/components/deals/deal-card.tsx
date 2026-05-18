@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Plane, TrendingDown, Users, Layers } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getAirlineByCode } from "@/data/airlines";
 import type { DealSchema } from "@/data/deal-schema";
 
 const badgeConfig = {
@@ -37,6 +38,7 @@ export function DealCard({
 }) {
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
   const deadlineDays = daysUntil(deal.booking_deadline);
+  const airlineLogo = getAirlineByCode(deal.airline_id)?.logo;
 
   return (
     <motion.div
@@ -102,7 +104,15 @@ export function DealCard({
         </div>
 
         <div className="mt-auto px-2.5 py-2 flex items-center justify-between sm:px-4 sm:py-2.5">
-          <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            {airlineLogo && (
+              <img
+                src={airlineLogo}
+                alt={deal.airline_name}
+                className="h-4 w-4 flex-shrink-0 rounded-[3px] object-contain sm:h-[18px] sm:w-[18px]"
+                loading="lazy"
+              />
+            )}
             <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-100 truncate tracking-tight sm:text-xs">{deal.airline_name}</span>
             {variantCount && variantCount > 1 && (
               <>
