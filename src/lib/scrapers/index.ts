@@ -52,6 +52,21 @@ function createScraper(code: string): AirlineScraper {
   return new MockScraper(code, airline.scrapeSources);
 }
 
+/**
+ * Promise を指定ミリ秒でタイムアウトさせる
+ * （タイムアウト時は reject せず空の成功扱いにして全体を止めない）
+ */
+function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  fallback: T
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+}
+
 export async function scrapeAirline(code: string): Promise<ScrapeResult> {
   const airline = airlines.find((a) => a.code === code);
   if (!airline) {
@@ -64,9 +79,18 @@ export async function scrapeAirline(code: string): Promise<ScrapeResult> {
     };
   }
 
+  const fallback: ScrapeResult = {
+    airlineCode: code,
+    sales: [],
+    scrapedAt: new Date().toISOString(),
+    success: false,
+    error: "Scrape timeout",
+  };
+
   try {
     const scraper = createScraper(code);
-    return await scraper.scrape();
+    // 1社あたり最大10秒。遅いサイトは諦めて全体を止めない
+    return await withTimeout(scraper.scrape(), 10000, fallback);
   } catch (error) {
     return {
       airlineCode: code,
@@ -84,9 +108,9 @@ export async function scrapeAllAirlines(): Promise<ScrapeResult[]> {
   // hybridモードでは Traicy RSS + 各社ページを並列実行
   if (mode === "hybrid") {
     const [traicyResults, ...airlineResults] = await Promise.allSettled([
-      // Traicy RSS で一括取得（全航空会社分）
-      scrapeViaTraicy(),
-      // 各航空会社の公式ページも並列スクレイプ
+      // Traicy RSS で一括取得（全航空会社分）— 主力ソース、最大15秒
+      withTimeout(scrapeViaTraicy(), 15000, [] as ScrapeResult[]),
+      // 各航空会社の公式ページも並列スクレイプ（各社10秒で打ち切り済み）
       ...airlines.map((a) => scrapeAirline(a.code)),
     ]);
 
