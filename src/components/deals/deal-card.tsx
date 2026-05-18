@@ -49,14 +49,15 @@ export function DealCard({
         href={`/deals/${deal.id}`}
         className="group relative flex h-full flex-col overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 transition-all duration-300 hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1 active:scale-[0.98] active:transition-transform active:duration-100"
       >
-        <div className="relative aspect-[4/3] overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden bg-zinc-200 dark:bg-zinc-800">
           <Image
             src={deal.image_url}
             alt={deal.destination}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
-            loading={index < 4 ? "eager" : "lazy"}
+            loading={index < 6 ? "eager" : "lazy"}
+            priority={index < 4}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
@@ -81,8 +82,8 @@ export function DealCard({
           )}
 
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <div className="flex items-end justify-between">
-              <div>
+            <div className="flex items-end justify-between gap-3">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1 text-white/70 text-[9px] tracking-wider mb-0.5 sm:gap-2 sm:text-[11px]">
                   <span className="font-mono">{deal.origin_code}</span>
                   <Plane className="h-2.5 w-2.5 rotate-45 sm:h-3 sm:w-3" />
@@ -133,18 +134,12 @@ export function DealCard({
               </>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            {variantOriginCodes && variantOriginCodes.length > 0 ? (
-              <span className="text-[9px] font-mono text-zinc-400 truncate sm:text-[10px]">
-                {variantOriginCodes.slice(0, 3).join("・")}
-                {variantOriginCodes.length > 3 ? "..." : ""}発
-              </span>
-            ) : (
-              <span className="text-[10px] text-zinc-400">
-                総額 ¥{formatPrice(deal.total_cost)}
-              </span>
-            )}
-          </div>
+          {variantOriginCodes && variantOriginCodes.length > 0 && (
+            <span className="flex-shrink-0 text-[9px] font-mono text-zinc-400 truncate sm:text-[10px]">
+              {variantOriginCodes.slice(0, 3).join("・")}
+              {variantOriginCodes.length > 3 ? "..." : ""}発
+            </span>
+          )}
         </div>
       </Link>
     </div>
