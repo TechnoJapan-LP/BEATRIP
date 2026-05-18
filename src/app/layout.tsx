@@ -53,6 +53,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://beatrip.jp",
   },
+  verification: {
+    google: "s6hnkAAFeWkjZuSP1daeBLRLSeapRvFROY7ge_7wrdU",
+  },
 };
 
 export default function RootLayout({
