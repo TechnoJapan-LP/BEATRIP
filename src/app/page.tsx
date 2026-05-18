@@ -11,7 +11,8 @@ import { airlines } from "@/data/airlines";
 import { AirlineCarousel } from "@/components/airlines/airline-carousel";
 import { DealCarousel } from "@/components/deals/deal-carousel";
 import { SiteFooter } from "@/components/site-footer";
-import { FlightSearchForm } from "@/components/search/flight-search-form";
+import { CollapsibleSearch } from "@/components/search/collapsible-search";
+import { HeroDeal } from "@/components/deals/hero-deal";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 
@@ -45,8 +46,14 @@ export default async function Home() {
       />
       <Header />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+        {/* ファーストビュー: 注目ディールで即フック */}
+        <section className="mb-6">
+          <HeroDeal deals={deals} />
+        </section>
+
+        {/* コンパクト検索（タップで展開） */}
         <section className="mb-10">
-          <FlightSearchForm deals={deals} />
+          <CollapsibleSearch deals={deals} />
         </section>
 
         <section id="deals">
