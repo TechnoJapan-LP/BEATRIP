@@ -14,18 +14,7 @@ export function CollapsibleSearch({ deals }: { deals: DealSchema[] }) {
   const [open, setOpen] = useState(false);
 
   if (open) {
-    return (
-      <div>
-        <FlightSearchForm deals={deals} />
-        <button
-          onClick={() => setOpen(false)}
-          className="mt-2 mx-auto flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
-        >
-          検索を閉じる
-          <ChevronDown className="h-3.5 w-3.5 rotate-180" />
-        </button>
-      </div>
-    );
+    return <FlightSearchForm deals={deals} onClose={() => setOpen(false)} />;
   }
 
   return (

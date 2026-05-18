@@ -9,6 +9,7 @@ import {
   ChevronDown,
   Plane,
   ArrowRightLeft,
+  X,
 } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
 
@@ -37,9 +38,11 @@ function getInternationalAirports(deals: DealSchema[]): Airport[] {
 
 type Props = {
   deals: DealSchema[];
+  /** 指定時、ヘッダー右上に閉じる×ボタンを表示 */
+  onClose?: () => void;
 };
 
-export function FlightSearchForm({ deals }: Props) {
+export function FlightSearchForm({ deals, onClose }: Props) {
   const router = useRouter();
   const internationalAirports = useMemo(
     () => getInternationalAirports(deals),
@@ -181,18 +184,30 @@ export function FlightSearchForm({ deals }: Props) {
     <div
       className="animate-fade-up rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-4 shadow-sm sm:p-6"
     >
-      <div className="mb-4 flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
-          <Search className="h-4 w-4" />
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
+            <Search className="h-4 w-4" />
+          </div>
+          <div>
+            <h2 className="font-heading text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-2xl">
+              フライト検索
+            </h2>
+            <p className="text-[11px] text-zinc-400 sm:text-xs">
+              行き先と日程からセール中のフライトを探す
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-heading text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-2xl">
-            フライト検索
-          </h2>
-          <p className="text-[11px] text-zinc-400 sm:text-xs">
-            行き先と日程からセール中のフライトを探す
-          </p>
-        </div>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="検索を閉じる"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-12 lg:gap-2">
