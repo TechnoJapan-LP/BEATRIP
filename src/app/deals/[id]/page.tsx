@@ -342,45 +342,6 @@ export default async function DealDetailPage({ params }: Props) {
               <RecentActivity dealId={deal.id} />
             </div>
 
-            {sameSaleDeals.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5">
-                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
-                  Same Sale
-                </h3>
-                <p className="text-[11px] text-zinc-400 mb-3">
-                  {deal.sale_name}の他の対象便
-                </p>
-                <div className="space-y-2">
-                  {sameSaleDeals.map((s) => (
-                    <Link
-                      key={s.id}
-                      href={`/deals/${s.id}`}
-                      className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                    >
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5 text-sm font-bold text-zinc-800 dark:text-zinc-200">
-                          <span className="truncate">{s.origin}</span>
-                          <Plane className="h-3 w-3 flex-shrink-0 text-zinc-300 rotate-45" />
-                          <span className="truncate">{s.destination}</span>
-                        </div>
-                        <div className="text-[11px] text-zinc-400 font-mono mt-0.5">
-                          {s.origin_code}→{s.destination_code} · {s.cabin}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
-                          ¥{formatPrice(s.sale_price)}
-                        </div>
-                        <span className="text-[10px] text-rose-500 font-medium">
-                          -{s.discount_percent}%
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5">
               <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
                 Details
@@ -446,6 +407,45 @@ export default async function DealDetailPage({ params }: Props) {
                 </div>
               </div>
             </div>
+
+            {sameSaleDeals.length > 0 && (
+              <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
+                  Same Sale
+                </h3>
+                <p className="text-[11px] text-zinc-400 mb-3">
+                  {deal.sale_name}の他の対象便
+                </p>
+                <div className="space-y-2">
+                  {sameSaleDeals.map((s) => (
+                    <Link
+                      key={s.id}
+                      href={`/deals/${s.id}`}
+                      className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                          <span className="truncate">{s.origin}</span>
+                          <Plane className="h-3 w-3 flex-shrink-0 text-zinc-300 rotate-45" />
+                          <span className="truncate">{s.destination}</span>
+                        </div>
+                        <div className="text-[11px] text-zinc-400 font-mono mt-0.5">
+                          {s.origin_code}→{s.destination_code} · {s.cabin}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                          ¥{formatPrice(s.sale_price)}
+                        </div>
+                        <span className="text-[10px] text-rose-500 font-medium">
+                          -{s.discount_percent}%
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5 space-y-3">
               <Link
