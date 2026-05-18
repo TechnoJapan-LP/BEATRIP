@@ -181,45 +181,26 @@ function buildTravelPayoutsUrl(route: SaleRoute, sale: AirlineSale): string {
   return `https://tp.media/r?marker=${marker}&trs=&p=4114&u=${searchUrl}`;
 }
 
-// ── 公式ソースURL（スクレイプ元）が信頼できる場合は優先 ──
-function isUsableOfficialUrl(url: string | undefined): boolean {
-  if (!url) return false;
-  // RSS記事へのリンクは予約導線にならないので除外
-  if (url.includes("traicy.com")) return false;
-  if (url.includes("/news/") || url.includes("/blog/")) return false;
-  return true;
-}
-
 /**
  * 路線・セール情報から最適なアフィリエイトリンクを生成
  *
- * 優先順:
- * 1. セールページ（航空会社公式の specific URL）が信頼できればそれを使う
- * 2. その航空会社の予約フォーム deep link
- * 3. Skyscanner deep link（万能フォールバック、affiliate IDあれば収益化）
+ * 設計方針（コンバージョン最優先）:
+ * 予約ボタンは必ず「その路線・日付で実際に予約できるページ」に着地させる。
+ * 航空会社のキャンペーン/プロモページは期限切れで404になったり、
+ * 路線情報のない汎用LPで離脱を招くため【予約CTAには使わない】。
+ * メタサーチ（Skyscanner）の路線+日付プリフィルは:
+ *   - 404にならない（常に検索結果が表示される）
+ *   - 実在の便をそのまま予約できる
+ *   - TravelPayouts/Skyscanner経由で収益化される
+ * よって Skyscanner を予約CTAの第一候補にする。
+ * 航空会社公式・Trip.com は「他サイトで価格比較」リンク側で提供する。
  */
 export function buildAffiliateLink(
   route: SaleRoute,
   sale: AirlineSale,
   options: { preferProvider?: AffiliateProvider } = {}
 ): AffiliateLink {
-  // 1. 公式ソースURLが直リンクとして使える場合
-  if (isUsableOfficialUrl(sale.sourceUrl) && !options.preferProvider) {
-    return {
-      url: sale.sourceUrl,
-      provider: getAirlineLabel(sale.airlineCode),
-      strategy: "official-source",
-    };
-  }
-
-  // 2. プロバイダー優先指定がある場合
-  if (options.preferProvider === "skyscanner") {
-    return {
-      url: buildSkyscannerUrl(route, sale),
-      provider: "Skyscanner",
-      strategy: "skyscanner",
-    };
-  }
+  // プロバイダー明示指定がある場合はそれに従う
   if (options.preferProvider === "trip") {
     return {
       url: buildTripComUrl(route, sale),
@@ -234,23 +215,60 @@ export function buildAffiliateLink(
       strategy: "travelpayouts",
     };
   }
-
-  // 3. その航空会社の予約フォーム
-  const template = AIRLINE_BOOKING_TEMPLATES[sale.airlineCode];
-  if (template) {
-    return {
-      url: template.build(route, sale),
-      provider: template.name,
-      strategy: "airline-direct",
-    };
+  if (options.preferProvider === "airline-direct") {
+    const t = AIRLINE_BOOKING_TEMPLATES[sale.airlineCode];
+    if (t) {
+      return {
+        url: t.build(route, sale),
+        provider: t.name,
+        strategy: "airline-direct",
+      };
+    }
   }
 
-  // 4. Skyscanner フォールバック
+  // デフォルト（予約CTA）: Skyscanner の路線+日付プリフィル
+  // 404にならず実在の便を予約でき、収益化もされる最も確実な導線
   return {
     url: buildSkyscannerUrl(route, sale),
     provider: "Skyscanner",
     strategy: "skyscanner",
   };
+}
+
+/**
+ * DealSchema から予約CTAリンクを生成
+ * （mockディール等、AirlineSale を持たない経路用）
+ */
+export function buildAffiliateLinkFromDeal(deal: DealSchema): AffiliateLink {
+  const route: SaleRoute = {
+    origin: deal.origin,
+    originCode: deal.origin_code,
+    destination: deal.destination,
+    destinationCode: deal.destination_code,
+    price: deal.sale_price,
+    originalPrice: deal.original_price,
+    currency: deal.currency,
+    cabin: deal.cabin,
+    discount: deal.discount_percent,
+    seatsRemaining: deal.seats_remaining,
+  };
+  const sale: AirlineSale = {
+    id: deal.sale_id ?? deal.id,
+    airlineCode: deal.airline_id,
+    airlineName: deal.airline_name,
+    saleName: deal.sale_name,
+    description: deal.sale_name,
+    sourceUrl: "",
+    startDate: deal.created_at,
+    endDate: deal.booking_deadline,
+    bookingDeadline: deal.booking_deadline,
+    travelPeriodStart: deal.departure_date,
+    travelPeriodEnd: deal.return_date,
+    routes: [route],
+    isActive: true,
+    scrapedAt: deal.updated_at,
+  };
+  return buildAffiliateLink(route, sale);
 }
 
 /**
@@ -287,10 +305,6 @@ export function buildCompareLinks(
   });
 
   return links;
-}
-
-function getAirlineLabel(code: string): string {
-  return AIRLINE_BOOKING_TEMPLATES[code]?.name ?? code;
 }
 
 /**

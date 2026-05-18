@@ -4,7 +4,7 @@ import { getDestinationImage } from "./destination-images";
 import { deals as mockDeals, historicalPrices as mockHistoricalPrices } from "@/data/mock-deals-v2";
 import { generateHistoricalPrices } from "@/lib/predictions/historical-generator";
 import { ROUTE_BASELINES } from "@/data/route-baselines";
-import { buildAffiliateLink } from "@/lib/affiliate/url-builder";
+import { buildAffiliateLink, buildAffiliateLinkFromDeal } from "@/lib/affiliate/url-builder";
 import type { DealSchema, DealHistoricalPrice } from "@/data/deal-schema";
 import type { AirlineSale, SaleRoute } from "@/lib/scrapers/types";
 
@@ -156,6 +156,21 @@ function convertToDeal(
  * ストアからアクティブなディールを取得し、DealSchema[] に変換
  * ストアが空の場合はモックデータにフォールバック
  */
+/**
+ * mockディールの壊れたハードコードaffiliate_url（/campaign等で404）を
+ * 確実に予約できるSkyscanner導線に置き換える
+ */
+function withReliableAffiliate(deals: DealSchema[]): DealSchema[] {
+  return deals.map((d) => {
+    const link = buildAffiliateLinkFromDeal(d);
+    return {
+      ...d,
+      affiliate_url: link.url,
+      affiliate_provider: link.provider,
+    };
+  });
+}
+
 export async function getActiveDeals(): Promise<DealSchema[]> {
   try {
     const allSales = await loadAllSales();
@@ -163,7 +178,7 @@ export async function getActiveDeals(): Promise<DealSchema[]> {
 
     if (airlineCodes.length === 0) {
       console.log("[DealService] Store is empty, using mock data");
-      return mockDeals;
+      return withReliableAffiliate(mockDeals);
     }
 
     const now = new Date();
@@ -186,14 +201,14 @@ export async function getActiveDeals(): Promise<DealSchema[]> {
 
     if (deals.length === 0) {
       console.log("[DealService] No active deals in store, using mock data");
-      return mockDeals;
+      return withReliableAffiliate(mockDeals);
     }
 
     console.log(`[DealService] Loaded ${deals.length} deals from store`);
     return deals;
   } catch (error) {
     console.error("[DealService] Error loading from store, using mock data:", error);
-    return mockDeals;
+    return withReliableAffiliate(mockDeals);
   }
 }
 
