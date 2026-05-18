@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Bebas_Neue } from "next/font/google";
 import { ServiceWorkerRegister } from "@/components/sw-register";
+import { Analytics } from "@/components/analytics";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -67,6 +68,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950">
         <ServiceWorkerRegister />
         {children}
+
+        {/* アナリティクス: Vercel Analytics + Speed Insights + GA4 */}
+        <Analytics />
 
         {/* TravelPayouts Drive (アフィリエイトトラッキング・コンバージョン計測) */}
         <Script

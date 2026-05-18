@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ExternalLink, Zap, Search } from "lucide-react";
+import { trackAffiliateClick } from "@/components/analytics";
 
 type CompareLink = {
   url: string;
@@ -14,6 +15,8 @@ export function BookingButton({
   affiliateProvider,
   saleName,
   compareLinks,
+  price,
+  route,
 }: {
   dealId: string;
   affiliateUrl: string;
@@ -21,11 +24,19 @@ export function BookingButton({
   saleName: string;
   /** 他プロバイダーでも検索できるリンク（任意） */
   compareLinks?: CompareLink[];
+  /** GA4 計測用: セール価格 */
+  price?: number;
+  /** GA4 計測用: 路線（例 NRT→BKK） */
+  route?: string;
 }) {
   const [clicked, setClicked] = useState(false);
 
   async function trackAndOpen(url: string, provider: string) {
     setClicked(true);
+
+    // GA4 コンバージョンイベント
+    trackAffiliateClick({ dealId, provider, price, route });
+
     try {
       await fetch("/api/clicks", {
         method: "POST",

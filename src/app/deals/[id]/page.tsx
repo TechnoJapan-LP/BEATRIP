@@ -315,6 +315,8 @@ export default async function DealDetailPage({ params }: Props) {
                   affiliateProvider={deal.affiliate_provider ?? "パートナーサイト"}
                   saleName={deal.sale_name}
                   compareLinks={buildCompareLinksFromDeal(deal)}
+                  price={deal.sale_price}
+                  route={`${deal.origin_code}→${deal.destination_code}`}
                 />
               </div>
             )}
