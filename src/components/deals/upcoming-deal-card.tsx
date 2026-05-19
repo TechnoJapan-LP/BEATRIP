@@ -73,8 +73,8 @@ export function UpcomingDealCard({
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
 
-          <Badge className="absolute top-3 left-3 text-[10px] font-bold tracking-[0.15em] uppercase bg-violet-500 text-white hover:bg-violet-600">
-            COMING SOON
+          <Badge className="absolute top-2 left-2 text-[8px] font-bold tracking-[0.1em] uppercase bg-violet-500 text-white hover:bg-violet-600 sm:top-3 sm:left-3 sm:text-[10px] sm:tracking-[0.15em]">
+            SOON
           </Badge>
 
           <div className="absolute top-2 right-2 flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 backdrop-blur-sm sm:top-3 sm:right-3 sm:gap-1 sm:px-2.5 sm:py-1 sm:text-xs">
@@ -82,8 +82,8 @@ export function UpcomingDealCard({
             平均-{event.avgDiscount}%
           </div>
 
-          <div className="absolute inset-x-0 top-[42%] -translate-y-1/2 px-4 text-center">
-            <h3 className="font-heading text-[17px] leading-tight tracking-wide text-white uppercase sm:text-[20px]">
+          <div className="absolute inset-x-0 top-[38%] -translate-y-1/2 px-4 text-center">
+            <h3 className="font-heading text-[13px] leading-tight tracking-wide text-white/90 uppercase line-clamp-2 sm:text-[15px]">
               {cleanSaleName}
             </h3>
           </div>
