@@ -7,25 +7,23 @@ export function NewsletterCTA() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
 
     setStatus("loading");
 
-    // TODO: 実際のAPI接続時に差し替え
-    setTimeout(() => {
-      try {
-        const stored = JSON.parse(localStorage.getItem("beatrip-newsletter") ?? "[]");
-        if (!stored.includes(email)) {
-          stored.push(email);
-          localStorage.setItem("beatrip-newsletter", JSON.stringify(stored));
-        }
-        setStatus("success");
-      } catch {
-        setStatus("error");
-      }
-    }, 800);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("request failed");
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
   }
 
   if (status === "success") {
