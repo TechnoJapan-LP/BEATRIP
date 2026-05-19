@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { TrendingDown, Plane } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getAirlineByName } from "@/data/airlines";
 import type { SaleEvent } from "@/data/mock-deals";
 
 const cityNames: Record<string, string> = {
@@ -40,12 +41,7 @@ export function UpcomingDealCard({
   index: number;
 }) {
   const days = daysUntil(event.predictedDate);
-  const probColor =
-    event.probability >= 80
-      ? "text-emerald-600"
-      : event.probability >= 60
-        ? "text-amber-600"
-        : "text-zinc-500";
+  const airlineLogo = getAirlineByName(event.airline)?.logo;
 
   const origin = event.routes[0]?.split("→")[0] ?? "";
   const destination = event.routes[0]?.split("→")[1] ?? "";
@@ -75,17 +71,13 @@ export function UpcomingDealCard({
             COMING SOON
           </Badge>
 
-          <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 backdrop-blur-sm">
-            <span className={`text-xs font-bold ${probColor}`}>
-              {event.probability}%
-            </span>
+          <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-rose-500/95 px-2.5 py-1 text-white backdrop-blur-sm">
+            <TrendingDown className="h-3 w-3" />
+            <span className="text-xs font-bold">平均-{event.avgDiscount}%</span>
           </div>
 
           <div className="absolute inset-x-0 top-[42%] -translate-y-1/2 px-4 text-center">
-            <span className="text-sm font-medium tracking-wider text-white/70 uppercase">
-              {event.airline}
-            </span>
-            <h3 className="font-heading text-[17px] leading-tight tracking-wide text-white uppercase mt-0.5 sm:text-[20px]">
+            <h3 className="font-heading text-[17px] leading-tight tracking-wide text-white uppercase sm:text-[20px]">
               {event.saleName}
             </h3>
           </div>
@@ -113,24 +105,18 @@ export function UpcomingDealCard({
           </div>
         </div>
 
-        <div className="mt-auto px-4 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-medium text-zinc-500">
-              {event.airline}
-            </span>
-            {event.routes.length > 1 && (
-              <>
-                <span className="text-zinc-200 dark:text-zinc-700">·</span>
-                <span className="text-[11px] text-zinc-400">
-                  他{event.routes.length - 1}路線
-                </span>
-              </>
-            )}
-          </div>
-          <div className="flex items-center gap-1 text-[10px] text-rose-500 font-medium">
-            <TrendingDown className="h-3 w-3" />
-            平均-{event.avgDiscount}%
-          </div>
+        <div className="mt-auto px-2.5 py-2 flex items-center gap-1.5 sm:px-4 sm:py-2.5 sm:gap-2 min-w-0">
+          {airlineLogo && (
+            <img
+              src={airlineLogo}
+              alt={event.airline}
+              className="h-4 w-4 flex-shrink-0 rounded-[3px] object-contain sm:h-[18px] sm:w-[18px]"
+              loading="lazy"
+            />
+          )}
+          <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-100 truncate tracking-tight sm:text-xs">
+            {event.airline}
+          </span>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Plane, TrendingDown, Users, Layers } from "lucide-react";
+import { Plane, TrendingDown, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode } from "@/data/airlines";
 import { cityNameJa } from "@/lib/airport-names";
@@ -27,14 +27,11 @@ function daysUntil(dateStr: string) {
 export function DealCard({
   deal,
   index,
-  variantCount,
   variantOriginCodes,
 }: {
   deal: DealSchema;
   index: number;
-  /** 同じ目的地への他の便数（自分含む。1の場合はバッジ非表示） */
-  variantCount?: number;
-  /** 同じ目的地の他便の出発空港コード（最大3つ） */
+  /** 同じ目的地の他便の出発空港コード（最大3つ）。ある場合は出発地に「ほか」を付す */
   variantOriginCodes?: string[];
 }) {
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
@@ -117,16 +114,7 @@ export function DealCard({
               />
             )}
             <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-100 truncate tracking-tight sm:text-xs">{deal.airline_name}</span>
-            {variantCount && variantCount > 1 && (
-              <>
-                <span className="text-zinc-200 dark:text-zinc-700">·</span>
-                <span className="flex items-center gap-0.5 text-[10px] font-medium text-sky-600 dark:text-sky-400 sm:text-[11px]">
-                  <Layers className="h-2.5 w-2.5" />
-                  他{variantCount - 1}便
-                </span>
-              </>
-            )}
-            {deadlineDays > 0 && deadlineDays <= 7 && (!variantCount || variantCount <= 1) && (
+            {deadlineDays > 0 && deadlineDays <= 7 && (
               <>
                 <span className="text-zinc-200 dark:text-zinc-700">·</span>
                 <span className="text-[10px] font-medium text-amber-500 animate-pulse">

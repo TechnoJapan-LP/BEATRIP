@@ -171,3 +171,14 @@ export const airlines: AirlineProfile[] = [
 export function getAirlineByCode(code: string) {
   return airlines.find((a) => a.code === code);
 }
+
+/** 表示名（nameEn / name）から航空会社を解決。未登録キャリアは undefined */
+export function getAirlineByName(name: string) {
+  const n = name.trim().toLowerCase();
+  return airlines.find(
+    (a) =>
+      a.nameEn.toLowerCase() === n ||
+      a.name.toLowerCase() === n ||
+      a.code.toLowerCase() === n
+  );
+}
