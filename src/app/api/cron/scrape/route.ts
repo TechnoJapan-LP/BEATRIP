@@ -5,6 +5,15 @@ import { dispatchNotifications } from "@/lib/notifications/notifier";
 import { generateArticlesFromChanges } from "@/lib/articles/article-generator";
 import { listSubscribers } from "@/lib/newsletter/store";
 import { sendSaleDigest } from "@/lib/newsletter/email";
+import {
+  appendPendingSales,
+  getPendingSales,
+  getLastDigestAt,
+  markDigestSent,
+  ensureAnchor,
+  MIN_DIGEST_INTERVAL_MS,
+  DIGEST_MIN_SALES,
+} from "@/lib/newsletter/digest-state";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
 
@@ -42,16 +51,45 @@ export async function GET(request: NextRequest) {
       generatedArticles += newArticles.length;
     }
 
-    // ニュースレター: 新着セールがある日だけ、購読者へまとめメールを配信
+    // ニュースレター: 新着セールを累積し、週1かつ累積4件以上のときだけ配信
     const allNewSales: AirlineSale[] = changes.flatMap((c) => c.newSales);
     let newsletterSent = 0;
-    if (allNewSales.length > 0) {
-      try {
-        const subscribers = await listSubscribers();
-        newsletterSent = await sendSaleDigest(subscribers, allNewSales);
-      } catch (e) {
-        console.error("[CRON] ニュースレター配信に失敗:", e);
+    let newsletterPending = 0;
+    let newsletterStatus = "skipped";
+    try {
+      await appendPendingSales(allNewSales);
+
+      const now = Date.now();
+      const anchored = await ensureAnchor(now);
+      const pending = await getPendingSales();
+      newsletterPending = pending.length;
+
+      if (anchored) {
+        // 初回実行: 週次の起点を確立。今回は配信しない。
+        newsletterStatus = "anchored";
+      } else {
+        const lastAt = (await getLastDigestAt()) ?? 0;
+        const elapsed = now - lastAt;
+        if (elapsed < MIN_DIGEST_INTERVAL_MS) {
+          newsletterStatus = "waiting_interval";
+        } else if (pending.length <= DIGEST_MIN_SALES) {
+          // 4件未満: 配信せず翌週へ持ち越し（pendingは保持）
+          newsletterStatus = "below_threshold";
+        } else {
+          const subscribers = await listSubscribers();
+          newsletterSent = await sendSaleDigest(subscribers, pending);
+          if (newsletterSent > 0) {
+            await markDigestSent(now);
+            newsletterStatus = "sent";
+          } else {
+            // 購読者ゼロ/送信不可: pending を保持し次回再試行
+            newsletterStatus = "no_recipients";
+          }
+        }
       }
+    } catch (e) {
+      console.error("[CRON] ニュースレター処理に失敗:", e);
+      newsletterStatus = "error";
     }
 
     const elapsed = Date.now() - startTime;
@@ -67,7 +105,11 @@ export async function GET(request: NextRequest) {
         priceChanges: changes.reduce((sum, c) => sum + c.priceChanges.length, 0),
       },
       notifications: { sent, errors },
-      newsletterSent,
+      newsletter: {
+        status: newsletterStatus,
+        sent: newsletterSent,
+        pending: newsletterPending,
+      },
       generatedArticles,
       details: changes.map((c) => ({
         airline: c.airlineCode,
