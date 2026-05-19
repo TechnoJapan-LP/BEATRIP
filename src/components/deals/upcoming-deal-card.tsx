@@ -4,6 +4,7 @@ import Image from "next/image";
 import { TrendingDown, Plane } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByName } from "@/data/airlines";
+import { cityNameJa } from "@/lib/airport-names";
 import type { SaleEvent } from "@/data/mock-deals";
 
 const cityNames: Record<string, string> = {
@@ -47,6 +48,11 @@ export function UpcomingDealCard({
   const destination = event.routes[0]?.split("→")[1] ?? "";
   const destinationCity = cityNames[destination] ?? destination;
 
+  // セール名から航空会社名プレフィックスを除去（"Emirates グローバルセール" → "グローバルセール"）
+  const cleanSaleName = event.saleName
+    .replace(new RegExp(`^${event.airline}\\s*`, "i"), "")
+    .trim() || event.saleName;
+
   return (
     <div
       className="h-full animate-fade-up"
@@ -71,32 +77,32 @@ export function UpcomingDealCard({
             COMING SOON
           </Badge>
 
-          <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-rose-500/95 px-2.5 py-1 text-white backdrop-blur-sm">
-            <TrendingDown className="h-3 w-3" />
-            <span className="text-xs font-bold">平均-{event.avgDiscount}%</span>
+          <div className="absolute top-2 right-2 flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 backdrop-blur-sm sm:top-3 sm:right-3 sm:gap-1 sm:px-2.5 sm:py-1 sm:text-xs">
+            <TrendingDown className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+            平均-{event.avgDiscount}%
           </div>
 
           <div className="absolute inset-x-0 top-[42%] -translate-y-1/2 px-4 text-center">
             <h3 className="font-heading text-[17px] leading-tight tracking-wide text-white uppercase sm:text-[20px]">
-              {event.saleName}
+              {cleanSaleName}
             </h3>
           </div>
 
           <div className="absolute bottom-0 left-0 right-0 p-4">
-            <div className="flex items-end justify-between">
-              <div>
-                <div className="flex items-center gap-2 text-white/70 text-[11px] tracking-wider mb-0.5">
+            <div className="flex items-end justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1 text-white/70 text-[9px] tracking-wider mb-0.5 sm:gap-2 sm:text-[11px]">
                   <span className="font-mono">{origin}</span>
-                  <Plane className="h-3 w-3 rotate-45" />
+                  <Plane className="h-2.5 w-2.5 rotate-45 sm:h-3 sm:w-3" />
                   <span className="font-mono">{destination}</span>
                 </div>
-                <h3 className="font-heading text-[22px] leading-none tracking-wide text-white uppercase sm:text-[28px]">
+                <h3 className="font-heading text-[17px] leading-none tracking-wide text-white uppercase truncate sm:text-[28px]">
                   {destinationCity}
                 </h3>
               </div>
               {days > 0 && (
-                <div className="text-right">
-                  <div className="text-[20px] font-heading leading-none text-white tracking-wide sm:text-[26px]">
+                <div className="text-right flex-shrink-0">
+                  <div className="text-[16px] font-heading leading-none text-white tracking-wide sm:text-[26px]">
                     {days}日後
                   </div>
                 </div>
@@ -105,18 +111,25 @@ export function UpcomingDealCard({
           </div>
         </div>
 
-        <div className="mt-auto px-2.5 py-2 flex items-center gap-1.5 sm:px-4 sm:py-2.5 sm:gap-2 min-w-0">
-          {airlineLogo && (
-            <img
-              src={airlineLogo}
-              alt={event.airline}
-              className="h-4 w-4 flex-shrink-0 rounded-[3px] object-contain sm:h-[18px] sm:w-[18px]"
-              loading="lazy"
-            />
+        <div className="mt-auto px-2.5 py-2 flex items-center justify-between sm:px-4 sm:py-2.5">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+            {airlineLogo && (
+              <img
+                src={airlineLogo}
+                alt={event.airline}
+                className="h-4 w-4 flex-shrink-0 rounded-[3px] object-contain sm:h-[18px] sm:w-[18px]"
+                loading="lazy"
+              />
+            )}
+            <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-100 truncate tracking-tight sm:text-xs">
+              {event.airline}
+            </span>
+          </div>
+          {origin && (
+            <span className="flex-shrink-0 text-[10px] font-medium text-zinc-400 sm:text-[11px]">
+              {cityNameJa(origin)}発
+            </span>
           )}
-          <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-100 truncate tracking-tight sm:text-xs">
-            {event.airline}
-          </span>
         </div>
       </div>
     </div>
