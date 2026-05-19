@@ -77,12 +77,16 @@ export default function RootLayout({
         {/* アナリティクス: Vercel Analytics + Speed Insights + GA4 */}
         <Analytics />
 
-        {/* TravelPayouts Drive (アフィリエイトトラッキング・コンバージョン計測) */}
-        <Script
-          id="travelpayouts-drive"
-          strategy="afterInteractive"
-          src="https://emrld.ltd/NTMwMDgx.js?t=530081"
-        />
+        {/* TravelPayouts Drive (アフィリエイトトラッキング・コンバージョン計測)
+            本番のみ読み込む。開発環境では不要かつ、Driveのcss preloadが
+            Next devのエラーオーバーレイを誘発しプレビューを妨げるため除外。 */}
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            id="travelpayouts-drive"
+            strategy="afterInteractive"
+            src="https://emrld.ltd/NTMwMDgx.js?t=530081"
+          />
+        )}
       </body>
     </html>
   );
