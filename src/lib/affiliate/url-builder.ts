@@ -206,6 +206,37 @@ function buildTravelPayoutsUrl(route: SaleRoute, sale: AirlineSale): string {
 }
 
 /**
+ * 目的地ホテル検索のアフィリエイトリンク（Hotellook 経由）。
+ *
+ * ホテルは航空券より高料率（数%）で、同じ訪問者の収益を底上げできる。
+ * Hotellook はネイティブに `marker` クエリで TravelPayouts 帰属するため
+ * 第三者スクリプト不要・URLのみで成立する（ページ軽量を維持）。
+ * Marker 未設定（開発）でもリンクは成立する（収益は発生しない）。
+ *
+ * @param cityNameEn 英語都市名（例: "Bangkok"）。Hotellook が確実に解決する。
+ * @param checkIn    YYYY-MM-DD（任意・無効なら省略）
+ * @param checkOut   YYYY-MM-DD（任意・無効なら省略）
+ */
+export function buildHotelLink(
+  cityNameEn: string,
+  checkIn?: string,
+  checkOut?: string
+): string {
+  const marker = process.env.TRAVELPAYOUTS_MARKER;
+  const params = new URLSearchParams({
+    destination: cityNameEn,
+    adults: "2",
+    locale: "ja",
+    currency: "jpy",
+  });
+  const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+  if (checkIn && isoDate.test(checkIn)) params.set("checkIn", checkIn);
+  if (checkOut && isoDate.test(checkOut)) params.set("checkOut", checkOut);
+  if (marker) params.set("marker", marker);
+  return `https://search.hotellook.com/?${params.toString()}`;
+}
+
+/**
  * 路線・セール情報から最適なアフィリエイトリンクを生成
  *
  * 設計方針（コンバージョン最優先）:

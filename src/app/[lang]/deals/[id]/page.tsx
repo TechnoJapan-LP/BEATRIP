@@ -21,6 +21,7 @@ import { PriceChart } from "@/components/deals/price-chart";
 import { BookingButton } from "@/components/deals/booking-button";
 import { ShareButtons } from "@/components/deals/share-buttons";
 import { PriceAlertForm } from "@/components/deals/price-alert-form";
+import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
 import { DealCarousel } from "@/components/deals/deal-carousel";
 import { FavoriteButton } from "@/components/deals/favorite-button";
 import { CountdownTimer } from "@/components/deals/countdown-timer";
@@ -492,6 +493,13 @@ export default async function DealDetailPage({ params }: Props) {
               routeKey={routeKey}
               currentPrice={deal.sale_price}
               dealId={deal.id}
+            />
+
+            <HotelCrossSell
+              destinationCode={deal.destination_code}
+              destinationLabel={deal.destination}
+              checkIn={deal.departure_date}
+              checkOut={deal.return_date}
             />
 
             {similar.length > 0 && (

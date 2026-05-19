@@ -35,3 +35,33 @@ export function cityNameJa(code: string): string {
 export function routeNameJa(originCode: string, destCode: string): string {
   return `${cityNameJa(originCode)}→${cityNameJa(destCode)}`;
 }
+
+/**
+ * 空港コード → 英語都市名（Hotellook等の外部アフィリエイト検索用）。
+ * 英語名で渡すと検索結果が確実に解決するため別途保持する。
+ */
+export const CITY_NAMES_EN: Record<string, string> = {
+  NRT: "Tokyo", HND: "Tokyo", KIX: "Osaka", ITM: "Osaka", NGO: "Nagoya",
+  NKM: "Nagoya", FUK: "Fukuoka", CTS: "Sapporo", OKD: "Sapporo",
+  OKA: "Okinawa", HIJ: "Hiroshima", KOJ: "Kagoshima", SDJ: "Sendai",
+  KMJ: "Kumamoto", KMI: "Miyazaki", NGS: "Nagasaki", OIT: "Oita",
+  AOJ: "Aomori", AXT: "Akita", GAJ: "Yamagata", HKD: "Hakodate",
+  AKJ: "Asahikawa", KUH: "Kushiro", OBO: "Obihiro", WKJ: "Wakkanai",
+  KKJ: "Kitakyushu", OKJ: "Okayama", MYJ: "Matsuyama", KCZ: "Kochi",
+  TAK: "Takamatsu", TKS: "Tokushima", ISG: "Ishigaki", MMY: "Miyako",
+  KIJ: "Niigata", UKB: "Kobe", HSG: "Saga",
+  BKK: "Bangkok", TPE: "Taipei", ICN: "Seoul", SIN: "Singapore",
+  HKG: "Hong Kong", MNL: "Manila", SGN: "Ho Chi Minh City",
+  HAN: "Hanoi", PVG: "Shanghai", PEK: "Beijing", DXB: "Dubai",
+  DEL: "Delhi", BOM: "Mumbai", KUL: "Kuala Lumpur", CDG: "Paris",
+  LHR: "London", HEL: "Helsinki", FCO: "Rome", BCN: "Barcelona",
+  FRA: "Frankfurt", AMS: "Amsterdam", IST: "Istanbul",
+  JFK: "New York", LAX: "Los Angeles", SFO: "San Francisco",
+  ORD: "Chicago", YVR: "Vancouver", SYD: "Sydney", AKL: "Auckland",
+  HNL: "Honolulu", GUM: "Guam", HRB: "Harbin",
+};
+
+/** 空港コードを英語都市名に。未知コードはそのまま返す */
+export function cityNameEn(code: string): string {
+  return CITY_NAMES_EN[code] ?? code;
+}

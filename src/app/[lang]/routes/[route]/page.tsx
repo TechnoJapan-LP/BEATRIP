@@ -6,6 +6,7 @@ import { ArrowLeft, Plane, TrendingDown, Calendar } from "lucide-react";
 import { Header } from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { PriceChart } from "@/components/deals/price-chart";
+import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
 import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
 import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -244,6 +245,13 @@ export default async function RoutePage({ params }: Props) {
           </div>
 
           <div className="space-y-6">
+            <HotelCrossSell
+              destinationCode={parsed.destination}
+              destinationLabel={dest}
+              checkIn={routeDeals[0].departure_date}
+              checkOut={routeDeals[0].return_date}
+            />
+
             {prediction && prediction.historical_prices.length > 0 && (
               <div className="rounded-xl border border-zinc-100 bg-white p-5">
                 <h2 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
