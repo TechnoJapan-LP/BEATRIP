@@ -3,7 +3,10 @@ import { scrapeAllAirlines, scrapeAirline } from "@/lib/scrapers";
 import { saveSalesAndDetectChanges } from "@/lib/store/sale-store";
 import { dispatchNotifications } from "@/lib/notifications/notifier";
 import { generateArticlesFromChanges } from "@/lib/articles/article-generator";
+import { listSubscribers } from "@/lib/newsletter/store";
+import { sendSaleDigest } from "@/lib/newsletter/email";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
+import type { AirlineSale } from "@/lib/scrapers/types";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -39,6 +42,18 @@ export async function GET(request: NextRequest) {
       generatedArticles += newArticles.length;
     }
 
+    // ニュースレター: 新着セールがある日だけ、購読者へまとめメールを配信
+    const allNewSales: AirlineSale[] = changes.flatMap((c) => c.newSales);
+    let newsletterSent = 0;
+    if (allNewSales.length > 0) {
+      try {
+        const subscribers = await listSubscribers();
+        newsletterSent = await sendSaleDigest(subscribers, allNewSales);
+      } catch (e) {
+        console.error("[CRON] ニュースレター配信に失敗:", e);
+      }
+    }
+
     const elapsed = Date.now() - startTime;
 
     const summary = {
@@ -52,6 +67,7 @@ export async function GET(request: NextRequest) {
         priceChanges: changes.reduce((sum, c) => sum + c.priceChanges.length, 0),
       },
       notifications: { sent, errors },
+      newsletterSent,
       generatedArticles,
       details: changes.map((c) => ({
         airline: c.airlineCode,

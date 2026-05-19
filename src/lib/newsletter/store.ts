@@ -52,3 +52,21 @@ export async function listSubscribers(): Promise<string[]> {
   }
   return readFileList();
 }
+
+/** 購読者を削除。実際に削除されたら true。 */
+export async function removeSubscriber(email: string): Promise<boolean> {
+  const normalized = email.trim().toLowerCase();
+
+  const kv = getKV();
+  if (kv) {
+    const removed = await kv.srem(KV_KEY, normalized);
+    return removed === 1;
+  }
+
+  const list = await readFileList();
+  if (!list.includes(normalized)) return false;
+  const next = list.filter((e) => e !== normalized);
+  await mkdir(WRITE_BASE, { recursive: true });
+  await writeFile(FILE, JSON.stringify(next, null, 2));
+  return true;
+}
