@@ -1,0 +1,103 @@
+{
+  "common": {
+    "seeAll": "See all",
+    "home": "Home",
+    "tagline": "Automatically tracking flight sales. Never miss the lowest fares with flash deals, sale-timing predictions, and price-history data."
+  },
+  "nav": {
+    "flashDeals": "Flash Deals",
+    "airlineSales": "Airline Sales",
+    "salePrediction": "Sale Forecast",
+    "articles": "Articles",
+    "themeToggle": "Toggle theme",
+    "menu": "Menu",
+    "language": "Language"
+  },
+  "home": {
+    "flashDealsTitle": "Flash Deals",
+    "flashDealsSubtitle": "Limited-time flight sales you can book right now",
+    "popularTitle": "Popular Deals",
+    "popularSubtitle": "Top deals with the biggest discounts",
+    "articlesTitle": "Articles",
+    "articlesSubtitle": "Sale alerts & booking guides",
+    "airlinesTitle": "Airlines",
+    "airlinesSubtitle": "Airline sale information"
+  },
+  "filters": {
+    "all": "All",
+    "domestic": "Domestic",
+    "international": "International",
+    "new": "New",
+    "ending": "Ending soon",
+    "niche": "Niche LCC",
+    "hiddenGem": "Hidden gem",
+    "searchPlaceholder": "Search by city, airport, or airline...",
+    "noResults": "No matching deals found",
+    "noResultsHint": "Try changing the filters",
+    "popularSuggestion": "Popular deals"
+  },
+  "newsletter": {
+    "title": "Never miss a sale",
+    "body": "Get notified by email the moment an airline sale starts. Never miss the lowest-fare window.",
+    "placeholder": "Email address",
+    "submit": "Subscribe free",
+    "successTitle": "You're in",
+    "successBody": "We'll send you sale alerts. Stay tuned!",
+    "error": "Subscription failed. Please try again.",
+    "note": "Unsubscribe anytime. No spam, ever."
+  },
+  "footer": {
+    "dealsTitle": "Deals",
+    "airlinesTitle": "Airlines",
+    "aboutTitle": "Site info",
+    "flashDeals": "Flash Deals",
+    "saleCalendar": "Sale forecast calendar",
+    "airlineSales": "Airline sales",
+    "articles": "Sale articles & guides",
+    "about": "About BEATRIP",
+    "faq": "FAQ",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "disclaimer": "* Sale information shown is collected from each airline's official website. Prices and seat availability change constantly, so always confirm the latest details on the airline's official site before booking. This site does not sell tickets and is for informational purposes only.",
+    "copyright": "© 2026 BEATRIP. All rights reserved."
+  },
+  "about": {
+    "metaTitle": "About BEATRIP",
+    "metaDescription": "BEATRIP is a flight-deal portal that automatically collects airline sale information and provides flash deals, sale-timing forecasts, and price-history data.",
+    "breadcrumb": "About",
+    "title": "About BEATRIP",
+    "intro": "BEATRIP is a flight-deal portal built around one idea: never miss the lowest fare. We automatically collect and analyze airline sale information.",
+    "featuresTitle": "Features",
+    "features": [
+      { "title": "Automatic sale tracking", "description": "We automatically collect sale information from major airlines such as ANA, JAL, Peach, and Jetstar — no more manual checking." },
+      { "title": "Sale-timing forecasts", "description": "AI analyzes historical sale data to predict the timing and probability of the next sale, so you can book at the best moment." },
+      { "title": "Price alerts", "description": "Get notified instantly when a route you care about drops below your target price. Never miss the chance." },
+      { "title": "Reliable data", "description": "All information is sourced directly from airline official websites, delivering accurate and up-to-date sale information." }
+    ],
+    "missionTitle": "Mission",
+    "mission": [
+      "Airline sale information is scattered across individual airline sites and social media, and it's easy to miss. BEATRIP aggregates it in one place and combines it with data-driven sale forecasts so users can book flights at the cheapest possible time.",
+      "We do not sell tickets directly — we are an information-only service. Always confirm details on each airline's official website before booking."
+    ],
+    "dataSourcesTitle": "Data Sources",
+    "dataSourcesIntro": "Sale information is collected from the following airline official websites:"
+  },
+  "faq": {
+    "metaTitle": "Frequently Asked Questions (FAQ)",
+    "metaDescription": "Answers to common questions about using BEATRIP, reading sale information, and setting up price alerts.",
+    "breadcrumb": "FAQ",
+    "title": "FAQ",
+    "subtitle": "Frequently asked questions",
+    "items": [
+      { "q": "What is BEATRIP?", "a": "BEATRIP is a flight-deal information site that automatically collects airline sale information and provides flash deals, sale-timing forecasts, and price-history data. We do not sell tickets directly and are for informational purposes only." },
+      { "q": "Where does the sale information come from?", "a": "We automatically collect sale information from the official websites of major airlines such as ANA, JAL, Peach, Jetstar Japan, and Scoot. Information is updated regularly, but please confirm the latest prices and seat availability on the airline's official site." },
+      { "q": "Are the listed prices accurate?", "a": "Listed prices are accurate as of the time of collection. Airfares constantly fluctuate based on seat availability and exchange rates, so actual prices may differ. Always confirm the latest price on the airline's official site before booking." },
+      { "q": "How is the 'Sale Forecast' calculated?", "a": "AI analyzes historical sale records (dates, frequency, discount rates, etc.) to predict the timing and probability of the next sale. Forecasts are reference information only and do not guarantee that a sale will actually occur." },
+      { "q": "How do I set up a price alert?", "a": "In the 'Price Alert' section on each deal's detail page, you can set the price at which you'd like to be notified. We'll let you know when it drops to or below that amount. Currently only browser notifications are supported." },
+      { "q": "How do I use the favorites feature?", "a": "Click the heart icon on any deal card to add it to your favorites. Favorites are saved in your browser's local storage, so they'll appear again when you visit from the same browser." },
+      { "q": "Can I book flights on BEATRIP?", "a": "You cannot book flights directly on BEATRIP. Clicking the 'Book' button takes you to the airline's official site or a partner booking site. Complete your booking on the destination site." },
+      { "q": "Can I use it on a smartphone?", "a": "Yes. BEATRIP supports PWA (Progressive Web App), so you can add it to your smartphone's home screen and use it like an app. Select 'Add to Home Screen' from your browser menu." },
+      { "q": "Is there a dark mode?", "a": "Yes. Click the sun/moon icon at the top right of the header to switch between light and dark mode. The setting is saved in your browser." }
+    ]
+  }
+}
