@@ -5,62 +5,94 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Plane, TrendingDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getAirlineByCode } from "@/data/airlines";
+import { cityNameJa } from "@/lib/airport-names";
 import type { DealSchema } from "@/data/deal-schema";
+
+const badgeConfig = {
+  NEW: { label: "NEW", className: "bg-emerald-500 text-white" },
+  ENDING_SOON: { label: "ENDING", className: "bg-amber-500 text-white" },
+  LOWEST_IN_2_YEARS: { label: "LOWEST", className: "bg-rose-500 text-white" },
+} as const;
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("ja-JP").format(price);
 }
 
+// DealCard と同一デザイン（カルーセル用にサイズのみ維持）
 function DealMiniCard({ deal }: { deal: DealSchema }) {
+  const badge = deal.badge ? badgeConfig[deal.badge] : null;
+  const airlineLogo = getAirlineByCode(deal.airline_id)?.logo;
+
   return (
     <Link
       href={`/deals/${deal.id}`}
-      className="group flex-shrink-0 w-[72vw] max-w-[256px] block rounded-xl border border-zinc-100 bg-white overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 sm:w-64 sm:max-w-none"
+      className="group flex-shrink-0 w-[72vw] max-w-[256px] flex flex-col rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 overflow-hidden transition-all duration-300 hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1 sm:w-64 sm:max-w-none"
     >
-      <div className="relative h-32 overflow-hidden sm:h-36">
+      <div className="relative h-32 overflow-hidden bg-zinc-200 dark:bg-zinc-800 sm:h-36">
         <Image
           src={deal.image_url}
           alt={deal.destination}
           fill
           sizes="256px"
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <div className="flex items-center gap-1.5 text-white/60 text-[10px] mb-0.5">
-            <span className="font-mono">{deal.origin_code}</span>
-            <Plane className="h-2.5 w-2.5 rotate-45" />
-            <span className="font-mono">{deal.destination_code}</span>
-          </div>
-          <div className="font-heading text-lg leading-tight tracking-wide text-white uppercase">
-            {deal.destination}
-          </div>
-        </div>
-        {deal.badge && (
-          <Badge className={`absolute top-2 left-2 text-[9px] font-bold tracking-wider ${
-            deal.badge === "NEW" ? "bg-emerald-500 text-white" :
-            deal.badge === "ENDING_SOON" ? "bg-amber-500 text-white" :
-            "bg-rose-500 text-white"
-          }`}>
-            {deal.badge === "LOWEST_IN_2_YEARS" ? "LOWEST" : deal.badge === "ENDING_SOON" ? "ENDING" : deal.badge}
+
+        {badge && (
+          <Badge
+            className={`absolute top-2 left-2 text-[8px] font-bold tracking-[0.1em] uppercase sm:text-[10px] sm:tracking-[0.15em] ${badge.className}`}
+          >
+            {badge.label}
           </Badge>
         )}
+
+        <div className="absolute top-2 right-2 flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 backdrop-blur-sm sm:gap-1 sm:px-2.5 sm:py-1 sm:text-xs">
+          <TrendingDown className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+          -{deal.discount_percent}%
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 p-3">
+          <div className="flex items-end justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1 text-white/70 text-[9px] tracking-wider mb-0.5 sm:text-[11px]">
+                <span className="font-mono">{deal.origin_code}</span>
+                <Plane className="h-2.5 w-2.5 rotate-45 sm:h-3 sm:w-3" />
+                <span className="font-mono">{deal.destination_code}</span>
+              </div>
+              <h3 className="font-heading text-[17px] leading-none tracking-wide text-white uppercase truncate sm:text-[22px]">
+                {deal.destination}
+              </h3>
+            </div>
+            <div className="text-right flex-shrink-0">
+              <div className="text-white/50 text-[9px] line-through font-mono sm:text-[11px]">
+                ¥{formatPrice(deal.original_price)}
+              </div>
+              <div className="text-[16px] font-heading leading-none text-white tracking-wide sm:text-[22px]">
+                ¥{formatPrice(deal.sale_price)}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="px-3 py-2.5 flex items-center justify-between">
-        <div>
-          <div className="text-[11px] text-zinc-400">{deal.airline_name}</div>
+
+      <div className="mt-auto px-2.5 py-2 flex items-center justify-between sm:px-3 sm:py-2.5">
+        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+          {airlineLogo && (
+            <img
+              src={airlineLogo}
+              alt={deal.airline_name}
+              className="h-4 w-4 flex-shrink-0 rounded-[3px] object-contain sm:h-[18px] sm:w-[18px]"
+              loading="lazy"
+            />
+          )}
+          <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-100 truncate tracking-tight sm:text-xs">
+            {deal.airline_name}
+          </span>
         </div>
-        <div className="text-right">
-          <div className="text-sm font-bold text-zinc-800">
-            ¥{formatPrice(deal.sale_price)}
-          </div>
-          <div className="flex items-center gap-0.5 justify-end">
-            <TrendingDown className="h-2.5 w-2.5 text-rose-500" />
-            <span className="text-[10px] text-rose-500 font-medium">
-              -{deal.discount_percent}%
-            </span>
-          </div>
-        </div>
+        <span className="flex-shrink-0 text-[10px] font-medium text-zinc-400 sm:text-[11px]">
+          {cityNameJa(deal.origin_code)}発
+        </span>
       </div>
     </Link>
   );
