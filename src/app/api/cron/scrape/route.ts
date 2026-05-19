@@ -14,6 +14,11 @@ import {
   MIN_DIGEST_INTERVAL_MS,
   DIGEST_MIN_SALES,
 } from "@/lib/newsletter/digest-state";
+import { listAlerts, removeAlertsByIds } from "@/lib/price-alerts/store";
+import {
+  sendPriceAlertEmails,
+  type AlertMatch,
+} from "@/lib/price-alerts/email";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
 
@@ -92,6 +97,50 @@ export async function GET(request: NextRequest) {
       newsletterStatus = "error";
     }
 
+    // 価格アラート: 現在の最安値とユーザー設定を照合し、達成したら通知
+    let priceAlertsSent = 0;
+    try {
+      const minByRoute = new Map<string, number>();
+      for (const r of results) {
+        for (const sale of r.sales) {
+          for (const route of sale.routes) {
+            const key = `${route.originCode}→${route.destinationCode}`;
+            const prev = minByRoute.get(key);
+            if (prev === undefined || route.price < prev) {
+              minByRoute.set(key, route.price);
+            }
+          }
+        }
+      }
+
+      const alerts = await listAlerts();
+      const matches: AlertMatch[] = [];
+      for (const a of alerts) {
+        const price = minByRoute.get(a.routeKey);
+        if (price !== undefined && price <= a.threshold) {
+          matches.push({
+            alertId: a.id,
+            email: a.email,
+            routeKey: a.routeKey,
+            originCode: a.originCode,
+            destinationCode: a.destinationCode,
+            threshold: a.threshold,
+            price,
+            dealId: a.dealId,
+          });
+        }
+      }
+
+      if (matches.length > 0) {
+        const delivered = await sendPriceAlertEmails(matches);
+        priceAlertsSent = delivered.length;
+        // ワンショット: 送信できたアラートは削除（毎日同じ通知を送らない）
+        await removeAlertsByIds(delivered.map((m) => m.alertId));
+      }
+    } catch (e) {
+      console.error("[CRON] 価格アラート処理に失敗:", e);
+    }
+
     const elapsed = Date.now() - startTime;
 
     const summary = {
@@ -110,6 +159,7 @@ export async function GET(request: NextRequest) {
         sent: newsletterSent,
         pending: newsletterPending,
       },
+      priceAlertsSent,
       generatedArticles,
       details: changes.map((c) => ({
         airline: c.airlineCode,

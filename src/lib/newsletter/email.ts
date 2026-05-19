@@ -1,19 +1,6 @@
-import { Resend } from "resend";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import { unsubscribeUrl } from "./token";
-
-/**
- * Resend クライアント。RESEND_API_KEY 未設定時は null を返し、
- * 呼び出し側はメール送信をスキップ（購読保存のみ）する。
- */
-function getResend(): Resend | null {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return null;
-  return new Resend(key);
-}
-
-const FROM = process.env.RESEND_FROM ?? "BEATRIP <onboarding@resend.dev>";
-const SITE = "https://beatrip.jp";
+import { getResend, MAIL_FROM as FROM, SITE_URL as SITE } from "@/lib/email/client";
 
 export async function sendWelcomeEmail(to: string): Promise<void> {
   const resend = getResend();
