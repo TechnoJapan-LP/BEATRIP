@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Bell, Check, Loader2 } from "lucide-react";
+import { useDictionary } from "@/components/i18n/locale-provider";
 
 export function NewsletterCTA() {
+  const t = useDictionary<Record<string, string>>("newsletter");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -34,10 +36,10 @@ export function NewsletterCTA() {
             <Check className="h-6 w-6 text-emerald-400" />
           </div>
           <h3 className="font-heading text-xl tracking-wide text-white uppercase sm:text-2xl">
-            登録完了
+            {t.successTitle}
           </h3>
           <p className="mt-2 text-sm text-zinc-400">
-            セール情報をお届けします。お楽しみに！
+            {t.successBody}
           </p>
         </div>
       </section>
@@ -53,12 +55,10 @@ export function NewsletterCTA() {
           </div>
 
           <h3 className="font-heading text-xl tracking-wide text-white uppercase sm:text-2xl">
-            セール情報を見逃さない
+            {t.title}
           </h3>
           <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
-            航空会社のセール開始をメールでお知らせ。
-            <br className="hidden sm:inline" />
-            最安値のタイミングを逃しません。
+            {t.body}
           </p>
 
           <form
@@ -68,7 +68,7 @@ export function NewsletterCTA() {
             <input
               type="email"
               required
-              placeholder="メールアドレス"
+              placeholder={t.placeholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="flex-1 rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-white placeholder:text-zinc-500 outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
@@ -81,19 +81,19 @@ export function NewsletterCTA() {
               {status === "loading" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                "無料で登録"
+                t.submit
               )}
             </button>
           </form>
 
           {status === "error" && (
             <p className="mt-3 text-xs text-rose-400">
-              登録に失敗しました。もう一度お試しください。
+              {t.error}
             </p>
           )}
 
           <p className="mt-4 text-[11px] text-zinc-600">
-            いつでも配信停止できます。スパムは送りません。
+            {t.note}
           </p>
         </div>
       </div>

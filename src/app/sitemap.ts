@@ -11,13 +11,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getActiveDeals(),
   ]);
 
+  // 日英両対応のページ（UI＋静的ページ）。hreflangで関連付ける。
+  const bilingual = (
+    path: string,
+    changeFrequency: "daily" | "monthly" | "yearly",
+    priority: number
+  ): MetadataRoute.Sitemap => {
+    const jaUrl = `${BASE_URL}${path}`;
+    const enUrl = `${BASE_URL}/en${path}`;
+    const languages = { ja: jaUrl, en: enUrl };
+    return [
+      {
+        url: jaUrl,
+        lastModified: new Date(),
+        changeFrequency,
+        priority,
+        alternates: { languages },
+      },
+      {
+        url: enUrl,
+        lastModified: new Date(),
+        changeFrequency,
+        priority: Math.round(priority * 90) / 100,
+        alternates: { languages },
+      },
+    ];
+  };
+
   const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: BASE_URL,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
-    },
+    ...bilingual("", "daily", 1),
     {
       url: `${BASE_URL}/airlines`,
       lastModified: new Date(),
@@ -30,30 +52,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 0.8,
     },
-    {
-      url: `${BASE_URL}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/faq`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/terms`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.2,
-    },
-    {
-      url: `${BASE_URL}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.2,
-    },
+    ...bilingual("/about", "monthly", 0.4),
+    ...bilingual("/faq", "monthly", 0.4),
+    ...bilingual("/terms", "yearly", 0.2),
+    ...bilingual("/privacy", "yearly", 0.2),
   ];
 
   const dealPages: MetadataRoute.Sitemap = deals.map((deal) => ({

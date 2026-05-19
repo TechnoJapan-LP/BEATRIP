@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
+import { useDictionary } from "@/components/i18n/locale-provider";
 
 type Airport = { code: string; name: string };
 
@@ -44,6 +45,7 @@ type Props = {
 
 export function FlightSearchForm({ deals, onClose }: Props) {
   const router = useRouter();
+  const t = useDictionary<Record<string, string>>("search");
   const internationalAirports = useMemo(
     () => getInternationalAirports(deals),
     [deals]
@@ -119,9 +121,9 @@ export function FlightSearchForm({ deals, onClose }: Props) {
   }
 
   const originDisplayName =
-    allAirports.find((a) => a.code === origin)?.name ?? "出発地を選択";
+    allAirports.find((a) => a.code === origin)?.name ?? t.selectOrigin;
   const destDisplayName =
-    allAirports.find((a) => a.code === destination)?.name ?? "行き先を選択";
+    allAirports.find((a) => a.code === destination)?.name ?? t.selectDestination;
 
   function renderDropdownList(
     selectedCode: string,
@@ -134,10 +136,10 @@ export function FlightSearchForm({ deals, onClose }: Props) {
           onClick={() => onSelect("")}
           className="flex w-full items-center gap-2 px-3 py-2 text-sm text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-700"
         >
-          すべて
+          {t.all}
         </button>
         <div className="px-3 pt-2 pb-1 text-[10px] font-medium uppercase tracking-wider text-zinc-300 dark:text-zinc-500">
-          国内
+          {t.domestic}
         </div>
         {domesticAirports.map((a) => (
           <button
@@ -157,7 +159,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
           </button>
         ))}
         <div className="px-3 pt-3 pb-1 text-[10px] font-medium uppercase tracking-wider text-zinc-300 dark:text-zinc-500">
-          海外
+          {t.international}
         </div>
         {internationalAirports.map((a) => (
           <button
@@ -191,10 +193,10 @@ export function FlightSearchForm({ deals, onClose }: Props) {
           </div>
           <div>
             <h2 className="font-heading text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-2xl">
-              フライト検索
+              {t.formTitle}
             </h2>
             <p className="text-[11px] text-zinc-400 sm:text-xs">
-              行き先と日程からセール中のフライトを探す
+              {t.formSubtitle}
             </p>
           </div>
         </div>
@@ -202,11 +204,11 @@ export function FlightSearchForm({ deals, onClose }: Props) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="検索を閉じる"
+            aria-label={t.closeAria}
             className="flex flex-shrink-0 items-center gap-1 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
           >
             <X className="h-3.5 w-3.5" />
-            閉じる
+            {t.close}
           </button>
         )}
       </div>
@@ -215,7 +217,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
         {/* Origin */}
         <div ref={originRef} className="relative lg:col-span-3">
           <label className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-zinc-400">
-            出発地
+            {t.origin}
           </label>
           <button
             type="button"
@@ -245,7 +247,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
             type="button"
             onClick={handleSwap}
             className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-400 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-zinc-600"
-            aria-label="出発地と行き先を入れ替え"
+            aria-label={t.swapAria}
           >
             <ArrowRightLeft className="h-3.5 w-3.5" />
           </button>
@@ -254,7 +256,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
         {/* Destination */}
         <div ref={destRef} className="relative lg:col-span-3">
           <label className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-zinc-400">
-            行き先
+            {t.destination}
           </label>
           <button
             type="button"
@@ -282,7 +284,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
         <div className="grid grid-cols-2 gap-2 sm:col-span-2 lg:col-span-4">
           <div>
             <label className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-zinc-400">
-              出発日
+              {t.departDate}
             </label>
             <div className="relative">
               <Calendar className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
@@ -296,7 +298,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
           </div>
           <div>
             <label className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-zinc-400">
-              帰国日
+              {t.returnDate}
             </label>
             <div className="relative">
               <Calendar className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
@@ -319,7 +321,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
             className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 dark:bg-zinc-100 px-6 text-sm font-bold text-white dark:text-zinc-900 transition-colors hover:bg-zinc-800 dark:hover:bg-zinc-200 active:bg-zinc-950"
           >
             <Search className="h-4 w-4" />
-            検索する
+            {t.submit}
           </button>
         </div>
       </div>
@@ -327,7 +329,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
       {/* Quick destination chips */}
       <div className="mt-3 flex flex-wrap gap-1.5">
         <span className="text-[10px] text-zinc-400 self-center mr-1">
-          人気:
+          {t.popular}
         </span>
         {internationalAirports.slice(0, 6).map((d) => (
           <button

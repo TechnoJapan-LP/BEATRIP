@@ -3,6 +3,7 @@
 import { Search, Sparkles, MapPin, Flame, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { useDictionary } from "@/components/i18n/locale-provider";
 
 export type FlightType = "all" | "domestic" | "international";
 
@@ -21,12 +22,6 @@ type DealFiltersProps = {
   onSearchChange: (v: string) => void;
 };
 
-const flightTabs: { value: FlightType; label: string }[] = [
-  { value: "all", label: "すべて" },
-  { value: "domestic", label: "国内線" },
-  { value: "international", label: "国際線" },
-];
-
 export function DealFilters({
   flightType,
   onFlightTypeChange,
@@ -41,6 +36,12 @@ export function DealFilters({
   searchQuery,
   onSearchChange,
 }: DealFiltersProps) {
+  const t = useDictionary<Record<string, string>>("filters");
+  const flightTabs: { value: FlightType; label: string }[] = [
+    { value: "all", label: t.all },
+    { value: "domestic", label: t.domestic },
+    { value: "international", label: t.international },
+  ];
   return (
     <div className="mb-6 flex flex-col gap-3 sm:mb-8 sm:gap-4">
       {/* 国内/国外 タブ */}
@@ -65,7 +66,7 @@ export function DealFilters({
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
         <Input
           data-search-input
-          placeholder="都市・空港・航空会社で検索..."
+          placeholder={t.searchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-9 h-10 bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus-visible:ring-zinc-300"
@@ -78,7 +79,7 @@ export function DealFilters({
           <Switch checked={showNew} onCheckedChange={onToggleNew} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Flame className="h-3.5 w-3.5 text-emerald-500" />
-            新着
+            {t.new}
           </span>
         </label>
 
@@ -86,7 +87,7 @@ export function DealFilters({
           <Switch checked={showEnding} onCheckedChange={onToggleEnding} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Clock className="h-3.5 w-3.5 text-amber-500" />
-            締切間近
+            {t.ending}
           </span>
         </label>
 
@@ -94,7 +95,7 @@ export function DealFilters({
           <Switch checked={showNiche} onCheckedChange={onToggleNiche} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Sparkles className="h-3.5 w-3.5" />
-            ニッチLCC
+            {t.niche}
           </span>
         </label>
 
@@ -105,7 +106,7 @@ export function DealFilters({
           />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <MapPin className="h-3.5 w-3.5" />
-            穴場
+            {t.hiddenGem}
           </span>
         </label>
       </div>

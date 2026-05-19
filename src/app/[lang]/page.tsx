@@ -15,8 +15,20 @@ import { CollapsibleSearch } from "@/components/search/collapsible-search";
 import { HeroDeal } from "@/components/deals/hero-deal";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { getActiveDeals } from "@/lib/deals/deal-service";
+import { getDictionary, hasLocale } from "./dictionaries";
+import { localizeHref } from "@/lib/i18n/locale";
 
-export default async function Home() {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  const locale = hasLocale(lang) ? lang : "ja";
+  const dict = await getDictionary(locale);
+  const t = dict.home;
+  const lh = (href: string) => localizeHref(href, locale);
+
   const [deals, articles] = await Promise.all([
     getActiveDeals(),
     getAllArticles(),
@@ -27,7 +39,10 @@ export default async function Home() {
     "@type": "WebSite",
     name: "BEATRIP",
     url: "https://beatrip.jp",
-    description: "航空券セール情報を自動収集。フライトディール、セール時期予測、価格推移を提供。",
+    description:
+      locale === "ja"
+        ? "航空券セール情報を自動収集。フライトディール、セール時期予測、価格推移を提供。"
+        : "Automatically tracking airline sales. Flight deals, sale-timing forecasts, and price history.",
     potentialAction: {
       "@type": "SearchAction",
       target: {
@@ -59,10 +74,10 @@ export default async function Home() {
         <section id="deals">
           <div className="mb-8">
             <h1 className="font-heading text-3xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-4xl lg:text-5xl">
-              Flash Deals
+              {t.flashDealsTitle}
             </h1>
             <p className="mt-1 text-sm text-zinc-500">
-              今すぐ予約できる限定フライトセール
+              {t.flashDealsSubtitle}
             </p>
           </div>
           <DealGrid deals={deals} upcomingSales={mockSaleEvents} />
@@ -73,8 +88,8 @@ export default async function Home() {
         <section>
           <DealCarousel
             deals={[...deals].sort((a, b) => b.discount_percent - a.discount_percent).slice(0, 8)}
-            title="Popular Deals"
-            subtitle="割引率の高い人気ディール"
+            title={t.popularTitle}
+            subtitle={t.popularSubtitle}
           />
         </section>
 
@@ -82,17 +97,17 @@ export default async function Home() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-3xl lg:text-4xl">
-                Articles
+                {t.articlesTitle}
               </h2>
               <p className="mt-1 text-sm text-zinc-500">
-                セール速報・攻略ガイド
+                {t.articlesSubtitle}
               </p>
             </div>
             <Link
-              href="/articles"
+              href={lh("/articles")}
               className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
             >
-              すべて見る
+              {dict.common.seeAll}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -107,17 +122,17 @@ export default async function Home() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-3xl lg:text-4xl">
-                Airlines
+                {t.airlinesTitle}
               </h2>
               <p className="mt-1 text-sm text-zinc-500">
-                航空会社セール情報
+                {t.airlinesSubtitle}
               </p>
             </div>
             <Link
-              href="/airlines"
+              href={lh("/airlines")}
               className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
             >
-              すべて見る
+              {dict.common.seeAll}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>

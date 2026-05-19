@@ -7,6 +7,10 @@ import { ChevronLeft, ChevronRight, Plane, TrendingDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode } from "@/data/airlines";
 import { cityNameJa } from "@/lib/airport-names";
+import {
+  useDictionary,
+  useLocalizedHref,
+} from "@/components/i18n/locale-provider";
 import type { DealSchema } from "@/data/deal-schema";
 
 const badgeConfig = {
@@ -23,10 +27,11 @@ function formatPrice(price: number) {
 function DealMiniCard({ deal }: { deal: DealSchema }) {
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
   const airlineLogo = getAirlineByCode(deal.airline_id)?.logo;
+  const lh = useLocalizedHref();
 
   return (
     <Link
-      href={`/deals/${deal.id}`}
+      href={lh(`/deals/${deal.id}`)}
       className="group flex-shrink-0 w-[72vw] max-w-[256px] flex flex-col rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 overflow-hidden transition-all duration-300 hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1 sm:w-64 sm:max-w-none"
     >
       <div className="relative h-32 overflow-hidden bg-zinc-200 dark:bg-zinc-800 sm:h-36">
@@ -110,6 +115,8 @@ export function DealCarousel({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const common = useDictionary<Record<string, string>>("common");
+  const lh = useLocalizedHref();
 
   function updateScrollState() {
     const el = scrollRef.current;
@@ -142,10 +149,10 @@ export function DealCarousel({
           )}
         </div>
         <Link
-          href="/"
+          href={lh("/")}
           className="text-xs font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
         >
-          すべて見る →
+          {common.seeAll} →
         </Link>
       </div>
       <div className="relative group/carousel">

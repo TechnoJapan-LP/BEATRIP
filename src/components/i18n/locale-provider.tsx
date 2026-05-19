@@ -1,8 +1,9 @@
 "use client";
 
 import { createContext, useContext } from "react";
+import { localizeHref, type Locale } from "@/lib/i18n/locale";
 
-export type Locale = "ja" | "en";
+export type { Locale };
 
 type LocaleContextValue = {
   locale: Locale;
@@ -46,14 +47,4 @@ export function useDictionary<T = Record<string, unknown>>(
 export function useLocalizedHref(): (href: string) => string {
   const locale = useLocale();
   return (href: string) => localizeHref(href, locale);
-}
-
-export function localizeHref(href: string, locale: Locale): string {
-  if (locale === "ja") return href;
-  // ハッシュ専用リンクや外部リンクはそのまま
-  if (href.startsWith("#") || /^https?:\/\//.test(href)) return href;
-  if (href === "/") return "/en";
-  if (href.startsWith("/#")) return `/en${href.slice(1)}`;
-  if (href.startsWith("/en/") || href === "/en") return href;
-  return `/en${href}`;
 }

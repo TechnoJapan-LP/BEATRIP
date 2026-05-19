@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { DealCard } from "./deal-card";
 import { UpcomingDealCard } from "./upcoming-deal-card";
 import { DealFilters, type FlightType } from "@/components/filters/deal-filters";
+import { useDictionary } from "@/components/i18n/locale-provider";
 import type { DealSchema } from "@/data/deal-schema";
 import type { SaleEvent } from "@/data/mock-deals";
 
@@ -26,6 +27,7 @@ export function DealGrid({
   deals: DealSchema[];
   upcomingSales?: SaleEvent[];
 }) {
+  const t = useDictionary<Record<string, string>>("filters");
   const [flightType, setFlightType] = useState<FlightType>("all");
   const [showNew, setShowNew] = useState(false);
   const [showEnding, setShowEnding] = useState(false);
@@ -146,16 +148,16 @@ export function DealGrid({
       {displayDeals.length === 0 && (
         <div className="py-12 text-center">
           <p className="text-lg text-zinc-400 dark:text-zinc-500">
-            該当するディールが見つかりませんでした
+            {t.noResults}
           </p>
           <p className="text-sm mt-1 text-zinc-400 dark:text-zinc-500">
-            フィルターを変更してお試しください
+            {t.noResultsHint}
           </p>
 
           {/* 人気ディール提案 */}
           <div className="mt-8">
             <p className="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-4">
-              人気のディール
+              {t.popularSuggestion}
             </p>
             <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
               {deals

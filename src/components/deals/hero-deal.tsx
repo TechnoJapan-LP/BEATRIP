@@ -1,8 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, TrendingDown, Flame } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
 import { cityNameJa } from "@/lib/airport-names";
+import {
+  useDictionary,
+  useLocalizedHref,
+} from "@/components/i18n/locale-provider";
 
 function formatPrice(p: number) {
   return new Intl.NumberFormat("ja-JP").format(p);
@@ -14,6 +20,8 @@ function formatPrice(p: number) {
  * 割引率が最大のディールを1枚だけ大きく表示。
  */
 export function HeroDeal({ deals }: { deals: DealSchema[] }) {
+  const t = useDictionary<Record<string, string>>("hero");
+  const lh = useLocalizedHref();
   if (deals.length === 0) return null;
   const deal = [...deals].sort(
     (a, b) => b.discount_percent - a.discount_percent
@@ -21,7 +29,7 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
 
   return (
     <Link
-      href={`/deals/${deal.id}`}
+      href={lh(`/deals/${deal.id}`)}
       className="group relative block overflow-hidden rounded-2xl ring-1 ring-zinc-200 dark:ring-zinc-800 shadow-sm transition-all hover:shadow-xl active:scale-[0.99] active:duration-100"
     >
       <div
@@ -41,7 +49,7 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
         {/* 上部: 今週の最大割引バッジ */}
         <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-rose-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white sm:left-6 sm:top-6 sm:text-xs">
           <Flame className="h-3.5 w-3.5" />
-          今週の最大割引
+          {t.badge}
         </div>
 
         {/* 下部: 情報 */}
@@ -79,7 +87,7 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
           </div>
 
           <div className="mt-4 hidden items-center gap-1.5 text-sm font-medium text-white/80 transition-colors group-hover:text-white sm:flex">
-            このディールを見る
+            {t.viewDeal}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </div>
         </div>

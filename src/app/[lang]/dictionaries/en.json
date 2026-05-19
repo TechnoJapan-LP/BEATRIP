@@ -36,6 +36,30 @@
     "noResultsHint": "Try changing the filters",
     "popularSuggestion": "Popular deals"
   },
+  "hero": {
+    "badge": "This week's biggest discount",
+    "viewDeal": "View this deal"
+  },
+  "search": {
+    "barTitle": "Search flights",
+    "barSubtitle": "Find sale fares by origin, destination, and dates",
+    "formTitle": "Flight search",
+    "formSubtitle": "Find flights on sale by destination and dates",
+    "close": "Close",
+    "closeAria": "Close search",
+    "all": "All",
+    "domestic": "Domestic",
+    "international": "International",
+    "origin": "Origin",
+    "destination": "Destination",
+    "selectOrigin": "Select origin",
+    "selectDestination": "Select destination",
+    "swapAria": "Swap origin and destination",
+    "departDate": "Departure date",
+    "returnDate": "Return date",
+    "submit": "Search",
+    "popular": "Popular:"
+  },
   "newsletter": {
     "title": "Never miss a sale",
     "body": "Get notified by email the moment an airline sale starts. Never miss the lowest-fare window.",
@@ -98,6 +122,41 @@
       { "q": "Can I book flights on BEATRIP?", "a": "You cannot book flights directly on BEATRIP. Clicking the 'Book' button takes you to the airline's official site or a partner booking site. Complete your booking on the destination site." },
       { "q": "Can I use it on a smartphone?", "a": "Yes. BEATRIP supports PWA (Progressive Web App), so you can add it to your smartphone's home screen and use it like an app. Select 'Add to Home Screen' from your browser menu." },
       { "q": "Is there a dark mode?", "a": "Yes. Click the sun/moon icon at the top right of the header to switch between light and dark mode. The setting is saved in your browser." }
+    ]
+  },
+  "terms": {
+    "metaTitle": "Terms of Service",
+    "metaDescription": "BEATRIP's Terms of Service. Please read them before using the service.",
+    "breadcrumb": "Terms",
+    "title": "Terms of Service",
+    "updated": "Terms of Service — Last updated: May 15, 2026",
+    "sections": [
+      { "title": "Article 1 (Application)", "content": "These Terms set out the conditions for using BEATRIP (the \"Service\"). Users shall use the Service in agreement with these Terms." },
+      { "title": "Article 2 (Service Content)", "content": "The Service automatically collects airline sale information and provides flash deals, sale-timing forecasts, price-history data, and similar information. The Service does not sell tickets or act as a booking agent; it is for informational purposes only." },
+      { "title": "Article 3 (Accuracy of Information)", "content": "Information on the Service is collected from airline official websites and similar sources, but its accuracy, completeness, and timeliness are not guaranteed. Airfares and seat availability constantly change, so always confirm the latest information on the airline's official site before booking." },
+      { "title": "Article 4 (Disclaimer)", "content": "We bear no responsibility for any flight bookings or purchases made by users based on information on the Service. Sale-forecast results are reference information only and do not guarantee that a sale will actually occur." },
+      { "title": "Article 5 (Prohibited Acts)", "content": "Users must not do any of the following when using the Service:\n- Reproduce or republish the Service's content without permission\n- Automated access such as scraping or crawling the Service\n- Interfere with the operation of the Service\n- Any other act we deem inappropriate" },
+      { "title": "Article 6 (Intellectual Property)", "content": "Intellectual property rights related to the Service belong to us or the rightful owners. Users may not reproduce, republish, or modify the Service's content without our prior written consent." },
+      { "title": "Article 7 (Changes / Suspension)", "content": "We may change the content of the Service, or suspend or terminate its provision, without prior notice to users." },
+      { "title": "Article 8 (Changes to Terms)", "content": "We may change these Terms as necessary. The revised Terms take effect from the time they are posted on the Service." }
+    ]
+  },
+  "privacy": {
+    "metaTitle": "Privacy Policy",
+    "metaDescription": "BEATRIP's Privacy Policy, explaining how personal information is handled.",
+    "breadcrumb": "Privacy",
+    "title": "Privacy Policy",
+    "updated": "Privacy Policy — Last updated: May 15, 2026",
+    "sections": [
+      { "title": "1. Information We Collect", "content": "The Service may collect the following information:\n- Access environment information such as browser type and OS\n- Access logs such as access date/time and pages viewed\n- Information entered by users when setting price alerts\n- User settings such as theme and favorites stored via cookies" },
+      { "title": "2. Purpose of Use", "content": "Collected information is used for the following purposes:\n- Providing, operating, and improving the Service\n- Improving user experience (retaining theme settings, favorites, etc.)\n- Providing the price-alert feature\n- Service improvement through access analysis\n- Preventing unauthorized access" },
+      { "title": "3. Information Storage", "content": "User settings such as favorites, price alerts, and theme are stored in your browser's local storage. This information is stored only on the user's device and is not sent to our servers." },
+      { "title": "4. Provision to Third Parties", "content": "We do not provide collected information to third parties without the user's consent, except as required by law." },
+      { "title": "5. Access Analysis Tools", "content": "The Service may use services such as Google Analytics for access analysis. These services use cookies to collect access information but do not include personally identifiable information. See each service's privacy policy for details." },
+      { "title": "6. Affiliate Links", "content": "The Service may contain affiliate links to airline official sites or partner booking sites. If a user makes a booking via these links, we may receive a referral commission." },
+      { "title": "7. Use of Cookies", "content": "The Service uses cookies to improve user experience. You can restrict cookie use via your browser settings, but some features may not work properly." },
+      { "title": "8. Changes to This Policy", "content": "We may change this Privacy Policy as necessary. The revised policy takes effect from the time it is posted on the Service." },
+      { "title": "9. Contact", "content": "For inquiries about this policy, please contact us via the contact form on the site." }
     ]
   }
 }

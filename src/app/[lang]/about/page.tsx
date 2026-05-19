@@ -3,41 +3,35 @@ import { Plane, BarChart3, Bell, Shield } from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
+import { getDictionary, hasLocale } from "../dictionaries";
+import { localizeHref } from "@/lib/i18n/locale";
 
-export const metadata: Metadata = {
-  title: "BEATRIPについて",
-  description:
-    "BEATRIPは航空券セール情報を自動収集し、フラッシュディール・セール時期予測・価格推移データを提供するフライトディールポータルです。",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = hasLocale(lang) ? lang : "ja";
+  const dict = await getDictionary(locale);
+  return {
+    title: dict.about.metaTitle,
+    description: dict.about.metaDescription,
+  };
+}
 
-const features = [
-  {
-    icon: Plane,
-    title: "セール情報の自動収集",
-    description:
-      "ANA・JAL・Peach・Jetstarなど、主要航空会社のセール情報を自動で収集。手動チェックの手間をなくします。",
-  },
-  {
-    icon: BarChart3,
-    title: "セール時期の予測",
-    description:
-      "過去のセール開催データをAIが分析し、次回セールの開催時期と確率を予測。最適なタイミングで予約できます。",
-  },
-  {
-    icon: Bell,
-    title: "価格アラート",
-    description:
-      "気になる路線の価格が設定した金額以下になったら即通知。チャンスを逃しません。",
-  },
-  {
-    icon: Shield,
-    title: "信頼性の高いデータ",
-    description:
-      "すべての情報は航空会社公式サイトから直接取得。正確で最新のセール情報をお届けします。",
-  },
-];
+const icons = [Plane, BarChart3, Bell, Shield];
 
-export default function AboutPage() {
+export default async function AboutPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+  const locale = hasLocale(lang) ? lang : "ja";
+  const dict = await getDictionary(locale);
+  const t = dict.about;
+
   return (
     <>
       <Header />
@@ -45,67 +39,72 @@ export default function AboutPage() {
         <div className="mb-6">
           <Breadcrumbs
             items={[
-              { label: "Home", href: "/" },
-              { label: "BEATRIPについて" },
+              { label: dict.common.home, href: localizeHref("/", locale) },
+              { label: t.breadcrumb },
             ]}
           />
         </div>
 
         <h1 className="font-heading text-3xl tracking-wide text-zinc-900 uppercase dark:text-zinc-100 sm:text-4xl">
-          About BEATRIP
+          {t.title}
         </h1>
         <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400 max-w-2xl">
-          BEATRIPは「最安値のフライトを見逃さない」をコンセプトに、航空券セール情報を自動収集・分析するフライトディールポータルです。
+          {t.intro}
         </p>
 
         <section className="mt-12">
           <h2 className="font-heading text-xl tracking-wide text-zinc-900 uppercase dark:text-zinc-100 sm:text-2xl mb-6">
-            Features
+            {t.featuresTitle}
           </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {features.map((feature) => (
-              <div
-                key={feature.title}
-                className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 mb-4">
-                  <feature.icon className="h-5 w-5" />
+            {t.features.map((feature, i) => {
+              const Icon = icons[i] ?? Plane;
+              return (
+                <div
+                  key={feature.title}
+                  className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6"
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 mb-4">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                    {feature.description}
+                  </p>
                 </div>
-                <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
         <section className="mt-12">
           <h2 className="font-heading text-xl tracking-wide text-zinc-900 uppercase dark:text-zinc-100 sm:text-2xl mb-4">
-            Mission
+            {t.missionTitle}
           </h2>
           <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-            <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-              航空券のセール情報は各航空会社のサイトやSNSに散在しており、見逃してしまうことが多くあります。BEATRIPはこれらの情報を一箇所に集約し、過去データに基づくセール予測を組み合わせることで、ユーザーが最も安いタイミングでフライトを予約できるようサポートします。
-            </p>
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-              私たちは航空券の直接販売は行っておらず、あくまで情報提供に特化したサービスです。ご予約の際は必ず各航空会社の公式サイトにてご確認ください。
-            </p>
+            {t.mission.map((para, i) => (
+              <p
+                key={i}
+                className={`text-sm leading-relaxed text-zinc-600 dark:text-zinc-400${i > 0 ? " mt-4" : ""}`}
+              >
+                {para}
+              </p>
+            ))}
           </div>
         </section>
 
         <section className="mt-12 mb-8">
           <h2 className="font-heading text-xl tracking-wide text-zinc-900 uppercase dark:text-zinc-100 sm:text-2xl mb-4">
-            Data Sources
+            {t.dataSourcesTitle}
           </h2>
           <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
             <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 mb-3">
-              セール情報は以下の航空会社公式サイトから取得しています：
+              {t.dataSourcesIntro}
             </p>
             <div className="flex flex-wrap gap-2">
-              {["ANA", "JAL", "Peach", "Jetstar Japan", "スクート", "エアアジア", "ZIPAIR", "Spring Japan", "Emirates", "Cathay Pacific"].map(
+              {["ANA", "JAL", "Peach", "Jetstar Japan", "Scoot", "AirAsia", "ZIPAIR", "Spring Japan", "Emirates", "Cathay Pacific"].map(
                 (name) => (
                   <span
                     key={name}

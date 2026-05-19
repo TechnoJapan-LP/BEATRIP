@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { FlightSearchForm } from "@/components/search/flight-search-form";
+import { useDictionary } from "@/components/i18n/locale-provider";
 import type { DealSchema } from "@/data/deal-schema";
 
 /**
@@ -12,6 +13,7 @@ import type { DealSchema } from "@/data/deal-schema";
  */
 export function CollapsibleSearch({ deals }: { deals: DealSchema[] }) {
   const [open, setOpen] = useState(false);
+  const t = useDictionary<Record<string, string>>("search");
 
   if (open) {
     return <FlightSearchForm deals={deals} onClose={() => setOpen(false)} />;
@@ -27,10 +29,10 @@ export function CollapsibleSearch({ deals }: { deals: DealSchema[] }) {
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-bold text-zinc-900 dark:text-zinc-100">
-          フライトを検索
+          {t.barTitle}
         </span>
         <span className="block text-[11px] text-zinc-400">
-          出発地・行き先・日程からセール便を探す
+          {t.barSubtitle}
         </span>
       </span>
       <ChevronDown className="h-4 w-4 flex-shrink-0 text-zinc-400" />
