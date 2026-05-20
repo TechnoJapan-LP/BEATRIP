@@ -171,6 +171,19 @@ function withReliableAffiliate(deals: DealSchema[]): DealSchema[] {
   });
 }
 
+/**
+ * 目的地コードに応じた都市別画像を常に適用する。
+ * モック経路（Store空・エラー時のフォールバック）はモック側に古い任意の
+ * Unsplash URLが残っており、都市と一致しない問題があった。スクレイプ経路の
+ * convertToDeal でも同じ関数を使っているため、ここで再適用しても無害（冪等）。
+ */
+function withDestinationImages(deals: DealSchema[]): DealSchema[] {
+  return deals.map((d) => ({
+    ...d,
+    image_url: getDestinationImage(d.destination_code),
+  }));
+}
+
 export async function getActiveDeals(): Promise<DealSchema[]> {
   try {
     const allSales = await loadAllSales();
@@ -178,7 +191,7 @@ export async function getActiveDeals(): Promise<DealSchema[]> {
 
     if (airlineCodes.length === 0) {
       console.log("[DealService] Store is empty, using mock data");
-      return withReliableAffiliate(mockDeals);
+      return withDestinationImages(withReliableAffiliate(mockDeals));
     }
 
     const now = new Date();
@@ -201,14 +214,14 @@ export async function getActiveDeals(): Promise<DealSchema[]> {
 
     if (deals.length === 0) {
       console.log("[DealService] No active deals in store, using mock data");
-      return withReliableAffiliate(mockDeals);
+      return withDestinationImages(withReliableAffiliate(mockDeals));
     }
 
     console.log(`[DealService] Loaded ${deals.length} deals from store`);
-    return deals;
+    return withDestinationImages(deals);
   } catch (error) {
     console.error("[DealService] Error loading from store, using mock data:", error);
-    return withReliableAffiliate(mockDeals);
+    return withDestinationImages(withReliableAffiliate(mockDeals));
   }
 }
 
