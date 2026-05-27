@@ -22,6 +22,39 @@ const nextConfig: NextConfig = {
   },
   // 本番ソースマップ無効でJSを軽量化（gzip/brotliはVercelが自動）
   productionBrowserSourceMaps: false,
+  // ── セキュリティヘッダ ──
+  // クリックジャッキング・MIME sniffing・リファラー漏洩等を防ぐ。
+  // CSP は Next.js のインラインスクリプト＋複数の第三者(GA/Vercel等)との
+  // 兼ね合いで誤爆しやすいため、まずは"絶対安全"な4種を有効化する。
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // HTTPS強制（既にHTTPSなのを継続。Vercelが自動TLS）
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          // iframe埋め込み禁止（クリックジャッキング対策）
+          { key: "X-Frame-Options", value: "DENY" },
+          // MIME sniffing 無効化
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          // 外部遷移時のリファラを抑制
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+          // ブラウザ機能の自動許可を最小化
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

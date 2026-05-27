@@ -1,0 +1,37 @@
+# GitHub Dependabot 設定
+# 依存ライブラリの既知脆弱性を週次で検知し、PRを自動作成する。
+# 詳細: https://docs.github.com/code-security/dependabot/dependabot-version-updates
+
+version: 2
+updates:
+  # npm 依存（Next.js本体・Resend・Upstash 等）
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Tokyo"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    # マイナー/パッチは1つのPRにまとめる。メジャーは個別PR。
+    groups:
+      patch-and-minor:
+        update-types:
+          - "patch"
+          - "minor"
+    # セキュリティ更新は最優先（独立して即PR）
+    versioning-strategy: "increase"
+
+  # GitHub Actions（将来CIを追加した時のため）
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Tokyo"
+    labels:
+      - "dependencies"
+      - "github-actions"
