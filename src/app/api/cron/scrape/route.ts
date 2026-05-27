@@ -161,17 +161,25 @@ export async function GET(request: NextRequest) {
       },
       priceAlertsSent,
       generatedArticles,
-      details: changes.map((c) => ({
-        airline: c.airlineCode,
-        hasChanges: c.hasChanges,
-        newSales: c.newSales.map((s) => s.saleName),
-        endedSales: c.endedSales.map((s) => s.saleName),
-        priceChanges: c.priceChanges.map((p) => ({
-          route: p.routeKey,
-          from: p.oldPrice,
-          to: p.newPrice,
-        })),
-      })),
+      details: changes.map((c) => {
+        // 生スクレイプ結果（results）と差分（changes）を突き合わせて、
+        // 各社が「何件拾ったか／成功失敗／エラー要因」まで可視化する。
+        const raw = results.find((r) => r.airlineCode === c.airlineCode);
+        return {
+          airline: c.airlineCode,
+          scraped: raw?.sales.length ?? 0,
+          success: raw?.success ?? false,
+          error: raw?.error,
+          hasChanges: c.hasChanges,
+          newSales: c.newSales.map((s) => s.saleName),
+          endedSales: c.endedSales.map((s) => s.saleName),
+          priceChanges: c.priceChanges.map((p) => ({
+            route: p.routeKey,
+            from: p.oldPrice,
+            to: p.newPrice,
+          })),
+        };
+      }),
       timestamp: new Date().toISOString(),
     };
 
