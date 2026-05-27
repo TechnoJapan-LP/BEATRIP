@@ -36,6 +36,8 @@ export function PriceAlertForm({ routeKey, currentPrice, dealId }: Props) {
   const defaultThreshold = Math.round(currentPrice * 0.8);
   const [threshold, setThreshold] = useState(defaultThreshold);
   const [email, setEmail] = useState("");
+  // Bot対策ハニーポット
+  const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<
     "idle" | "loading" | "set" | "confirm" | "error"
   >("idle");
@@ -61,7 +63,7 @@ export function PriceAlertForm({ routeKey, currentPrice, dealId }: Props) {
       const res = await fetch("/api/price-alerts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, dealId, routeKey, threshold }),
+        body: JSON.stringify({ email, dealId, routeKey, threshold, website }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -165,6 +167,17 @@ export function PriceAlertForm({ routeKey, currentPrice, dealId }: Props) {
             >
               通知先メールアドレス
             </label>
+            {/* Bot対策ハニーポット: 人間に見せず、Botが埋めたら server で弾く */}
+            <input
+              type="text"
+              name="website"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
             <input
               id="price-alert-email"
               type="email"

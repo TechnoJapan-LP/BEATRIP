@@ -1,14 +1,41 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addAlert, removeAlertByEmailDeal } from "@/lib/price-alerts/store";
+import {
+  checkRateLimit,
+  clientId,
+  isHoneypotTripped,
+} from "@/lib/rate-limit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
+  // レート制限（IP単位、1時間に20回まで）
+  const id = clientId(request);
+  const limit = await checkRateLimit("priceAlerts", id);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: "リクエストが多すぎます。しばらくしてからお試しください。" },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(
+            Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000))
+          ),
+        },
+      }
+    );
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  // Bot対策ハニーポット
+  if (isHoneypotTripped(body)) {
+    return NextResponse.json({ success: true, id: "ok" });
   }
 
   const email = typeof body.email === "string" ? body.email.trim() : "";

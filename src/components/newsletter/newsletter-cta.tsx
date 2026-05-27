@@ -7,6 +7,8 @@ import { useDictionary } from "@/components/i18n/locale-provider";
 export function NewsletterCTA() {
   const t = useDictionary<Record<string, string>>("newsletter");
   const [email, setEmail] = useState("");
+  // Bot対策: 人間には非表示、Botは埋めがちなハニーポット
+  const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -19,7 +21,7 @@ export function NewsletterCTA() {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, website }),
       });
       if (!res.ok) throw new Error("request failed");
       setStatus("success");
@@ -65,6 +67,17 @@ export function NewsletterCTA() {
             onSubmit={handleSubmit}
             className="mt-6 flex flex-col gap-2 sm:flex-row sm:gap-3"
           >
+            {/* Bot対策ハニーポット: 人間に見せず、Botが埋めたら server で弾く */}
+            <input
+              type="text"
+              name="website"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
             <input
               type="email"
               required
