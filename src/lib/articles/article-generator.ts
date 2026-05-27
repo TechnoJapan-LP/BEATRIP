@@ -5,6 +5,9 @@ import type { PriceChange } from "@/lib/store/sale-store";
 import type { Article } from "@/data/mock-articles";
 import { deals } from "@/data/mock-deals-v2";
 import { cityNameJa } from "@/lib/airport-names";
+import { getKV } from "@/lib/store/kv";
+
+const KV_ARTICLES_KEY = "beatrip:articles:generated";
 
 function findDealImage(airlineCode: string, routes: { originCode: string; destinationCode: string }[]): string {
   for (const route of routes) {
@@ -140,7 +143,18 @@ async function ensureDir() {
 }
 
 export async function loadGeneratedArticles(): Promise<Article[]> {
-  // /tmpを先に読み、なければビルド時同梱のデータから
+  // 本番（Vercel）では Redis がSource of truth。/tmpはインスタンス間で
+  // 共有されないため、Cronで生成しても次のリクエストが見えない問題があった。
+  const kv = getKV();
+  if (kv) {
+    try {
+      const fromKv = await kv.get<Article[]>(KV_ARTICLES_KEY);
+      if (fromKv && fromKv.length > 0) return fromKv;
+    } catch (e) {
+      console.warn("[Articles] KV read failed, falling back to FS:", e);
+    }
+  }
+  // KV未設定/未投入時のフォールバック: /tmp → ビルド時同梱
   for (const dir of [DATA_DIR, READ_DIR]) {
     try {
       const raw = await readFile(join(dir, "generated.json"), "utf-8");
@@ -153,6 +167,15 @@ export async function loadGeneratedArticles(): Promise<Article[]> {
 }
 
 async function saveGeneratedArticles(articles: Article[]) {
+  const kv = getKV();
+  if (kv) {
+    try {
+      await kv.set(KV_ARTICLES_KEY, articles);
+    } catch (e) {
+      console.warn("[Articles] KV persist failed:", e);
+    }
+  }
+  // ローカル/フォールバック用に /tmp にも書く（KV未設定時に有効）
   try {
     await ensureDir();
     await writeFile(
@@ -160,7 +183,7 @@ async function saveGeneratedArticles(articles: Article[]) {
       JSON.stringify(articles, null, 2)
     );
   } catch (e) {
-    console.warn("[Articles] Failed to persist:", e);
+    if (!kv) console.warn("[Articles] Failed to persist:", e);
   }
 }
 
