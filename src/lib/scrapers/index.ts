@@ -1,8 +1,8 @@
 import { airlines } from "@/data/airlines";
 import { MockScraper } from "./mock-scraper";
-import { TraicyScraper } from "./traicy-scraper";
+import { TraicyScraper, AviationWireAllScraper } from "./traicy-scraper";
 import { AirlinePageScraper } from "./airline-page-scraper";
-import type { ScrapeResult } from "./types";
+import type { ScrapeResult, AirlineSale } from "./types";
 import type { AirlineScraper } from "./scraper-base";
 
 /**
@@ -105,20 +105,25 @@ export async function scrapeAirline(code: string): Promise<ScrapeResult> {
 export async function scrapeAllAirlines(): Promise<ScrapeResult[]> {
   const mode = getMode();
 
-  // hybridモードでは Traicy RSS + 各社ページを並列実行
+  // hybridモードでは 複数RSS + 各社ページを並列実行
   if (mode === "hybrid") {
-    const [traicyResults, ...airlineResults] = await Promise.allSettled([
-      // Traicy RSS で一括取得（全航空会社分）— 主力ソース、最大15秒
-      withTimeout(scrapeViaTraicy(), 15000, [] as ScrapeResult[]),
-      // 各航空会社の公式ページも並列スクレイプ（各社10秒で打ち切り済み）
-      ...airlines.map((a) => scrapeAirline(a.code)),
-    ]);
+    const [traicyResults, aviationWireResults, ...airlineResults] =
+      await Promise.allSettled([
+        // Traicy RSS — 主力ソース、最大15秒
+        withTimeout(scrapeViaTraicy(), 15000, [] as ScrapeResult[]),
+        // Aviation Wire RSS — 補助ソース、最大15秒
+        withTimeout(scrapeViaAviationWire(), 15000, [] as ScrapeResult[]),
+        // 各航空会社の公式ページも並列スクレイプ（各社10秒で打ち切り済み）
+        ...airlines.map((a) => scrapeAirline(a.code)),
+      ]);
 
     const results: ScrapeResult[] = [];
 
-    // Traicy結果をマージ
     if (traicyResults.status === "fulfilled") {
       results.push(...traicyResults.value);
+    }
+    if (aviationWireResults.status === "fulfilled") {
+      results.push(...aviationWireResults.value);
     }
 
     // 各社ページの結果をマージ（重複はIDで排除）
@@ -148,12 +153,22 @@ export async function scrapeAllAirlines(): Promise<ScrapeResult[]> {
  * Traicy RSS から全航空会社のセールを一括取得
  */
 async function scrapeViaTraicy(): Promise<ScrapeResult[]> {
-  const scraper = new TraicyScraper("ALL");
-  const result = await scraper.scrape();
+  return splitByAirline(await new TraicyScraper("ALL").scrape());
+}
 
-  // 航空会社コードごとに分割
+/**
+ * Aviation Wire RSS から全航空会社のセールを一括取得
+ */
+async function scrapeViaAviationWire(): Promise<ScrapeResult[]> {
+  return splitByAirline(await new AviationWireAllScraper().scrape());
+}
+
+/** スクレイプ結果（全航空会社混在）を航空会社コードごとに分割 */
+function splitByAirline(
+  result: ScrapeResult
+): ScrapeResult[] {
   const byAirline: Record<string, ScrapeResult> = {};
-  for (const sale of result.sales) {
+  for (const sale of (result.sales as AirlineSale[])) {
     if (!byAirline[sale.airlineCode]) {
       byAirline[sale.airlineCode] = {
         airlineCode: sale.airlineCode,
@@ -164,7 +179,6 @@ async function scrapeViaTraicy(): Promise<ScrapeResult[]> {
     }
     byAirline[sale.airlineCode].sales.push(sale);
   }
-
   return Object.values(byAirline);
 }
 

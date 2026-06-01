@@ -88,19 +88,35 @@ type RSSItem = {
   pubDate: string;
 };
 
+export type RssFeedConfig = {
+  /** フィードURL */
+  url: string;
+  /** スクレイプソース名（ログ・モニタ用） */
+  sourceName: string;
+  /** ID生成用プレフィクス（フィード間でのID衝突を避ける） */
+  idPrefix: string;
+};
+
+const DEFAULT_FEED: RssFeedConfig = {
+  url: "https://www.traicy.com/category/sale/feed/",
+  sourceName: "Traicy セール情報RSS",
+  idPrefix: "traicy",
+};
+
 export class TraicyScraper extends AirlineScraper {
   private targetAirlineCode: string;
+  protected feedConfig: RssFeedConfig;
 
-  constructor(airlineCode: string) {
+  constructor(airlineCode: string, feedConfig: RssFeedConfig = DEFAULT_FEED) {
     super(airlineCode, [
       {
-        // セール・特別運賃情報専用カテゴリRSS
-        name: "Traicy セール情報RSS",
-        url: "https://www.traicy.com/category/sale/feed/",
+        name: feedConfig.sourceName,
+        url: feedConfig.url,
         type: "rss",
       },
     ]);
     this.targetAirlineCode = airlineCode;
+    this.feedConfig = feedConfig;
   }
 
   protected async fetchSales(): Promise<AirlineSale[]> {
@@ -237,7 +253,7 @@ export class TraicyScraper extends AirlineScraper {
     const saleName = this.extractSaleName(item.title, airlineName);
 
     return {
-      id: this.generateId(["traicy", airlineCode, dates.startDate]),
+      id: this.generateId([this.feedConfig.idPrefix, airlineCode, dates.startDate]),
       airlineCode,
       airlineName,
       saleName,
@@ -498,5 +514,20 @@ function addDays(dateStr: string, days: number): string {
 export class TraicyAllScraper extends TraicyScraper {
   constructor() {
     super("ALL");
+  }
+}
+
+/**
+ * Aviation Wire RSS（航空業界ニュース）。Traicy より幅広く航空関連ニュースを
+ * 配信しており、セールキーワードでフィルタした上で同じパーサで処理する。
+ * 完全な路線/価格抽出に失敗した記事は静かにスキップされる（routes=0で null）。
+ */
+export class AviationWireAllScraper extends TraicyScraper {
+  constructor() {
+    super("ALL", {
+      url: "https://www.aviationwire.jp/feed",
+      sourceName: "Aviation Wire RSS",
+      idPrefix: "aviationwire",
+    });
   }
 }

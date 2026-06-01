@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loadAllSales } from "@/lib/store/sale-store";
-import { generateArticlesFromChanges } from "@/lib/articles/article-generator";
+import {
+  generateArticlesFromChanges,
+  generateAndSaveWeeklyRoundup,
+} from "@/lib/articles/article-generator";
+import type { AirlineSale } from "@/lib/scrapers/types";
 
 /**
  * 管理用エンドポイント：現在ストアにあるアクティブセールから記事を再生成する。
@@ -60,9 +64,31 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    // 週次まとめ記事も同時に生成（ISO週単位でslug一意、同週内は再生成スキップ）
+    let weeklyRoundup: "generated" | "already_exists" | "no_sales" | "error" =
+      "no_sales";
+    try {
+      const allRecentSales: AirlineSale[] = Object.values(allSales).flatMap(
+        (d) =>
+          d.sales.filter((s) => {
+            if (!s.scrapedAt) return false;
+            return now - new Date(s.scrapedAt).getTime() <= SIXTY_DAYS;
+          })
+      );
+      if (allRecentSales.length > 0) {
+        const article = await generateAndSaveWeeklyRoundup(allRecentSales);
+        weeklyRoundup = article ? "generated" : "already_exists";
+        if (article) totalGenerated += 1;
+      }
+    } catch (e) {
+      console.error("[regenerate] weekly roundup failed:", e);
+      weeklyRoundup = "error";
+    }
+
     return NextResponse.json({
       success: true,
       totalGenerated,
+      weeklyRoundup,
       perAirline,
       timestamp: new Date().toISOString(),
     });

@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { scrapeAllAirlines, scrapeAirline } from "@/lib/scrapers";
 import { saveSalesAndDetectChanges } from "@/lib/store/sale-store";
 import { dispatchNotifications } from "@/lib/notifications/notifier";
-import { generateArticlesFromChanges } from "@/lib/articles/article-generator";
+import {
+  generateArticlesFromChanges,
+  generateAndSaveWeeklyRoundup,
+} from "@/lib/articles/article-generator";
 import { listSubscribers } from "@/lib/newsletter/store";
 import { sendSaleDigest } from "@/lib/newsletter/email";
 import {
@@ -54,6 +57,23 @@ export async function GET(request: NextRequest) {
       if (!change.hasChanges) continue;
       const newArticles = await generateArticlesFromChanges(change);
       generatedArticles += newArticles.length;
+    }
+
+    // 週次まとめ記事: 今あるアクティブセール全体を1本にまとめる。
+    // ISO週番号で slug 一意なので、同じ週に何度叩いても dedup される。
+    let weeklyRoundup = "skipped";
+    try {
+      const allCurrentSales: AirlineSale[] = results.flatMap((r) => r.sales);
+      const roundup = await generateAndSaveWeeklyRoundup(allCurrentSales);
+      if (roundup) {
+        weeklyRoundup = "generated";
+        generatedArticles += 1;
+      } else {
+        weeklyRoundup = allCurrentSales.length === 0 ? "no_sales" : "already_exists";
+      }
+    } catch (e) {
+      console.error("[CRON] 週次まとめ記事生成に失敗:", e);
+      weeklyRoundup = "error";
     }
 
     // ニュースレター: 新着セールを累積し、週1かつ累積4件以上のときだけ配信
@@ -161,6 +181,7 @@ export async function GET(request: NextRequest) {
       },
       priceAlertsSent,
       generatedArticles,
+      weeklyRoundup,
       details: changes.map((c) => {
         // 生スクレイプ結果（results）と差分（changes）を突き合わせて、
         // 各社が「何件拾ったか／成功失敗／エラー要因」まで可視化する。

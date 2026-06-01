@@ -220,3 +220,26 @@ export async function generateArticlesFromChanges(changes: {
 
   return newArticles;
 }
+
+/**
+ * 今あるアクティブセールから「今週のセールまとめ」記事を1本生成する。
+ * slug は ISO 週番号で一意なので、同じ週に何度叩いても dedup される。
+ * 週が変われば新しい slug になり、サイトに新着として並ぶ。
+ *
+ * sales が空、または既に同週の記事が存在する場合は null を返す。
+ */
+export async function generateAndSaveWeeklyRoundup(
+  sales: AirlineSale[]
+): Promise<Article | null> {
+  // 動的importで循環の心配をなくしつつロジックは別モジュールに分離
+  const { buildWeeklyRoundupArticle } = await import("./weekly-roundup-generator");
+  const article = buildWeeklyRoundupArticle(sales);
+  if (!article) return null;
+
+  const existing = await loadGeneratedArticles();
+  if (existing.some((a) => a.slug === article.slug)) return null;
+
+  const updated = [article, ...existing].slice(0, 200);
+  await saveGeneratedArticles(updated);
+  return article;
+}
