@@ -20,34 +20,43 @@ export async function GET(request: NextRequest) {
 
   try {
     const allSales = await loadAllSales();
-    const now = new Date();
+    const now = Date.now();
+    // 「最近60日以内に取得したセール」は予約期限切れでも記事化する。
+    // 記事は速報的価値があり、期限切れでも振り返り・予測材料になるため、
+    // "active" ではなく "recent" を採用する。
+    const SIXTY_DAYS = 60 * 24 * 60 * 60 * 1000;
 
     let totalGenerated = 0;
-    const perAirline: Array<{ airline: string; generated: number; salesConsidered: number }> = [];
+    const perAirline: Array<{ airline: string; generated: number; salesConsidered: number; totalInStore: number }> = [];
 
     for (const [code, data] of Object.entries(allSales)) {
-      // 期限切れ・非アクティブを除外して新着候補として渡す
-      const activeSales = data.sales.filter((s) => {
-        if (!s.isActive) return false;
-        const deadline = new Date(s.bookingDeadline);
-        return deadline >= now;
+      const recentSales = data.sales.filter((s) => {
+        if (!s.scrapedAt) return false;
+        const scrapedAt = new Date(s.scrapedAt).getTime();
+        return now - scrapedAt <= SIXTY_DAYS;
       });
 
-      if (activeSales.length === 0) {
-        perAirline.push({ airline: code, generated: 0, salesConsidered: 0 });
+      if (recentSales.length === 0) {
+        perAirline.push({
+          airline: code,
+          generated: 0,
+          salesConsidered: 0,
+          totalInStore: data.sales.length,
+        });
         continue;
       }
 
       const generated = await generateArticlesFromChanges({
         airlineCode: code,
-        newSales: activeSales,
+        newSales: recentSales,
         priceChanges: [], // スナップショットなので値下げ系は対象外
       });
       totalGenerated += generated.length;
       perAirline.push({
         airline: code,
         generated: generated.length,
-        salesConsidered: activeSales.length,
+        salesConsidered: recentSales.length,
+        totalInStore: data.sales.length,
       });
     }
 
