@@ -22,6 +22,7 @@ import { BookingButton } from "@/components/deals/booking-button";
 import { ShareButtons } from "@/components/deals/share-buttons";
 import { PriceAlertForm } from "@/components/deals/price-alert-form";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
+import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { DealCarousel } from "@/components/deals/deal-carousel";
 import { FavoriteButton } from "@/components/deals/favorite-button";
 import { CountdownTimer } from "@/components/deals/countdown-timer";
@@ -559,6 +560,9 @@ export default async function DealDetailPage({ params }: Props) {
             />
           </div>
         )}
+
+        {/* ディール詳細末尾CTA: 興味は高いが今は予約しない層をリピート化 */}
+        <NewsletterCTA />
       </main>
       <SiteFooter />
 

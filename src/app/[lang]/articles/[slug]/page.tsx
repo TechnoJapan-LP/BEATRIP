@@ -16,6 +16,7 @@ import {
 import { deals } from "@/data/mock-deals-v2";
 import { airlines } from "@/data/airlines";
 import { SiteFooter } from "@/components/site-footer";
+import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -246,6 +247,8 @@ export default async function ArticleDetailPage({ params }: Props) {
             <div className="rounded-xl border border-zinc-100 bg-white p-4 sm:p-6 lg:p-8">
               {renderMarkdown(article.body)}
             </div>
+            {/* 記事末尾CTA: 読了直後＝最もエンゲージメントが高い瞬間 */}
+            <NewsletterCTA />
           </article>
 
           <aside className="space-y-6">
