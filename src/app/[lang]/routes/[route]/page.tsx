@@ -112,6 +112,54 @@ export default async function RoutePage({ params }: Props) {
   const origin = routeDeals[0].origin;
   const dest = routeDeals[0].destination;
   const cheapest = Math.min(...routeDeals.map((d) => d.sale_price));
+  const avgPrice = Math.round(
+    routeDeals.reduce((s, d) => s + d.sale_price, 0) / routeDeals.length
+  );
+  const airlinesOnRoute = Array.from(
+    new Set(routeDeals.map((d) => d.airline_name))
+  );
+
+  // FAQ — 路線特有の検索意図にピンポイントで答えてリッチ結果を狙う
+  const faqs: { q: string; a: string }[] = [];
+  faqs.push({
+    q: `${origin}→${dest}の航空券はいくらから買えますか？`,
+    a: `BEATRIPで現在掲載中の${origin}→${dest}の最安値は¥${cheapest.toLocaleString()}（平均¥${avgPrice.toLocaleString()}）です。価格は時期・予約タイミング・残席数で変動します。本ページのセール一覧から最新の価格をご確認ください。`,
+  });
+  if (airlinesOnRoute.length > 0) {
+    faqs.push({
+      q: `${origin}→${dest}にはどの航空会社が就航していますか？`,
+      a: `現在BEATRIPに掲載中の${origin}→${dest}のセールは ${airlinesOnRoute.join("、")} の${airlinesOnRoute.length}社で確認できます。各社の運賃・キャビン・予約期限はセール一覧で比較できます。`,
+    });
+  }
+  if (prediction && prediction.best_month_name) {
+    faqs.push({
+      q: `${origin}→${dest}を安く買うなら何月が良いですか？`,
+      a: `過去の${origin}→${dest}の運賃データから、${prediction.best_month_name}の出発が最も安い傾向（平均より約${prediction.avg_saving_percent}%安）です。出発の2〜3ヶ月前の予約も安く取るコツです。`,
+    });
+  } else {
+    faqs.push({
+      q: `${origin}→${dest}はいつ予約するのが安いですか？`,
+      a: `航空券は一般に出発の2〜3ヶ月前の予約が最も安くなりやすい傾向です。BEATRIPでは新着セールを毎日収集しており、${origin}→${dest}の値下げ通知を受け取りたい場合は本ページの「価格アラート」をご利用ください。`,
+    });
+  }
+  faqs.push({
+    q: `${origin}→${dest}のセールはどれくらいの頻度で出ますか？`,
+    a: `各航空会社の四半期セール・タイムセール・サマー/ウィンターセール等で年に複数回出ます。最新の開催状況は本ページのセール一覧、過去履歴は各航空会社の「セール時期・実績」ページ、新着通知はBEATRIPニュースレターでお届けします。`,
+  });
+  faqs.push({
+    q: `${origin}→${dest}のセールを見逃さないには？`,
+    a: `BEATRIPの無料ニュースレターに登録すると、${origin}→${dest}を含む各路線の新着セールを週次でお届けします。特定価格以下になったら通知してほしい場合は、各ディール詳細ページの「価格アラート」もご利用いただけます。`,
+  });
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
 
   // ItemList 構造化データ（路線のセール一覧）
   const jsonLd = {
@@ -145,6 +193,10 @@ export default async function RoutePage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Header />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
@@ -248,6 +300,32 @@ export default async function RoutePage({ params }: Props) {
                   </div>
                 </Link>
               ))}
+
+            {/* FAQ — 路線の検索意図に答え、FAQPage構造化データでリッチ結果を狙う */}
+            <section className="mt-8 pt-8 border-t border-zinc-100 dark:border-zinc-800">
+              <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
+                よくある質問
+              </h2>
+              <div className="space-y-3">
+                {faqs.map((faq, i) => (
+                  <details
+                    key={i}
+                    className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden"
+                    open={i === 0}
+                  >
+                    <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-bold text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                      <span>{faq.q}</span>
+                      <span className="ml-3 text-zinc-400 transition-transform group-open:rotate-180">▼</span>
+                    </summary>
+                    <div className="px-5 pb-4 pt-1">
+                      <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
+                        {faq.a}
+                      </p>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </section>
           </div>
 
           <div className="space-y-6">
