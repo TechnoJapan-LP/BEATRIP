@@ -38,22 +38,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const origin = routeDeals[0]?.origin ?? parsed.origin;
   const dest = routeDeals[0]?.destination ?? parsed.destination;
 
+  // GSCで「{出発} {目的地} 飛行機」需要を確認。タイトルに"飛行機"も含めて取りに行く。
+  const title = `${origin}→${dest} 格安航空券・飛行機セール${cheapest ? `（最安¥${cheapest.toLocaleString()}〜）` : ""} | BEATRIP`;
+  const description = `${origin}から${dest}への格安フライトセール最新情報。${cheapest ? `最安¥${cheapest.toLocaleString()}〜、` : ""}複数航空会社の価格比較・次回セール時期の予測・過去最安値まで。`;
+
   return {
-    title: `${origin}（${parsed.origin}）→${dest}（${parsed.destination}）格安航空券セール`,
-    description: `${origin}から${dest}への格安フライトセール情報。${cheapest ? `最安¥${cheapest.toLocaleString()}〜。` : ""}複数航空会社の価格を比較して最安値を見つけよう。航空券セール時期の予測も。`,
+    title,
+    description,
     keywords: [
+      `${origin} ${dest} 飛行機`,
       `${origin} ${dest} 格安`,
       `${origin} ${dest} 航空券`,
       `${origin} ${dest} セール`,
-      `${parsed.origin} ${parsed.destination} 最安`,
+      `${origin} ${dest} 最安`,
+      `${parsed.origin} ${parsed.destination}`,
       `${dest} 旅行 格安`,
       "航空券セール",
       "格安航空券",
     ],
     openGraph: {
-      title: `${origin}→${dest} 格安航空券セール`,
+      title,
       description: cheapest
-        ? `最安¥${cheapest.toLocaleString()}〜 | 複数航空会社の価格を比較`
+        ? `${origin}→${dest} 最安¥${cheapest.toLocaleString()}〜 | 複数航空会社の価格を比較`
         : `${origin}→${dest}のセール情報`,
       type: "website",
     },

@@ -24,13 +24,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const airline = getAirlineByCode(code);
   if (!airline) return { title: "Not Found" };
 
+  // 「{社名} セール」「{社名} タイムセール」需要に合わせる
+  const title = `${airline.name} セール最新情報・タイムセール開催状況 | BEATRIP`;
+  const description = `${airline.name}の最新フライトセール・タイムセール・キャンペーン一覧。${airline.type === "LCC" ? "格安LCC" : "フルサービスキャリア"}の現在開催中セール、過去の開催実績、次回予測まで一目で。`;
+
   return {
-    title: `${airline.name}（${airline.nameEn}）のセール情報`,
-    description: `${airline.name}の最新フライトセール・キャンペーン情報。${airline.type === "LCC" ? "格安LCC" : "フルサービスキャリア"}のお得な航空券を見逃さない。`,
-    openGraph: {
-      title: `${airline.name} セール情報`,
-      description: `${airline.nameEn}の最新セール・割引情報をチェック`,
-    },
+    title,
+    description,
+    openGraph: { title, description },
     alternates: {
       canonical: `https://beatrip.jp/airlines/${code}`,
     },
