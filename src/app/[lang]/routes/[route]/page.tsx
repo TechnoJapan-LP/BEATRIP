@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Plane, TrendingDown, Calendar } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plane, TrendingDown, Calendar } from "lucide-react";
 import { Header } from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { PriceChart } from "@/components/deals/price-chart";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
 import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
+import { getHotelSlugByIata } from "@/data/hotel-destinations";
 import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
@@ -118,6 +119,7 @@ export default async function RoutePage({ params }: Props) {
   const airlinesOnRoute = Array.from(
     new Set(routeDeals.map((d) => d.airline_name))
   );
+  const hotelSlug = getHotelSlugByIata(parsed.destination);
 
   // FAQ — 路線特有の検索意図にピンポイントで答えてリッチ結果を狙う
   const faqs: { q: string; a: string }[] = [];
@@ -335,6 +337,25 @@ export default async function RoutePage({ params }: Props) {
               checkIn={routeDeals[0].departure_date}
               checkOut={routeDeals[0].return_date}
             />
+
+            {hotelSlug && (
+              <Link
+                href={`/hotels/${hotelSlug}`}
+                className="block rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 transition-colors hover:border-zinc-200 dark:hover:border-zinc-700 group"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                      {dest}の旅行ガイド
+                    </h3>
+                    <p className="text-[11px] text-zinc-400 mt-0.5">
+                      ベストシーズン・観光・グルメ・ホテル
+                    </p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-zinc-300 transition-transform group-hover:translate-x-0.5" />
+                </div>
+              </Link>
+            )}
 
             {prediction && prediction.historical_prices.length > 0 && (
               <div className="rounded-xl border border-zinc-100 bg-white p-5">

@@ -285,6 +285,26 @@ export function getHotelDestinationBySlug(slug: string): HotelDestination | unde
   return HOTEL_BY_SLUG[slug];
 }
 
+/**
+ * IATAコード → ホテル目的地スラッグ。
+ * 路線/ディール ページから "目的地の旅行ガイドを見る" 等のリンクを
+ * 動的に組み立てるために使う。
+ */
+const HOTEL_BY_IATA: Record<string, string> = (() => {
+  const m: Record<string, string> = {};
+  for (const d of HOTEL_DESTINATIONS) {
+    for (const code of d.iataCodes) {
+      // 既に登録済みの code は上書きしない（最初のヒットが代表）
+      if (!m[code]) m[code] = d.slug;
+    }
+  }
+  return m;
+})();
+
+export function getHotelSlugByIata(iata: string): string | undefined {
+  return HOTEL_BY_IATA[iata];
+}
+
 /** リージョン順に並べた目的地リスト（インデックスページの表示順用） */
 export function getHotelDestinationsByRegion(): { region: Region; items: HotelDestination[] }[] {
   const order: Region[] = ["国内", "アジア", "欧州", "米州", "オセアニア・その他"];

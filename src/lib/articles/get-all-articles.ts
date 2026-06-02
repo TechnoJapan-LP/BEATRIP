@@ -1,15 +1,17 @@
 import { articles as mockArticles } from "@/data/mock-articles";
 import { loadGeneratedArticles } from "./article-generator";
 import { getRouteGuides } from "./route-guide-generator";
+import { getCityGuideArticles } from "./city-guide-generator";
 import type { Article } from "@/data/mock-articles";
 
 export async function getAllArticles(): Promise<Article[]> {
   const generated = await loadGeneratedArticles();
   const guides = getRouteGuides();
-  // slug重複を排除（生成セール記事 > モック > 攻略ガイド の優先順）
+  const cityGuides = getCityGuideArticles();
+  // slug重複を排除（生成セール記事 > モック > 攻略ガイド > 都市ガイド）
   const seen = new Set<string>();
   const all: Article[] = [];
-  for (const a of [...generated, ...mockArticles, ...guides]) {
+  for (const a of [...generated, ...mockArticles, ...guides, ...cityGuides]) {
     if (seen.has(a.slug)) continue;
     seen.add(a.slug);
     all.push(a);

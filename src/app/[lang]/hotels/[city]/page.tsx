@@ -12,6 +12,7 @@ import {
 } from "@/data/hotel-destinations";
 import { buildHotelLink } from "@/lib/affiliate/url-builder";
 import { getActiveDeals } from "@/lib/deals/deal-service";
+import { getCityGuide } from "@/data/hotel-city-guides";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -55,13 +56,23 @@ export default async function HotelCityPage({ params }: Props) {
   if (!d) notFound();
 
   const hotelUrl = buildHotelLink(d.nameEn);
+  const guide = getCityGuide(d.slug);
 
   // 関連フライトディール（この都市行き、最大4件）
   const deals = await getActiveDeals();
-  const relatedFlights = deals
-    .filter((deal) => d.iataCodes.includes(deal.destination_code))
+  const cityDeals = deals.filter((deal) =>
+    d.iataCodes.includes(deal.destination_code)
+  );
+  const relatedFlights = [...cityDeals]
     .sort((a, b) => a.sale_price - b.sale_price)
     .slice(0, 4);
+
+  // この都市行きの人気路線（出発地ごとに重複排除、上位4路線）
+  const popularRoutes = Array.from(
+    new Set(
+      cityDeals.map((dd) => `${dd.origin_code}-${dd.destination_code}`)
+    )
+  ).slice(0, 4);
 
   // FAQ — 「{都市} ホテル 安く」「{都市} ホテル どのエリア」「{都市} ホテル 相場」需要に対応
   const faqs = [
@@ -209,11 +220,97 @@ export default async function HotelCityPage({ params }: Props) {
                 <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
                   {d.bestSeason}
                 </p>
+                {guide?.climate && (
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-3 leading-relaxed">
+                    気候: {guide.climate}
+                  </p>
+                )}
                 <p className="text-xs text-zinc-400 mt-2">
                   ※ ハイシーズンは航空券・ホテルとも価格上昇傾向。予約は2〜3ヶ月前が目安です。
                 </p>
               </div>
             </section>
+
+            {/* 観光名所 */}
+            {guide && guide.attractions.length > 0 && (
+              <section>
+                <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
+                  人気の観光スポット
+                </h2>
+                <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+                  <ul className="space-y-2">
+                    {guide.attractions.map((a) => (
+                      <li
+                        key={a}
+                        className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300"
+                      >
+                        <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-zinc-400" />
+                        <span>{a}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            )}
+
+            {/* グルメ */}
+            {guide && guide.food.length > 0 && (
+              <section>
+                <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
+                  ご当地グルメ
+                </h2>
+                <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+                  <ul className="space-y-2">
+                    {guide.food.map((f) => (
+                      <li
+                        key={f}
+                        className="flex items-start gap-2 text-sm text-zinc-700 dark:text-zinc-300"
+                      >
+                        <span className="mt-1.5 inline-block h-1.5 w-1.5 flex-shrink-0 rounded-full bg-zinc-400" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            )}
+
+            {/* 旅の基本情報 */}
+            {guide && (
+              <section>
+                <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
+                  旅の基本情報
+                </h2>
+                <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    <div>
+                      <div className="text-zinc-400 mb-1 font-bold uppercase tracking-wider">通貨</div>
+                      <div className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                        {guide.currency}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-zinc-400 mb-1 font-bold uppercase tracking-wider">言語</div>
+                      <div className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                        {guide.language}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-zinc-400 mb-1 font-bold uppercase tracking-wider">治安</div>
+                      <div className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                        {guide.safety}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border-t border-zinc-100 dark:border-zinc-800 pt-3 text-xs">
+                    <div className="text-zinc-400 mb-1 font-bold uppercase tracking-wider">空港アクセス</div>
+                    <div className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                      {guide.airportAccess}
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
 
             {/* FAQ */}
             <section>
@@ -297,6 +394,38 @@ export default async function HotelCityPage({ params }: Props) {
                 </div>
               )}
             </section>
+
+            {/* 人気路線（出発地別）— 内部リンク強化 */}
+            {popularRoutes.length > 0 && (
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <Plane className="h-4 w-4 text-zinc-400" />
+                  <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase">
+                    {d.nameJa}行きの人気路線
+                  </h2>
+                </div>
+                <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2">
+                  <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                    {popularRoutes.map((r) => {
+                      const [o, dCode] = r.split("-");
+                      return (
+                        <li key={r}>
+                          <Link
+                            href={`/routes/${r}`}
+                            className="flex items-center justify-between px-3 py-2.5 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group"
+                          >
+                            <span className="font-mono text-zinc-600 dark:text-zinc-300">
+                              {o} → {dCode}
+                            </span>
+                            <ArrowUpRight className="h-3.5 w-3.5 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </section>
+            )}
           </aside>
         </div>
       </main>

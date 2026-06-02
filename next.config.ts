@@ -53,6 +53,25 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // sitemap.xml / robots.txt は静的に近いので CDN/ブラウザでキャッシュ可
+      {
+        source: "/sitemap.xml",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/robots.txt",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, s-maxage=86400",
+          },
+        ],
+      },
     ];
   },
 };
