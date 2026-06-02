@@ -10,6 +10,7 @@ import {
   useLocale,
   useLocalizedHref,
 } from "@/components/i18n/locale-provider";
+import { trackLanguageSwitch } from "@/components/analytics";
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -69,6 +70,9 @@ export function Header() {
             <Globe className="h-3.5 w-3.5 text-zinc-400" />
             <Link
               href={toJa}
+              onClick={() =>
+                locale !== "ja" && trackLanguageSwitch({ from: locale, to: "ja" })
+              }
               className={`font-mono transition-colors ${
                 locale === "ja"
                   ? "text-zinc-900 dark:text-zinc-100 font-bold"
@@ -80,6 +84,9 @@ export function Header() {
             <span className="text-zinc-300 dark:text-zinc-600">/</span>
             <Link
               href={toEn}
+              onClick={() =>
+                locale !== "en" && trackLanguageSwitch({ from: locale, to: "en" })
+              }
               className={`font-mono transition-colors ${
                 locale === "en"
                   ? "text-zinc-900 dark:text-zinc-100 font-bold"
@@ -138,7 +145,10 @@ export function Header() {
             <div className="flex items-center gap-2 text-sm font-mono">
               <Link
                 href={toJa}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  if (locale !== "ja") trackLanguageSwitch({ from: locale, to: "ja" });
+                  setOpen(false);
+                }}
                 className={
                   locale === "ja"
                     ? "font-bold text-zinc-900 dark:text-zinc-100"
@@ -150,7 +160,10 @@ export function Header() {
               <span className="text-zinc-300 dark:text-zinc-600">/</span>
               <Link
                 href={toEn}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  if (locale !== "en") trackLanguageSwitch({ from: locale, to: "en" });
+                  setOpen(false);
+                }}
                 className={
                   locale === "en"
                     ? "font-bold text-zinc-900 dark:text-zinc-100"

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Bell, Check, Loader2 } from "lucide-react";
 import { useDictionary } from "@/components/i18n/locale-provider";
+import { trackNewsletterSignup } from "@/components/analytics";
 
 export function NewsletterCTA() {
   const t = useDictionary<Record<string, string>>("newsletter");
@@ -24,6 +25,7 @@ export function NewsletterCTA() {
         body: JSON.stringify({ email, website }),
       });
       if (!res.ok) throw new Error("request failed");
+      trackNewsletterSignup({ source: "cta" });
       setStatus("success");
     } catch {
       setStatus("error");

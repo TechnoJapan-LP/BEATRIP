@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
 import { useDictionary } from "@/components/i18n/locale-provider";
+import { trackSearchSubmit } from "@/components/analytics";
 
 type Airport = { code: string; name: string };
 
@@ -89,6 +90,12 @@ export function FlightSearchForm({ deals, onClose }: Props) {
   }, [openDropdown]);
 
   function handleSearch() {
+    trackSearchSubmit({
+      origin,
+      destination,
+      departDate,
+      returnDate,
+    });
     const matched = deals.filter((d) => {
       if (origin && d.origin_code !== origin) return false;
       if (destination && d.destination_code !== destination) return false;

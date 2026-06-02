@@ -1,23 +1,30 @@
+"use client";
+
 import { BedDouble, ArrowUpRight } from "lucide-react";
 import { buildHotelLink } from "@/lib/affiliate/url-builder";
 import { cityNameEn } from "@/lib/airport-names";
+import { trackHotelClick } from "@/components/analytics";
 
 /**
  * 目的地ホテルへの送客ブロック（高料率アフィリエイト）。
  * フライトディール閲覧者は宿泊需要も高く、同じ訪問者の収益を底上げする。
  * URLベース（Hotellook marker）で第三者スクリプト不要・ページ軽量を維持。
+ * クリックは GA4 `hotel_click` イベントとして計測（収益化の主要KPI）。
  */
 export function HotelCrossSell({
   destinationCode,
   destinationLabel,
   checkIn,
   checkOut,
+  dealId,
 }: {
   destinationCode: string;
   /** 表示用の都市名（日本語） */
   destinationLabel: string;
   checkIn?: string;
   checkOut?: string;
+  /** 起点となったディールID（イベント属性として送信） */
+  dealId?: string;
 }) {
   const href = buildHotelLink(
     cityNameEn(destinationCode),
@@ -30,6 +37,7 @@ export function HotelCrossSell({
       href={href}
       target="_blank"
       rel="sponsored noopener noreferrer"
+      onClick={() => trackHotelClick({ destinationCode, dealId })}
       className="group flex items-center gap-4 rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5 transition-colors hover:border-zinc-200 dark:hover:border-zinc-700"
     >
       <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">

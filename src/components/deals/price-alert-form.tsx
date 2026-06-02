@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { BellRing, Check, X, Loader2 } from "lucide-react";
+import { trackPriceAlertSet } from "@/components/analytics";
 
 type StoredAlert = {
   dealId: string;
@@ -72,6 +73,7 @@ export function PriceAlertForm({ routeKey, currentPrice, dealId }: Props) {
       const stored = getStored().filter((a) => a.dealId !== dealId);
       stored.push({ dealId, email: email.trim().toLowerCase(), threshold });
       saveStored(stored);
+      trackPriceAlertSet({ routeKey, threshold });
       setStatus("confirm");
       setTimeout(() => setStatus("set"), 2500);
     } catch (e) {

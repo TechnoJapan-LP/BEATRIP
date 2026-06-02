@@ -500,6 +500,7 @@ export default async function DealDetailPage({ params }: Props) {
               destinationLabel={deal.destination}
               checkIn={deal.departure_date}
               checkOut={deal.return_date}
+              dealId={deal.id}
             />
 
             {similar.length > 0 && (

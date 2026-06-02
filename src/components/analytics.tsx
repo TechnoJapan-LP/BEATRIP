@@ -46,26 +46,83 @@ export function Analytics() {
 }
 
 /**
- * アフィリエイトクリックを GA4 イベントとして送信するヘルパー
- * （クライアントコンポーネントから呼び出す）
+ * 汎用 GA4 イベント送信ヘルパー。gtag未読込時はno-op。
+ * クライアントコンポーネントから呼び出す。
  */
+function track(eventName: string, params: Record<string, unknown> = {}) {
+  if (typeof window === "undefined") return;
+  const w = window as typeof window & {
+    gtag?: (...args: unknown[]) => void;
+  };
+  if (typeof w.gtag !== "function") return;
+  w.gtag("event", eventName, params);
+}
+
+/** 航空券アフィリエイトリンクのクリック（既存） */
 export function trackAffiliateClick(params: {
   dealId: string;
   provider: string;
   price?: number;
   route?: string;
 }) {
-  if (typeof window === "undefined") return;
-  const w = window as typeof window & {
-    gtag?: (...args: unknown[]) => void;
-  };
-  if (typeof w.gtag !== "function") return;
-
-  w.gtag("event", "affiliate_click", {
+  track("affiliate_click", {
     deal_id: params.dealId,
     affiliate_provider: params.provider,
     value: params.price ?? 0,
     currency: "JPY",
     route: params.route ?? "",
+  });
+}
+
+/** ホテル併売リンクのクリック（高料率アフィリエイト） */
+export function trackHotelClick(params: {
+  destinationCode: string;
+  dealId?: string;
+}) {
+  track("hotel_click", {
+    destination_code: params.destinationCode,
+    deal_id: params.dealId ?? "",
+  });
+}
+
+/** ニュースレター登録完了 */
+export function trackNewsletterSignup(params: { source?: string } = {}) {
+  track("newsletter_signup", {
+    source: params.source ?? "site",
+  });
+}
+
+/** 価格アラート登録 */
+export function trackPriceAlertSet(params: {
+  routeKey: string;
+  threshold: number;
+}) {
+  track("price_alert_set", {
+    route: params.routeKey,
+    threshold: params.threshold,
+    currency: "JPY",
+  });
+}
+
+/** 検索フォーム実行（ユーザー意図シグナル） */
+export function trackSearchSubmit(params: {
+  origin: string;
+  destination: string;
+  departDate?: string;
+  returnDate?: string;
+}) {
+  track("search_submit", {
+    origin: params.origin,
+    destination: params.destination,
+    depart_date: params.departDate ?? "",
+    return_date: params.returnDate ?? "",
+  });
+}
+
+/** 言語切替 */
+export function trackLanguageSwitch(params: { from: string; to: string }) {
+  track("language_switch", {
+    from_locale: params.from,
+    to_locale: params.to,
   });
 }
