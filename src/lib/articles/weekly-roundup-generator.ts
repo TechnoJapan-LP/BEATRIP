@@ -1,6 +1,5 @@
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { Article } from "@/data/mock-articles";
-import { deals } from "@/data/mock-deals-v2";
 import { cityNameJa } from "@/lib/airport-names";
 
 /**
@@ -27,19 +26,28 @@ function isoWeek(date: Date): { year: number; week: number } {
   return { year: d.getUTCFullYear(), week };
 }
 
-function pickRoundupImage(sales: AirlineSale[]): string {
-  // 代表的なルートのモック画像を流用（destination-imagesと同基盤）
-  for (const sale of sales) {
-    for (const route of sale.routes) {
-      const match = deals.find(
-        (d) =>
-          d.origin_code === route.originCode &&
-          d.destination_code === route.destinationCode
-      );
-      if (match) return match.image_url;
-    }
-  }
-  return "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&q=80";
+/**
+ * 週次まとめ専用の "summary" 系画像セット（個別セール記事と被らないよう
+ * 空港・地図・俯瞰系を中心にキュレート）。週番号で決定論的にローテーション。
+ */
+const ROUNDUP_IMAGES = [
+  // 空港・俯瞰
+  "https://images.unsplash.com/photo-1503220317375-aaad61436b1b?w=1200&q=80",
+  "https://images.unsplash.com/photo-1542296332-2e4473faf563?w=1200&q=80",
+  "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=1200&q=80",
+  // 機内・窓
+  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
+  "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=1200&q=80",
+  // 地球・地図
+  "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
+  "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&q=80",
+  // パッキング・出発
+  "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
+  "https://images.unsplash.com/photo-1473625247510-8ceb1760943f?w=1200&q=80",
+];
+
+function pickRoundupImage(weekSeed: number): string {
+  return ROUNDUP_IMAGES[weekSeed % ROUNDUP_IMAGES.length];
 }
 
 /**
@@ -104,7 +112,7 @@ export function buildWeeklyRoundupArticle(
     title: headline,
     excerpt: intro.slice(0, 140),
     body,
-    image_url: pickRoundupImage(sales),
+    image_url: pickRoundupImage(year * 100 + week),
     category: "セール速報",
     airline_tags: airlineTags,
     route_tags: routeTags,
