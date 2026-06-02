@@ -94,6 +94,78 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
   });
   const maxMonthCount = Math.max(...monthCounts, 1);
 
+  // 主要セール種別（記録から拾い、過去開催回数の多い順）
+  const saleTypeCounts = new Map<string, number>();
+  for (const r of records) {
+    // "ANA タイムセール" → "タイムセール" のように種別ワードだけ抽出
+    const typeWords = [
+      "タイムセール",
+      "メガセール",
+      "スーパーバリュー",
+      "スペシャルセーバー",
+      "サマーSALE",
+      "秋の旅割",
+      "ビジネスクラス タイムセール",
+      "プレミアムエコノミー SALE",
+      "片道キャンペーン",
+    ];
+    for (const word of typeWords) {
+      if (r.saleName.includes(word)) {
+        saleTypeCounts.set(word, (saleTypeCounts.get(word) ?? 0) + 1);
+      }
+    }
+  }
+  const topSaleTypes = [...saleTypeCounts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3);
+
+  // 月別の傾向トップ3（次回の最頻月予測）
+  const monthIndexed = monthCounts
+    .map((count, i) => ({ month: i + 1, count }))
+    .sort((a, b) => b.count - a.count);
+  const peakMonths = monthIndexed.filter((m) => m.count > 0).slice(0, 3);
+
+  // FAQ — GSCで実際に検索されているクエリにピンポイントで答える
+  const faqs: { q: string; a: string }[] = [];
+  if (peakMonths.length > 0) {
+    faqs.push({
+      q: `${airline.name}のセールはいつ開催されますか？`,
+      a: `過去の開催実績では、${peakMonths.map((m) => `${m.month}月（${m.count}回）`).join("、")}に集中しています。${stats ? `過去${stats.totalSales}回の開催を分析した結果です。` : ""}最新の開催状況は本ページ上部の「現在開催中のセール」もしくは BEATRIP トップで確認できます。`,
+    });
+    faqs.push({
+      q: `次回の${airline.name}セールはいつ頃ですか？`,
+      a: `直近の傾向では${peakMonths[0].month}月の開催が最多（${peakMonths[0].count}回）。${predictions.length > 0 ? `BEATRIPの予測では「${predictions[0].saleName}」が ${new Date(predictions[0].predictedDate).toLocaleDateString("ja-JP", { year: "numeric", month: "long" })} ごろの開催見込み（確度${predictions[0].probability}%）。` : ""}メールで通知を受け取りたい方はBEATRIPの価格アラートをご利用ください。`,
+    });
+  }
+  if (topSaleTypes.length > 0) {
+    faqs.push({
+      q: `${airline.name}には主にどのようなセール種別がありますか？`,
+      a: `過去の開催実績で多いのは ${topSaleTypes.map(([type, count]) => `「${type}」（${count}回）`).join("、")} です。各セールの内容や対象路線は本ページの「セール開催履歴」で確認できます。`,
+    });
+  }
+  if (stats) {
+    faqs.push({
+      q: `${airline.name}セールの過去最安値はいくらですか？`,
+      a: `本サイトが収集した過去のセール記録における最安値は ¥${stats.lowestPrice.toLocaleString()}（平均割引率 ${stats.avgDiscount}%）です。航路・時期によって変動します。`,
+    });
+  }
+  faqs.push({
+    q: `${airline.name}のセールを見逃さないにはどうすれば良いですか？`,
+    a: `BEATRIP の無料ニュースレターに登録すると、${airline.name}を含む各社の新着セールを週次でまとめてメールで受け取れます。特定路線の値下げ通知が欲しい場合は価格アラート機能をご利用ください。`,
+  });
+
+  const faqJsonLd = faqs.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }
+    : null;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -136,6 +208,12 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <Header />
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6">
@@ -359,6 +437,38 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               </div>
             )}
           </>
+        )}
+
+        {/* FAQ — GSCで実際に検索されているクエリにピンポイントで答え、
+            FAQPage 構造化データでリッチ結果（featured snippet）も狙う */}
+        {faqs.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <BarChart3 className="h-4 w-4 text-zinc-400" />
+              <h2 className="font-bold text-zinc-900 text-sm sm:text-base">
+                よくある質問
+              </h2>
+            </div>
+            <div className="space-y-3">
+              {faqs.map((faq, i) => (
+                <details
+                  key={i}
+                  className="group rounded-xl border border-zinc-100 bg-white overflow-hidden"
+                  open={i === 0}
+                >
+                  <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-bold text-zinc-900 hover:bg-zinc-50 transition-colors">
+                    <span>{faq.q}</span>
+                    <span className="ml-3 text-zinc-400 transition-transform group-open:rotate-180">▼</span>
+                  </summary>
+                  <div className="px-5 pb-4 pt-1">
+                    <p className="text-xs leading-relaxed text-zinc-600">
+                      {faq.a}
+                    </p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Sale history timeline */}
