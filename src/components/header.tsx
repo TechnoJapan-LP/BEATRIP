@@ -21,6 +21,7 @@ export function Header() {
 
   const navLinks = [
     { href: "/", label: nav.flashDeals },
+    { href: "/hotels", label: nav.hotels },
     { href: "/airlines", label: nav.airlineSales },
     { href: "/#calendar", label: nav.salePrediction },
     { href: "/articles", label: nav.articles },

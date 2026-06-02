@@ -7,6 +7,7 @@
   "nav": {
     "flashDeals": "Flash Deals",
     "airlineSales": "Airline Sales",
+    "hotels": "Hotels",
     "salePrediction": "Sale Forecast",
     "articles": "Articles",
     "themeToggle": "Toggle theme",
@@ -75,6 +76,7 @@
     "airlinesTitle": "Airlines",
     "aboutTitle": "Site info",
     "flashDeals": "Flash Deals",
+    "hotels": "Hotels",
     "saleCalendar": "Sale forecast calendar",
     "airlineSales": "Airline sales",
     "articles": "Sale articles & guides",

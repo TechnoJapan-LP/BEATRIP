@@ -7,6 +7,7 @@
   "nav": {
     "flashDeals": "フラッシュディール",
     "airlineSales": "航空会社セール",
+    "hotels": "ホテル",
     "salePrediction": "セール予測",
     "articles": "記事",
     "themeToggle": "テーマ切替",
@@ -75,6 +76,7 @@
     "airlinesTitle": "航空会社",
     "aboutTitle": "サイト情報",
     "flashDeals": "フラッシュディール",
+    "hotels": "ホテル",
     "saleCalendar": "セール予測カレンダー",
     "airlineSales": "航空会社セール",
     "articles": "セール記事・攻略",

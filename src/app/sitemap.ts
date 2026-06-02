@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { airlines } from "@/data/airlines";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
+import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 
 const BASE_URL = "https://beatrip.jp";
 
@@ -101,11 +102,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // ホテル特集（インデックス + 目的地別）
+  const hotelPages: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/hotels`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    ...HOTEL_DESTINATIONS.map((d) => ({
+      url: `${BASE_URL}/hotels/${d.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+  ];
+
   return [
     ...staticPages,
     ...dealPages,
     ...routePages,
     ...airlinePages,
     ...articlePages,
+    ...hotelPages,
   ];
 }

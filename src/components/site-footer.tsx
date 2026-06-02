@@ -19,6 +19,7 @@ export function SiteFooter() {
       title: t.dealsTitle,
       links: [
         { href: "/", label: t.flashDeals },
+        { href: "/hotels", label: t.hotels ?? "ホテル" },
         { href: "/#calendar", label: t.saleCalendar },
         { href: "/airlines", label: t.airlineSales },
         { href: "/articles", label: t.articles },
