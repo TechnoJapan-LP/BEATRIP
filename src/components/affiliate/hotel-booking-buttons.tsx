@@ -1,10 +1,15 @@
+"use client";
+
 import { ArrowUpRight } from "lucide-react";
 import { HOTEL_SEARCH_PROVIDERS } from "@/lib/affiliate/hotel-search";
+import { trackHotelClick } from "@/components/analytics";
 
 /**
- * 1ホテルにつき複数OTAの予約ボタンを横並びで表示。
- * クリックで各サイトの「ホテル名一致検索」結果ページへ深リンク。
+ * 1ホテル or 1都市につき複数OTAの予約ボタンを横並びで表示。
+ * クリックで各サイトの「ホテル名/都市検索」結果ページへ深リンク。
  * marker帰属はOTAごとに tp.media wrap で処理（program_id 未設定なら素のリンク）。
+ *
+ * hotelName="" を渡すと都市検索（cross-sell 用）になる。
  */
 
 const ACCENT_CLASS: Record<string, string> = {
@@ -19,19 +24,44 @@ const ACCENT_CLASS: Record<string, string> = {
 export function HotelBookingButtons({
   hotelName,
   cityNameEn,
+  checkIn,
+  checkOut,
+  /** GA4 イベント用 — 起点ディール or 起点都市コード */
+  destinationCode,
+  dealId,
+  size = "sm",
+  className = "",
 }: {
   hotelName: string;
   cityNameEn: string;
+  checkIn?: string;
+  checkOut?: string;
+  destinationCode?: string;
+  dealId?: string;
+  size?: "sm" | "md";
+  className?: string;
 }) {
+  const padding =
+    size === "md"
+      ? "px-3 py-1.5 text-xs"
+      : "px-2.5 py-1 text-[11px]";
+
   return (
-    <div className="mt-3 flex flex-wrap gap-1.5">
+    <div className={`flex flex-wrap gap-1.5 ${className}`}>
       {HOTEL_SEARCH_PROVIDERS.map((p) => (
         <a
           key={p.id}
-          href={p.url(hotelName, cityNameEn)}
+          href={p.url(hotelName, cityNameEn, { checkIn, checkOut })}
           target="_blank"
           rel="sponsored noopener noreferrer"
-          className={`group inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ring-1 transition-colors ${ACCENT_CLASS[p.accent]}`}
+          onClick={() =>
+            trackHotelClick({
+              destinationCode: destinationCode ?? cityNameEn,
+              dealId,
+              provider: p.id,
+            })
+          }
+          className={`group inline-flex items-center gap-1 rounded-full ${padding} font-bold ring-1 transition-colors ${ACCENT_CLASS[p.accent]}`}
         >
           {p.label}
           <ArrowUpRight className="h-2.5 w-2.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

@@ -78,10 +78,13 @@ export function trackAffiliateClick(params: {
 export function trackHotelClick(params: {
   destinationCode: string;
   dealId?: string;
+  /** OTA識別子（booking / trip / agoda / hotellook 等）。未指定はHotellook既定。 */
+  provider?: string;
 }) {
   track("hotel_click", {
     destination_code: params.destinationCode,
     deal_id: params.dealId ?? "",
+    affiliate_provider: params.provider ?? "hotellook",
   });
 }
 
