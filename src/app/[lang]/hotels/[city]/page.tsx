@@ -13,6 +13,7 @@ import {
 import { buildHotelLink } from "@/lib/affiliate/url-builder";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getCityGuide } from "@/data/hotel-city-guides";
+import { getCuratedHotels } from "@/data/hotel-curated";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -57,6 +58,7 @@ export default async function HotelCityPage({ params }: Props) {
 
   const hotelUrl = buildHotelLink(d.nameEn);
   const guide = getCityGuide(d.slug);
+  const curatedHotels = getCuratedHotels(d.slug);
 
   // 関連フライトディール（この都市行き、最大4件）
   const deals = await getActiveDeals();
@@ -230,6 +232,62 @@ export default async function HotelCityPage({ params }: Props) {
                 </p>
               </div>
             </section>
+
+            {/* キュレートされた代表ホテル — 編集者による厳選リスト */}
+            {curatedHotels.length > 0 && (
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <BedDouble className="h-4 w-4 text-zinc-400" />
+                  <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase">
+                    {d.nameJa}の代表的なホテル
+                  </h2>
+                </div>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
+                  編集者が選ぶ、価格帯別の代表的なホテル。クリックで{d.nameJa}のホテル一覧から最新の空室・料金をチェックできます。
+                </p>
+                <div className="space-y-2">
+                  {curatedHotels.map((h) => (
+                    <a
+                      key={h.name}
+                      href={hotelUrl}
+                      target="_blank"
+                      rel="sponsored noopener noreferrer"
+                      className="group block rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors hover:border-zinc-200 dark:hover:border-zinc-700"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                              {h.name}
+                            </h3>
+                            <span
+                              className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                                h.tier === "ラグジュアリー"
+                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                                  : h.tier === "ハイクラス"
+                                    ? "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300"
+                                    : h.tier === "ミドル"
+                                      ? "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300"
+                                      : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                              }`}
+                            >
+                              {h.tier}
+                            </span>
+                          </div>
+                          <div className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+                            エリア: {h.area}
+                          </div>
+                          <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                            {h.highlight}
+                          </p>
+                        </div>
+                        <ArrowUpRight className="h-4 w-4 flex-shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* 観光名所 */}
             {guide && guide.attractions.length > 0 && (
