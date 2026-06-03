@@ -29,6 +29,7 @@ import {
 } from "@/data/hotel-destinations";
 import { cityNameEn } from "@/lib/airport-names";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
+import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
 import { DealCarousel } from "@/components/deals/deal-carousel";
 import { FavoriteButton } from "@/components/deals/favorite-button";
 import { CountdownTimer } from "@/components/deals/countdown-timer";
@@ -589,6 +590,11 @@ export default async function DealDetailPage({ params }: Props) {
 
         {/* ディール詳細末尾CTA: 興味は高いが今は予約しない層をリピート化 */}
         <NewsletterCTA />
+
+        <NextTripSuggestions
+          excludeSlug={getHotelSlugByIata(deal.destination_code)}
+          seed={deal.id}
+        />
       </main>
       <SiteFooter />
 

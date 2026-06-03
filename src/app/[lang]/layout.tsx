@@ -7,6 +7,7 @@ import { ServiceWorkerRegister } from "@/components/sw-register";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Analytics } from "@/components/analytics";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { getDictionary, hasLocale, LOCALES } from "./dictionaries";
 import "../globals.css";
 
@@ -112,7 +113,7 @@ export default async function RootLayout({
       lang={lang}
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950">
+      <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950 pb-14 sm:pb-0">
         {/* Skip to content (a11y): キーボードユーザー最初の Tab で表示 */}
         <a
           href="#main-content"
@@ -124,6 +125,7 @@ export default async function RootLayout({
           <ServiceWorkerRegister />
           <ScrollToTop />
           {children}
+          <MobileBottomNav />
 
           {/* アナリティクス: Vercel Analytics + Speed Insights + GA4 */}
           <Analytics />

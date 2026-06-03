@@ -7,6 +7,7 @@ import { Header } from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { PriceChart } from "@/components/deals/price-chart";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
+import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
 import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
 import { getHotelSlugByIata } from "@/data/hotel-destinations";
@@ -411,6 +412,11 @@ export default async function RoutePage({ params }: Props) {
             </div>
           </div>
         </div>
+
+        <NextTripSuggestions
+          excludeSlug={hotelSlug}
+          seed={route}
+        />
       </main>
     </>
   );

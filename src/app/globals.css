@@ -170,7 +170,26 @@
   .animate-slide-up {
     animation: beatrip-slide-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
+  /* スポットライトカードの背景画像にかける緩やかなケンバーンズ風ズーム。
+     じっとしていても旅情を感じさせるための環境モーション。 */
+  @keyframes beatrip-ken-burns {
+    0%   { transform: scale(1)    translate(0, 0); }
+    50%  { transform: scale(1.06) translate(-1%, -1%); }
+    100% { transform: scale(1)    translate(0, 0); }
+  }
+  .animate-ken-burns {
+    animation: beatrip-ken-burns 24s ease-in-out infinite;
+  }
+  /* "今が買い時" バッジ用のソフトパルス */
+  @keyframes beatrip-soft-pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(244,63,94,0.4); }
+    50%     { box-shadow: 0 0 0 6px rgba(244,63,94,0); }
+  }
+  .animate-soft-pulse {
+    animation: beatrip-soft-pulse 2.6s ease-in-out infinite;
+  }
   @media (prefers-reduced-motion: reduce) {
-    .animate-fade-up, .animate-fade-in, .animate-slide-up { animation: none; }
+    .animate-fade-up, .animate-fade-in, .animate-slide-up,
+    .animate-ken-burns, .animate-soft-pulse { animation: none; }
   }
 }

@@ -11,6 +11,7 @@ import {
   getHotelDestinationBySlug,
 } from "@/data/hotel-destinations";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
+import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
 import { buildHotelLink } from "@/lib/affiliate/url-builder";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getCityGuide } from "@/data/hotel-city-guides";
@@ -489,6 +490,8 @@ export default async function HotelCityPage({ params }: Props) {
             )}
           </aside>
         </div>
+
+        <NextTripSuggestions excludeSlug={d.slug} seed={d.slug} />
       </main>
       <SiteFooter />
     </>

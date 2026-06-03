@@ -16,8 +16,9 @@ import { CollapsibleSearch } from "@/components/search/collapsible-search";
 import { HeroDeal } from "@/components/deals/hero-deal";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
+import { DestinationSpotlight } from "@/components/home/destination-spotlight";
 import { getActiveDeals } from "@/lib/deals/deal-service";
-import { HOTEL_BY_SLUG } from "@/data/hotel-destinations";
+import { HOTEL_BY_SLUG, HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { getDictionary, hasLocale } from "./dictionaries";
 import { localizeHref } from "@/lib/i18n/locale";
 
@@ -49,6 +50,35 @@ export default async function Home({
     getAllArticles(),
   ]);
 
+  // 「今週、行きたくなる旅先」スポットライト：
+  // 1) 大カード = 現在ディール最大割引の目的地（ホテルページ有のもの）
+  // 2) 小カード = 同様にディスカウント率高い順から、大カードと別の都市を2つ
+  const spotlightCandidates = [...deals]
+    .sort((a, b) => b.discount_percent - a.discount_percent)
+    .map((d) => {
+      // destination_code から HotelDestination を逆引き
+      const hd = HOTEL_DESTINATIONS.find((h) =>
+        h.iataCodes.includes(d.destination_code)
+      );
+      return hd ? { slug: hd.slug, discount: d.discount_percent } : null;
+    })
+    .filter((x): x is { slug: string; discount: number } => Boolean(x));
+  const spotlightSlugs: string[] = [];
+  for (const c of spotlightCandidates) {
+    if (!spotlightSlugs.includes(c.slug)) spotlightSlugs.push(c.slug);
+    if (spotlightSlugs.length === 3) break;
+  }
+  // 万一データが薄ければ POPULAR から補完
+  for (const s of ["bangkok", "honolulu", "paris"]) {
+    if (spotlightSlugs.length < 3 && !spotlightSlugs.includes(s)) {
+      spotlightSlugs.push(s);
+    }
+  }
+  const spotlights = spotlightSlugs.map((slug, i) => ({
+    slug,
+    badge: i === 0 ? "今週のいちおし" : i === 1 ? "コスパ◎" : "憧れの旅先",
+  }));
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -76,8 +106,8 @@ export default async function Home({
       />
       <Header />
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
-        {/* ファーストビュー: 注目ディールで即フック */}
-        <section className="mb-6">
+        {/* ファーストビュー: 注目ディール（雑誌風の一面）— 即フック */}
+        <section className="mb-6 animate-fade-up">
           <HeroDeal deals={deals} />
         </section>
 
@@ -87,8 +117,20 @@ export default async function Home({
         </section>
 
         {/* スリム版 ニュースレターCTA — ファーストビューでリピーター化 */}
-        <section className="mb-10">
+        <section className="mb-12">
           <NewsletterCTASlim source="home_top" />
+        </section>
+
+        {/* インスピレーション: 旅先スポットライト */}
+        <section
+          className="mb-12 animate-fade-up"
+          style={{ animationDelay: "0.1s" }}
+        >
+          <DestinationSpotlight
+            deals={deals}
+            spotlights={spotlights}
+            lh={lh}
+          />
         </section>
 
         <section id="deals">
@@ -103,17 +145,7 @@ export default async function Home({
           <DealGrid deals={deals} upcomingSales={mockSaleEvents} />
         </section>
 
-        <NewsletterCTA />
-
-        <section>
-          <DealCarousel
-            deals={[...deals].sort((a, b) => b.discount_percent - a.discount_percent).slice(0, 8)}
-            title={t.popularTitle}
-            subtitle={t.popularSubtitle}
-          />
-        </section>
-
-        {/* Popular Hotels — 高料率の収益面、新規導線 */}
+        {/* Popular Hotels — 高料率の収益面、フライト/ホテル両軸の流量に */}
         <section className="mt-12">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -170,6 +202,18 @@ export default async function Home({
             })}
           </div>
         </section>
+
+        {/* 割引率の高いディール カルーセル */}
+        <section className="mt-12">
+          <DealCarousel
+            deals={[...deals].sort((a, b) => b.discount_percent - a.discount_percent).slice(0, 8)}
+            title={t.popularTitle}
+            subtitle={t.popularSubtitle}
+          />
+        </section>
+
+        {/* リピート化のための フルCTA */}
+        <NewsletterCTA />
 
         <section className="mt-12">
           <div className="flex items-center justify-between mb-6">
