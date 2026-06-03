@@ -114,6 +114,47 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950 pb-[calc(56px+env(safe-area-inset-bottom,0px))] sm:pb-0">
+        {/* Organization / WebSite 構造化データ — 全ページ共通 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@graph": [
+                {
+                  "@type": "Organization",
+                  "@id": "https://beatrip.jp/#organization",
+                  name: "BEATRIP",
+                  url: "https://beatrip.jp",
+                  logo: {
+                    "@type": "ImageObject",
+                    url: "https://beatrip.jp/icon.svg",
+                  },
+                  sameAs: [],
+                },
+                {
+                  "@type": "WebSite",
+                  "@id": "https://beatrip.jp/#website",
+                  url: "https://beatrip.jp",
+                  name: "BEATRIP",
+                  description:
+                    "航空券セール情報を自動収集。フライトディール、セール時期予測、価格推移を提供。",
+                  publisher: { "@id": "https://beatrip.jp/#organization" },
+                  inLanguage: ["ja-JP", "en-US"],
+                  potentialAction: {
+                    "@type": "SearchAction",
+                    target: {
+                      "@type": "EntryPoint",
+                      urlTemplate:
+                        "https://beatrip.jp/?q={search_term_string}",
+                    },
+                    "query-input": "required name=search_term_string",
+                  },
+                },
+              ],
+            }),
+          }}
+        />
         {/* Skip to content (a11y): キーボードユーザー最初の Tab で表示 */}
         <a
           href="#main-content"
