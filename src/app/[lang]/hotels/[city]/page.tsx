@@ -19,6 +19,7 @@ import { getCuratedHotels } from "@/data/hotel-curated";
 import { TravelCompanions } from "@/components/affiliate/travel-companions";
 import { HotelBookingButtons } from "@/components/affiliate/hotel-booking-buttons";
 import { getAirlineByCode } from "@/data/airlines";
+import { getCityStartingPrice } from "@/lib/affiliate/hotel-price";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -69,6 +70,8 @@ export default async function HotelCityPage({ params }: Props) {
   const hotelUrl = buildHotelLink(d.nameEn);
   const guide = getCityGuide(d.slug);
   const curatedHotels = getCuratedHotels(d.slug);
+  // スターティング価格: 承認後は Booking feed / 未承認時はシーズン補正推定
+  const startingPrice = await getCityStartingPrice(d.slug);
 
   // 関連フライトディール（この都市行き、最大4件）
   const deals = await getActiveDeals();
@@ -90,7 +93,7 @@ export default async function HotelCityPage({ params }: Props) {
   const faqs = [
     {
       q: `${d.nameJa}のホテル相場はどのくらいですか？`,
-      a: `${d.nameJa}の3つ星クラスのホテル相場は${d.priceFromJpy ? `1泊¥${priceFmt(d.priceFromJpy)}〜` : "シーズン・エリアにより変動します"}。シーズンや立地により上下するため、最新の価格は本ページの検索ボタンからHotellookで確認してください。`,
+      a: `${d.nameJa}の3つ星クラスのホテル相場は${startingPrice ? `今の時期で1泊¥${priceFmt(startingPrice.jpy)}〜（${startingPrice.isEstimate ? "編集部ベースラインに季節係数を反映した目安" : "提携OTAの直近最安値"}）` : "シーズン・エリアにより変動します"}。シーズンや立地により上下するため、最新の価格は本ページの予約ボタンから各OTAでご確認ください。`,
     },
     {
       q: `${d.nameJa}のホテルはどのエリアが便利ですか？`,
@@ -244,8 +247,8 @@ export default async function HotelCityPage({ params }: Props) {
               </h2>
               <p className="text-xs text-white/80 dark:text-zinc-900/80 mt-0.5">
                 複数サイトから最安値で
-                {d.priceFromJpy
-                  ? `（1泊¥${priceFmt(d.priceFromJpy)}〜）`
+                {startingPrice
+                  ? `（1泊¥${priceFmt(startingPrice.jpy)}〜${startingPrice.isEstimate ? " 目安" : ""}）`
                   : ""}
               </p>
             </div>
