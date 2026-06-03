@@ -22,6 +22,12 @@ import { BookingButton } from "@/components/deals/booking-button";
 import { ShareButtons } from "@/components/deals/share-buttons";
 import { PriceAlertForm } from "@/components/deals/price-alert-form";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
+import { TravelCompanions } from "@/components/affiliate/travel-companions";
+import {
+  getHotelDestinationBySlug,
+  getHotelSlugByIata,
+} from "@/data/hotel-destinations";
+import { cityNameEn } from "@/lib/airport-names";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { DealCarousel } from "@/components/deals/deal-carousel";
 import { FavoriteButton } from "@/components/deals/favorite-button";
@@ -502,6 +508,26 @@ export default async function DealDetailPage({ params }: Props) {
               checkIn={deal.departure_date}
               checkOut={deal.return_date}
               dealId={deal.id}
+            />
+
+            {/* 旅の周辺商品（高料率）— env で有効なものだけ出る */}
+            <TravelCompanions
+              ctx={{
+                cityNameEn: cityNameEn(deal.destination_code),
+                cityNameJa: deal.destination,
+                countryNameEn: getHotelDestinationBySlug(
+                  getHotelSlugByIata(deal.destination_code) ?? ""
+                )?.countryEn,
+                countrySlug: getHotelDestinationBySlug(
+                  getHotelSlugByIata(deal.destination_code) ?? ""
+                )?.airaloSlug,
+                destinationIata: deal.destination_code,
+                originIata: deal.origin_code,
+                checkIn: deal.departure_date,
+                checkOut: deal.return_date,
+              }}
+              title="旅の準備"
+              subtitle="ホテル・eSIM・送迎・保険まで一括で"
             />
 
             {similar.length > 0 && (

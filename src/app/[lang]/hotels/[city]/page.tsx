@@ -14,6 +14,7 @@ import { buildHotelLink } from "@/lib/affiliate/url-builder";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getCityGuide } from "@/data/hotel-city-guides";
 import { getCuratedHotels } from "@/data/hotel-curated";
+import { TravelCompanions } from "@/components/affiliate/travel-companions";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -332,6 +333,20 @@ export default async function HotelCityPage({ params }: Props) {
                 </div>
               </section>
             )}
+
+            {/* 旅の準備 — 高料率アフィリエイト（env で有効なものだけ表示） */}
+            <TravelCompanions
+              ctx={{
+                cityNameEn: d.nameEn,
+                cityNameJa: d.nameJa,
+                countryNameEn: d.countryEn,
+                countrySlug: d.airaloSlug,
+                destinationIata: d.iataCodes[0],
+                originIata: relatedFlights[0]?.origin_code,
+                checkIn: relatedFlights[0]?.departure_date,
+                checkOut: relatedFlights[0]?.return_date,
+              }}
+            />
 
             {/* 旅の基本情報 */}
             {guide && (

@@ -27,6 +27,10 @@ export type HotelDestination = {
   priceFromJpy?: number;
   /** ヒーロー画像（destination-images map から自動取得） */
   image?: string;
+  /** 国名（英語）— Airalo eSIM 等の国別ページで利用 */
+  countryEn?: string;
+  /** Airalo の国slug（{slug}-esim）。countryEn と異なる場合のみ指定 */
+  airaloSlug?: string;
 };
 
 const RAW: Omit<HotelDestination, "image">[] = [
@@ -273,10 +277,48 @@ const RAW: Omit<HotelDestination, "image">[] = [
   },
 ];
 
-export const HOTEL_DESTINATIONS: HotelDestination[] = RAW.map((d) => ({
-  ...d,
-  image: getDestinationImage(d.iataCodes[0]),
-}));
+// 国名（英語）と Airalo の slug を slug ベースで一括補完。
+const COUNTRY_BY_SLUG: Record<string, { en: string; airalo?: string }> = {
+  tokyo: { en: "Japan" },
+  osaka: { en: "Japan" },
+  sapporo: { en: "Japan" },
+  fukuoka: { en: "Japan" },
+  okinawa: { en: "Japan" },
+  hiroshima: { en: "Japan" },
+  nagoya: { en: "Japan" },
+  sendai: { en: "Japan" },
+  bangkok: { en: "Thailand" },
+  seoul: { en: "South Korea", airalo: "south-korea" },
+  taipei: { en: "Taiwan" },
+  singapore: { en: "Singapore" },
+  "hong-kong": { en: "Hong Kong", airalo: "hong-kong" },
+  hanoi: { en: "Vietnam" },
+  "ho-chi-minh-city": { en: "Vietnam" },
+  shanghai: { en: "China" },
+  manila: { en: "Philippines" },
+  paris: { en: "France" },
+  london: { en: "United Kingdom", airalo: "united-kingdom" },
+  helsinki: { en: "Finland" },
+  rome: { en: "Italy" },
+  barcelona: { en: "Spain" },
+  "new-york": { en: "United States", airalo: "united-states" },
+  "los-angeles": { en: "United States", airalo: "united-states" },
+  honolulu: { en: "United States", airalo: "united-states" },
+  dubai: { en: "United Arab Emirates", airalo: "united-arab-emirates" },
+  sydney: { en: "Australia" },
+  auckland: { en: "New Zealand", airalo: "new-zealand" },
+  guam: { en: "Guam" },
+};
+
+export const HOTEL_DESTINATIONS: HotelDestination[] = RAW.map((d) => {
+  const country = COUNTRY_BY_SLUG[d.slug];
+  return {
+    ...d,
+    image: getDestinationImage(d.iataCodes[0]),
+    countryEn: country?.en,
+    airaloSlug: country?.airalo,
+  };
+});
 
 export const HOTEL_BY_SLUG: Record<string, HotelDestination> =
   Object.fromEntries(HOTEL_DESTINATIONS.map((d) => [d.slug, d]));
