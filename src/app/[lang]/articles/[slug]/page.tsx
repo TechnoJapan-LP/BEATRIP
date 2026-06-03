@@ -17,6 +17,7 @@ import { deals } from "@/data/mock-deals-v2";
 import { airlines } from "@/data/airlines";
 import { SiteFooter } from "@/components/site-footer";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
+import { getHotelSlugByIata, getHotelDestinationBySlug } from "@/data/hotel-destinations";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,6 +37,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     alternates: {
       canonical: `https://beatrip.jp/articles/${slug}`,
+      languages: {
+        ja: `https://beatrip.jp/articles/${slug}`,
+        en: `https://beatrip.jp/en/articles/${slug}`,
+        "x-default": `https://beatrip.jp/articles/${slug}`,
+      },
     },
   };
 }
@@ -165,6 +171,19 @@ export default async function ArticleDetailPage({ params }: Props) {
     )
   );
 
+  // route_tags ("NRT-BKK"等) から、目的地ホテル + 路線ページへの相互リンク
+  const linkedRoutes = Array.from(new Set(article.route_tags)).slice(0, 4);
+  const linkedHotelSlugs = Array.from(
+    new Set(
+      article.route_tags
+        .map((t) => {
+          const dest = t.split("-")[1];
+          return dest ? getHotelSlugByIata(dest) : undefined;
+        })
+        .filter((s): s is string => Boolean(s))
+    )
+  ).slice(0, 3);
+
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -241,7 +260,7 @@ export default async function ArticleDetailPage({ params }: Props) {
         </div>
       </div>
 
-      <main className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
+      <main id="main-content" className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
           <article className="lg:col-span-2">
             <div className="rounded-xl border border-zinc-100 bg-white p-4 sm:p-6 lg:p-8">
@@ -293,6 +312,52 @@ export default async function ArticleDetailPage({ params }: Props) {
                     </Link>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {linkedRoutes.length > 0 && (
+              <div className="rounded-xl border border-zinc-100 bg-white p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
+                  関連路線
+                </h3>
+                <ul className="space-y-1">
+                  {linkedRoutes.map((r) => (
+                    <li key={r}>
+                      <Link
+                        href={`/routes/${r}`}
+                        className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors group"
+                      >
+                        <span className="font-mono">{r.replace("-", " → ")}</span>
+                        <ArrowRight className="h-3 w-3 text-zinc-300 transition-transform group-hover:translate-x-0.5" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {linkedHotelSlugs.length > 0 && (
+              <div className="rounded-xl border border-zinc-100 bg-white p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
+                  目的地のホテル
+                </h3>
+                <ul className="space-y-1">
+                  {linkedHotelSlugs.map((slug) => {
+                    const hd = getHotelDestinationBySlug(slug);
+                    if (!hd) return null;
+                    return (
+                      <li key={slug}>
+                        <Link
+                          href={`/hotels/${slug}`}
+                          className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors group"
+                        >
+                          <span>{hd.nameJa}のホテル</span>
+                          <ArrowRight className="h-3 w-3 text-zinc-300 transition-transform group-hover:translate-x-0.5" />
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
               </div>
             )}
 

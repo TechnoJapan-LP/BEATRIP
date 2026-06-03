@@ -16,6 +16,14 @@ export async function generateMetadata({
   return {
     title: dict.faq.metaTitle,
     description: dict.faq.metaDescription,
+    alternates: {
+      canonical: locale === "en" ? "https://beatrip.jp/en/faq" : "https://beatrip.jp/faq",
+      languages: {
+        ja: "https://beatrip.jp/faq",
+        en: "https://beatrip.jp/en/faq",
+        "x-default": "https://beatrip.jp/faq",
+      },
+    },
   };
 }
 
@@ -49,7 +57,7 @@ export default async function FAQPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
           <Breadcrumbs
             items={[

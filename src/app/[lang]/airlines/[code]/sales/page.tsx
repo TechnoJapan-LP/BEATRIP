@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode, airlines } from "@/data/airlines";
 import {
@@ -43,6 +44,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title, description },
     alternates: {
       canonical: `https://beatrip.jp/airlines/${code}/sales`,
+      languages: {
+        ja: `https://beatrip.jp/airlines/${code}/sales`,
+        en: `https://beatrip.jp/en/airlines/${code}/sales`,
+        "x-default": `https://beatrip.jp/airlines/${code}/sales`,
+      },
     },
   };
 }
@@ -83,6 +89,11 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
 
   const stats = getAirlineSaleStats(code);
   const records = getSaleHistoryByAirline(code);
+  // Server Component なので Date.now() を一度だけリクエスト時に評価して使用。
+  // React Compiler の purity 警告はクライアントコンポーネント向けで、ここでは
+  // 意図的に許可する（リクエストごとに固定の "today" を得るのが目的）。
+  // eslint-disable-next-line react-hooks/purity
+  const recentThreshold = Date.now() - 90 * 24 * 60 * 60 * 1000;
 
   const predictions = mockSaleEvents.filter(
     (e) => e.airline === airline.nameEn || e.airline === airline.name
@@ -449,25 +460,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 よくある質問
               </h2>
             </div>
-            <div className="space-y-3">
-              {faqs.map((faq, i) => (
-                <details
-                  key={i}
-                  className="group rounded-xl border border-zinc-100 bg-white overflow-hidden"
-                  open={i === 0}
-                >
-                  <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-bold text-zinc-900 hover:bg-zinc-50 transition-colors">
-                    <span>{faq.q}</span>
-                    <span className="ml-3 text-zinc-400 transition-transform group-open:rotate-180">▼</span>
-                  </summary>
-                  <div className="px-5 pb-4 pt-1">
-                    <p className="text-xs leading-relaxed text-zinc-600">
-                      {faq.a}
-                    </p>
-                  </div>
-                </details>
-              ))}
-            </div>
+            <FAQAccordion items={faqs} />
           </div>
         )}
 
@@ -483,8 +476,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
             <div className="space-y-3">
               {records.map((record) => {
                 const isRecent =
-                  new Date(record.startDate).getTime() >
-                  Date.now() - 90 * 24 * 60 * 60 * 1000;
+                  new Date(record.startDate).getTime() > recentThreshold;
                 return (
                   <div
                     key={record.id}

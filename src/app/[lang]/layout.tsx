@@ -113,6 +113,13 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950">
+        {/* Skip to content (a11y): キーボードユーザー最初の Tab で表示 */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-zinc-900 focus:text-white focus:px-3 focus:py-2 focus:text-sm focus:font-bold focus:outline-none focus:ring-2 focus:ring-zinc-400"
+        >
+          メインコンテンツへスキップ
+        </a>
         <LocaleProvider locale={lang} dict={dict}>
           <ServiceWorkerRegister />
           <ScrollToTop />

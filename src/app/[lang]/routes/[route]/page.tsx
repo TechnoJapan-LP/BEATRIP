@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, Plane, TrendingDown, Calendar } from "lucide-rea
 import { Header } from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { PriceChart } from "@/components/deals/price-chart";
+import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
 import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
 import { getHotelSlugByIata } from "@/data/hotel-destinations";
@@ -66,6 +67,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     alternates: {
       canonical: `https://beatrip.jp/routes/${route}`,
+      languages: {
+        ja: `https://beatrip.jp/routes/${route}`,
+        en: `https://beatrip.jp/en/routes/${route}`,
+        "x-default": `https://beatrip.jp/routes/${route}`,
+      },
     },
   };
 }
@@ -308,25 +314,7 @@ export default async function RoutePage({ params }: Props) {
               <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
                 よくある質問
               </h2>
-              <div className="space-y-3">
-                {faqs.map((faq, i) => (
-                  <details
-                    key={i}
-                    className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden"
-                    open={i === 0}
-                  >
-                    <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-bold text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                      <span>{faq.q}</span>
-                      <span className="ml-3 text-zinc-400 transition-transform group-open:rotate-180">▼</span>
-                    </summary>
-                    <div className="px-5 pb-4 pt-1">
-                      <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-                        {faq.a}
-                      </p>
-                    </div>
-                  </details>
-                ))}
-              </div>
+              <FAQAccordion items={faqs} />
             </section>
           </div>
 

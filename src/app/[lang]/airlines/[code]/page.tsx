@@ -34,6 +34,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title, description },
     alternates: {
       canonical: `https://beatrip.jp/airlines/${code}`,
+      languages: {
+        ja: `https://beatrip.jp/airlines/${code}`,
+        en: `https://beatrip.jp/en/airlines/${code}`,
+        "x-default": `https://beatrip.jp/airlines/${code}`,
+      },
     },
   };
 }

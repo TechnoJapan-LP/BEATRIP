@@ -10,7 +10,14 @@ import { getHotelDestinationsByRegion } from "@/data/hotel-destinations";
 export const metadata: Metadata = {
   title: "ホテル予約・最安値検索｜目的地別の宿泊情報 | BEATRIP",
   description: "東京・大阪・バンコク・ソウル・ホノルル等、人気目的地のホテルを最安値で検索。エリア別の特徴・相場・ベストシーズンも掲載。フライトとあわせて予約準備に。",
-  alternates: { canonical: "https://beatrip.jp/hotels" },
+  alternates: {
+    canonical: "https://beatrip.jp/hotels",
+    languages: {
+      ja: "https://beatrip.jp/hotels",
+      en: "https://beatrip.jp/en/hotels",
+      "x-default": "https://beatrip.jp/hotels",
+    },
+  },
 };
 
 export default function HotelsIndexPage() {
@@ -31,7 +38,7 @@ export default function HotelsIndexPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
           <Breadcrumbs
             items={[{ label: "Home", href: "/" }, { label: "ホテル" }]}

@@ -13,10 +13,11 @@ function calcRemaining(deadline: string) {
 }
 
 export function CountdownTimer({ deadline }: { deadline: string }) {
-  const [remaining, setRemaining] = useState(calcRemaining(deadline));
+  // 初期値は遅延評価で1回だけ計算（react-hooks/purity準拠）。
+  // 以降はsetIntervalだけが setRemaining を呼ぶ。
+  const [remaining, setRemaining] = useState(() => calcRemaining(deadline));
 
   useEffect(() => {
-    setRemaining(calcRemaining(deadline));
     const interval = setInterval(() => {
       setRemaining(calcRemaining(deadline));
     }, 60_000);

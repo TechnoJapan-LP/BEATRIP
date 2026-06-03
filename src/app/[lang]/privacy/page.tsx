@@ -16,6 +16,14 @@ export async function generateMetadata({
   return {
     title: dict.privacy.metaTitle,
     description: dict.privacy.metaDescription,
+    alternates: {
+      canonical: locale === "en" ? "https://beatrip.jp/en/privacy" : "https://beatrip.jp/privacy",
+      languages: {
+        ja: "https://beatrip.jp/privacy",
+        en: "https://beatrip.jp/en/privacy",
+        "x-default": "https://beatrip.jp/privacy",
+      },
+    },
   };
 }
 
@@ -32,7 +40,7 @@ export default async function PrivacyPage({
   return (
     <>
       <Header />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
           <Breadcrumbs
             items={[

@@ -10,6 +10,7 @@ import {
   HOTEL_DESTINATIONS,
   getHotelDestinationBySlug,
 } from "@/data/hotel-destinations";
+import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { buildHotelLink } from "@/lib/affiliate/url-builder";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getCityGuide } from "@/data/hotel-city-guides";
@@ -40,6 +41,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title, description, type: "website" },
     alternates: {
       canonical: `https://beatrip.jp/hotels/${d.slug}`,
+      languages: {
+        ja: `https://beatrip.jp/hotels/${d.slug}`,
+        en: `https://beatrip.jp/en/hotels/${d.slug}`,
+        "x-default": `https://beatrip.jp/hotels/${d.slug}`,
+      },
     },
   };
 }
@@ -164,7 +170,7 @@ export default async function HotelCityPage({ params }: Props) {
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         {/* 主要CTA */}
         <section className="mb-10">
           <a
@@ -392,25 +398,7 @@ export default async function HotelCityPage({ params }: Props) {
                   よくある質問
                 </h2>
               </div>
-              <div className="space-y-3">
-                {faqs.map((faq, i) => (
-                  <details
-                    key={i}
-                    className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden"
-                    open={i === 0}
-                  >
-                    <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-bold text-zinc-900 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
-                      <span>{faq.q}</span>
-                      <span className="ml-3 text-zinc-400 transition-transform group-open:rotate-180">▼</span>
-                    </summary>
-                    <div className="px-5 pb-4 pt-1">
-                      <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-                        {faq.a}
-                      </p>
-                    </div>
-                  </details>
-                ))}
-              </div>
+              <FAQAccordion items={faqs} />
             </section>
           </div>
 

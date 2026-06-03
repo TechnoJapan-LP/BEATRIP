@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://beatrip.jp/airlines",
+    languages: {
+      ja: "https://beatrip.jp/airlines",
+      en: "https://beatrip.jp/en/airlines",
+      "x-default": "https://beatrip.jp/airlines",
+    },
   },
 };
 import { AirlineCard } from "@/components/airlines/airline-card";

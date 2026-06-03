@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://beatrip.jp/articles",
+    languages: {
+      ja: "https://beatrip.jp/articles",
+      en: "https://beatrip.jp/en/articles",
+      "x-default": "https://beatrip.jp/articles",
+    },
   },
 };
 
@@ -23,7 +28,7 @@ export default async function ArticlesPage() {
   return (
     <>
       <Header />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-8">
           <h1 className="font-heading text-3xl tracking-wide text-zinc-900 uppercase sm:text-4xl lg:text-5xl">
             Articles

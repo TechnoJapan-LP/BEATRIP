@@ -75,7 +75,7 @@ export default async function Home({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         {/* ファーストビュー: 注目ディールで即フック */}
         <section className="mb-6">
           <HeroDeal deals={deals} />

@@ -17,6 +17,14 @@ export async function generateMetadata({
   return {
     title: dict.about.metaTitle,
     description: dict.about.metaDescription,
+    alternates: {
+      canonical: locale === "en" ? "https://beatrip.jp/en/about" : "https://beatrip.jp/about",
+      languages: {
+        ja: "https://beatrip.jp/about",
+        en: "https://beatrip.jp/en/about",
+        "x-default": "https://beatrip.jp/about",
+      },
+    },
   };
 }
 
@@ -35,7 +43,7 @@ export default async function AboutPage({
   return (
     <>
       <Header />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
           <Breadcrumbs
             items={[
