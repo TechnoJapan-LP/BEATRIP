@@ -17,6 +17,7 @@ import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getCityGuide } from "@/data/hotel-city-guides";
 import { getCuratedHotels } from "@/data/hotel-curated";
 import { TravelCompanions } from "@/components/affiliate/travel-companions";
+import { HotelBookingButtons } from "@/components/affiliate/hotel-booking-buttons";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -251,18 +252,15 @@ export default async function HotelCityPage({ params }: Props) {
                   </h2>
                 </div>
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
-                  編集者が選ぶ、価格帯別の代表的なホテル。クリックで{d.nameJa}のホテル一覧から最新の空室・料金をチェックできます。
+                  編集者が選ぶ、価格帯別の代表的なホテル。複数の予約サイトを横断比較して最安値で予約できます。
                 </p>
                 <div className="space-y-2">
                   {curatedHotels.map((h) => (
-                    <a
+                    <div
                       key={h.name}
-                      href={hotelUrl}
-                      target="_blank"
-                      rel="sponsored noopener noreferrer"
-                      className="group block rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors hover:border-zinc-200 dark:hover:border-zinc-700"
+                      className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors"
                     >
-                      <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
@@ -288,10 +286,14 @@ export default async function HotelCityPage({ params }: Props) {
                           <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
                             {h.highlight}
                           </p>
+                          {/* 各OTAへホテル名指定で直接深リンク（複数の予約サイトを比較） */}
+                          <HotelBookingButtons
+                            hotelName={h.name}
+                            cityNameEn={d.nameEn}
+                          />
                         </div>
-                        <ArrowUpRight className="h-4 w-4 flex-shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                       </div>
-                    </a>
+                    </div>
                   ))}
                 </div>
               </section>
