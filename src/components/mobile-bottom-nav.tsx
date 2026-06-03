@@ -39,23 +39,27 @@ export function MobileBottomNav() {
             <Link
               key={item.href}
               href={lh(item.href)}
-              className={`flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors ${
+              aria-current={active ? "page" : undefined}
+              className={`flex min-h-[56px] flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium transition-colors active:scale-95 ${
                 active
                   ? "text-zinc-900 dark:text-zinc-100"
                   : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
               }`}
             >
-              <Icon className={`h-5 w-5 ${active ? "scale-110" : ""} transition-transform`} />
+              <Icon
+                className={`h-5 w-5 transition-transform ${active ? "scale-110" : ""}`}
+                aria-hidden="true"
+              />
               <span>{item.label}</span>
             </Link>
           );
         })}
-        {/* 検索アンカー: ホーム#deals へ飛ばす（or 専用検索ページにすると将来拡張） */}
+        {/* 検索アンカー: ホーム#deals へ飛ばす */}
         <Link
           href={lh("/#deals")}
-          className="flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+          className="flex min-h-[56px] flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors active:scale-95"
         >
-          <Search className="h-5 w-5" />
+          <Search className="h-5 w-5" aria-hidden="true" />
           <span>検索</span>
         </Link>
       </div>

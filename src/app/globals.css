@@ -123,9 +123,20 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* スマホでカードや絶対配置要素が画面端にはみ出ても横スクロールを発生
+       させない（背景画像のスケール演出などが端から数px溢れるのを安全に処理） */
+    overflow-x: hidden;
   }
   html {
     @apply font-sans;
+    /* iOS Safari でラバーバンド時に横方向のチラつきを防ぐ */
+    overscroll-behavior-x: none;
+    /* タップハイライトをサイトの統一感のある淡いカラーに */
+    -webkit-tap-highlight-color: rgba(24, 24, 27, 0.06);
+  }
+  /* キーボードフォーカスを視覚的に分かりやすく（a11y） */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-zinc-900 dark:outline-zinc-100;
   }
 }
 

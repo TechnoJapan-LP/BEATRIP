@@ -120,12 +120,13 @@ function SpotlightCard({
       className={`group relative block overflow-hidden rounded-2xl ring-1 ring-zinc-200 dark:ring-zinc-800 shadow-sm transition-all hover:shadow-xl active:scale-[0.99] ${className}`}
     >
       <div
-        className="relative w-full"
-        style={
+        className={`relative w-full ${
           tall
-            ? { aspectRatio: "16 / 11", maxHeight: "min(56vh, 460px)" }
-            : { aspectRatio: "4 / 3" }
-        }
+            // モバイルは縦長(4/5)で画面を埋め、デスクトップは横長(16/11)に
+            ? "aspect-[4/5] sm:aspect-[16/11]"
+            : "aspect-[4/3]"
+        }`}
+        style={tall ? { maxHeight: "min(72vh, 540px)" } : undefined}
       >
         {dest.image && (
           <Image
