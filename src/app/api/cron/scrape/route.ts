@@ -22,6 +22,8 @@ import {
   sendPriceAlertEmails,
   type AlertMatch,
 } from "@/lib/price-alerts/email";
+import { postSalesToBluesky } from "@/lib/social/bluesky";
+import { getPostedIds, markPosted } from "@/lib/social/posted-store";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
 
@@ -161,6 +163,22 @@ export async function GET(request: NextRequest) {
       console.error("[CRON] 価格アラート処理に失敗:", e);
     }
 
+    // Bluesky 自動投稿: 新着セールのうち、まだポストしていないものを最大5件
+    let blueskyPosted = 0;
+    try {
+      const posted = await getPostedIds("bluesky");
+      const fresh = allNewSales.filter((s) => !posted.has(s.id));
+      if (fresh.length > 0) {
+        const sent = await postSalesToBluesky(fresh, 5);
+        if (sent.length > 0) {
+          await markPosted("bluesky", sent);
+          blueskyPosted = sent.length;
+        }
+      }
+    } catch (e) {
+      console.error("[CRON] Bluesky 投稿に失敗:", e);
+    }
+
     const elapsed = Date.now() - startTime;
 
     const summary = {
@@ -180,6 +198,7 @@ export async function GET(request: NextRequest) {
         pending: newsletterPending,
       },
       priceAlertsSent,
+      blueskyPosted,
       generatedArticles,
       weeklyRoundup,
       details: changes.map((c) => {
