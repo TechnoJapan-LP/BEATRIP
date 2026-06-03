@@ -18,6 +18,7 @@ import { getCityGuide } from "@/data/hotel-city-guides";
 import { getCuratedHotels } from "@/data/hotel-curated";
 import { TravelCompanions } from "@/components/affiliate/travel-companions";
 import { HotelBookingButtons } from "@/components/affiliate/hotel-booking-buttons";
+import { getAirlineByCode } from "@/data/airlines";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -173,24 +174,79 @@ export default async function HotelCityPage({ params }: Props) {
       </section>
 
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
-        {/* 主要CTA */}
-        <section className="mb-10">
+        {/* 主要CTA: フライト + ホテル の双子カード */}
+        <section className="mb-10 grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
+          {/* 航空券 — 最安ディール詳細へ直接 */}
+          {relatedFlights[0] ? (
+            <Link
+              href={`/deals/${relatedFlights[0].id}`}
+              className="group flex items-center gap-4 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 px-5 py-5 text-white shadow-lg shadow-rose-500/20 transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99]"
+            >
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/20">
+                <Plane className="h-6 w-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold tracking-widest uppercase opacity-90">
+                  航空券
+                </p>
+                <h2 className="font-heading text-xl tracking-wide uppercase sm:text-2xl">
+                  {relatedFlights[0].origin}→{d.nameJa}
+                </h2>
+                <p className="text-xs text-white/90 mt-0.5">
+                  最安 ¥{relatedFlights[0].sale_price.toLocaleString()}〜
+                  {relatedFlights[0].discount_percent
+                    ? ` (-${relatedFlights[0].discount_percent}%)`
+                    : ""}{" "}
+                  · {relatedFlights[0].airline_name}
+                </p>
+              </div>
+              <ArrowUpRight className="h-5 w-5 flex-shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </Link>
+          ) : (
+            <Link
+              href="/"
+              className="group flex items-center gap-4 rounded-2xl bg-gradient-to-br from-zinc-700 to-zinc-800 px-5 py-5 text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
+            >
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/15">
+                <Plane className="h-6 w-6" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold tracking-widest uppercase opacity-80">
+                  航空券
+                </p>
+                <h2 className="font-heading text-xl tracking-wide uppercase sm:text-2xl">
+                  {d.nameJa}行きを探す
+                </h2>
+                <p className="text-xs text-white/80 mt-0.5">
+                  BEATRIP で最新セールを横断検索
+                </p>
+              </div>
+              <ArrowUpRight className="h-5 w-5 flex-shrink-0 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          )}
+
+          {/* ホテル — Hotellook 横断検索（marker 帰属あり） */}
           <a
             href={hotelUrl}
             target="_blank"
             rel="sponsored noopener noreferrer"
-            className="group flex items-center gap-4 rounded-2xl bg-zinc-900 dark:bg-zinc-100 px-6 py-5 text-white dark:text-zinc-900 transition-transform hover:-translate-y-0.5"
+            className="group flex items-center gap-4 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-zinc-100 dark:to-zinc-200 px-5 py-5 text-white dark:text-zinc-900 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99]"
           >
-            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 dark:bg-zinc-900/10">
+            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/15 dark:bg-zinc-900/15">
               <BedDouble className="h-6 w-6" />
             </div>
             <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-bold tracking-widest uppercase opacity-80">
+                ホテル
+              </p>
               <h2 className="font-heading text-xl tracking-wide uppercase sm:text-2xl">
-                {d.nameJa}のホテルを検索
+                {d.nameJa}のホテル
               </h2>
-              <p className="text-xs text-white/70 dark:text-zinc-900/70 mt-0.5">
-                Hotellookで複数の予約サイトを横断比較
-                {d.priceFromJpy ? `（1泊¥${priceFmt(d.priceFromJpy)}〜）` : ""}
+              <p className="text-xs text-white/80 dark:text-zinc-900/80 mt-0.5">
+                複数サイトから最安値で
+                {d.priceFromJpy
+                  ? `（1泊¥${priceFmt(d.priceFromJpy)}〜）`
+                  : ""}
               </p>
             </div>
             <ArrowUpRight className="h-5 w-5 flex-shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -416,33 +472,50 @@ export default async function HotelCityPage({ params }: Props) {
               </div>
               {relatedFlights.length > 0 ? (
                 <div className="space-y-2">
-                  {relatedFlights.map((deal) => (
-                    <Link
-                      key={deal.id}
-                      href={`/deals/${deal.id}`}
-                      className="block rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors hover:border-zinc-200 dark:hover:border-zinc-700"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="min-w-0">
-                          <div className="text-[11px] font-mono text-zinc-400">
-                            {deal.origin_code} → {deal.destination_code}
+                  {relatedFlights.map((deal) => {
+                    const airline = getAirlineByCode(deal.airline_id);
+                    return (
+                      <Link
+                        key={deal.id}
+                        href={`/deals/${deal.id}`}
+                        className="group block rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors hover:border-zinc-200 dark:hover:border-zinc-700"
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            {airline?.logo && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={airline.logo}
+                                alt=""
+                                className="h-7 w-7 flex-shrink-0 rounded object-contain"
+                              />
+                            )}
+                            <div className="min-w-0">
+                              <div className="text-[11px] font-mono text-zinc-400">
+                                {deal.origin_code} → {deal.destination_code}
+                              </div>
+                              <div className="text-xs font-bold text-zinc-800 dark:text-zinc-200 truncate">
+                                {deal.airline_name}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">
-                            {deal.airline_name}
+                          <div className="text-right flex-shrink-0">
+                            <div className="font-heading text-lg leading-none text-zinc-900 dark:text-zinc-100">
+                              ¥{deal.sale_price.toLocaleString()}
+                            </div>
+                            <div className="flex items-center justify-end gap-0.5 text-rose-500 text-[10px] mt-0.5">
+                              <TrendingDown className="h-2.5 w-2.5" />
+                              -{deal.discount_percent}%
+                            </div>
                           </div>
                         </div>
-                        <div className="text-right flex-shrink-0">
-                          <div className="font-heading text-lg text-zinc-900 dark:text-zinc-100">
-                            ¥{deal.sale_price.toLocaleString()}
-                          </div>
-                          <div className="flex items-center justify-end gap-0.5 text-rose-500 text-[10px]">
-                            <TrendingDown className="h-2.5 w-2.5" />
-                            -{deal.discount_percent}%
-                          </div>
+                        <div className="mt-2.5 flex items-center justify-end gap-1 text-[11px] font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
+                          このディールを見る
+                          <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                         </div>
-                      </div>
-                    </Link>
-                  ))}
+                      </Link>
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
