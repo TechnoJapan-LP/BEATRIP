@@ -45,7 +45,11 @@ export function StickyCTA({
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl px-4 py-3 lg:hidden">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-200 dark:border-zinc-700 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xl px-4 py-3 lg:hidden"
+      // iOS のノッチ/ホームインジケータと重ならないよう safe-area を加算
+      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-baseline gap-2 min-w-0">
           <span className="text-lg font-heading tracking-wide text-zinc-900 dark:text-zinc-100 whitespace-nowrap">

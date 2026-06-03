@@ -529,6 +529,7 @@ export default async function DealDetailPage({ params }: Props) {
               }}
               title="旅の準備"
               subtitle="ホテル・eSIM・送迎・保険まで一括で"
+              source="deal"
             />
 
             {similar.length > 0 && (

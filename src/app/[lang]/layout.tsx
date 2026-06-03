@@ -29,6 +29,12 @@ const bebasNeue = Bebas_Neue({
 
 export const viewport: Viewport = {
   themeColor: "#18181b",
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 5,
+  // iOS のノッチ/セーフエリアを尊重しつつ、全画面に背景を流せるよう cover
+  viewportFit: "cover",
 };
 
 export function generateStaticParams() {

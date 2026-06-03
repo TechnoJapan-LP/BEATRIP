@@ -12,7 +12,13 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/"],
+        // 機微・管理系パスは多重に disallow（防御的な意思表示）
+        disallow: [
+          "/api/",
+          "/.env",
+          "/.env.",
+          "/.well-known/",
+        ],
       },
     ],
     sitemap: "https://beatrip.jp/sitemap.xml",

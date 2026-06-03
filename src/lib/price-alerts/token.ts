@@ -4,13 +4,18 @@ import { SITE_URL } from "@/lib/email/client";
 /**
  * 価格アラート解除リンク用のHMACトークン。
  * アラートIDを秘密鍵で署名し改ざんを防ぐ。
+ *
+ * セキュリティ: フォールバック値を持たせると署名強度がゼロになるので、
+ * 環境変数未設定なら明示的に throw する。
  */
 function secret(): string {
-  return (
-    process.env.NEWSLETTER_SECRET ??
-    process.env.CRON_SECRET ??
-    "beatrip-newsletter-fallback-secret"
-  );
+  const s = process.env.NEWSLETTER_SECRET ?? process.env.CRON_SECRET;
+  if (!s || s.length < 16) {
+    throw new Error(
+      "NEWSLETTER_SECRET or CRON_SECRET must be set (>=16 chars) for alert token signing"
+    );
+  }
+  return s;
 }
 
 export function alertToken(id: string): string {

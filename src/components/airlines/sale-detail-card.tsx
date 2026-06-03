@@ -175,7 +175,9 @@ export function SaleDetailCard({
         <a
           href={sale.sourceUrl}
           target="_blank"
-          rel="noopener noreferrer"
+          // sale.sourceUrl は通常 航空会社の公式ページだが、提携経路（A8等）に
+          // 切り替わる可能性があるため安全側で sponsored も付与（ステマ規制対応）
+          rel="sponsored noopener noreferrer"
           className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
         >
           公式サイトで確認

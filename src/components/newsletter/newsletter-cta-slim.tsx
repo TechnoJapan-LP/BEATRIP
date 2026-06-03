@@ -77,7 +77,13 @@ export function NewsletterCTASlim({ source = "slim" }: { source?: string }) {
         placeholder="メールアドレス"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2 text-xs text-white placeholder:text-zinc-500 outline-none focus:border-zinc-500 sm:text-sm"
+        autoComplete="email"
+        inputMode="email"
+        autoCapitalize="off"
+        autoCorrect="off"
+        spellCheck={false}
+        // モバイルは text-base (16px) で iOS 自動ズーム回避、PC は sm:text-sm
+        className="flex-1 rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-base text-white placeholder:text-zinc-500 outline-none focus:border-zinc-500 sm:py-2 sm:text-sm"
       />
       <button
         type="submit"

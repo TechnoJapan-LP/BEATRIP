@@ -14,6 +14,14 @@ import { airlines } from "@/data/airlines";
  *   - verbose: "true" で詳細ログ
  */
 export async function GET(request: NextRequest) {
+  // 管理用デバッグエンドポイント: CRON_SECRET の Bearer 必須。
+  // スクレイパー内部の詳細を晒すため、認証を強制する。
+  const authHeader = request.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { searchParams } = request.nextUrl;
   const source = searchParams.get("source") ?? "traicy";
   const airlineCode = searchParams.get("airline");
@@ -94,7 +102,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid source" }, { status: 400 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    const stack = error instanceof Error ? error.stack : undefined;
+    // 本番ではスタックトレースを返さない（実装詳細の漏洩防止）
+    const stack =
+      process.env.NODE_ENV === "development" && error instanceof Error
+        ? error.stack
+        : undefined;
     return NextResponse.json(
       { success: false, error: message, stack, elapsed: `${Date.now() - startTime}ms` },
       { status: 500 }

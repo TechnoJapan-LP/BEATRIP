@@ -22,6 +22,8 @@ export const metadata: Metadata = {
 
 export default function HotelsIndexPage() {
   const regions = getHotelDestinationsByRegion();
+  // ItemList 化のため、地域フラット化した全目的地リストを作る
+  const allDestinations = regions.flatMap((r) => r.items);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -29,6 +31,16 @@ export default function HotelsIndexPage() {
     name: "ホテル予約・目的地別の宿泊情報",
     description: "人気目的地のホテルを最安値で検索",
     url: "https://beatrip.jp/hotels",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: allDestinations.length,
+      itemListElement: allDestinations.map((d, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `https://beatrip.jp/hotels/${d.slug}`,
+        name: d.nameJa,
+      })),
+    },
   };
 
   return (

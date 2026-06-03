@@ -4,13 +4,18 @@ import { createHmac, timingSafeEqual } from "crypto";
  * 配信停止リンク用のHMACトークン。
  * メールアドレスを秘密鍵で署名し、改ざん・総当たりを防ぐ。
  * 秘密鍵は NEWSLETTER_SECRET → CRON_SECRET の順で解決。
+ *
+ * セキュリティ: 予測可能なフォールバック値を許容すると署名そのものが
+ * 無意味になるため、いずれの環境変数も未設定なら明示的に throw する。
  */
 function secret(): string {
-  return (
-    process.env.NEWSLETTER_SECRET ??
-    process.env.CRON_SECRET ??
-    "beatrip-newsletter-fallback-secret"
-  );
+  const s = process.env.NEWSLETTER_SECRET ?? process.env.CRON_SECRET;
+  if (!s || s.length < 16) {
+    throw new Error(
+      "NEWSLETTER_SECRET or CRON_SECRET must be set (>=16 chars) for unsubscribe token signing"
+    );
+  }
+  return s;
 }
 
 export function unsubscribeToken(email: string): string {

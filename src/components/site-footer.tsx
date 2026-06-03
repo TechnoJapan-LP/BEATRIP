@@ -42,6 +42,7 @@ export function SiteFooter() {
         { href: "/faq", label: t.faq },
         { href: "/terms", label: t.terms },
         { href: "/privacy", label: t.privacy },
+        { href: "/disclosure", label: t.disclosure ?? "広告開示" },
       ],
     },
   };
@@ -114,6 +115,12 @@ export function SiteFooter() {
                 className="text-[11px] text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
               >
                 {t.privacy}
+              </Link>
+              <Link
+                href={lh("/disclosure")}
+                className="text-[11px] text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
+              >
+                {t.disclosure ?? "広告開示"}
               </Link>
             </div>
           </div>

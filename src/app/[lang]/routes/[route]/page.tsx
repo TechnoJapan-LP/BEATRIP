@@ -9,8 +9,13 @@ import { PriceChart } from "@/components/deals/price-chart";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
+import { TravelCompanions } from "@/components/affiliate/travel-companions";
 import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
-import { getHotelSlugByIata } from "@/data/hotel-destinations";
+import {
+  getHotelSlugByIata,
+  getHotelDestinationBySlug,
+} from "@/data/hotel-destinations";
+import { cityNameEn } from "@/lib/airport-names";
 import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
@@ -325,6 +330,25 @@ export default async function RoutePage({ params }: Props) {
               destinationLabel={dest}
               checkIn={routeDeals[0].departure_date}
               checkOut={routeDeals[0].return_date}
+            />
+
+            {/* 旅の周辺商品（eSIM / 空港送迎 / 海外旅行保険 等）— env で有効なものだけ表示 */}
+            <TravelCompanions
+              ctx={{
+                cityNameEn: cityNameEn(parsed.destination),
+                cityNameJa: dest,
+                countryNameEn: getHotelDestinationBySlug(hotelSlug ?? "")
+                  ?.countryEn,
+                countrySlug: getHotelDestinationBySlug(hotelSlug ?? "")
+                  ?.airaloSlug,
+                destinationIata: parsed.destination,
+                originIata: parsed.origin,
+                checkIn: routeDeals[0].departure_date,
+                checkOut: routeDeals[0].return_date,
+              }}
+              title="旅の準備"
+              subtitle="eSIM・空港送迎・海外旅行保険まで一括で"
+              source="route"
             />
 
             {hotelSlug && (

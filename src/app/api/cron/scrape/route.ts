@@ -30,7 +30,15 @@ import type { AirlineSale } from "@/lib/scrapers/types";
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  // 本番では CRON_SECRET 必須。未設定なら 500 で fail-safe。
+  if (!cronSecret) {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        { error: "Server misconfigured: CRON_SECRET required" },
+        { status: 500 }
+      );
+    }
+  } else if (authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

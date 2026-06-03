@@ -80,8 +80,56 @@ export default async function AirlineDetailPage({ params }: Props) {
     (e) => e.airline === airline.nameEn || e.airline === airline.name
   );
 
+  // Airline (Organization) JSON-LD — 航空会社エンティティとして検索エンジンに認識させる
+  const airlineJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Airline",
+    name: airline.name,
+    alternateName: airline.nameEn,
+    iataCode: airline.code,
+    url: `https://beatrip.jp/airlines/${airline.code}`,
+    logo: airline.logo
+      ? airline.logo.startsWith("http")
+        ? airline.logo
+        : `https://beatrip.jp${airline.logo}`
+      : undefined,
+  };
+  // Breadcrumb JSON-LD
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://beatrip.jp",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Airlines",
+        item: "https://beatrip.jp/airlines",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: airline.name,
+        item: `https://beatrip.jp/airlines/${airline.code}`,
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(airlineJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Header />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">

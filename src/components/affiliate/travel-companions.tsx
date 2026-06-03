@@ -7,11 +7,16 @@ import {
   type PartnerCategory,
   type PartnerContext,
 } from "@/lib/affiliate/partners";
+import { PartnerCardLink } from "./partner-card-link";
 
 /**
  * 旅の周辺商品（高料率）アフィリエイトブロック
  * env で有効なパートナーだけ表示。1つも無ければ何も描画しない（リンク
  * 切れ防止）。
+ *
+ * env (TRAVELPAYOUTS_MARKER / TP_*_PROGRAM_ID) はサーバー側でしか読めないので
+ * サーバーコンポーネントのまま保持し、クリック計測の onClick だけクライアント
+ * 子コンポーネント（PartnerCardLink）に分離している。
  */
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -30,12 +35,15 @@ export function TravelCompanions({
   categories,
   /** カードの最大数（多い時の trim） */
   maxItems = 8,
+  /** GA4 partner_click イベントの `source` 値（呼び出しページ識別） */
+  source,
 }: {
   ctx: PartnerContext;
   title?: string;
   subtitle?: string;
   categories?: PartnerCategory[];
   maxItems?: number;
+  source?: string;
 }) {
   const partners = PARTNERS.filter((p) => isPartnerEnabled(p))
     .filter((p) => !categories || categories.includes(p.category))
@@ -55,7 +63,12 @@ export function TravelCompanions({
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {partners.map((p) => (
-          <PartnerCard key={p.id} partner={p} ctx={ctx} />
+          <PartnerCard
+            key={p.id}
+            partner={p}
+            ctx={ctx}
+            source={source}
+          />
         ))}
       </div>
     </section>
@@ -65,20 +78,24 @@ export function TravelCompanions({
 function PartnerCard({
   partner,
   ctx,
+  source,
 }: {
   partner: Partner;
   ctx: PartnerContext;
+  source?: string;
 }) {
   const url = buildPartnerUrl(partner, ctx);
   if (!url) return null;
   const Icon = ICONS[partner.iconKey] ?? BedDouble;
 
   return (
-    <a
-      href={url}
-      target="_blank"
+    <PartnerCardLink
+      url={url}
       rel={partner.rel ?? "sponsored noopener noreferrer"}
-      className="group flex items-center gap-3 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors hover:border-zinc-200 dark:hover:border-zinc-700"
+      partnerId={partner.id}
+      category={partner.category}
+      destinationCode={ctx.destinationIata ?? ctx.cityNameEn}
+      source={source}
     >
       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
         <Icon className="h-4 w-4" />
@@ -95,6 +112,6 @@ function PartnerCard({
         </p>
       </div>
       <ArrowUpRight className="h-4 w-4 flex-shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-    </a>
+    </PartnerCardLink>
   );
 }

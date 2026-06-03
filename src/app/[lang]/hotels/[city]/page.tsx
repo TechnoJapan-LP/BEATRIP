@@ -298,6 +298,13 @@ export default async function HotelCityPage({ params }: Props) {
                 <p className="text-xs text-zinc-400 mt-2">
                   ※ ハイシーズンは航空券・ホテルとも価格上昇傾向。予約は2〜3ヶ月前が目安です。
                 </p>
+                <Link
+                  href={`/hotels/${d.slug}/best-season`}
+                  className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-zinc-100 hover:underline"
+                >
+                  {d.nameJa}の月別ベストシーズンガイドを見る
+                  <ArrowUpRight className="h-3 w-3" />
+                </Link>
               </div>
             </section>
 
@@ -414,6 +421,7 @@ export default async function HotelCityPage({ params }: Props) {
                 checkIn: relatedFlights[0]?.departure_date,
                 checkOut: relatedFlights[0]?.return_date,
               }}
+              source="hotel-city"
             />
 
             {/* 旅の基本情報 */}

@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 日英両対応のページ（UI＋静的ページ）。hreflangで関連付ける。
   const bilingual = (
     path: string,
-    changeFrequency: "daily" | "monthly" | "yearly",
+    changeFrequency: "daily" | "weekly" | "monthly" | "yearly",
     priority: number
   ): MetadataRoute.Sitemap => {
     const jaUrl = `${BASE_URL}${path}`;
@@ -41,52 +41,70 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages: MetadataRoute.Sitemap = [
     ...bilingual("", "daily", 1),
-    {
-      url: `${BASE_URL}/airlines`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/articles`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.8,
-    },
+    ...bilingual("/airlines", "weekly", 0.8),
+    ...bilingual("/articles", "daily", 0.8),
     ...bilingual("/about", "monthly", 0.4),
     ...bilingual("/faq", "monthly", 0.4),
     ...bilingual("/terms", "yearly", 0.2),
     ...bilingual("/privacy", "yearly", 0.2),
   ];
 
-  const dealPages: MetadataRoute.Sitemap = deals.map((deal) => ({
-    url: `${BASE_URL}/deals/${deal.id}`,
-    lastModified: new Date(deal.updated_at),
-    changeFrequency: "daily" as const,
-    priority: 0.7,
-  }));
+  // 動的ルートも hreflang 付きで日英両対応に。
+  // ja を主、en を補助 (priority を 0.9 倍) とし、alternates.languages で相互リンク。
+  const dynamicBilingual = (
+    path: string,
+    lastModified: Date,
+    changeFrequency: "daily" | "weekly" | "monthly",
+    priority: number
+  ): MetadataRoute.Sitemap => {
+    const jaUrl = `${BASE_URL}${path}`;
+    const enUrl = `${BASE_URL}/en${path}`;
+    const languages = { ja: jaUrl, en: enUrl };
+    return [
+      {
+        url: jaUrl,
+        lastModified,
+        changeFrequency,
+        priority,
+        alternates: { languages },
+      },
+      {
+        url: enUrl,
+        lastModified,
+        changeFrequency,
+        priority: Math.round(priority * 90) / 100,
+        alternates: { languages },
+      },
+    ];
+  };
+
+  const dealPages: MetadataRoute.Sitemap = deals.flatMap((deal) =>
+    dynamicBilingual(
+      `/deals/${deal.id}`,
+      new Date(deal.updated_at),
+      "daily",
+      0.7
+    )
+  );
 
   // 路線ページ（/routes/NRT-BKK 等）— ロングテールSEOの柱
   const routeKeys = new Set<string>();
   for (const d of deals) {
     routeKeys.add(`${d.origin_code}-${d.destination_code}`);
   }
-  const routePages: MetadataRoute.Sitemap = Array.from(routeKeys).map(
-    (route) => ({
-      url: `${BASE_URL}/routes/${route}`,
-      lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.8,
-    })
+  const routePages: MetadataRoute.Sitemap = Array.from(routeKeys).flatMap(
+    (route) =>
+      dynamicBilingual(`/routes/${route}`, new Date(), "daily", 0.8)
   );
 
   const airlinePages: MetadataRoute.Sitemap = airlines.flatMap((airline) => [
-    {
-      url: `${BASE_URL}/airlines/${airline.code}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    },
+    ...dynamicBilingual(
+      `/airlines/${airline.code}`,
+      new Date(),
+      "weekly",
+      0.6
+    ),
+    // /sales サブルートは日本語のみ（英語版未提供）
     {
       url: `${BASE_URL}/airlines/${airline.code}/sales`,
       lastModified: new Date(),
@@ -95,27 +113,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]);
 
-  const articlePages: MetadataRoute.Sitemap = articles.map((article) => ({
-    url: `${BASE_URL}/articles/${article.slug}`,
-    lastModified: new Date(article.published_at),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
+  const articlePages: MetadataRoute.Sitemap = articles.flatMap((article) =>
+    dynamicBilingual(
+      `/articles/${article.slug}`,
+      new Date(article.published_at),
+      "monthly",
+      0.6
+    )
+  );
 
-  // ホテル特集（インデックス + 目的地別）
+  // ホテル特集（インデックス + 目的地別 + 都市別ベストシーズン）— 日英両対応
   const hotelPages: MetadataRoute.Sitemap = [
-    {
-      url: `${BASE_URL}/hotels`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    ...HOTEL_DESTINATIONS.map((d) => ({
-      url: `${BASE_URL}/hotels/${d.slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
+    ...bilingual("/hotels", "weekly", 0.8),
+    ...HOTEL_DESTINATIONS.flatMap((d) =>
+      dynamicBilingual(`/hotels/${d.slug}`, new Date(), "weekly", 0.7)
+    ),
+    // 都市別ベストシーズン — 「{都市} ベストシーズン」「{都市} 何月」等の long-tail
+    ...HOTEL_DESTINATIONS.flatMap((d) =>
+      dynamicBilingual(
+        `/hotels/${d.slug}/best-season`,
+        new Date(),
+        "monthly",
+        0.6
+      )
+    ),
   ];
 
   return [

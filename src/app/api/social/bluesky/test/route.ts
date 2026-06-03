@@ -50,14 +50,12 @@ export async function POST(request: NextRequest) {
       tip: `https://bsky.app/profile/${handle}`,
     });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : "unknown";
+    // 実装詳細やヒントを外部に返さない（サーバ側ログに留める）
+    console.error("[bluesky/test] login or post failed:", e);
     return NextResponse.json(
       {
         success: false,
-        error: msg,
-        hint:
-          "App Password が無効/期限切れ、または handle が間違っている可能性。" +
-          "https://bsky.app/settings/app-passwords で新しい App Password を発行してください。",
+        error: "Authentication or post failed",
       },
       { status: 500 }
     );

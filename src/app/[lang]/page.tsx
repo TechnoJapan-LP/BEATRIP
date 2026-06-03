@@ -21,6 +21,40 @@ import { getActiveDeals } from "@/lib/deals/deal-service";
 import { HOTEL_BY_SLUG, HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { getDictionary, hasLocale } from "./dictionaries";
 import { localizeHref } from "@/lib/i18n/locale";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const locale = hasLocale(lang) ? lang : "ja";
+
+  // 検索キーワード（「格安航空券」「航空会社セール」）需要をタイトル/説明に反映。
+  // 150〜160字を目安に拡張し、CTR とキーワードカバレッジを向上。
+  const description =
+    locale === "ja"
+      ? "「格安航空券」「航空会社セール」で検索する方へ。ANA・JAL・Peach・Jetstar など日本発着の最新セール情報を自動収集。次回セール時期の予測、価格推移、最安値ディールを毎日更新。フライトとホテルの予約準備にどうぞ。"
+      : "For travelers searching cheap flights from Japan. BEATRIP auto-tracks ANA, JAL, Peach, Jetstar and more — latest sales, sale-timing forecasts, price history, and the cheapest deals, updated daily. Plan flights and hotels in one place.";
+
+  const path = locale === "ja" ? "" : "/en";
+
+  return {
+    description,
+    openGraph: {
+      description,
+    },
+    alternates: {
+      canonical: `https://beatrip.jp${path}`,
+      languages: {
+        ja: "https://beatrip.jp",
+        en: "https://beatrip.jp/en",
+        "x-default": "https://beatrip.jp",
+      },
+    },
+  };
+}
 
 // ホームに出す代表的なホテル都市（国内→アジア→欧米まんべんなく）
 const POPULAR_HOTEL_SLUGS = [

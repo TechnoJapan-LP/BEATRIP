@@ -32,7 +32,15 @@ export async function POST(req: Request) {
   const body = await req.text();
   const signature = req.headers.get("x-line-signature") ?? "";
 
-  if (process.env.LINE_CHANNEL_SECRET && !verifySignature(body, signature)) {
+  // LINE_CHANNEL_SECRET は本番必須。未設定なら fail-safe で 500 を返す。
+  if (!process.env.LINE_CHANNEL_SECRET) {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        { error: "Server misconfigured: LINE_CHANNEL_SECRET required" },
+        { status: 500 }
+      );
+    }
+  } else if (!verifySignature(body, signature)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
 

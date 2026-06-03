@@ -3,10 +3,12 @@ import { Header } from "@/components/header";
 
 export const metadata: Metadata = {
   title: "航空会社セール一覧",
-  description: "ANA・JAL・Peach・Jetstarなど、日本発着の航空会社セール情報を自動収集。最新のフライトキャンペーン・割引情報をまとめてチェック。",
+  description:
+    "「ANA セール」「JAL セール」「Peach タイムセール」「Jetstar セール」で検索する方へ。日本発着の主要キャリア／LCC の最新セール・キャンペーン・割引情報を自動収集してまとめて掲載。次回開催時期の予測も。",
   openGraph: {
     title: "航空会社セール一覧",
-    description: "日本発着の全航空会社セール情報をリアルタイムで収集・表示",
+    description:
+      "ANA・JAL・Peach・Jetstar など日本発着の航空会社セールをリアルタイムで自動収集・横断比較。",
   },
   alternates: {
     canonical: "https://beatrip.jp/airlines",
@@ -63,8 +65,32 @@ export default async function AirlinesPage() {
       })
     : null;
 
+  // CollectionPage + ItemList — 航空会社一覧の構造を検索エンジンに明示
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "航空会社セール一覧",
+    description:
+      "日本発着の航空会社セール情報を自動収集・横断比較。",
+    url: "https://beatrip.jp/airlines",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: airlines.length,
+      itemListElement: airlines.map((a, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `https://beatrip.jp/airlines/${a.code}`,
+        name: a.name,
+      })),
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">

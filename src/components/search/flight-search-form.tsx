@@ -253,7 +253,7 @@ export function FlightSearchForm({ deals, onClose }: Props) {
           <button
             type="button"
             onClick={handleSwap}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-400 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-zinc-600"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-700 text-zinc-400 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-zinc-600"
             aria-label={t.swapAria}
           >
             <ArrowRightLeft className="h-3.5 w-3.5" />
@@ -299,7 +299,8 @@ export function FlightSearchForm({ deals, onClose }: Props) {
                 type="date"
                 value={departDate}
                 onChange={(e) => setDepartDate(e.target.value)}
-                className="h-11 w-full rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 pl-9 pr-2 text-sm text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-300 dark:hover:border-zinc-600 focus:border-zinc-400 focus:outline-none"
+                // モバイルでは text-base (16px) で iOS の自動ズームを抑止
+                className="h-11 w-full rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 pl-9 pr-2 text-base text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-300 dark:hover:border-zinc-600 focus:border-zinc-400 focus:outline-none sm:text-sm"
               />
             </div>
           </div>
@@ -314,7 +315,8 @@ export function FlightSearchForm({ deals, onClose }: Props) {
                 value={returnDate}
                 onChange={(e) => setReturnDate(e.target.value)}
                 min={departDate || undefined}
-                className="h-11 w-full rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 pl-9 pr-2 text-sm text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-300 dark:hover:border-zinc-600 focus:border-zinc-400 focus:outline-none"
+                // モバイルでは text-base (16px) で iOS の自動ズームを抑止
+                className="h-11 w-full rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 pl-9 pr-2 text-base text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-300 dark:hover:border-zinc-600 focus:border-zinc-400 focus:outline-none sm:text-sm"
               />
             </div>
           </div>

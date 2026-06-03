@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // X-Powered-By ヘッダを抑止（Next.js 利用のフィンガープリント漏洩を防ぐ）
+  poweredByHeader: false,
   images: {
     // 配信元を許可（Unsplash の写真 / Wikimedia の都市代表画像）
     remotePatterns: [
@@ -25,8 +27,20 @@ const nextConfig: NextConfig = {
   // ── セキュリティヘッダ ──
   // クリックジャッキング・MIME sniffing・リファラー漏洩等を防ぐ。
   // CSP は Next.js のインラインスクリプト＋複数の第三者(GA/Vercel等)との
-  // 兼ね合いで誤爆しやすいため、まずは"絶対安全"な4種を有効化する。
+  // 兼ね合いがあるため、必要なドメインを明示的に許可している。
+  // 許可している外部接続先:
+  //   - GA4: https://www.googletagmanager.com / https://www.google-analytics.com
+  //   - Vercel Analytics / Speed Insights: https://va.vercel-scripts.com / https://vitals.vercel-insights.com
   async headers() {
+    const csp = [
+      "default-src 'self'",
+      "img-src 'self' data: https:",
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://va.vercel-scripts.com",
+      "style-src 'self' 'unsafe-inline'",
+      "font-src 'self' data:",
+      "connect-src 'self' https://www.google-analytics.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+      "frame-ancestors 'self'",
+    ].join("; ");
     return [
       {
         source: "/:path*",
@@ -36,8 +50,8 @@ const nextConfig: NextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
           },
-          // iframe埋め込み禁止（クリックジャッキング対策）
-          { key: "X-Frame-Options", value: "DENY" },
+          // iframe埋め込みは同一オリジンのみ許可（CSP frame-ancestors とも整合）
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
           // MIME sniffing 無効化
           { key: "X-Content-Type-Options", value: "nosniff" },
           // 外部遷移時のリファラを抑制
@@ -51,6 +65,8 @@ const nextConfig: NextConfig = {
             value:
               "camera=(), microphone=(), geolocation=(), interest-cohort=()",
           },
+          // Content Security Policy
+          { key: "Content-Security-Policy", value: csp },
         ],
       },
       // sitemap.xml / robots.txt は静的に近いので CDN/ブラウザでキャッシュ可

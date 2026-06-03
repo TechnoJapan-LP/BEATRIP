@@ -126,6 +126,19 @@
     /* スマホでカードや絶対配置要素が画面端にはみ出ても横スクロールを発生
        させない（背景画像のスケール演出などが端から数px溢れるのを安全に処理） */
     overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+  /* iOS Safari の自動ズーム（フォーカス時に画面拡大）を抑止。
+     16px 未満の入力要素ではフォーカス時に zoom が起きるため、
+     モバイルでは強制的に 16px 以上に。デスクトップでは text-sm 等の
+     Tailwind クラスが優先されるよう、メディアクエリで限定する。 */
+  @media (max-width: 768px) {
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+    textarea,
+    select {
+      font-size: 16px;
+    }
   }
   html {
     @apply font-sans;
@@ -199,8 +212,23 @@
   .animate-soft-pulse {
     animation: beatrip-soft-pulse 2.6s ease-in-out infinite;
   }
+  /* ユーティリティ: 任意要素で reduced-motion を尊重したいときに付与。
+     animate-pulse など Tailwind 既製の無限アニメも含めて停止させる。 */
+  .motion-safe-only {
+    /* 通常時は素の挙動。reduced-motion 時に下のクエリで無効化 */
+  }
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up, .animate-fade-in, .animate-slide-up,
-    .animate-ken-burns, .animate-soft-pulse { animation: none; }
+    .animate-ken-burns, .animate-soft-pulse,
+    .animate-grow-h, .animate-grow-w,
+    .motion-safe-only { animation: none !important; }
+    /* Tailwind / 任意の無限アニメも reduced-motion 環境では実質停止に。
+       transition も最短化して、視差・移動を抑える。 */
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }

@@ -88,6 +88,28 @@ export function trackHotelClick(params: {
   });
 }
 
+/**
+ * 高料率パートナー（eSIM / 空港送迎 / 海外旅行保険 / ホテル 等）のクリック計測。
+ * hotel_click と分けることで、パートナーカテゴリ別の CTR / RPM を GA4 上で比較できる。
+ */
+export function trackPartnerClick(params: {
+  /** Partner.id（airalo / kiwitaxi / insurance / booking / trip-hotel 等） */
+  partnerId: string;
+  /** Partner.category（esim / transfer / insurance / hotel / tour） */
+  category: string;
+  /** 起点となった目的地（IATAコード or 都市slug。なければ "" でOK） */
+  destinationCode?: string;
+  /** 起点ページ識別子（deal / route / hotel-city 等） */
+  source?: string;
+}) {
+  track("partner_click", {
+    partner_id: params.partnerId,
+    partner_category: params.category,
+    destination_code: params.destinationCode ?? "",
+    source: params.source ?? "",
+  });
+}
+
 /** ニュースレター登録完了 */
 export function trackNewsletterSignup(params: { source?: string } = {}) {
   track("newsletter_signup", {

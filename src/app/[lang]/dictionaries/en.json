@@ -84,6 +84,7 @@
     "faq": "FAQ",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
+    "disclosure": "Ad disclosure",
     "disclaimer": "* Sale information shown is collected from each airline's official website. Prices and seat availability change constantly, so always confirm the latest details on the airline's official site before booking. This site does not sell tickets and is for informational purposes only.",
     "copyright": "© 2026 BEATRIP. All rights reserved."
   },
@@ -159,6 +160,39 @@
       { "title": "7. Use of Cookies", "content": "The Service uses cookies to improve user experience. You can restrict cookie use via your browser settings, but some features may not work properly." },
       { "title": "8. Changes to This Policy", "content": "We may change this Privacy Policy as necessary. The revised policy takes effect from the time it is posted on the Service." },
       { "title": "9. Contact", "content": "For inquiries about this policy, please contact us via the contact form on the site." }
+    ]
+  },
+  "disclosure": {
+    "metaTitle": "Advertising Disclosure & Affiliate Policy",
+    "metaDescription": "BEATRIP uses affiliate advertising (TravelPayouts marker=729387 and others). This page lists our partner programs, how the affiliate model works, and our editorial independence.",
+    "breadcrumb": "Ad disclosure",
+    "title": "Advertising Disclosure",
+    "updated": "Last updated: 2026-06-04",
+    "sections": [
+      {
+        "title": "1. About affiliate advertising",
+        "content": "BEATRIP (the \"Service\") participates in performance-based affiliate programs. Outbound links on this Service (flight, hotel, eSIM, airport transfer, travel insurance booking buttons, etc. opened in a new tab) may be advertising. If you make a booking through one of these links, the Service may receive a referral commission from the advertiser. Per Japanese advertising regulations, such links carry rel=\"sponsored\"."
+      },
+      {
+        "title": "2. Affiliate programs we use",
+        "content": "The Service currently uses the following partner programs (subject to change based on approval status):\n\n● TravelPayouts (marker ID: 729387) — flight, hotel and travel-companion affiliate network\n● Hotellook — cross-OTA hotel price comparison\n● Booking.com — hotel bookings\n● Trip.com — flights and hotels\n● Agoda — hotels (strong in Asia)\n● Aviasales / Skyscanner — flight metasearch\n● Airalo — travel eSIM\n● KiwiTaxi — airport transfers\n● Travel insurance (TBD after approval)\n\nReferral commissions are paid by the advertiser and never marked up to the user's price."
+      },
+      {
+        "title": "3. About displayed prices and availability",
+        "content": "The Service does not sell flights directly; it aggregates publicly available information from airlines and OTAs. Listed prices and seat availability reflect the moment of fetch. Always confirm the latest on the destination site before booking."
+      },
+      {
+        "title": "4. Editorial independence",
+        "content": "Sale listings, articles, and curated hotel picks are chosen for their value to users, independent of the size of any affiliate commission. \"Best time to book\" and seasonal forecasts are statistical guidance based on historical data, not a guarantee of any particular advertiser's sale."
+      },
+      {
+        "title": "5. Cookies and analytics",
+        "content": "Clicks on affiliate links are measured via Google Analytics 4 events (partner_click / hotel_click / affiliate_click). This data is used to measure conversion and improve the Service, and does not include personally identifiable information. See the Privacy Policy for details."
+      },
+      {
+        "title": "6. Changes",
+        "content": "This disclosure will be updated as partner programs are added or ended. The \"last updated\" date above reflects the most recent revision."
+      }
     ]
   }
 }

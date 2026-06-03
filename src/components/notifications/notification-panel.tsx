@@ -63,7 +63,14 @@ export function NotificationPanel() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+        aria-label="通知設定を開く"
+        // モバイルでは下部の固定ナビ (56px) と重ならないよう位置を上げ、
+        // iOS のホームインジケータ safe-area も加算
+        style={{
+          bottom: "calc(72px + env(safe-area-inset-bottom, 0px))",
+          right: "calc(1rem + env(safe-area-inset-right, 0px))",
+        }}
+        className="fixed z-50 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-transform hover:scale-105 active:scale-95 sm:!bottom-6 sm:!right-6"
       >
         <Bell className="h-5 w-5" />
         {subscriptions.length > 0 && (
@@ -80,7 +87,14 @@ export function NotificationPanel() {
               onClick={() => setIsOpen(false)}
             />
             <div
-              className="fixed bottom-20 right-6 z-50 w-[340px] rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-zinc-100 animate-fade-up"
+              // モバイルではフロートボタン (bottom 72+safe) のさらに上に出す。
+              // 画面端からはみ出さないよう左右マージンも確保。
+              style={{
+                bottom: "calc(132px + env(safe-area-inset-bottom, 0px))",
+                right: "calc(1rem + env(safe-area-inset-right, 0px))",
+                maxWidth: "calc(100vw - 2rem)",
+              }}
+              className="fixed z-50 w-[340px] rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-zinc-100 animate-fade-up sm:!bottom-20 sm:!right-6"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-zinc-900">通知設定</h3>
@@ -121,6 +135,9 @@ export function NotificationPanel() {
                   placeholder="路線 (例: NRT→BKK)"
                   value={route}
                   onChange={(e) => setRoute(e.target.value)}
+                  autoComplete="off"
+                  autoCapitalize="characters"
+                  spellCheck={false}
                   className="h-9 text-sm bg-zinc-50"
                 />
                 <Input
@@ -131,6 +148,12 @@ export function NotificationPanel() {
                   }
                   value={webhook}
                   onChange={(e) => setWebhook(e.target.value)}
+                  type="url"
+                  inputMode="url"
+                  autoComplete="off"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                   className="h-9 text-sm bg-zinc-50"
                 />
                 <Button
