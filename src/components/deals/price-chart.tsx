@@ -1,4 +1,4 @@
-"use client";
+// Server component: 純表示用 (useClient 不要)
 
 import type { BestTimeToBook } from "@/data/deal-schema";
 

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
 import { DealGrid } from "@/components/deals/deal-grid";
 import { SaleCalendar } from "@/components/calendar/sale-calendar";
-import { NotificationPanel } from "@/components/notifications/notification-panel";
 import { ArticleCard } from "@/components/articles/article-card";
 import { mockSaleEvents } from "@/data/mock-deals";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
@@ -14,14 +14,31 @@ import { DealCarousel } from "@/components/deals/deal-carousel";
 import { SiteFooter } from "@/components/site-footer";
 import { CollapsibleSearch } from "@/components/search/collapsible-search";
 import { HeroDeal } from "@/components/deals/hero-deal";
-import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
+
+// Below-the-fold + heavy interactive components — code-split out of the
+// initial JS chunk. Note: ssr:false is not allowed in Server Components,
+// so we use dynamic() without it; the components still load lazily on the
+// client and live in their own JS chunks.
+const NotificationPanel = dynamic(() =>
+  import("@/components/notifications/notification-panel").then((m) => ({
+    default: m.NotificationPanel,
+  }))
+);
+const NewsletterCTA = dynamic(() =>
+  import("@/components/newsletter/newsletter-cta").then((m) => ({
+    default: m.NewsletterCTA,
+  }))
+);
 import { DestinationSpotlight } from "@/components/home/destination-spotlight";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { HOTEL_BY_SLUG, HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { getDictionary, hasLocale } from "./dictionaries";
 import { localizeHref } from "@/lib/i18n/locale";
 import type { Metadata } from "next";
+
+// ISR: 1800秒キャッシュ (30分: deal が頻繁に変わる top)
+export const revalidate = 1800;
 
 export async function generateMetadata({
   params,

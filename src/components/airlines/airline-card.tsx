@@ -1,4 +1,4 @@
-"use client";
+// Server component: 純表示用 (useClient 不要)
 
 import { ExternalLink, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

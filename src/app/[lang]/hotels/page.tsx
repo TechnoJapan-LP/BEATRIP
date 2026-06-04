@@ -7,6 +7,9 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { getHotelDestinationsByRegion } from "@/data/hotel-destinations";
 
+// ISR: 21600秒キャッシュ (6時間)
+export const revalidate = 21600;
+
 export const metadata: Metadata = {
   title: "ホテル予約・最安値検索｜目的地別の宿泊情報 | BEATRIP",
   description: "東京・大阪・バンコク・ソウル・ホノルル等、人気目的地のホテルを最安値で検索。エリア別の特徴・相場・ベストシーズンも掲載。フライトとあわせて予約準備に。",

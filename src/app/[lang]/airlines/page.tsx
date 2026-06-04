@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/header";
 
+// ISR: 21600秒キャッシュ (6時間: 航空会社マスタは静的)
+export const revalidate = 21600;
+
 export const metadata: Metadata = {
   title: "航空会社セール一覧",
   description:

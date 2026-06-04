@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
 
+// ISR: 86400秒キャッシュ (24時間)
+export const revalidate = 86400;
+
 /**
  * robots.txt — クローラー向け公開ポリシー。
  * - 全クローラーに全公開ページを許可

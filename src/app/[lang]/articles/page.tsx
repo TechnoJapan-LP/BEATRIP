@@ -4,6 +4,9 @@ import { ArticleList } from "@/components/articles/article-list";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
 import { SiteFooter } from "@/components/site-footer";
 
+// ISR: 3600秒キャッシュ (1時間)
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "セール記事・攻略ガイド",
   description:

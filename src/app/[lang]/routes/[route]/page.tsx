@@ -21,6 +21,9 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 
 type Props = { params: Promise<{ route: string }> };
 
+// ISR: 1800秒キャッシュ (30分)
+export const revalidate = 1800;
+
 function parseRoute(slug: string) {
   const decoded = decodeURIComponent(slug);
   const match = decoded.match(/^([A-Z]{3})-([A-Z]{3})$/);

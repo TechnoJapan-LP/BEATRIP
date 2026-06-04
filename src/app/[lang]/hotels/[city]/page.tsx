@@ -27,6 +27,9 @@ import { CityPracticalCard } from "@/components/hotels/city-practical-card";
 
 type Props = { params: Promise<{ city: string }> };
 
+// ISR: 3600秒キャッシュ (1時間)
+export const revalidate = 3600;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city } = await params;
   const d = getHotelDestinationBySlug(city);

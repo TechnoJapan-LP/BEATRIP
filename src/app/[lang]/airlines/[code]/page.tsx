@@ -19,6 +19,9 @@ import { SiteFooter } from "@/components/site-footer";
 
 type Props = { params: Promise<{ code: string }> };
 
+// ISR: 3600秒キャッシュ (1時間)
+export const revalidate = 3600;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
   const airline = getAirlineByCode(code);

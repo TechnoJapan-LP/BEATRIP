@@ -43,6 +43,9 @@ import { StickyCTA } from "@/components/deals/sticky-cta";
 
 type Props = { params: Promise<{ id: string }> };
 
+// ISR: 1800秒キャッシュ (30分)
+export const revalidate = 1800;
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const deal = await getDealByIdFromService(id);

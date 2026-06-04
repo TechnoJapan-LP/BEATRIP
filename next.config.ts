@@ -3,6 +3,20 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // X-Powered-By ヘッダを抑止（Next.js 利用のフィンガープリント漏洩を防ぐ）
   poweredByHeader: false,
+  // ── バンドル最適化 ──
+  // 大きい lib (lucide-react: 2800+ icons, @base-ui/react 等) を per-icon /
+  // per-export tree-shake させる。Turbopack が compile 時に解決し、未参照
+  // export を初期バンドルから除外する。
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "@base-ui/react",
+      "class-variance-authority",
+      "@vercel/analytics",
+      "@vercel/speed-insights",
+      "date-fns",
+    ],
+  },
   images: {
     // 配信元を許可（Unsplash の写真 / Wikimedia の都市代表画像）
     remotePatterns: [

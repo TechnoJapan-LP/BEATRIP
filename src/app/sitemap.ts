@@ -6,6 +6,9 @@ import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 
 const BASE_URL = "https://beatrip.jp";
 
+// ISR: 3600秒キャッシュ (1時間)
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [articles, deals] = await Promise.all([
     getAllArticles(),
