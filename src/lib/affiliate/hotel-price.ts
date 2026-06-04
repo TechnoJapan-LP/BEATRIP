@@ -145,3 +145,89 @@ export async function getCityStartingPrice(
   const adjusted = applySeasonAdjustment(slug, baseline);
   return { jpy: adjusted, source: "estimate", isEstimate: true };
 }
+
+/**
+ * 今後1〜3ヶ月の価格動向シグナル。
+ * 現在月の係数と将来月の係数を比較し、「上昇中」「下降中」「横ばい」を返す。
+ * FOMO 演出（今が安い／今すぐ予約推奨）に使う。
+ */
+export type PriceTrend = {
+  /** 'rising' = 今後上昇 / 'falling' = 今後下降 / 'stable' = 横ばい */
+  direction: "rising" | "falling" | "stable";
+  /** 現在月 → 1〜3ヶ月先のピーク月の変化率 (%) */
+  changePercent: number;
+  /** UI 表示用の短文 */
+  label: string;
+  /** ユーザー向け推奨アクション */
+  recommendation: string;
+  /** 比較対象の「将来ピーク月」 (1-12) */
+  peakMonth: number;
+};
+
+export function getCityPriceTrend(slug: string): PriceTrend {
+  const now = new Date().getMonth() + 1;
+  const cityFactor = CITY_TYPE_FACTOR[slug] ?? {};
+
+  const factorFor = (month: number) => {
+    const m = ((month - 1) % 12) + 1;
+    let f = MONTH_FACTOR[m] ?? 1.0;
+    if ((m === 7 || m === 8) && cityFactor.summer != null) f *= cityFactor.summer;
+    else if ((m === 12 || m === 1 || m === 2) && cityFactor.winter != null) f *= cityFactor.winter;
+    return f;
+  };
+
+  const current = factorFor(now);
+  let peakMonth = now;
+  let peakFactor = current;
+  for (let i = 1; i <= 3; i++) {
+    const m = ((now - 1 + i) % 12) + 1;
+    const f = factorFor(m);
+    if (f > peakFactor) {
+      peakFactor = f;
+      peakMonth = m;
+    }
+  }
+
+  const changePercent = Math.round(((peakFactor - current) / current) * 100);
+
+  if (changePercent >= 15) {
+    return {
+      direction: "rising",
+      changePercent,
+      peakMonth,
+      label: `${peakMonth}月にかけて約${changePercent}%上昇見込み`,
+      recommendation: "今のうちに予約を確保するのがおすすめ",
+    };
+  }
+
+  // 下降検出: 1-3 ヶ月先の最低 vs 現在
+  let troughFactor = current;
+  let troughMonth = now;
+  for (let i = 1; i <= 3; i++) {
+    const m = ((now - 1 + i) % 12) + 1;
+    const f = factorFor(m);
+    if (f < troughFactor) {
+      troughFactor = f;
+      troughMonth = m;
+    }
+  }
+  const troughChange = Math.round(((troughFactor - current) / current) * 100);
+
+  if (troughChange <= -10) {
+    return {
+      direction: "falling",
+      changePercent: troughChange,
+      peakMonth: troughMonth,
+      label: `${troughMonth}月にかけて約${Math.abs(troughChange)}%下落見込み`,
+      recommendation: "急ぎでなければ少し待つと安く取れる可能性",
+    };
+  }
+
+  return {
+    direction: "stable",
+    changePercent: 0,
+    peakMonth: now,
+    label: "価格は当面安定",
+    recommendation: "需要が増える前のタイミングで予約推奨",
+  };
+}

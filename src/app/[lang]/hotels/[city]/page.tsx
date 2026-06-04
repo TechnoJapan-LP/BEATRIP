@@ -19,7 +19,11 @@ import { getCuratedHotels } from "@/data/hotel-curated";
 import { TravelCompanions } from "@/components/affiliate/travel-companions";
 import { HotelBookingButtons } from "@/components/affiliate/hotel-booking-buttons";
 import { getAirlineByCode } from "@/data/airlines";
-import { getCityStartingPrice } from "@/lib/affiliate/hotel-price";
+import { getCityStartingPrice, getCityPriceTrend } from "@/lib/affiliate/hotel-price";
+import { getCityPracticalInfo } from "@/data/city-practical-info";
+import { PriceTrendBadge } from "@/components/hotels/price-trend-badge";
+import { HotelMetaRow } from "@/components/hotels/hotel-meta-row";
+import { CityPracticalCard } from "@/components/hotels/city-practical-card";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -72,6 +76,9 @@ export default async function HotelCityPage({ params }: Props) {
   const curatedHotels = getCuratedHotels(d.slug);
   // スターティング価格: 承認後は Booking feed / 未承認時はシーズン補正推定
   const startingPrice = await getCityStartingPrice(d.slug);
+  // 価格動向シグナル (今後1-3ヶ月) と都市の実用旅行情報
+  const priceTrend = getCityPriceTrend(d.slug);
+  const practicalInfo = getCityPracticalInfo(d.slug);
 
   // 関連フライトディール（この都市行き、最大4件）
   const deals = await getActiveDeals();
@@ -352,11 +359,16 @@ export default async function HotelCityPage({ params }: Props) {
                           <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
                             {h.highlight}
                           </p>
+                          {/* 星評価 / 客室数 / レビュースコア / アメニティ / 推奨利用シーン */}
+                          <HotelMetaRow hotel={h} />
                           {/* 各OTAへホテル名指定で直接深リンク（複数の予約サイトを比較） */}
-                          <HotelBookingButtons
-                            hotelName={h.name}
-                            cityNameEn={d.nameEn}
-                          />
+                          <div className="mt-3">
+                            <HotelBookingButtons
+                              hotelName={h.name}
+                              cityNameEn={d.nameEn}
+                              destinationCode={d.iataCodes[0]}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -472,8 +484,29 @@ export default async function HotelCityPage({ params }: Props) {
             </section>
           </div>
 
-          {/* 右サイド: 関連フライト */}
+          {/* 右サイド: 関連フライト + 価格動向 + 実用情報 */}
           <aside className="space-y-6">
+            {/* 価格動向シグナル (FOMO/信頼性) */}
+            <section>
+              <div className="flex items-center gap-2 mb-3">
+                <TrendingDown className="h-4 w-4 text-zinc-400" />
+                <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase">
+                  価格動向
+                </h2>
+              </div>
+              <PriceTrendBadge trend={priceTrend} />
+            </section>
+
+            {/* 実用旅行情報 (eSIM/旅行保険/送迎クロスセル トリガー) */}
+            {practicalInfo && (
+              <section>
+                <CityPracticalCard
+                  info={practicalInfo}
+                  cityNameJa={d.nameJa}
+                />
+              </section>
+            )}
+
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <Plane className="h-4 w-4 text-zinc-400" />
