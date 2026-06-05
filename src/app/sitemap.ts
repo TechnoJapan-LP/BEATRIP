@@ -54,6 +54,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // 特集ランディング
     ...bilingual("/cruise", "monthly", 0.7),
     ...bilingual("/hawaii", "monthly", 0.7),
+    ...bilingual("/esim", "monthly", 0.7),
+    ...bilingual("/package-tour", "monthly", 0.7),
+    ...bilingual("/okinawa", "monthly", 0.7),
   ];
 
   // 動的ルートも hreflang 付きで日英両対応に。
@@ -142,6 +145,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         new Date(),
         "monthly",
         0.6
+      )
+    ),
+    // 都市別アクティビティ — 「{都市} ツアー」「{都市} 観光」等
+    ...HOTEL_DESTINATIONS.flatMap((d) =>
+      dynamicBilingual(
+        `/hotels/${d.slug}/activities`,
+        new Date(),
+        "monthly",
+        0.6
+      )
+    ),
+    // 都市別 eSIM (海外のみ) — 「{都市} eSIM」「{都市} Wi-Fi」等
+    ...HOTEL_DESTINATIONS.filter((d) => d.region !== "国内").flatMap((d) =>
+      dynamicBilingual(
+        `/hotels/${d.slug}/esim`,
+        new Date(),
+        "monthly",
+        0.55
       )
     ),
   ];
