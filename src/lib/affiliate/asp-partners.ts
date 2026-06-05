@@ -20,7 +20,9 @@ export type AspCategory =
   | "hotel-luxury"      // 高級ホテル特化
   | "tour-package"      // パッケージツアー
   | "tour-okinawa"      // 沖縄特化
+  | "tour-local"        // 現地アクティビティ・ガイドツアー
   | "rental-car"        // レンタカー
+  | "rail-domestic"     // 国内鉄道 (新幹線・特急)
   | "esim-wifi"         // eSIM / Wi-Fi レンタル
   | "insurance"         // 海外旅行保険
   | "transfer";         // 空港送迎
@@ -116,6 +118,46 @@ export const ASP_PARTNERS: AspPartner[] = [
     matEnv: "A8_GLOBAL_WIFI_MAT",
     accent: "zinc",
     priority: 4,
+  },
+  {
+    id: "travel-west",
+    label: "トラベルウエスト",
+    ecid: "tw",
+    tagline: "海外航空券の最安値検索・比較・予約",
+    categories: ["flight-overseas"],
+    matEnv: "A8_TRAVEL_WEST_MAT",
+    accent: "sky",
+    priority: 3,
+  },
+  {
+    id: "real-ticket",
+    label: "リアルチケット",
+    ecid: "rt",
+    tagline: "24時間365日・国内航空券の最安値検索",
+    categories: ["flight-domestic"],
+    matEnv: "A8_REAL_TICKET_MAT",
+    accent: "rose",
+    priority: 3,
+  },
+  {
+    id: "navitime-travel",
+    label: "NAVITIME Travel",
+    ecid: "nt",
+    tagline: "JR新幹線・特急チケットを自宅にお届け",
+    categories: ["rail-domestic"],
+    matEnv: "A8_NAVITIME_MAT",
+    accent: "emerald",
+    priority: 4,
+  },
+  {
+    id: "buyma-travel",
+    label: "BUYMA TRAVEL",
+    ecid: "bt",
+    tagline: "現地在住ガイドが日本語で案内するプライベートツアー",
+    categories: ["tour-local"],
+    matEnv: "A8_BUYMA_TRAVEL_MAT",
+    accent: "violet",
+    priority: 2,
   },
 ];
 
