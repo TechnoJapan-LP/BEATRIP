@@ -31,6 +31,7 @@ const NewsletterCTA = dynamic(() =>
   }))
 );
 import { DestinationSpotlight } from "@/components/home/destination-spotlight";
+import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { HOTEL_BY_SLUG, HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { getDictionary, hasLocale } from "./dictionaries";
@@ -260,6 +261,28 @@ export default async function Home({
             deals={[...deals].sort((a, b) => b.discount_percent - a.discount_percent).slice(0, 8)}
             title={t.popularTitle}
             subtitle={t.popularSubtitle}
+          />
+        </section>
+
+        {/* 日本系 ASP partner 横断パネル — 訪問者全員に partner を露出 */}
+        <section className="mt-12">
+          <JapanesePartnersPanel
+            title="信頼できる日本の旅行サービス"
+            subtitle="航空券・ホテル・ツアー・eSIM まで、提携の中から最安値で比較・予約"
+            categories={[
+              "flight-domestic",
+              "flight-overseas",
+              "hotel-domestic",
+              "hotel-overseas",
+              "tour-package",
+              "tour-overseas",
+              "tour-local",
+              "rail-domestic",
+              "esim-wifi",
+              "airline-direct",
+              "cruise",
+            ]}
+            source="home"
           />
         </section>
 
