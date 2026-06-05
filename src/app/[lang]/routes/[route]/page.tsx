@@ -10,6 +10,8 @@ import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
 import { TravelCompanions } from "@/components/affiliate/travel-companions";
+import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import type { AspCategory } from "@/lib/affiliate/asp-partners";
 import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
 import {
   getHotelSlugByIata,
@@ -135,6 +137,30 @@ export default async function RoutePage({ params }: Props) {
     new Set(routeDeals.map((d) => d.airline_name))
   );
   const hotelSlug = getHotelSlugByIata(parsed.destination);
+  const destDestination = hotelSlug ? getHotelDestinationBySlug(hotelSlug) : null;
+  const isDomestic = destDestination?.region === "国内";
+  const aspCategories: AspCategory[] = isDomestic
+    ? [
+        "flight-domestic",
+        "tour-package",
+        "hotel-domestic",
+        "hotel-luxury",
+        "rental-car",
+        "rail-domestic",
+        "bus-domestic",
+        "activity-domestic",
+      ]
+    : [
+        "flight-overseas",
+        "tour-overseas",
+        "hotel-overseas",
+        "airline-direct",
+        "tour-local",
+        "esim-wifi",
+        "transport-europe",
+        "transfer",
+        "cruise",
+      ];
 
   // FAQ — 路線特有の検索意図にピンポイントで答えてリッチ結果を狙う
   const faqs: { q: string; a: string }[] = [];
@@ -333,6 +359,19 @@ export default async function RoutePage({ params }: Props) {
               destinationLabel={dest}
               checkIn={routeDeals[0].departure_date}
               checkOut={routeDeals[0].return_date}
+            />
+
+            {/* 日本系 ASP partner 集約 — env で有効化された分だけ表示 */}
+            <JapanesePartnersPanel
+              title={`${origin}→${dest}の比較・予約`}
+              subtitle={
+                isDomestic
+                  ? "日本の旅行サービスから最安値で予約"
+                  : `${dest}行きの航空券・ツアー・現地サービスを比較`
+              }
+              categories={aspCategories}
+              destinationCode={parsed.destination}
+              source="route"
             />
 
             {/* 旅の周辺商品（eSIM / 空港送迎 / 海外旅行保険 等）— env で有効なものだけ表示 */}

@@ -24,6 +24,8 @@ import { getCityPracticalInfo } from "@/data/city-practical-info";
 import { PriceTrendBadge } from "@/components/hotels/price-trend-badge";
 import { HotelMetaRow } from "@/components/hotels/hotel-meta-row";
 import { CityPracticalCard } from "@/components/hotels/city-practical-card";
+import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import type { AspCategory } from "@/lib/affiliate/asp-partners";
 
 type Props = { params: Promise<{ city: string }> };
 
@@ -82,6 +84,35 @@ export default async function HotelCityPage({ params }: Props) {
   // 価格動向シグナル (今後1-3ヶ月) と都市の実用旅行情報
   const priceTrend = getCityPriceTrend(d.slug);
   const practicalInfo = getCityPracticalInfo(d.slug);
+
+  // ASP 経由 partner の表示カテゴリ — 国内/海外で出すべきものを切替
+  const isDomestic = d.region === "国内";
+  const aspCategories: AspCategory[] = isDomestic
+    ? [
+        "hotel-domestic",
+        "hotel-luxury",
+        "hotel-glamping",
+        "tour-package",
+        ...(d.slug === "okinawa" ? (["tour-okinawa"] as AspCategory[]) : []),
+        "flight-domestic",
+        "rail-domestic",
+        "rental-car",
+        "bus-domestic",
+        "activity-domestic",
+      ]
+    : [
+        "hotel-overseas",
+        "hotel-luxury",
+        "flight-overseas",
+        "tour-overseas",
+        ...(d.slug === "honolulu" ? (["tour-hawaii"] as AspCategory[]) : []),
+        "tour-local",
+        "airline-direct",
+        "esim-wifi",
+        "transport-europe",
+        "cruise",
+        "transfer",
+      ];
 
   // 関連フライトディール（この都市行き、最大4件）
   const deals = await getActiveDeals();
@@ -509,6 +540,21 @@ export default async function HotelCityPage({ params }: Props) {
                 />
               </section>
             )}
+
+            {/* 日本系 ASP partner 集約 — env で有効化された分だけ表示 */}
+            <section>
+              <JapanesePartnersPanel
+                title={`${d.nameJa}旅行の比較・予約`}
+                subtitle={
+                  isDomestic
+                    ? "日本の旅行サービスから最安値で予約"
+                    : `${d.nameJa}行きの航空券・ホテル・現地ツアーを比較`
+                }
+                categories={aspCategories}
+                destinationCode={d.iataCodes[0]}
+                source="hotel-city"
+              />
+            </section>
 
             <section>
               <div className="flex items-center gap-2 mb-3">

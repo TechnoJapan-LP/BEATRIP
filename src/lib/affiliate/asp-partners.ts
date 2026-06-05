@@ -34,7 +34,10 @@ export type AspCategory =
   | "transport-europe"    // 欧州交通 (鉄道・バス)
   | "esim-wifi"           // eSIM / Wi-Fi レンタル
   | "insurance"           // 海外旅行保険
-  | "transfer";           // 空港送迎
+  | "transfer"            // 空港送迎
+  | "cruise"              // クルーズ旅行
+  | "airline-direct"      // 海外航空会社直販
+  | "tour-hawaii";        // ハワイ旅行特化
 
 export type AspPartner = {
   id: string;
@@ -86,6 +89,51 @@ export const ASP_PARTNERS: AspPartner[] = [
     matEnv: "A8_AIRTRIP_NIGHT_BUS_MAT",
     accent: "rose",
     priority: 6,
+  },
+  {
+    id: "airtrip-overseas-package",
+    label: "エアトリ（海外航空券＋ホテル）",
+    tagline: "海外航空券＋ホテルがお得",
+    categories: ["flight-overseas", "tour-overseas"],
+    matEnv: "A8_AIRTRIP_OVERSEAS_PACKAGE_MAT",
+    accent: "rose",
+    priority: 2,
+  },
+  {
+    id: "airtrip-plus",
+    label: "エアトリプラス（国内航空券＋ホテル）",
+    tagline: "国内航空券＋ホテルの予約サイト",
+    categories: ["flight-domestic", "tour-package"],
+    matEnv: "A8_AIRTRIP_PLUS_MAT",
+    accent: "rose",
+    priority: 2,
+  },
+  {
+    id: "airtrip-domestic-tour",
+    label: "エアトリ国内ツアー",
+    tagline: "沖縄・北海道など格安国内ツアー",
+    categories: ["tour-package", "tour-okinawa"],
+    matEnv: "A8_AIRTRIP_DOMESTIC_TOUR_MAT",
+    accent: "rose",
+    priority: 4,
+  },
+  {
+    id: "airtrip-hawaii",
+    label: "エアトリハワイ",
+    tagline: "ハワイ旅行・ハワイツアー特化",
+    categories: ["tour-hawaii", "tour-overseas"],
+    matEnv: "A8_AIRTRIP_HAWAII_MAT",
+    accent: "rose",
+    priority: 1,
+  },
+  {
+    id: "airtrip-domestic-hotel",
+    label: "エアトリ国内ホテル予約",
+    tagline: "格安国内ホテル予約サイト",
+    categories: ["hotel-domestic"],
+    matEnv: "A8_AIRTRIP_DOMESTIC_HOTEL_MAT",
+    accent: "rose",
+    priority: 5,
   },
 
   // ─── 大手旅行代理店 ───
@@ -323,6 +371,133 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["esim-wifi"],
     matEnv: "A8_TRIFA_MAT",
     accent: "sky",
+    priority: 1,
+  },
+  {
+    id: "tora-esim",
+    label: "TORA eSIM",
+    tagline: "海外向けeSIM・スマホ一つで旅行が快適",
+    categories: ["esim-wifi"],
+    matEnv: "A8_TORA_ESIM_MAT",
+    accent: "amber",
+    priority: 4,
+  },
+  {
+    id: "japan-global-esim",
+    label: "JAPAN&GLOBAL eSIM",
+    tagline: "世界192地域で使える eSIM",
+    categories: ["esim-wifi"],
+    matEnv: "A8_JAPAN_GLOBAL_ESIM_MAT",
+    accent: "blue",
+    priority: 5,
+  },
+  {
+    id: "saily",
+    label: "Saily",
+    tagline: "海外旅行のためのお得な eSIM",
+    categories: ["esim-wifi"],
+    matEnv: "A8_SAILY_MAT",
+    accent: "emerald",
+    priority: 6,
+  },
+
+  // ─── 航空会社直販 ───
+  {
+    id: "qatar-airways",
+    label: "Qatar Airways",
+    tagline: "世界150以上の都市へ就航・最大10%オフセール",
+    categories: ["airline-direct", "flight-overseas"],
+    matEnv: "A8_QATAR_AIRWAYS_MAT",
+    accent: "violet",
+    priority: 1,
+  },
+
+  // ─── ホテル (グローバル) ───
+  {
+    id: "agoda",
+    label: "agoda",
+    tagline: "国内・海外ホテルの格安予約",
+    categories: ["hotel-domestic", "hotel-overseas"],
+    matEnv: "A8_AGODA_MAT",
+    accent: "rose",
+    priority: 1,
+  },
+
+  // ─── 海外オプショナルツアー / 現地サービス ───
+  {
+    id: "kkday",
+    label: "KKday",
+    tagline: "海外旅行オプショナルツアーを楽々予約・簡単決済",
+    categories: ["tour-local"],
+    matEnv: "A8_KKDAY_MAT",
+    accent: "amber",
+    priority: 2,
+  },
+  {
+    id: "oooh",
+    label: "Oooh（ウー）",
+    tagline: "現地旅行会社と「行きたい」を叶える海外旅行サービス",
+    categories: ["tour-overseas", "tour-local"],
+    matEnv: "A8_OOOH_MAT",
+    accent: "violet",
+    priority: 3,
+  },
+
+  // ─── 国内旅行・ツアー ───
+  {
+    id: "big-holiday",
+    label: "ビッグホリデー",
+    tagline: "国内旅行の格安予約",
+    categories: ["tour-package", "hotel-domestic"],
+    matEnv: "A8_BIG_HOLIDAY_MAT",
+    accent: "emerald",
+    priority: 4,
+  },
+  {
+    id: "nippon-travel",
+    label: "日本旅行",
+    tagline: "お得な国内ツアーを多数掲載",
+    categories: ["tour-package", "tour-overseas"],
+    matEnv: "A8_NIPPON_TRAVEL_MAT",
+    accent: "blue",
+    priority: 3,
+  },
+  {
+    id: "j-trip",
+    label: "J-TRIP（ジェイトリップ）",
+    tagline: "JALで行く格安国内旅行",
+    categories: ["tour-package", "flight-domestic"],
+    matEnv: "A8_J_TRIP_MAT",
+    accent: "rose",
+    priority: 4,
+  },
+  {
+    id: "needs-tour",
+    label: "ニーズツアー",
+    tagline: "超お得なツアーを多数掲載・国内・沖縄",
+    categories: ["tour-package", "tour-okinawa"],
+    matEnv: "A8_NEEDS_TOUR_MAT",
+    accent: "emerald",
+    priority: 3,
+  },
+  {
+    id: "travelwest-domestic-package",
+    label: "トラベルウエスト（国内航空券＋宿泊）",
+    tagline: "国内ダイナミックパッケージ・24時間予約",
+    categories: ["tour-package", "flight-domestic"],
+    matEnv: "A8_TRAVELWEST_DOMESTIC_PACKAGE_MAT",
+    accent: "sky",
+    priority: 5,
+  },
+
+  // ─── クルーズ ───
+  {
+    id: "best-one-cruise",
+    label: "ベストワンクルーズ",
+    tagline: "クルーズ旅行・船旅の専門会社・海外発着から日本発着まで",
+    categories: ["cruise"],
+    matEnv: "A8_BEST_ONE_CRUISE_MAT",
+    accent: "blue",
     priority: 1,
   },
 ];
