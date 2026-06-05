@@ -8,31 +8,40 @@
  * メタを引いて「自分の場所に表示すべき partner」をフィルタする。
  * これにより、新 partner 追加時は ENV と asp-partners.ts への 1 行追加で
  * 自動的に該当 UI ブロックに出る。
+ *
+ * 同一広告主でも、プログラム (航空券/ツアー/パッケージ等) が異なれば
+ * 別 partner として登録する。a8mat はプログラム別に発行されるため、
+ * カテゴリ・配置箇所・コンバージョン率が違うので独立管理する。
  */
 
 import { buildA8Link, isValidA8Mat } from "./a8-link";
 
 export type AspCategory =
-  | "flight-domestic"   // 国内航空券
-  | "flight-overseas"   // 海外航空券
-  | "hotel-domestic"    // 国内ホテル
-  | "hotel-overseas"    // 海外ホテル
-  | "hotel-luxury"      // 高級ホテル特化
-  | "tour-package"      // パッケージツアー
-  | "tour-okinawa"      // 沖縄特化
-  | "tour-local"        // 現地アクティビティ・ガイドツアー
-  | "rental-car"        // レンタカー
-  | "rail-domestic"     // 国内鉄道 (新幹線・特急)
-  | "esim-wifi"         // eSIM / Wi-Fi レンタル
-  | "insurance"         // 海外旅行保険
-  | "transfer";         // 空港送迎
+  | "flight-domestic"     // 国内航空券
+  | "flight-overseas"     // 海外航空券
+  | "hotel-domestic"      // 国内ホテル
+  | "hotel-overseas"      // 海外ホテル
+  | "hotel-luxury"        // 高級ホテル特化
+  | "hotel-glamping"      // グランピング・特殊宿泊
+  | "tour-package"        // パッケージツアー
+  | "tour-overseas"       // 海外ツアー専門
+  | "tour-okinawa"        // 沖縄特化
+  | "tour-local"          // 現地アクティビティ・ガイドツアー
+  | "activity-domestic"   // 国内レジャー・アクティビティ
+  | "rental-car"          // レンタカー
+  | "rail-domestic"       // 国内鉄道 (新幹線・特急)
+  | "bus-domestic"        // 国内バス (夜行・高速)
+  | "transport-europe"    // 欧州交通 (鉄道・バス)
+  | "esim-wifi"           // eSIM / Wi-Fi レンタル
+  | "insurance"           // 海外旅行保険
+  | "transfer";           // 空港送迎
 
 export type AspPartner = {
   id: string;
   /** 表示用日本語名 */
   label: string;
-  /** ECID — A8 上の広告主識別子 (デバッグ・参照用) */
-  ecid: string;
+  /** ECID — A8 上の広告主識別子 (デバッグ参照用、不明なら省略) */
+  ecid?: string;
   /** 一行紹介 (UI で副題として使う) */
   tagline: string;
   /** 該当カテゴリ (複数可) */
@@ -43,12 +52,22 @@ export type AspPartner = {
   defaultDestination?: string;
   /** カテゴリ別アクセントカラー (Tailwind) */
   accent: "rose" | "sky" | "emerald" | "violet" | "amber" | "blue" | "zinc";
-  /** UI で優先表示すべきか */
+  /** UI で優先表示すべきか (小さいほど優先) */
   priority: number;
 };
 
 /** 全 partner レジストリ */
 export const ASP_PARTNERS: AspPartner[] = [
+  // ─── エアトリ系 ───
+  {
+    id: "airtrip-domestic-flight",
+    label: "エアトリ（国内航空券）",
+    tagline: "国内格安航空券の最安値販売",
+    categories: ["flight-domestic"],
+    matEnv: "A8_AIRTRIP_DOMESTIC_FLIGHT_MAT",
+    accent: "rose",
+    priority: 1,
+  },
   {
     id: "airtrip-rental",
     label: "エアトリレンタカー",
@@ -57,8 +76,19 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["rental-car"],
     matEnv: "A8_AIRTRIP_RENTAL_MAT",
     accent: "rose",
+    priority: 5,
+  },
+  {
+    id: "airtrip-night-bus",
+    label: "エアトリ（夜行・高速バス）",
+    tagline: "夜行・高速バス予約サイト",
+    categories: ["bus-domestic"],
+    matEnv: "A8_AIRTRIP_NIGHT_BUS_MAT",
+    accent: "rose",
     priority: 6,
   },
+
+  // ─── 大手旅行代理店 ───
   {
     id: "jtb",
     label: "JTB",
@@ -77,8 +107,20 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-okinawa"],
     matEnv: "A8_OKINAWA_TOURIST_MAT",
     accent: "emerald",
-    priority: 5,
+    priority: 1,
   },
+  {
+    id: "newt",
+    label: "NEWT（令和トラベル）",
+    ecid: "s00000025498",
+    tagline: "アプリ完結型の海外ツアー",
+    categories: ["tour-overseas", "tour-package"],
+    matEnv: "A8_NEWT_MAT",
+    accent: "sky",
+    priority: 2,
+  },
+
+  // ─── ホテル系 ───
   {
     id: "yahoo-travel",
     label: "Yahoo!トラベル",
@@ -90,16 +132,6 @@ export const ASP_PARTNERS: AspPartner[] = [
     priority: 2,
   },
   {
-    id: "newt",
-    label: "NEWT（令和トラベル）",
-    ecid: "s00000025498",
-    tagline: "アプリ完結型の海外ツアー",
-    categories: ["tour-package", "flight-overseas"],
-    matEnv: "A8_NEWT_MAT",
-    accent: "sky",
-    priority: 3,
-  },
-  {
     id: "ichikyu",
     label: "一休.com",
     ecid: "s00000000218",
@@ -107,28 +139,75 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["hotel-luxury", "hotel-domestic"],
     matEnv: "A8_ICHIKYU_MAT",
     accent: "amber",
+    priority: 1,
+  },
+  {
+    id: "jalan",
+    label: "じゃらんnet",
+    tagline: "国内25,000軒の宿をネットで予約・2%ポイント還元",
+    categories: ["hotel-domestic"],
+    matEnv: "A8_JALAN_MAT",
+    accent: "rose",
     priority: 2,
   },
   {
-    id: "global-wifi",
-    label: "グローバルWiFi（ビジョン）",
-    ecid: "s00000011875",
-    tagline: "海外Wi-Fiレンタル・最短当日受取",
-    categories: ["esim-wifi"],
-    matEnv: "A8_GLOBAL_WIFI_MAT",
-    accent: "zinc",
+    id: "travelist-hotel",
+    label: "トラベリスト（国内ホテル）",
+    tagline: "国内ホテル・宿泊・旅館の予約サイト",
+    categories: ["hotel-domestic"],
+    matEnv: "A8_TRAVELIST_HOTEL_MAT",
+    accent: "sky",
     priority: 4,
   },
   {
-    id: "travel-west",
-    label: "トラベルウエスト",
-    ecid: "tw",
+    id: "resort-glamping",
+    label: "リゾートグランピングドットコム",
+    tagline: "国内最大級のグランピング予約サイト",
+    categories: ["hotel-glamping"],
+    matEnv: "A8_RESORT_GLAMPING_MAT",
+    accent: "emerald",
+    priority: 1,
+  },
+
+  // ─── 海外航空券・ツアー ───
+  {
+    id: "travelwest-flight",
+    label: "トラベルウエスト（海外航空券）",
     tagline: "海外航空券の最安値検索・比較・予約",
     categories: ["flight-overseas"],
-    matEnv: "A8_TRAVEL_WEST_MAT",
+    matEnv: "A8_TRAVELWEST_FLIGHT_MAT",
+    accent: "sky",
+    priority: 2,
+  },
+  {
+    id: "travelwest-package",
+    label: "トラベルウエスト（航空券＋ホテル）",
+    tagline: "海外ダイナミックパッケージ・24時間予約",
+    categories: ["tour-package", "tour-overseas"],
+    matEnv: "A8_TRAVELWEST_PACKAGE_MAT",
     accent: "sky",
     priority: 3,
   },
+  {
+    id: "travelwest-tour",
+    label: "トラベルウエスト（海外ツアー）",
+    tagline: "おトクに海外ツアー",
+    categories: ["tour-overseas"],
+    matEnv: "A8_TRAVELWEST_TOUR_MAT",
+    accent: "sky",
+    priority: 3,
+  },
+  {
+    id: "travelist-overseas-flight",
+    label: "Travelist（海外格安航空券）",
+    tagline: "格安航空券・LCC予約",
+    categories: ["flight-overseas"],
+    matEnv: "A8_TRAVELIST_OVERSEAS_FLIGHT_MAT",
+    accent: "sky",
+    priority: 3,
+  },
+
+  // ─── 国内航空券 (エアトリ以外) ───
   {
     id: "real-ticket",
     label: "リアルチケット",
@@ -140,15 +219,63 @@ export const ASP_PARTNERS: AspPartner[] = [
     priority: 3,
   },
   {
-    id: "navitime-travel",
-    label: "NAVITIME Travel",
-    ecid: "nt",
-    tagline: "JR新幹線・特急チケットを自宅にお届け",
-    categories: ["rail-domestic"],
-    matEnv: "A8_NAVITIME_MAT",
-    accent: "emerald",
+    id: "cheap-flight-mall",
+    label: "格安航空券モール",
+    tagline: "国内線の比較・購入サイトの決定版",
+    categories: ["flight-domestic"],
+    matEnv: "A8_CHEAP_FLIGHT_MALL_MAT",
+    accent: "rose",
     priority: 4,
   },
+  {
+    id: "travelist-domestic-flight",
+    label: "トラベリスト（国内航空券）",
+    tagline: "国内格安航空券・LCCの比較・予約",
+    categories: ["flight-domestic"],
+    matEnv: "A8_TRAVELIST_DOMESTIC_FLIGHT_MAT",
+    accent: "sky",
+    priority: 5,
+  },
+
+  // ─── 鉄道・交通 ───
+  {
+    id: "navitime-rail",
+    label: "NAVITIME Travel（新幹線・特急）",
+    tagline: "JR新幹線・特急のチケットを自宅にお届け",
+    categories: ["rail-domestic"],
+    matEnv: "A8_NAVITIME_RAIL_MAT",
+    accent: "emerald",
+    priority: 1,
+  },
+  {
+    id: "navitime-flight",
+    label: "NAVITIME Travel（国内線）",
+    tagline: "国内線14社すべての路線予約が可能・乗継便対応",
+    categories: ["flight-domestic"],
+    matEnv: "A8_NAVITIME_FLIGHT_MAT",
+    accent: "emerald",
+    priority: 5,
+  },
+  {
+    id: "omio",
+    label: "Omio",
+    tagline: "ヨーロッパ格安乗車券検索・鉄道とバスの予約",
+    categories: ["transport-europe"],
+    matEnv: "A8_OMIO_MAT",
+    accent: "sky",
+    priority: 1,
+  },
+  {
+    id: "airport-shuttle",
+    label: "エアポートシャトル",
+    tagline: "自宅・ホテル↔空港を定額のシェアでお得に",
+    categories: ["transfer"],
+    matEnv: "A8_AIRPORT_SHUTTLE_MAT",
+    accent: "blue",
+    priority: 1,
+  },
+
+  // ─── 現地ツアー・アクティビティ ───
   {
     id: "buyma-travel",
     label: "BUYMA TRAVEL",
@@ -157,7 +284,46 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-local"],
     matEnv: "A8_BUYMA_TRAVEL_MAT",
     accent: "violet",
+    priority: 1,
+  },
+  {
+    id: "tabirai-activity",
+    label: "たびらいアクティビティ",
+    tagline: "沖縄・北海道の遊び・レジャーを格安で比較・予約",
+    categories: ["activity-domestic", "tour-okinawa"],
+    matEnv: "A8_TABIRAI_ACTIVITY_MAT",
+    accent: "amber",
     priority: 2,
+  },
+
+  // ─── 通信 (eSIM / Wi-Fi) ───
+  {
+    id: "global-wifi",
+    label: "グローバルWiFi（ビジョン）",
+    ecid: "s00000011875",
+    tagline: "海外Wi-Fiレンタル・最短当日受取",
+    categories: ["esim-wifi"],
+    matEnv: "A8_GLOBAL_WIFI_MAT",
+    accent: "zinc",
+    priority: 3,
+  },
+  {
+    id: "voye-global",
+    label: "ボイエグローバル（Voye Global）",
+    tagline: "各国最低2回線使えるコスパ最強eSIM・通信安定",
+    categories: ["esim-wifi"],
+    matEnv: "A8_VOYE_GLOBAL_MAT",
+    accent: "violet",
+    priority: 2,
+  },
+  {
+    id: "trifa",
+    label: "トリファ（trifa）",
+    tagline: "海外のネット接続がアプリだけで完結・国内利用者数No.1",
+    categories: ["esim-wifi"],
+    matEnv: "A8_TRIFA_MAT",
+    accent: "sky",
+    priority: 1,
   },
 ];
 
