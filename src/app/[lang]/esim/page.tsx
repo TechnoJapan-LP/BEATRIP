@@ -129,11 +129,16 @@ export default function EsimPage() {
     description:
       "海外旅行用 eSIM の選び方・対応端末・Wi-Fi レンタルとの違いを徹底比較するガイド。",
     inLanguage: "ja-JP",
+    datePublished: "2026-06-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
       url: "https://beatrip.jp",
+      logo: { "@type": "ImageObject", url: "https://beatrip.jp/logo.png" },
     },
+    image: "https://beatrip.jp/opengraph-image",
     mainEntityOfPage: "https://beatrip.jp/esim",
   };
 

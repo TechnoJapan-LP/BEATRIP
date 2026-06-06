@@ -171,11 +171,16 @@ export default function PackageTourPage() {
     description:
       "国内・海外パッケージツアーを個人手配と比較し、選び方とお得に取るコツを解説。BEATRIP厳選のツアー予約サイトから検索できます。",
     inLanguage: "ja-JP",
+    datePublished: "2026-06-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
       url: "https://beatrip.jp",
+      logo: { "@type": "ImageObject", url: "https://beatrip.jp/logo.png" },
     },
+    image: "https://beatrip.jp/opengraph-image",
     mainEntityOfPage: "https://beatrip.jp/package-tour",
   };
 

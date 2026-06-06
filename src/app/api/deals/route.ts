@@ -16,8 +16,13 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get("type");
   const statusOnly = searchParams.get("status");
 
-  // ストアステータス確認用
+  // ストアステータス確認は内部情報のため CRON_SECRET / ADMIN_API_KEY 必須
   if (statusOnly === "true" || statusOnly === "status") {
+    const authHeader = request.headers.get("authorization");
+    const expected = process.env.CRON_SECRET ?? process.env.ADMIN_API_KEY;
+    if (!expected || authHeader !== `Bearer ${expected}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const status = await getStoreStatus();
     return NextResponse.json(status);
   }

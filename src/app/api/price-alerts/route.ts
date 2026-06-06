@@ -6,9 +6,19 @@ import {
   isHoneypotTripped,
 } from "@/lib/rate-limit";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{1,64}$/;
+const MAX_BODY_BYTES = 4 * 1024;
 
 export async function POST(request: NextRequest) {
+  // ペイロード上限で DoS 防止
+  const contentLength = parseInt(
+    request.headers.get("content-length") ?? "0",
+    10
+  );
+  if (contentLength > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
+
   // レート制限（IP単位、1時間に20回まで）
   const id = clientId(request);
   const limit = await checkRateLimit("priceAlerts", id);

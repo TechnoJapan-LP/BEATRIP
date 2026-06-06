@@ -22,7 +22,54 @@ async function sendPush(alert: Alert, payload: DispatchPayload) {
   );
 }
 
+/**
+ * Webhook URL が外部公開された HTTPS エンドポイントであることを保証する SSRF 対策。
+ * 内部 IP / localhost / プライベートレンジ / メタデータサービスへの POST を弾く。
+ */
+function isAllowedWebhookUrl(rawUrl: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(rawUrl);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "https:") return false;
+  const host = url.hostname.toLowerCase();
+  if (
+    host === "localhost" ||
+    host === "0.0.0.0" ||
+    host === "127.0.0.1" ||
+    host === "::1" ||
+    host.endsWith(".local") ||
+    host.endsWith(".internal")
+  ) {
+    return false;
+  }
+  // IPv4 プライベートレンジ
+  if (/^10\./.test(host)) return false;
+  if (/^192\.168\./.test(host)) return false;
+  if (/^172\.(1[6-9]|2[0-9]|3[01])\./.test(host)) return false;
+  // AWS / GCP メタデータエンドポイント
+  if (host === "169.254.169.254") return false;
+  if (host === "metadata.google.internal") return false;
+  return true;
+}
+
+/** AbortSignal.timeout が無い古いランタイム用フォールバック */
+function withTimeout(ms: number): AbortSignal {
+  if (typeof AbortSignal !== "undefined" && "timeout" in AbortSignal) {
+    return (AbortSignal as { timeout: (ms: number) => AbortSignal }).timeout(ms);
+  }
+  const ctrl = new AbortController();
+  setTimeout(() => ctrl.abort(), ms);
+  return ctrl.signal;
+}
+
 async function sendSlack(webhookUrl: string, payload: DispatchPayload) {
+  if (!isAllowedWebhookUrl(webhookUrl)) {
+    console.warn("[dispatch] Slack webhook URL rejected (SSRF guard)");
+    return;
+  }
   const emoji =
     payload.type === "new_sale"
       ? ":airplane:"
@@ -32,6 +79,7 @@ async function sendSlack(webhookUrl: string, payload: DispatchPayload) {
 
   await fetch(webhookUrl, {
     method: "POST",
+    signal: withTimeout(5000),
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       text: `${emoji} *${payload.saleName}*\n${payload.summary}`,
@@ -63,8 +111,13 @@ async function sendSlack(webhookUrl: string, payload: DispatchPayload) {
 }
 
 async function sendWebhook(webhookUrl: string, payload: DispatchPayload) {
+  if (!isAllowedWebhookUrl(webhookUrl)) {
+    console.warn("[dispatch] Generic webhook URL rejected (SSRF guard)");
+    return;
+  }
   await fetch(webhookUrl, {
     method: "POST",
+    signal: withTimeout(5000),
     headers: {
       "Content-Type": "application/json",
       "X-BEATRIP-Event": payload.type,

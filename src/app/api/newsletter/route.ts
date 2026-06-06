@@ -7,9 +7,20 @@ import {
   isHoneypotTripped,
 } from "@/lib/rate-limit";
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// RFC 5321 で local-part 64 / domain 255。実用上は 254 字以内なら十分。
+const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{1,64}$/;
+const MAX_BODY_BYTES = 4 * 1024; // 4 KB
 
 export async function POST(request: NextRequest) {
+  // ペイロード上限で DoS 防止
+  const contentLength = parseInt(
+    request.headers.get("content-length") ?? "0",
+    10
+  );
+  if (contentLength > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
+
   // レート制限（IP単位、1時間に5回まで）
   const id = clientId(request);
   const limit = await checkRateLimit("newsletter", id);
@@ -41,7 +52,11 @@ export async function POST(request: NextRequest) {
   }
 
   const email = body.email;
-  if (typeof email !== "string" || !EMAIL_RE.test(email.trim())) {
+  if (
+    typeof email !== "string" ||
+    email.length > 254 ||
+    !EMAIL_RE.test(email.trim())
+  ) {
     return NextResponse.json(
       { error: "有効なメールアドレスを入力してください" },
       { status: 400 }

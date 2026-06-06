@@ -36,7 +36,10 @@ async function readFileState(): Promise<FileState> {
     /* none */
   }
   try {
-    lastDigestAt = JSON.parse(await readFile(LAST_FILE, "utf-8")).lastDigestAt;
+    const parsed = JSON.parse(await readFile(LAST_FILE, "utf-8"));
+    if (parsed && typeof parsed === "object" && "lastDigestAt" in parsed) {
+      lastDigestAt = parsed.lastDigestAt as number | null;
+    }
   } catch {
     /* none */
   }

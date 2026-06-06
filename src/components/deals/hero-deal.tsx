@@ -34,14 +34,15 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
     >
       <div
         className="relative w-full"
-        style={{ aspectRatio: "16 / 10", maxHeight: "min(60vh, 420px)" }}
+        style={{ aspectRatio: "16 / 10", maxHeight: "min(50vh, 420px)" }}
       >
         <Image
           src={deal.image_url}
           alt={deal.destination}
           fill
           priority
-          sizes="100vw"
+          fetchPriority="high"
+          sizes="(min-width: 1280px) 1280px, (min-width: 768px) 100vw, 100vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />

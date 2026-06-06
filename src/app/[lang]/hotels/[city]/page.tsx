@@ -455,6 +455,56 @@ export default async function HotelCityPage({ params }: Props) {
               </section>
             )}
 
+            {/* 関連コンテンツ — best-season / activities / esim への双方向リンク */}
+            <section>
+              <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
+                {d.nameJa}の関連コンテンツ
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <Link
+                  href={`/hotels/${d.slug}/best-season`}
+                  className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
+                >
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
+                    {d.nameJa}のベストシーズン
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1">月別おすすめ度・気候・服装</p>
+                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                    詳細を見る
+                    <ArrowUpRight className="h-3 w-3" />
+                  </div>
+                </Link>
+                <Link
+                  href={`/hotels/${d.slug}/activities`}
+                  className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
+                >
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
+                    {d.nameJa}の現地ツアー
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1">日本語ガイドから英語ツアーまで</p>
+                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                    詳細を見る
+                    <ArrowUpRight className="h-3 w-3" />
+                  </div>
+                </Link>
+                {d.region !== "国内" && (
+                  <Link
+                    href={`/hotels/${d.slug}/esim`}
+                    className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
+                  >
+                    <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
+                      {d.nameJa}の eSIM 比較
+                    </h3>
+                    <p className="text-xs text-zinc-500 mt-1">現地通信の選び方ガイド</p>
+                    <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                      詳細を見る
+                      <ArrowUpRight className="h-3 w-3" />
+                    </div>
+                  </Link>
+                )}
+              </div>
+            </section>
+
             {/* 旅の準備 — 高料率アフィリエイト（env で有効なものだけ表示） */}
             <TravelCompanions
               ctx={{

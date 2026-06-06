@@ -127,8 +127,10 @@ export default async function RoutePage({ params }: Props) {
       ? calculateBestTimeToBook(routeKey, historicalData)
       : null;
 
-  const origin = routeDeals[0].origin;
-  const dest = routeDeals[0].destination;
+  // notFound() で空配列は弾かれているが、TS narrowing のため明示
+  const firstDeal = routeDeals[0]!;
+  const origin = firstDeal.origin;
+  const dest = firstDeal.destination;
   const cheapest = Math.min(...routeDeals.map((d) => d.sale_price));
   const avgPrice = Math.round(
     routeDeals.reduce((s, d) => s + d.sale_price, 0) / routeDeals.length

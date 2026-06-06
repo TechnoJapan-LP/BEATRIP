@@ -24,8 +24,11 @@ function priceLabelColor(ratio: number): string {
 
 export function PriceChart({ prediction }: { prediction: BestTimeToBook }) {
   const { historical_prices } = prediction;
-  const maxPrice = Math.max(...historical_prices.map((p) => p.avg_price));
-  const minPrice = Math.min(...historical_prices.map((p) => p.avg_price));
+  // 空配列で Math.max/min が ±Infinity を返し NaN 連鎖するのを防ぐ
+  if (!historical_prices || historical_prices.length === 0) return null;
+  const prices = historical_prices.map((p) => p.avg_price);
+  const maxPrice = Math.max(...prices);
+  const minPrice = Math.min(...prices);
   const range = maxPrice - minPrice || 1;
 
   return (

@@ -138,7 +138,16 @@ export default function OkinawaPage() {
     description:
       "沖縄本島の王道リゾートから宮古・石垣・西表・久米まで、沖縄旅行のベストシーズン・必需品・レンタカー・予約サイト比較のガイド。",
     inLanguage: "ja-JP",
-    publisher: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    datePublished: "2026-06-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    publisher: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+      logo: { "@type": "ImageObject", url: "https://beatrip.jp/logo.png" },
+    },
+    image: "https://beatrip.jp/opengraph-image",
     mainEntityOfPage: "https://beatrip.jp/okinawa",
   };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MapPin, Sparkles, ArrowRight, ArrowUpRight } from "lucide-react";
+import { MapPin, Sparkles, ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
@@ -80,7 +80,7 @@ export default async function CityActivitiesPage({ params }: Props) {
   const faqs = [
     {
       q: `${d.nameJa}でおすすめのアクティビティは？`,
-      a: guide?.attractions.length
+      a: guide && guide.attractions.length > 0
         ? `${d.nameJa}の代表的な観光スポットは ${guide.attractions
             .slice(0, 4)
             .map((a) => `「${a}」`)

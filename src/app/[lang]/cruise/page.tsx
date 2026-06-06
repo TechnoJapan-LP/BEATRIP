@@ -86,11 +86,23 @@ export default function CruisePage() {
     description:
       "日本発着から世界一周まで、クルーズ旅行の予約サイト比較・選び方・費用相場のガイド。",
     inLanguage: "ja-JP",
-    publisher: {
+    datePublished: "2026-06-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    author: {
       "@type": "Organization",
       name: "BEATRIP",
       url: "https://beatrip.jp",
     },
+    publisher: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://beatrip.jp/logo.png",
+      },
+    },
+    image: "https://beatrip.jp/opengraph-image",
     mainEntityOfPage: "https://beatrip.jp/cruise",
   };
 

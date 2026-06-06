@@ -44,9 +44,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
 
-  const data = JSON.parse(body);
+  let data: { events?: unknown[] };
+  try {
+    data = JSON.parse(body);
+  } catch (e) {
+    console.error("[LINE webhook] malformed JSON body", e);
+    return NextResponse.json(
+      { error: "Invalid JSON body" },
+      { status: 400 }
+    );
+  }
 
-  for (const event of data.events ?? []) {
+  for (const event of (data.events ?? []) as Array<Record<string, unknown> & { type: string; message?: { type?: string; text?: string }; replyToken?: string }>) {
+    if (!event.replyToken) continue;
     if (event.type === "follow") {
       await replyMessage(
         event.replyToken,
@@ -55,7 +65,7 @@ export async function POST(req: Request) {
     }
 
     if (event.type === "message" && event.message?.type === "text") {
-      const text = event.message.text;
+      const text = event.message.text ?? "";
       if (text.includes("セール") || text.includes("deal")) {
         await replyMessage(
           event.replyToken,

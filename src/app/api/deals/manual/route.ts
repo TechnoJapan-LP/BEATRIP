@@ -17,14 +17,32 @@ import type { AirlineSale } from "@/lib/scrapers/types";
  * }
  */
 export async function POST(request: NextRequest) {
-  // 認証チェック
+  // 認証チェック (本番では ADMIN_API_KEY 必須、未設定なら 500 fail-safe)
   const authHeader = request.headers.get("authorization");
   const adminKey = process.env.ADMIN_API_KEY;
-  if (adminKey && authHeader !== `Bearer ${adminKey}`) {
+  if (!adminKey) {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json(
+        { error: "Server misconfigured: ADMIN_API_KEY required" },
+        { status: 500 }
+      );
+    }
+  } else if (authHeader !== `Bearer ${adminKey}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
+    // ペイロード上限 (1 MB) で DoS 防止
+    const contentLength = parseInt(
+      request.headers.get("content-length") ?? "0",
+      10
+    );
+    if (contentLength > 1024 * 1024) {
+      return NextResponse.json(
+        { error: "Payload too large" },
+        { status: 413 }
+      );
+    }
     const body = await request.json();
     const { airlineCode, sale } = body as {
       airlineCode: string;
