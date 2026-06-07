@@ -6,6 +6,7 @@ import {
   generateAndSaveMonthlyTrend,
   generateAndSaveEndingSoon,
 } from "@/lib/articles/article-generator";
+import { generateOtaNewsArticles } from "@/lib/articles/ota-news-generator";
 import type { AirlineSale } from "@/lib/scrapers/types";
 
 /**
@@ -116,12 +117,29 @@ export async function GET(request: NextRequest) {
       endingSoon = "error";
     }
 
+    // OTA セール記事 (Traicy RSS から Trip.com / Agoda / 楽天トラベル 等を検出)
+    // AirlineSale とは別レーン。RSS フィードを直接読むので allRecentSales に依存しない。
+    let otaNews: { generated: number; total: number } | { error: string } = {
+      generated: 0,
+      total: 0,
+    };
+    try {
+      const result = await generateOtaNewsArticles({ maxItems: 10 });
+      otaNews = { generated: result.generated.length, total: result.totalDetected };
+      totalGenerated += result.generated.length;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "Unknown error";
+      console.error("[regenerate] ota-news failed:", message);
+      otaNews = { error: message };
+    }
+
     return NextResponse.json({
       success: true,
       totalGenerated,
       weeklyRoundup,
       monthlyTrend,
       endingSoon,
+      otaNews,
       perAirline,
       timestamp: new Date().toISOString(),
     });

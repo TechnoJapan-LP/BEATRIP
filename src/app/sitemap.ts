@@ -58,6 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("/esim", "monthly", 0.7),
     ...bilingual("/package-tour", "monthly", 0.7),
     ...bilingual("/okinawa", "monthly", 0.7),
+    ...bilingual("/ota-sales", "weekly", 0.7),
     // 空港ハブ + 地方便特集
     ...bilingual("/airports", "weekly", 0.7),
     ...bilingual("/local-flights", "weekly", 0.7),

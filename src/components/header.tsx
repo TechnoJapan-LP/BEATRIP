@@ -111,6 +111,7 @@ export function Header() {
           items: [
             { href: "/package-tour", label: "パッケージツアー", desc: "JTB / NEWT 等を比較", Icon: Package },
             { href: "/esim", label: "eSIM", desc: "海外通信ガイド", Icon: Wifi },
+            { href: "/ota-sales", label: "OTAセール比較", desc: "Booking / Trip / 楽天 / じゃらん 完全比較", Icon: BedDouble },
           ],
         },
       ],
