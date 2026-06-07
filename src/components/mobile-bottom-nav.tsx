@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Plane, BedDouble, Search, BookOpen, MapPin } from "lucide-react";
+import { Plane, BedDouble, BookOpen, MapPin } from "lucide-react";
 import { useLocalizedHref } from "@/components/i18n/locale-provider";
 
 /**
@@ -32,7 +32,7 @@ export function MobileBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200/60 bg-white/90 backdrop-blur-md dark:border-zinc-800/60 dark:bg-zinc-950/85 sm:hidden"
       style={{ paddingBottom: "max(0px, env(safe-area-inset-bottom))" }}
     >
-      <div className="grid grid-cols-5">
+      <div className="grid grid-cols-4">
         {NAV.map((item) => {
           const active = item.match(pathname);
           const Icon = item.icon;
@@ -41,7 +41,7 @@ export function MobileBottomNav() {
               key={item.href}
               href={lh(item.href)}
               aria-current={active ? "page" : undefined}
-              className={`flex min-h-[56px] flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium transition-colors active:scale-95 ${
+              className={`relative flex min-h-[56px] flex-col items-center justify-center gap-1 py-2.5 text-xs font-medium transition-colors active:scale-95 ${
                 active
                   ? "text-zinc-900 dark:text-zinc-100"
                   : "text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300"
@@ -55,14 +55,6 @@ export function MobileBottomNav() {
             </Link>
           );
         })}
-        {/* 検索アンカー: ホーム#deals へ飛ばす */}
-        <Link
-          href={lh("/#deals")}
-          className="flex min-h-[56px] flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium text-zinc-400 dark:text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors active:scale-95"
-        >
-          <Search className="h-5 w-5" aria-hidden="true" />
-          <span>検索</span>
-        </Link>
       </div>
     </nav>
   );

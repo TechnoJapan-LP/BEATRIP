@@ -263,7 +263,7 @@ export function Header() {
 
       {/* モバイル: アコーディオン */}
       {open && (
-        <nav className="animate-fade-in border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-2 pb-4 pt-2 sm:hidden max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+        <nav className="animate-fade-in border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-2 pt-2 sm:hidden max-h-[calc(100vh-3.5rem)] overflow-y-auto" style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}>
           {menus.map((menu) => {
             const isExpanded = mobileExpanded === menu.key;
             return (
@@ -334,11 +334,11 @@ export function Header() {
                   if (locale !== "ja") trackLanguageSwitch({ from: locale, to: "ja" });
                   setOpen(false);
                 }}
-                className={
+                className={`inline-block px-3 py-2 rounded-md ${
                   locale === "ja"
                     ? "font-bold text-zinc-900 dark:text-zinc-100"
                     : "text-zinc-400"
-                }
+                }`}
               >
                 JA
               </Link>
@@ -349,11 +349,11 @@ export function Header() {
                   if (locale !== "en") trackLanguageSwitch({ from: locale, to: "en" });
                   setOpen(false);
                 }}
-                className={
+                className={`inline-block px-3 py-2 rounded-md ${
                   locale === "en"
                     ? "font-bold text-zinc-900 dark:text-zinc-100"
                     : "text-zinc-400"
-                }
+                }`}
               >
                 EN
               </Link>

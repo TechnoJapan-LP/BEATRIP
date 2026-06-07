@@ -43,8 +43,8 @@ export function HotelBookingButtons({
 }) {
   const padding =
     size === "md"
-      ? "px-3 py-1.5 text-xs"
-      : "px-2.5 py-1 text-[11px]";
+      ? "px-3 py-2 text-sm sm:py-1.5 sm:text-xs"
+      : "px-3 py-1.5 text-xs sm:px-2.5 sm:py-1 sm:text-[11px]";
 
   return (
     <div className={`flex flex-wrap gap-1.5 ${className}`}>

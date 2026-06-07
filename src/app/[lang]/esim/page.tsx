@@ -180,7 +180,7 @@ export default function EsimPage() {
               eSIM Travel Guide
             </p>
           </div>
-          <h1 className="font-heading text-4xl tracking-wide uppercase sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-3xl tracking-wide uppercase sm:text-5xl lg:text-6xl">
             海外旅行 eSIM 比較
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">

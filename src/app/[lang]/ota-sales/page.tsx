@@ -419,7 +419,7 @@ export default function OtaSalesPage() {
               OTA Sales Guide
             </p>
           </div>
-          <h1 className="font-heading text-4xl tracking-wide uppercase sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-3xl tracking-wide uppercase sm:text-5xl lg:text-6xl">
             OTA セール完全ガイド
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">
@@ -444,7 +444,37 @@ export default function OtaSalesPage() {
               <p className="text-sm text-zinc-500 mb-6">
                 Booking / Trip.com / 楽天 / Agoda / じゃらん など 12 社の強み・セール時期・ポイント還元
               </p>
-              <div className="overflow-x-auto rounded-xl border border-zinc-100 dark:border-zinc-800">
+              {/* モバイル: 縦積みカードリスト */}
+              <ul className="sm:hidden divide-y divide-zinc-100 dark:divide-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                {OTAS.map((o) => (
+                  <li key={`m-${o.name}`} className="p-4 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <a
+                        href={o.url}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        className="inline-flex items-center gap-1 font-bold text-sm text-zinc-900 dark:text-zinc-100"
+                      >
+                        {o.name}
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                      </a>
+                      <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${COVERAGE_BADGE[o.coverage]}`}>
+                        {o.coverage}
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">{o.strength}</p>
+                    <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px]">
+                      <dt className="text-zinc-400 font-bold">セール時期</dt>
+                      <dd className="text-zinc-700 dark:text-zinc-200">{o.sale}</dd>
+                      <dt className="text-zinc-400 font-bold">ポイント</dt>
+                      <dd className="text-zinc-700 dark:text-zinc-200">{o.points}</dd>
+                    </dl>
+                  </li>
+                ))}
+              </ul>
+
+              {/* PC: 通常テーブル */}
+              <div className="hidden sm:block overflow-x-auto rounded-xl border border-zinc-100 dark:border-zinc-800">
                 <table className="min-w-[820px] w-full text-xs sm:text-sm">
                   <thead className="bg-zinc-50 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-300">
                     <tr>

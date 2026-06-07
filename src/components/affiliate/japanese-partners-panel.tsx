@@ -126,7 +126,7 @@ export function JapanesePartnersPanel({
                       })
                     }
                     title={p.tagline}
-                    className={`group inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors ${ACCENT_CLASS[p.accent]}`}
+                    className={`group inline-flex items-center gap-1 rounded-full border px-3 py-2 sm:py-1.5 text-sm sm:text-xs font-bold transition-colors ${ACCENT_CLASS[p.accent]}`}
                   >
                     {p.label}
                     <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

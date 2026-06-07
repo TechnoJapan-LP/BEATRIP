@@ -177,7 +177,7 @@ export default function HawaiiPage() {
               Hawaii Travel Guide
             </p>
           </div>
-          <h1 className="font-heading text-4xl tracking-wide text-white uppercase sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-3xl tracking-wide text-white uppercase sm:text-5xl lg:text-6xl">
             ハワイ旅行
           </h1>
           <p className="mt-2 text-sm sm:text-base text-white/90 max-w-2xl">

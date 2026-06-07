@@ -56,8 +56,8 @@ export function PriceTrendBadge({
           <styles.Icon className="h-4 w-4" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className={`text-xs font-bold ${styles.text}`}>{trend.label}</p>
-          <p className="text-[11px] text-zinc-600 dark:text-zinc-300 mt-0.5">
+          <p className={`text-sm font-bold ${styles.text}`}>{trend.label}</p>
+          <p className="text-xs text-zinc-600 dark:text-zinc-300 mt-1 leading-relaxed">
             {trend.recommendation}
           </p>
         </div>

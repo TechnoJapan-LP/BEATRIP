@@ -93,7 +93,7 @@ export default function AirportsIndexPage() {
               Airports of Japan
             </p>
           </div>
-          <h1 className="font-heading text-4xl tracking-wide uppercase sm:text-5xl lg:text-6xl">
+          <h1 className="font-heading text-3xl tracking-wide uppercase sm:text-5xl lg:text-6xl">
             日本国内の空港一覧
           </h1>
           <p className="mt-3 text-sm sm:text-base text-white/90 max-w-2xl">

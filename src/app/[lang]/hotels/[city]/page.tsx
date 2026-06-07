@@ -227,9 +227,9 @@ export default async function HotelCityPage({ params }: Props) {
           {relatedFlights[0] ? (
             <Link
               href={`/deals/${relatedFlights[0].id}`}
-              className="group flex items-center gap-4 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 px-5 py-5 text-white shadow-lg shadow-rose-500/20 transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99]"
+              className="group flex items-center gap-3 rounded-2xl bg-gradient-to-br from-rose-500 to-rose-600 px-4 py-4 text-white shadow-lg shadow-rose-500/20 sm:gap-4 sm:px-5 sm:py-5 transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99]"
             >
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/20">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/20">
                 <Plane className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
@@ -252,9 +252,9 @@ export default async function HotelCityPage({ params }: Props) {
           ) : (
             <Link
               href="/"
-              className="group flex items-center gap-4 rounded-2xl bg-gradient-to-br from-zinc-700 to-zinc-800 px-5 py-5 text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
+              className="group flex items-center gap-3 rounded-2xl bg-gradient-to-br from-zinc-700 to-zinc-800 px-4 py-4 text-white shadow-lg sm:gap-4 sm:px-5 sm:py-5 transition-all hover:-translate-y-0.5 hover:shadow-xl"
             >
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/15">
+              <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/15">
                 <Plane className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
@@ -277,9 +277,9 @@ export default async function HotelCityPage({ params }: Props) {
             href={hotelUrl}
             target="_blank"
             rel="sponsored noopener noreferrer"
-            className="group flex items-center gap-4 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-zinc-100 dark:to-zinc-200 px-5 py-5 text-white dark:text-zinc-900 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99]"
+            className="group flex items-center gap-3 rounded-2xl bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-zinc-100 dark:to-zinc-200 px-4 py-4 text-white dark:text-zinc-900 shadow-lg sm:gap-4 sm:px-5 sm:py-5 transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-[0.99]"
           >
-            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/15 dark:bg-zinc-900/15">
+            <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/15 dark:bg-zinc-900/15">
               <BedDouble className="h-6 w-6" />
             </div>
             <div className="min-w-0 flex-1">
