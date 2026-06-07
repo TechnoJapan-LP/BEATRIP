@@ -2,6 +2,7 @@ import { airlines } from "@/data/airlines";
 import { MockScraper } from "./mock-scraper";
 import { TraicyScraper, AviationWireAllScraper } from "./traicy-scraper";
 import { AirlinePageScraper } from "./airline-page-scraper";
+import { PeachOfficialScraper } from "./peach-official-scraper";
 import type { ScrapeResult, AirlineSale } from "./types";
 import type { AirlineScraper } from "./scraper-base";
 
@@ -33,6 +34,11 @@ function createScraper(code: string): AirlineScraper {
   }
 
   if (mode === "live" || mode === "hybrid") {
+    // Peach は news ベースの専用パーサーを使用 (公式 HTML は WAF/JS で取りづらいため)
+    if (code === "PCH") {
+      return new PeachOfficialScraper(code, airline.scrapeSources);
+    }
+
     // 公式サイトスクレイパーを優先、フォールバックにTraicyを使用
     const hasHtmlSource = airline.scrapeSources.some((s) => s.type === "html");
 
