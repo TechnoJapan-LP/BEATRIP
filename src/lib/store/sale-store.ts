@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
 import { join } from "path";
+import { unstable_cache } from "next/cache";
 import type { AirlineSale, ScrapeResult } from "@/lib/scrapers/types";
 import { getKV, KV_KEYS } from "./kv";
 
@@ -49,36 +50,57 @@ async function loadFromFs(airlineCode: string): Promise<StoredSaleData | null> {
   return null;
 }
 
-export async function loadSales(airlineCode: string): Promise<StoredSaleData> {
-  // 優先: KV（永続）→ /tmp・同梱データ（FS）→ 空
-  const kv = getKV();
-  if (kv) {
-    try {
-      const data = await kv.get<StoredSaleData>(KV_KEYS.sale(airlineCode));
-      if (data && Array.isArray(data.sales)) return data;
-      // KVに未登録なら同梱データを初期値として返す（初回デプロイ時）
-      const seed = await loadFromFs(airlineCode);
-      return seed ?? EMPTY;
-    } catch (e) {
-      console.warn(`[SaleStore] KV read failed for ${airlineCode}:`, e);
+/**
+ * KV (Upstash Redis) は内部で no-store fetch を使うため、ISR ページから
+ * 直接呼ぶと「Dynamic server usage」エラーで static generation に失敗する。
+ * unstable_cache で wrap して fetch を Next の data cache に乗せ、
+ * 60 秒キャッシュ + tag invalidation を可能にする。
+ */
+const loadSalesCached = unstable_cache(
+  async (airlineCode: string): Promise<StoredSaleData> => {
+    const kv = getKV();
+    if (kv) {
+      try {
+        const data = await kv.get<StoredSaleData>(KV_KEYS.sale(airlineCode));
+        if (data && Array.isArray(data.sales)) return data;
+        const seed = await loadFromFs(airlineCode);
+        return seed ?? EMPTY;
+      } catch (e) {
+        console.warn(`[SaleStore] KV read failed for ${airlineCode}:`, e);
+      }
     }
-  }
-  return (await loadFromFs(airlineCode)) ?? EMPTY;
+    return (await loadFromFs(airlineCode)) ?? EMPTY;
+  },
+  ["sale-store-load"],
+  { revalidate: 60, tags: ["sales"] }
+);
+
+export async function loadSales(airlineCode: string): Promise<StoredSaleData> {
+  return loadSalesCached(airlineCode);
 }
+
+/** KV index 読み取りも unstable_cache 化して static generation 対応 */
+const loadKvIndexCached = unstable_cache(
+  async (): Promise<string[]> => {
+    const kv = getKV();
+    if (!kv) return [];
+    try {
+      const indexed = await kv.smembers(KV_KEYS.index);
+      return indexed.map((c) => String(c).toUpperCase());
+    } catch (e) {
+      console.warn("[SaleStore] KV index read failed:", e);
+      return [];
+    }
+  },
+  ["sale-store-index"],
+  { revalidate: 60, tags: ["sales"] }
+);
 
 export async function loadAllSales(): Promise<Record<string, StoredSaleData>> {
   const codes = new Set<string>();
 
-  // KVのインデックスから航空会社コードを収集
-  const kv = getKV();
-  if (kv) {
-    try {
-      const indexed = await kv.smembers(KV_KEYS.index);
-      for (const c of indexed) codes.add(String(c).toUpperCase());
-    } catch (e) {
-      console.warn("[SaleStore] KV index read failed:", e);
-    }
-  }
+  // KVのインデックスから航空会社コードを収集 (cache 経由)
+  for (const c of await loadKvIndexCached()) codes.add(c);
 
   // 同梱データ + /tmp のコードも収集（KV未導入/初回でも動くように）
   const { readdir } = await import("fs/promises");

@@ -4,7 +4,6 @@ import { airlines } from "@/data/airlines";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
 import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { AIRPORTS } from "@/data/airports";
-import { airlines } from "@/data/airlines";
 
 const BASE_URL = "https://beatrip.jp";
 
