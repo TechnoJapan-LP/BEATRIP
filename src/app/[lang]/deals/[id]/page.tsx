@@ -253,38 +253,39 @@ export default async function DealDetailPage({ params }: Props) {
       </div>
 
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
+        {/* Best Time to Book — 価格判断の主要シグナル。grid 外で full-width 表示 */}
+        {prediction.historical_prices.length > 0 && (
+          <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-4 sm:p-6 mb-8">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-xl">
+                Best Time to Book
+              </h2>
+              <div className="flex items-center gap-1.5">
+                <Shield className="h-4 w-4 text-emerald-500" />
+                <span className="text-xs font-medium text-zinc-500">
+                  信頼度 {prediction.confidence_score}%
+                </span>
+              </div>
+            </div>
+
+            <div className="mb-6 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 px-4 py-3">
+              <div className="flex items-center gap-2 mb-1">
+                <Calendar className="h-4 w-4 text-emerald-600" />
+                <span className="text-sm font-bold text-emerald-700 dark:text-emerald-200">
+                  ベスト予約時期: {prediction.best_month_name}
+                </span>
+              </div>
+              <p className="text-xs text-emerald-600 dark:text-emerald-300">
+                年間平均より約{prediction.avg_saving_percent}%安く予約できる傾向があります
+              </p>
+            </div>
+
+            <PriceChart prediction={prediction} />
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
-            {prediction.historical_prices.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white p-4 sm:p-6">
-                <div className="flex items-center justify-between mb-3 sm:mb-4">
-                  <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-xl">
-                    Best Time to Book
-                  </h2>
-                  <div className="flex items-center gap-1.5">
-                    <Shield className="h-4 w-4 text-emerald-500" />
-                    <span className="text-xs font-medium text-zinc-500">
-                      信頼度 {prediction.confidence_score}%
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mb-6 rounded-lg bg-emerald-50 px-4 py-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Calendar className="h-4 w-4 text-emerald-600" />
-                    <span className="text-sm font-bold text-emerald-700">
-                      ベスト予約時期: {prediction.best_month_name}
-                    </span>
-                  </div>
-                  <p className="text-xs text-emerald-600">
-                    年間平均より約{prediction.avg_saving_percent}%安く予約できる傾向があります
-                  </p>
-                </div>
-
-                <PriceChart prediction={prediction} />
-              </div>
-            )}
-
             {/* ホテル・eSIM・現地ツアー — 高料率アフィリエイト */}
             <HotelCrossSell
               destinationCode={deal.destination_code}
