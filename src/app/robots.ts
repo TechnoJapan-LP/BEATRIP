@@ -18,6 +18,7 @@ export default function robots(): MetadataRoute.Robots {
         // 機微・管理系パスは多重に disallow（防御的な意思表示）
         disallow: [
           "/api/",
+          "/admin",
           "/.env",
           "/.env.",
           "/.well-known/",

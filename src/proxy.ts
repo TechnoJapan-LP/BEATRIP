@@ -27,9 +27,9 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // _next / api / 静的ファイル / メタデータファイル / ロケール非対象ルート(brand) は除外
+  // _next / api / 静的ファイル / メタデータ / ロケール非対象ルート(brand, admin) は除外
   matcher: [
-    "/((?!_next/|api/|brand|favicon.ico|sitemap.xml|robots.txt|manifest.json|opengraph-image|.*\\.[\\w]+$).*)",
+    "/((?!_next/|api/|brand|admin|favicon.ico|sitemap.xml|robots.txt|manifest.json|opengraph-image|.*\\.[\\w]+$).*)",
   ],
 };
 
