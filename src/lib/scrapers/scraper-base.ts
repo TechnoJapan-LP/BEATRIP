@@ -61,28 +61,14 @@ export abstract class AirlineScraper {
         );
       }
 
-      // ストリームで読みつつ累積サイズを check
-      const reader = res.body?.getReader();
-      if (!reader) return await res.text();
-      const chunks: Uint8Array[] = [];
-      let received = 0;
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        received += value.length;
-        if (received > AirlineScraper.MAX_RESPONSE_BYTES) {
-          controller.abort();
-          throw new Error(`Response exceeded size limit: ${url}`);
-        }
-        chunks.push(value);
+      // Body をテキストとして読み込み、長さを後 check (Edge / Node 両対応の安全版)
+      const text = await res.text();
+      if (text.length > AirlineScraper.MAX_RESPONSE_BYTES) {
+        throw new Error(
+          `Response exceeded size limit (${text.length} chars): ${url}`
+        );
       }
-      const merged = new Uint8Array(received);
-      let off = 0;
-      for (const c of chunks) {
-        merged.set(c, off);
-        off += c.length;
-      }
-      return new TextDecoder("utf-8").decode(merged);
+      return text;
     } catch (e) {
       if (e instanceof Error && e.name === "AbortError") {
         throw new Error(`Timeout (${timeoutMs}ms): ${url}`);
