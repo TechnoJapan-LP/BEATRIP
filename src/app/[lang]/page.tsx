@@ -33,6 +33,7 @@ const NewsletterCTA = dynamic(() =>
 import { DestinationSpotlight } from "@/components/home/destination-spotlight";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { getActiveDeals } from "@/lib/deals/deal-service";
+import { AIRPORTS, type AirportRegion } from "@/data/airports";
 import { HOTEL_BY_SLUG, HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { getDictionary, hasLocale } from "./dictionaries";
 import { localizeHref } from "@/lib/i18n/locale";
@@ -73,6 +74,19 @@ export async function generateMetadata({
     },
   };
 }
+
+// 「お住まいの地域から」セクション表示順 (北から南へ)
+const REGION_ORDER: AirportRegion[] = [
+  "北海道",
+  "東北",
+  "関東",
+  "中部",
+  "近畿",
+  "中国",
+  "四国",
+  "九州",
+  "沖縄",
+];
 
 // ホームに出す代表的なホテル都市（国内→アジア→欧米まんべんなく）
 const POPULAR_HOTEL_SLUGS = [
@@ -130,6 +144,17 @@ export default async function Home({
     slug,
     badge: i === 0 ? "今週のいちおし" : i === 1 ? "コスパ◎" : "憧れの旅先",
   }));
+
+  // 「お住まいの地域から」: deal を出発空港の region 別にグループ化
+  const dealsByRegion = AIRPORTS.reduce<Record<AirportRegion, typeof deals>>(
+    (acc, airport) => {
+      const matches = deals.filter((d) => d.origin_code === airport.iata);
+      if (!acc[airport.region]) acc[airport.region] = [];
+      acc[airport.region].push(...matches);
+      return acc;
+    },
+    {} as Record<AirportRegion, typeof deals>
+  );
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -262,6 +287,57 @@ export default async function Home({
             title={t.popularTitle}
             subtitle={t.popularSubtitle}
           />
+        </section>
+
+        {/* お住まいの地域から — 出発地別の最安ディール導線 */}
+        <section className="mt-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-3xl lg:text-4xl">
+                お住まいの地域から
+              </h2>
+              <p className="mt-1 text-sm text-zinc-500">
+                出発地別の最新セール。地方発の格安便も網羅
+              </p>
+            </div>
+            <Link
+              href={lh("/airports")}
+              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              空港一覧
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {REGION_ORDER.map((region) => {
+              const regionDeals = dealsByRegion[region] ?? [];
+              const cheapest = [...regionDeals].sort(
+                (a, b) => a.sale_price - b.sale_price
+              )[0];
+              if (!cheapest) return null;
+              return (
+                <Link
+                  key={region}
+                  href={lh(`/airports`)}
+                  className="group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-all hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 hover:-translate-y-0.5"
+                >
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                    {region}発
+                  </div>
+                  <div className="mt-1 text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                    最安 ¥{cheapest.sale_price.toLocaleString()}〜
+                  </div>
+                  <div className="text-[11px] text-zinc-500 mt-0.5">
+                    {cheapest.origin} → {cheapest.destination} ({cheapest.airline_name})
+                  </div>
+                  <div className="text-[11px] text-zinc-400 mt-2">
+                    このエリアから {regionDeals.length} 件のセール
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </section>
 
         {/* 日本系 ASP partner 横断パネル — 訪問者全員に partner を露出 */}
