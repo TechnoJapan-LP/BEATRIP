@@ -44,12 +44,32 @@ function getLimiter(name: LimiterKey): Ratelimit | null {
   return limiter;
 }
 
-/** リクエストの識別子（IP）を取得。プロキシ後ろなのでヘッダ優先。 */
+/** IPv4 / IPv6 の概形チェック (偽装対策: 不正なフォーマットを弾く) */
+function isValidIp(s: string): boolean {
+  // IPv4
+  if (/^(\d{1,3}\.){3}\d{1,3}$/.test(s)) {
+    return s.split(".").every((n) => {
+      const v = parseInt(n, 10);
+      return v >= 0 && v <= 255;
+    });
+  }
+  // IPv6 (簡易)
+  return /^[0-9a-fA-F:]+$/.test(s) && s.includes(":");
+}
+
+/**
+ * リクエストの識別子（IP）を取得。Vercel の前段プロキシは X-Forwarded-For
+ * の "client, proxy1, proxy2" 形式で先頭が信頼できる client IP。
+ * 末尾を取ると spoofing 可能なので必ず **先頭** を取る。
+ */
 export function clientId(request: NextRequest): string {
   const xff = request.headers.get("x-forwarded-for");
-  if (xff) return xff.split(",")[0].trim();
-  const real = request.headers.get("x-real-ip");
-  if (real) return real;
+  if (xff) {
+    const first = xff.split(",")[0]?.trim();
+    if (first && isValidIp(first)) return first;
+  }
+  const real = request.headers.get("x-real-ip")?.trim();
+  if (real && isValidIp(real)) return real;
   return "unknown";
 }
 

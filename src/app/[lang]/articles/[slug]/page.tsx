@@ -29,14 +29,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Not Found" };
 
+  const tags = [
+    ...(article.airline_tags ?? []),
+    ...(article.route_tags ?? []),
+  ];
   return {
     title: article.title,
     description: article.excerpt,
+    keywords: [
+      article.category,
+      ...tags,
+      "BEATRIP",
+      "格安航空券",
+      "セール",
+    ],
     openGraph: {
       title: article.title,
       description: article.excerpt,
       images: [article.image_url],
       type: "article",
+      publishedTime: article.published_at,
+      modifiedTime: article.published_at,
+      tags,
     },
     alternates: {
       canonical: `https://beatrip.jp/articles/${slug}`,

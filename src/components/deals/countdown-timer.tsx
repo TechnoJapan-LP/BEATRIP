@@ -18,10 +18,34 @@ export function CountdownTimer({ deadline }: { deadline: string }) {
   const [remaining, setRemaining] = useState(() => calcRemaining(deadline));
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRemaining(calcRemaining(deadline));
-    }, 60_000);
-    return () => clearInterval(interval);
+    let interval: ReturnType<typeof setInterval> | null = null;
+    const tick = () => setRemaining(calcRemaining(deadline));
+
+    const start = () => {
+      if (interval !== null) return;
+      tick();
+      interval = setInterval(tick, 60_000);
+    };
+    const stop = () => {
+      if (interval !== null) {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
+
+    // タブ非表示時は止め、復帰時に追いつく (バッテリー / CPU 節約)
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") start();
+      else stop();
+    };
+
+    if (document.visibilityState === "visible") start();
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [deadline]);
 
   if (!remaining) {

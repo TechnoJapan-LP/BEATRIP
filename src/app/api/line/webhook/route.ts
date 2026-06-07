@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 
+/** Base64 形式 (LINE は 44 文字、`=` 末尾 padding) として妥当か事前判定 */
+function isValidSignatureFormat(sig: string | null | undefined): sig is string {
+  if (!sig) return false;
+  // SHA256 HMAC = 32 bytes = base64 で 44 文字 (= 含む)
+  return /^[A-Za-z0-9+/]{43}=$/.test(sig);
+}
+
 function verifySignature(body: string, signature: string): boolean {
   const secret = process.env.LINE_CHANNEL_SECRET;
   if (!secret) return false;
@@ -8,7 +15,9 @@ function verifySignature(body: string, signature: string): boolean {
     .createHmac("SHA256", secret)
     .update(body)
     .digest("base64");
-  return hash === signature;
+  // 一定時間比較 (timing attack 対策)
+  if (hash.length !== signature.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signature));
 }
 
 async function replyMessage(replyToken: string, text: string) {
@@ -30,7 +39,7 @@ async function replyMessage(replyToken: string, text: string) {
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = req.headers.get("x-line-signature") ?? "";
+  const signature = req.headers.get("x-line-signature");
 
   // LINE_CHANNEL_SECRET は本番必須。未設定なら fail-safe で 500 を返す。
   if (!process.env.LINE_CHANNEL_SECRET) {
@@ -40,7 +49,10 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
-  } else if (!verifySignature(body, signature)) {
+  } else if (
+    !isValidSignatureFormat(signature) ||
+    !verifySignature(body, signature)
+  ) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
   }
 

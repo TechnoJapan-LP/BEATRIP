@@ -21,17 +21,32 @@ function getCreds(): { handle: string; password: string } | null {
   return { handle, password };
 }
 
+/**
+ * Bluesky の session トークンは 7 日程度で expire するため、
+ * モジュールスコープで永続キャッシュすると古い session で失敗し続ける。
+ * 起動から 6 時間で再 login を強制するシンプルな TTL を実装。
+ */
+const AGENT_TTL_MS = 6 * 60 * 60 * 1000;
 let cachedAgent: AtpAgent | null = null;
+let cachedAt = 0;
+
 async function getAgent(): Promise<AtpAgent | null> {
-  if (cachedAgent) return cachedAgent;
+  if (cachedAgent && Date.now() - cachedAt < AGENT_TTL_MS) return cachedAgent;
   const creds = getCreds();
   if (!creds) return null;
   const agent = new AtpAgent({ service: SERVICE });
-  await agent.login({
-    identifier: creds.handle,
-    password: creds.password,
-  });
+  try {
+    await agent.login({
+      identifier: creds.handle,
+      password: creds.password,
+    });
+  } catch (e) {
+    console.error("[bluesky] login failed", e);
+    cachedAgent = null;
+    return null;
+  }
   cachedAgent = agent;
+  cachedAt = Date.now();
   return agent;
 }
 

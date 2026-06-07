@@ -31,10 +31,10 @@ const nextConfig: NextConfig = {
     ],
     // AVIF/WebP で配信（JPEG比で大幅軽量化）
     formats: ["image/avif", "image/webp"],
-    // モバイル〜デスクトップの代表幅に絞る
-    deviceSizes: [320, 420, 640, 768, 1024, 1280],
+    // モバイル〜デスクトップの代表幅 (384 = iPhone 14 Pro Max / Pixel 8 Pro)
+    deviceSizes: [320, 384, 420, 640, 768, 1024, 1280],
     imageSizes: [16, 24, 48, 64, 96, 160, 256],
-    minimumCacheTTL: 86400,
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 日 (Vercel CDN がより長く保持)
   },
   // 本番ソースマップ無効でJSを軽量化（gzip/brotliはVercelが自動）
   productionBrowserSourceMaps: false,

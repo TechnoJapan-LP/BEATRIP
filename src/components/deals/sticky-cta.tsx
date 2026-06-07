@@ -28,18 +28,30 @@ export function StickyCTA({
     // GA4 コンバージョンイベント（モバイル予約導線）
     trackAffiliateClick({ dealId, provider: affiliateProvider, price, route });
 
+    // sendBeacon でナビゲーション直前のトラッキングを確実に届ける。
+    // 失敗しても navigation はブロックしない。
     try {
-      fetch("/api/clicks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          deal_id: dealId,
-          affiliate_provider: affiliateProvider,
-          affiliate_url: affiliateUrl,
-        }),
+      const payload = JSON.stringify({
+        deal_id: dealId,
+        affiliate_provider: affiliateProvider,
+        affiliate_url: affiliateUrl,
       });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(
+          "/api/clicks",
+          new Blob([payload], { type: "application/json" })
+        );
+      } else {
+        // フォールバック (古いブラウザ): keepalive で navigation 後も配信
+        fetch("/api/clicks", {
+          method: "POST",
+          keepalive: true,
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+        }).catch(() => undefined);
+      }
     } catch {
-      // tracking failure should not block navigation
+      /* tracking 失敗は navigation を妨げない */
     }
     window.open(affiliateUrl, "_blank", "noopener,noreferrer");
   }

@@ -141,7 +141,12 @@ export default async function DealDetailPage({ params }: Props) {
       url: `https://beatrip.jp/deals/${deal.id}`,
       priceCurrency: "JPY",
       price: deal.sale_price,
-      priceValidUntil: deal.booking_deadline,
+      // ISO 8601 形式 (YYYY-MM-DD) で priceValidUntil を保証
+      priceValidUntil: deal.booking_deadline
+        ? deal.booking_deadline.slice(0, 10)
+        : new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .slice(0, 10),
       availability: "https://schema.org/InStock",
       itemCondition: "https://schema.org/NewCondition",
     },
