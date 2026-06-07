@@ -170,6 +170,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         0.55
       )
     ),
+    // 地方便 region 別深掘り (9 region × 日英 = 18 URL)
+    ...["hokkaido", "tohoku", "kanto", "chubu", "kinki", "chugoku", "shikoku", "kyushu", "okinawa"].flatMap(
+      (region) =>
+        dynamicBilingual(
+          `/local-flights/${region}`,
+          new Date(),
+          "weekly",
+          0.65
+        )
+    ),
     // 空港別ハブ — 「{空港} 発 セール」「{IATA} 空港 航空券」等の地方検索
     ...AIRPORTS.flatMap((a) =>
       dynamicBilingual(

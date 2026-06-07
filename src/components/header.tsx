@@ -165,7 +165,7 @@ export function Header() {
 
               {activeMenu === menu.key && (
                 <div
-                  className="absolute left-0 top-full mt-1 min-w-[480px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl p-4 animate-fade-in"
+                  className="absolute left-0 top-full mt-1 min-w-[480px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl p-4 animate-fade-in z-50"
                   onMouseEnter={() => setActiveMenu(menu.key)}
                 >
                   <div className="grid grid-cols-2 gap-4">

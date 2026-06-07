@@ -98,7 +98,20 @@
     "privacy": "Privacy Policy",
     "disclosure": "Ad disclosure",
     "disclaimer": "* Sale information shown is collected from each airline's official website. Prices and seat availability change constantly, so always confirm the latest details on the airline's official site before booking. This site does not sell tickets and is for informational purposes only.",
-    "copyright": "© 2026 BEATRIP. All rights reserved."
+    "copyright": "© 2026 BEATRIP. All rights reserved.",
+    "flightsTitle": "Flights",
+    "stayTitle": "Stay",
+    "featuresTitle": "Features",
+    "localFlights": "Local Flights",
+    "airports": "Airports",
+    "bestSeason": "Best Season by City",
+    "activities": "Local Tours",
+    "esimGuide": "eSIM Compare",
+    "otaSales": "OTA Sales Compare",
+    "cruise": "Cruise",
+    "hawaii": "Hawaii",
+    "okinawa": "Okinawa",
+    "packageTour": "Package Tours"
   },
   "about": {
     "metaTitle": "About BEATRIP",
@@ -108,10 +121,22 @@
     "intro": "BEATRIP is a flight-deal portal built around one idea: never miss the lowest fare. We automatically collect and analyze airline sale information.",
     "featuresTitle": "Features",
     "features": [
-      { "title": "Automatic sale tracking", "description": "We automatically collect sale information from major airlines such as ANA, JAL, Peach, and Jetstar — no more manual checking." },
-      { "title": "Sale-timing forecasts", "description": "AI analyzes historical sale data to predict the timing and probability of the next sale, so you can book at the best moment." },
-      { "title": "Price alerts", "description": "Get notified instantly when a route you care about drops below your target price. Never miss the chance." },
-      { "title": "Reliable data", "description": "All information is sourced directly from airline official websites, delivering accurate and up-to-date sale information." }
+      {
+        "title": "Automatic sale tracking",
+        "description": "We automatically collect sale information from major airlines such as ANA, JAL, Peach, and Jetstar — no more manual checking."
+      },
+      {
+        "title": "Sale-timing forecasts",
+        "description": "AI analyzes historical sale data to predict the timing and probability of the next sale, so you can book at the best moment."
+      },
+      {
+        "title": "Price alerts",
+        "description": "Get notified instantly when a route you care about drops below your target price. Never miss the chance."
+      },
+      {
+        "title": "Reliable data",
+        "description": "All information is sourced directly from airline official websites, delivering accurate and up-to-date sale information."
+      }
     ],
     "missionTitle": "Mission",
     "mission": [
@@ -128,15 +153,42 @@
     "title": "FAQ",
     "subtitle": "Frequently asked questions",
     "items": [
-      { "q": "What is BEATRIP?", "a": "BEATRIP is a flight-deal information site that automatically collects airline sale information and provides flash deals, sale-timing forecasts, and price-history data. We do not sell tickets directly and are for informational purposes only." },
-      { "q": "Where does the sale information come from?", "a": "We automatically collect sale information from the official websites of major airlines such as ANA, JAL, Peach, Jetstar Japan, and Scoot. Information is updated regularly, but please confirm the latest prices and seat availability on the airline's official site." },
-      { "q": "Are the listed prices accurate?", "a": "Listed prices are accurate as of the time of collection. Airfares constantly fluctuate based on seat availability and exchange rates, so actual prices may differ. Always confirm the latest price on the airline's official site before booking." },
-      { "q": "How is the 'Sale Forecast' calculated?", "a": "AI analyzes historical sale records (dates, frequency, discount rates, etc.) to predict the timing and probability of the next sale. Forecasts are reference information only and do not guarantee that a sale will actually occur." },
-      { "q": "How do I set up a price alert?", "a": "In the 'Price Alert' section on each deal's detail page, you can set the price at which you'd like to be notified. We'll let you know when it drops to or below that amount. Currently only browser notifications are supported." },
-      { "q": "How do I use the favorites feature?", "a": "Click the heart icon on any deal card to add it to your favorites. Favorites are saved in your browser's local storage, so they'll appear again when you visit from the same browser." },
-      { "q": "Can I book flights on BEATRIP?", "a": "You cannot book flights directly on BEATRIP. Clicking the 'Book' button takes you to the airline's official site or a partner booking site. Complete your booking on the destination site." },
-      { "q": "Can I use it on a smartphone?", "a": "Yes. BEATRIP supports PWA (Progressive Web App), so you can add it to your smartphone's home screen and use it like an app. Select 'Add to Home Screen' from your browser menu." },
-      { "q": "Is there a dark mode?", "a": "Yes. Click the sun/moon icon at the top right of the header to switch between light and dark mode. The setting is saved in your browser." }
+      {
+        "q": "What is BEATRIP?",
+        "a": "BEATRIP is a flight-deal information site that automatically collects airline sale information and provides flash deals, sale-timing forecasts, and price-history data. We do not sell tickets directly and are for informational purposes only."
+      },
+      {
+        "q": "Where does the sale information come from?",
+        "a": "We automatically collect sale information from the official websites of major airlines such as ANA, JAL, Peach, Jetstar Japan, and Scoot. Information is updated regularly, but please confirm the latest prices and seat availability on the airline's official site."
+      },
+      {
+        "q": "Are the listed prices accurate?",
+        "a": "Listed prices are accurate as of the time of collection. Airfares constantly fluctuate based on seat availability and exchange rates, so actual prices may differ. Always confirm the latest price on the airline's official site before booking."
+      },
+      {
+        "q": "How is the 'Sale Forecast' calculated?",
+        "a": "AI analyzes historical sale records (dates, frequency, discount rates, etc.) to predict the timing and probability of the next sale. Forecasts are reference information only and do not guarantee that a sale will actually occur."
+      },
+      {
+        "q": "How do I set up a price alert?",
+        "a": "In the 'Price Alert' section on each deal's detail page, you can set the price at which you'd like to be notified. We'll let you know when it drops to or below that amount. Currently only browser notifications are supported."
+      },
+      {
+        "q": "How do I use the favorites feature?",
+        "a": "Click the heart icon on any deal card to add it to your favorites. Favorites are saved in your browser's local storage, so they'll appear again when you visit from the same browser."
+      },
+      {
+        "q": "Can I book flights on BEATRIP?",
+        "a": "You cannot book flights directly on BEATRIP. Clicking the 'Book' button takes you to the airline's official site or a partner booking site. Complete your booking on the destination site."
+      },
+      {
+        "q": "Can I use it on a smartphone?",
+        "a": "Yes. BEATRIP supports PWA (Progressive Web App), so you can add it to your smartphone's home screen and use it like an app. Select 'Add to Home Screen' from your browser menu."
+      },
+      {
+        "q": "Is there a dark mode?",
+        "a": "Yes. Click the sun/moon icon at the top right of the header to switch between light and dark mode. The setting is saved in your browser."
+      }
     ]
   },
   "terms": {
@@ -146,14 +198,38 @@
     "title": "Terms of Service",
     "updated": "Terms of Service — Last updated: May 15, 2026",
     "sections": [
-      { "title": "Article 1 (Application)", "content": "These Terms set out the conditions for using BEATRIP (the \"Service\"). Users shall use the Service in agreement with these Terms." },
-      { "title": "Article 2 (Service Content)", "content": "The Service automatically collects airline sale information and provides flash deals, sale-timing forecasts, price-history data, and similar information. The Service does not sell tickets or act as a booking agent; it is for informational purposes only." },
-      { "title": "Article 3 (Accuracy of Information)", "content": "Information on the Service is collected from airline official websites and similar sources, but its accuracy, completeness, and timeliness are not guaranteed. Airfares and seat availability constantly change, so always confirm the latest information on the airline's official site before booking." },
-      { "title": "Article 4 (Disclaimer)", "content": "We bear no responsibility for any flight bookings or purchases made by users based on information on the Service. Sale-forecast results are reference information only and do not guarantee that a sale will actually occur." },
-      { "title": "Article 5 (Prohibited Acts)", "content": "Users must not do any of the following when using the Service:\n- Reproduce or republish the Service's content without permission\n- Automated access such as scraping or crawling the Service\n- Interfere with the operation of the Service\n- Any other act we deem inappropriate" },
-      { "title": "Article 6 (Intellectual Property)", "content": "Intellectual property rights related to the Service belong to us or the rightful owners. Users may not reproduce, republish, or modify the Service's content without our prior written consent." },
-      { "title": "Article 7 (Changes / Suspension)", "content": "We may change the content of the Service, or suspend or terminate its provision, without prior notice to users." },
-      { "title": "Article 8 (Changes to Terms)", "content": "We may change these Terms as necessary. The revised Terms take effect from the time they are posted on the Service." }
+      {
+        "title": "Article 1 (Application)",
+        "content": "These Terms set out the conditions for using BEATRIP (the \"Service\"). Users shall use the Service in agreement with these Terms."
+      },
+      {
+        "title": "Article 2 (Service Content)",
+        "content": "The Service automatically collects airline sale information and provides flash deals, sale-timing forecasts, price-history data, and similar information. The Service does not sell tickets or act as a booking agent; it is for informational purposes only."
+      },
+      {
+        "title": "Article 3 (Accuracy of Information)",
+        "content": "Information on the Service is collected from airline official websites and similar sources, but its accuracy, completeness, and timeliness are not guaranteed. Airfares and seat availability constantly change, so always confirm the latest information on the airline's official site before booking."
+      },
+      {
+        "title": "Article 4 (Disclaimer)",
+        "content": "We bear no responsibility for any flight bookings or purchases made by users based on information on the Service. Sale-forecast results are reference information only and do not guarantee that a sale will actually occur."
+      },
+      {
+        "title": "Article 5 (Prohibited Acts)",
+        "content": "Users must not do any of the following when using the Service:\n- Reproduce or republish the Service's content without permission\n- Automated access such as scraping or crawling the Service\n- Interfere with the operation of the Service\n- Any other act we deem inappropriate"
+      },
+      {
+        "title": "Article 6 (Intellectual Property)",
+        "content": "Intellectual property rights related to the Service belong to us or the rightful owners. Users may not reproduce, republish, or modify the Service's content without our prior written consent."
+      },
+      {
+        "title": "Article 7 (Changes / Suspension)",
+        "content": "We may change the content of the Service, or suspend or terminate its provision, without prior notice to users."
+      },
+      {
+        "title": "Article 8 (Changes to Terms)",
+        "content": "We may change these Terms as necessary. The revised Terms take effect from the time they are posted on the Service."
+      }
     ]
   },
   "privacy": {
@@ -163,15 +239,42 @@
     "title": "Privacy Policy",
     "updated": "Privacy Policy — Last updated: May 15, 2026",
     "sections": [
-      { "title": "1. Information We Collect", "content": "The Service may collect the following information:\n- Access environment information such as browser type and OS\n- Access logs such as access date/time and pages viewed\n- Information entered by users when setting price alerts\n- User settings such as theme and favorites stored via cookies" },
-      { "title": "2. Purpose of Use", "content": "Collected information is used for the following purposes:\n- Providing, operating, and improving the Service\n- Improving user experience (retaining theme settings, favorites, etc.)\n- Providing the price-alert feature\n- Service improvement through access analysis\n- Preventing unauthorized access" },
-      { "title": "3. Information Storage", "content": "User settings such as favorites, price alerts, and theme are stored in your browser's local storage. This information is stored only on the user's device and is not sent to our servers." },
-      { "title": "4. Provision to Third Parties", "content": "We do not provide collected information to third parties without the user's consent, except as required by law." },
-      { "title": "5. Access Analysis Tools", "content": "The Service may use services such as Google Analytics for access analysis. These services use cookies to collect access information but do not include personally identifiable information. See each service's privacy policy for details." },
-      { "title": "6. Affiliate Links", "content": "The Service may contain affiliate links to airline official sites or partner booking sites. If a user makes a booking via these links, we may receive a referral commission." },
-      { "title": "7. Use of Cookies", "content": "The Service uses cookies to improve user experience. You can restrict cookie use via your browser settings, but some features may not work properly." },
-      { "title": "8. Changes to This Policy", "content": "We may change this Privacy Policy as necessary. The revised policy takes effect from the time it is posted on the Service." },
-      { "title": "9. Contact", "content": "For inquiries about this policy, please contact us via the contact form on the site." }
+      {
+        "title": "1. Information We Collect",
+        "content": "The Service may collect the following information:\n- Access environment information such as browser type and OS\n- Access logs such as access date/time and pages viewed\n- Information entered by users when setting price alerts\n- User settings such as theme and favorites stored via cookies"
+      },
+      {
+        "title": "2. Purpose of Use",
+        "content": "Collected information is used for the following purposes:\n- Providing, operating, and improving the Service\n- Improving user experience (retaining theme settings, favorites, etc.)\n- Providing the price-alert feature\n- Service improvement through access analysis\n- Preventing unauthorized access"
+      },
+      {
+        "title": "3. Information Storage",
+        "content": "User settings such as favorites, price alerts, and theme are stored in your browser's local storage. This information is stored only on the user's device and is not sent to our servers."
+      },
+      {
+        "title": "4. Provision to Third Parties",
+        "content": "We do not provide collected information to third parties without the user's consent, except as required by law."
+      },
+      {
+        "title": "5. Access Analysis Tools",
+        "content": "The Service may use services such as Google Analytics for access analysis. These services use cookies to collect access information but do not include personally identifiable information. See each service's privacy policy for details."
+      },
+      {
+        "title": "6. Affiliate Links",
+        "content": "The Service may contain affiliate links to airline official sites or partner booking sites. If a user makes a booking via these links, we may receive a referral commission."
+      },
+      {
+        "title": "7. Use of Cookies",
+        "content": "The Service uses cookies to improve user experience. You can restrict cookie use via your browser settings, but some features may not work properly."
+      },
+      {
+        "title": "8. Changes to This Policy",
+        "content": "We may change this Privacy Policy as necessary. The revised policy takes effect from the time it is posted on the Service."
+      },
+      {
+        "title": "9. Contact",
+        "content": "For inquiries about this policy, please contact us via the contact form on the site."
+      }
     ]
   },
   "disclosure": {
