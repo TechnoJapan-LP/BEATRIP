@@ -23,6 +23,8 @@ import { ShareButtons } from "@/components/deals/share-buttons";
 import { PriceAlertForm } from "@/components/deals/price-alert-form";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
 import { TravelCompanions } from "@/components/affiliate/travel-companions";
+import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import type { AspCategory } from "@/lib/affiliate/asp-partners";
 import {
   getHotelDestinationBySlug,
   getHotelSlugByIata,
@@ -282,6 +284,63 @@ export default async function DealDetailPage({ params }: Props) {
                 <PriceChart prediction={prediction} />
               </div>
             )}
+
+            {/* ホテル・eSIM・現地ツアー — 高料率アフィリエイト */}
+            <HotelCrossSell
+              destinationCode={deal.destination_code}
+              destinationLabel={deal.destination}
+              checkIn={deal.departure_date}
+              checkOut={deal.return_date}
+              dealId={deal.id}
+            />
+
+            <TravelCompanions
+              ctx={{
+                cityNameEn: cityNameEn(deal.destination_code),
+                cityNameJa: deal.destination,
+                countryNameEn: getHotelDestinationBySlug(
+                  getHotelSlugByIata(deal.destination_code) ?? ""
+                )?.countryEn,
+                countrySlug: getHotelDestinationBySlug(
+                  getHotelSlugByIata(deal.destination_code) ?? ""
+                )?.airaloSlug,
+                destinationIata: deal.destination_code,
+                originIata: deal.origin_code,
+                checkIn: deal.departure_date,
+                checkOut: deal.return_date,
+              }}
+              title="旅の準備"
+              subtitle="ホテル・eSIM・送迎・保険まで一括で"
+              source="deal"
+            />
+
+            {/* 日本系 ASP partner — env 設定済の分だけ表示 */}
+            <JapanesePartnersPanel
+              title={`${deal.destination}行きの比較・予約`}
+              subtitle="航空券・ホテル・ツアー・eSIM を厳選サイトで比較"
+              categories={
+                (getHotelDestinationBySlug(
+                  getHotelSlugByIata(deal.destination_code) ?? ""
+                )?.region === "国内"
+                  ? [
+                      "flight-domestic",
+                      "hotel-domestic",
+                      "tour-package",
+                      "rental-car",
+                      "rail-domestic",
+                    ]
+                  : [
+                      "flight-overseas",
+                      "hotel-overseas",
+                      "tour-overseas",
+                      "tour-local",
+                      "esim-wifi",
+                      "transfer",
+                    ]) as AspCategory[]
+              }
+              destinationCode={deal.destination_code}
+              source="deal"
+            />
           </div>
 
           <div className="space-y-6 order-1 lg:order-2">
@@ -509,35 +568,6 @@ export default async function DealDetailPage({ params }: Props) {
               routeKey={routeKey}
               currentPrice={deal.sale_price}
               dealId={deal.id}
-            />
-
-            <HotelCrossSell
-              destinationCode={deal.destination_code}
-              destinationLabel={deal.destination}
-              checkIn={deal.departure_date}
-              checkOut={deal.return_date}
-              dealId={deal.id}
-            />
-
-            {/* 旅の周辺商品（高料率）— env で有効なものだけ出る */}
-            <TravelCompanions
-              ctx={{
-                cityNameEn: cityNameEn(deal.destination_code),
-                cityNameJa: deal.destination,
-                countryNameEn: getHotelDestinationBySlug(
-                  getHotelSlugByIata(deal.destination_code) ?? ""
-                )?.countryEn,
-                countrySlug: getHotelDestinationBySlug(
-                  getHotelSlugByIata(deal.destination_code) ?? ""
-                )?.airaloSlug,
-                destinationIata: deal.destination_code,
-                originIata: deal.origin_code,
-                checkIn: deal.departure_date,
-                checkOut: deal.return_date,
-              }}
-              title="旅の準備"
-              subtitle="ホテル・eSIM・送迎・保険まで一括で"
-              source="deal"
             />
 
             {similar.length > 0 && (
