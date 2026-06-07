@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Plane, BedDouble, Search, BookOpen } from "lucide-react";
+import { Plane, BedDouble, Search, BookOpen, MapPin } from "lucide-react";
 import { useLocalizedHref } from "@/components/i18n/locale-provider";
 
 /**
@@ -14,6 +14,7 @@ import { useLocalizedHref } from "@/components/i18n/locale-provider";
 const NAV = [
   { href: "/", label: "ディール", icon: Plane, match: (p: string) => p === "/" || p === "/en" },
   { href: "/hotels", label: "ホテル", icon: BedDouble, match: (p: string) => p.startsWith("/hotels") || p.startsWith("/en/hotels") },
+  { href: "/local-flights", label: "地方便", icon: MapPin, match: (p: string) => p.startsWith("/local-flights") || p.startsWith("/airports") || p.startsWith("/en/local-flights") || p.startsWith("/en/airports") },
   { href: "/articles", label: "記事", icon: BookOpen, match: (p: string) => p.startsWith("/articles") || p.startsWith("/en/articles") },
 ];
 
@@ -31,7 +32,7 @@ export function MobileBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200/60 bg-white/90 backdrop-blur-md dark:border-zinc-800/60 dark:bg-zinc-950/85 sm:hidden"
       style={{ paddingBottom: "max(0px, env(safe-area-inset-bottom))" }}
     >
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-5">
         {NAV.map((item) => {
           const active = item.match(pathname);
           const Icon = item.icon;

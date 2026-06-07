@@ -23,7 +23,8 @@ export function Header() {
     { href: "/", label: nav.flashDeals },
     { href: "/hotels", label: nav.hotels },
     { href: "/airlines", label: nav.airlineSales },
-    { href: "/#calendar", label: nav.salePrediction },
+    { href: "/local-flights", label: nav.localFlights },
+    { href: "/airports", label: nav.airports },
     { href: "/articles", label: nav.articles },
   ];
 
