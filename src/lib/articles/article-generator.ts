@@ -285,3 +285,38 @@ export async function generateAndSaveWeeklyRoundup(
   await saveGeneratedArticles(updated);
   return article;
 }
+
+/**
+ * 月次トレンドレポート (YYYY-MM 単位) を生成。
+ * 同月に既存があれば null を返す (毎月 1 本だけ生成)。
+ */
+export async function generateAndSaveMonthlyTrend(
+  sales: AirlineSale[]
+): Promise<Article | null> {
+  const { buildMonthlyTrendArticle } = await import("./trend-report-generator");
+  const article = buildMonthlyTrendArticle(sales);
+  if (!article) return null;
+  const existing = await loadGeneratedArticles();
+  if (existing.some((a) => a.slug === article.slug)) return null;
+  const updated = [article, ...existing].slice(0, 200);
+  await saveGeneratedArticles(updated);
+  return article;
+}
+
+/**
+ * 「セール終了予告」記事 (YYYY-MM-DD 単位) を生成。
+ * 7 日以内に終了するセールがなければ null。
+ * 同日に既存があれば null (1 日 1 本まで)。
+ */
+export async function generateAndSaveEndingSoon(
+  sales: AirlineSale[]
+): Promise<Article | null> {
+  const { buildEndingSoonArticle } = await import("./ending-soon-generator");
+  const article = buildEndingSoonArticle(sales);
+  if (!article) return null;
+  const existing = await loadGeneratedArticles();
+  if (existing.some((a) => a.slug === article.slug)) return null;
+  const updated = [article, ...existing].slice(0, 200);
+  await saveGeneratedArticles(updated);
+  return article;
+}

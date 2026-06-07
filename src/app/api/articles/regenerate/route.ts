@@ -3,6 +3,8 @@ import { loadAllSales } from "@/lib/store/sale-store";
 import {
   generateArticlesFromChanges,
   generateAndSaveWeeklyRoundup,
+  generateAndSaveMonthlyTrend,
+  generateAndSaveEndingSoon,
 } from "@/lib/articles/article-generator";
 import type { AirlineSale } from "@/lib/scrapers/types";
 
@@ -64,17 +66,20 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // 週次まとめ記事も同時に生成（ISO週単位でslug一意、同週内は再生成スキップ）
-    let weeklyRoundup: "generated" | "already_exists" | "no_sales" | "error" =
-      "no_sales";
+    // 全 active 系セールを 1 度集約 (3 種の総括記事で共有)
+    const allRecentSales: AirlineSale[] = Object.values(allSales).flatMap(
+      (d) =>
+        d.sales.filter((s) => {
+          if (!s.scrapedAt) return false;
+          return now - new Date(s.scrapedAt).getTime() <= SIXTY_DAYS;
+        })
+    );
+
+    type GenStatus = "generated" | "already_exists" | "no_sales" | "error";
+
+    // 週次まとめ (ISO 週単位 slug)
+    let weeklyRoundup: GenStatus = "no_sales";
     try {
-      const allRecentSales: AirlineSale[] = Object.values(allSales).flatMap(
-        (d) =>
-          d.sales.filter((s) => {
-            if (!s.scrapedAt) return false;
-            return now - new Date(s.scrapedAt).getTime() <= SIXTY_DAYS;
-          })
-      );
       if (allRecentSales.length > 0) {
         const article = await generateAndSaveWeeklyRoundup(allRecentSales);
         weeklyRoundup = article ? "generated" : "already_exists";
@@ -85,10 +90,38 @@ export async function GET(request: NextRequest) {
       weeklyRoundup = "error";
     }
 
+    // 月次トレンドレポート (YYYY-MM slug、月 1 本)
+    let monthlyTrend: GenStatus = "no_sales";
+    try {
+      if (allRecentSales.length > 0) {
+        const article = await generateAndSaveMonthlyTrend(allRecentSales);
+        monthlyTrend = article ? "generated" : "already_exists";
+        if (article) totalGenerated += 1;
+      }
+    } catch (e) {
+      console.error("[regenerate] monthly trend failed:", e);
+      monthlyTrend = "error";
+    }
+
+    // セール終了予告 (YYYY-MM-DD slug、日 1 本、終了7日以内のみ)
+    let endingSoon: GenStatus = "no_sales";
+    try {
+      if (allRecentSales.length > 0) {
+        const article = await generateAndSaveEndingSoon(allRecentSales);
+        endingSoon = article ? "generated" : "already_exists";
+        if (article) totalGenerated += 1;
+      }
+    } catch (e) {
+      console.error("[regenerate] ending-soon failed:", e);
+      endingSoon = "error";
+    }
+
     return NextResponse.json({
       success: true,
       totalGenerated,
       weeklyRoundup,
+      monthlyTrend,
+      endingSoon,
       perAirline,
       timestamp: new Date().toISOString(),
     });
