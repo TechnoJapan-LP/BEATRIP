@@ -14,7 +14,17 @@
     "articles": "記事",
     "themeToggle": "テーマ切替",
     "menu": "メニュー",
-    "language": "言語"
+    "language": "言語",
+    "flights": "航空券",
+    "stay": "ホテル",
+    "features": "特集",
+    "destinations": "都市別",
+    "esimGuide": "eSIM 比較",
+    "bestSeason": "ベストシーズン",
+    "localActivities": "現地ツアー",
+    "salesCalendar": "セール予測",
+    "routes": "路線",
+    "destinationsListed": "都市・空港から探す"
   },
   "home": {
     "flashDealsTitle": "Flash Deals",

@@ -14,7 +14,17 @@
     "articles": "Articles",
     "themeToggle": "Toggle theme",
     "menu": "Menu",
-    "language": "Language"
+    "language": "Language",
+    "flights": "Flights",
+    "stay": "Stay",
+    "features": "Features",
+    "destinations": "Destinations",
+    "esimGuide": "eSIM Compare",
+    "bestSeason": "Best Season",
+    "localActivities": "Local Tours",
+    "salesCalendar": "Sale Forecast",
+    "routes": "Routes",
+    "destinationsListed": "By City / Airport"
   },
   "home": {
     "flashDealsTitle": "Flash Deals",
