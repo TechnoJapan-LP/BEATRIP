@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
@@ -192,6 +193,8 @@ export default async function DealDetailPage({ params }: Props) {
           priority
           sizes="100vw"
           className="object-cover"
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER_DARK}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 

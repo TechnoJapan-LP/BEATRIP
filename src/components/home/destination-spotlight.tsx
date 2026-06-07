@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { ArrowUpRight, Plane, BedDouble } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
 import { HOTEL_BY_SLUG } from "@/data/hotel-destinations";
@@ -136,6 +137,8 @@ function SpotlightCard({
             sizes={tall ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, 50vw"}
             className={`object-cover transition-transform duration-700 group-hover:scale-110 ${tall ? "animate-ken-burns" : ""}`}
             priority={tall}
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER_DARK}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10" />

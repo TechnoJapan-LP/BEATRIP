@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_LIGHT } from "@/lib/images/blur";
 import { Plane, TrendingDown, ArrowRight } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
 import { cityNameJa } from "@/lib/airport-names";
@@ -49,6 +50,8 @@ export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
                   fill
                   sizes="48px"
                   className="object-cover"
+                  placeholder="blur"
+                  blurDataURL={BLUR_PLACEHOLDER_LIGHT}
                 />
               </div>
               <div className="flex-1 min-w-0">

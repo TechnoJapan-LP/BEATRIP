@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BedDouble, ArrowUpRight, Calendar, MapPin, Plane, TrendingDown } from "lucide-react";
@@ -196,6 +197,8 @@ export default async function HotelCityPage({ params }: Props) {
             priority
             sizes="100vw"
             className="object-cover"
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER_DARK}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />

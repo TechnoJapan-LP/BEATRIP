@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { ArrowRight, TrendingDown, Flame } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
 import { cityNameJa } from "@/lib/airport-names";
@@ -44,6 +45,8 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
           fetchPriority="high"
           sizes="(min-width: 1280px) 1280px, (min-width: 768px) 100vw, 100vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER_DARK}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Tag, ArrowRight } from "lucide-react";
@@ -245,6 +246,8 @@ export default async function ArticleDetailPage({ params }: Props) {
           priority
           sizes="100vw"
           className="object-cover"
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER_DARK}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0">
@@ -395,7 +398,8 @@ export default async function ArticleDetailPage({ params }: Props) {
                           className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden"
                           style={{ backgroundColor: a.color + "15" }}
                         >
-                          <img src={a.logo} alt={a.nameEn} className="h-5 w-5 object-contain" />
+                          {/* 隣の div が airline 名を読み上げるため装飾扱い */}
+                          <img src={a.logo} alt="" className="h-5 w-5 object-contain" />
                         </span>
                         <div>
                           <div className="text-xs font-medium text-zinc-800">

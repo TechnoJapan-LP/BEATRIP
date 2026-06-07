@@ -255,10 +255,11 @@ export default async function AirlineAirportPage({ params }: Props) {
 
           <div className="mt-6 flex items-center gap-4 flex-wrap">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/95 overflow-hidden flex-shrink-0">
+              {/* 直下の h1 が airline 名を読み上げるため装飾扱い */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={airline.logo}
-                alt={airline.nameEn}
+                alt=""
                 className="h-10 w-10 object-contain"
               />
             </div>

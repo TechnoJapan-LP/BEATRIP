@@ -33,7 +33,7 @@ export default function BrandPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/avatar"
-            alt="BEATRIP avatar"
+            alt="BEATRIPブランドのプロフィールアバター画像プレビュー"
             width={400}
             height={400}
             style={{ display: "block", width: 400, height: 400 }}
@@ -61,7 +61,7 @@ export default function BrandPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/banner"
-            alt="BEATRIP banner"
+            alt="BEATRIPブランドのSNSヘッダー／バナー画像プレビュー"
             width={1500}
             height={500}
             style={{ display: "block", width: "100%", height: "auto" }}
@@ -89,7 +89,7 @@ export default function BrandPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/opengraph-image"
-            alt="BEATRIP OG"
+            alt="BEATRIPのOGP（Open Graph）カードプレビュー"
             width={1200}
             height={630}
             style={{ display: "block", width: "100%", height: "auto" }}

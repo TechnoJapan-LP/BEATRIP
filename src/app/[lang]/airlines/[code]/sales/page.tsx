@@ -247,9 +247,10 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 border: `1.5px solid ${airline.color}30`,
               }}
             >
+              {/* 隣の h1 が airline 名を読み上げるため装飾扱い */}
               <img
                 src={airline.logo}
-                alt={airline.nameEn}
+                alt=""
                 className="h-7 w-7 object-contain"
               />
             </div>

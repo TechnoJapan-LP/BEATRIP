@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { ArrowUpRight } from "lucide-react";
 import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 
@@ -65,6 +66,8 @@ export function NextTripSuggestions({
                   sizes="(min-width: 640px) 33vw, 100vw"
                   loading="lazy"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  placeholder="blur"
+                  blurDataURL={BLUR_PLACEHOLDER_DARK}
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />

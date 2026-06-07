@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import dynamic from "next/dynamic";
 import { ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
@@ -260,6 +261,8 @@ export default async function Home({
                         sizes="(max-width: 640px) 50vw, 25vw"
                         loading="lazy"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        placeholder="blur"
+                        blurDataURL={BLUR_PLACEHOLDER_DARK}
                       />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />

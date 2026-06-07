@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_LIGHT } from "@/lib/images/blur";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Plane, TrendingDown, Calendar } from "lucide-react";
@@ -297,6 +298,8 @@ export default async function RoutePage({ params }: Props) {
                       height={64}
                       sizes="96px"
                       className="h-16 w-24 rounded-lg object-cover flex-shrink-0"
+                      placeholder="blur"
+                      blurDataURL={BLUR_PLACEHOLDER_LIGHT}
                     />
                     <div>
                       <div className="flex items-center gap-2 mb-1">

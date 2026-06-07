@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_LIGHT } from "@/lib/images/blur";
 import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Article } from "@/data/mock-articles";
@@ -42,6 +43,8 @@ export function ArticleCard({
               fill
               sizes="(max-width: 640px) 100vw, 50vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
+              placeholder="blur"
+              blurDataURL={BLUR_PLACEHOLDER_LIGHT}
             />
           </div>
           <div className="p-6 flex flex-col justify-center">
@@ -83,6 +86,8 @@ export function ArticleCard({
           fill
           sizes="(max-width: 640px) 100vw, 33vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER_LIGHT}
         />
         <Badge
           className={`absolute top-3 left-3 text-[10px] font-bold tracking-wider ${categoryColor[article.category]}`}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import Link from "next/link";
 import { ArrowRight, BedDouble } from "lucide-react";
 import { Header } from "@/components/header";
@@ -99,6 +100,8 @@ export default function HotelsIndexPage() {
                         fill
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        placeholder="blur"
+                        blurDataURL={BLUR_PLACEHOLDER_DARK}
                       />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />

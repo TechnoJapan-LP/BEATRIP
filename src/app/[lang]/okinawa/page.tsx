@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import Link from "next/link";
 import { Palmtree, Sun, Waves, Car, Plane, ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
@@ -185,6 +186,8 @@ export default function OkinawaPage() {
             priority
             sizes="100vw"
             className="object-cover"
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER_DARK}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-tr from-sky-900/85 via-emerald-900/40 to-sky-700/20" />

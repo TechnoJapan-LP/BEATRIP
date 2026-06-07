@@ -151,7 +151,8 @@ export default async function AirlineDetailPage({ params }: Props) {
               className="flex h-14 w-14 items-center justify-center rounded-2xl overflow-hidden"
               style={{ backgroundColor: airline.color + "15" }}
             >
-              <img src={airline.logo} alt={airline.nameEn} className="h-10 w-10 object-contain" />
+              {/* 隣の h1 が airline 名を読み上げるため装飾扱い */}
+              <img src={airline.logo} alt="" className="h-10 w-10 object-contain" />
             </div>
             <div>
               <div className="flex items-center gap-2">

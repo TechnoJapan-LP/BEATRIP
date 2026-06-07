@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { ChevronLeft, ChevronRight, Plane, TrendingDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode } from "@/data/airlines";
@@ -41,6 +42,8 @@ function DealMiniCard({ deal }: { deal: DealSchema }) {
           fill
           sizes="256px"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
+          placeholder="blur"
+          blurDataURL={BLUR_PLACEHOLDER_DARK}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
@@ -84,9 +87,10 @@ function DealMiniCard({ deal }: { deal: DealSchema }) {
       <div className="mt-auto px-2.5 py-2 flex items-center justify-between sm:px-3 sm:py-2.5">
         <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
           {airlineLogo && (
+            // 隣の span が airline 名を読み上げるため装飾扱い
             <img
               src={airlineLogo}
-              alt={deal.airline_name}
+              alt=""
               className="h-4 w-4 flex-shrink-0 rounded-[3px] object-contain sm:h-[18px] sm:w-[18px]"
               loading="lazy"
             />

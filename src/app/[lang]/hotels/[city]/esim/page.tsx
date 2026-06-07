@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Smartphone, Wifi, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
@@ -148,6 +149,8 @@ export default async function CityEsimPage({ params }: Props) {
             priority
             sizes="100vw"
             className="object-cover"
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER_DARK}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-violet-950/90 via-violet-900/60 to-violet-700/30" />

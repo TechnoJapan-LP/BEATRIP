@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import Link from "next/link";
 import { Sun, Waves, Sparkles, Coffee, ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
@@ -157,6 +158,8 @@ export default function HawaiiPage() {
             priority
             sizes="100vw"
             className="object-cover"
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER_DARK}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />

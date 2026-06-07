@@ -69,7 +69,8 @@ export function AirlineCard({
               className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden shadow-sm"
               style={{ backgroundColor: "white", border: `1.5px solid ${airline.color}30` }}
             >
-              <img src={airline.logo} alt={airline.nameEn} className="h-7 w-7 object-contain" />
+              {/* 隣の h3 が airline 名を読み上げるため装飾扱い */}
+              <img src={airline.logo} alt="" className="h-7 w-7 object-contain" />
             </div>
             <div>
               <h3 className="font-bold text-zinc-900 text-sm leading-tight">

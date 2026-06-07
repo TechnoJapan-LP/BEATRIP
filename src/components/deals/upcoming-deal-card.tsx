@@ -1,6 +1,7 @@
 // Server component: 純表示用 (useClient 不要)
 
 import Image from "next/image";
+import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { TrendingDown, Plane } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByName } from "@/data/airlines";
@@ -67,6 +68,8 @@ export function UpcomingDealCard({
               fill
               sizes="(max-width: 640px) 50vw, 25vw"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL={BLUR_PLACEHOLDER_DARK}
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-zinc-100 via-zinc-50 to-zinc-200" />
@@ -114,9 +117,10 @@ export function UpcomingDealCard({
         <div className="mt-auto px-2.5 py-2 flex items-center justify-between sm:px-4 sm:py-2.5">
           <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             {airlineLogo && (
+              // 隣の span が airline 名を読み上げるため装飾扱い
               <img
                 src={airlineLogo}
-                alt={event.airline}
+                alt=""
                 className="h-4 w-4 flex-shrink-0 rounded-[3px] object-contain sm:h-[18px] sm:w-[18px]"
                 loading="lazy"
               />

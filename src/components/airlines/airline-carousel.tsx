@@ -70,9 +70,10 @@ export function AirlineCarousel({ airlines }: { airlines: AirlineProfile[] }) {
 
             <div className="flex flex-col items-center px-3 pt-4 pb-3 sm:px-4 sm:pt-5 sm:pb-4">
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-900 p-2 ring-1 ring-zinc-100 dark:ring-zinc-700 sm:h-16 sm:w-16">
+                {/* 下の span が airline 名を読み上げるため装飾扱い */}
                 <img
                   src={a.logo}
-                  alt={a.nameEn}
+                  alt=""
                   className="h-full w-full object-contain group-hover:scale-110 transition-transform duration-300"
                 />
               </div>
