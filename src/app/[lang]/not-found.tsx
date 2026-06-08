@@ -26,6 +26,9 @@ export const metadata: Metadata = {
 };
 
 export default async function NotFound() {
+  // not-found.tsx は props を受け取れない (Next.js 仕様)。
+  // SiteFooter には lang を渡せないが、デフォルトの "ja" で問題ない
+  // (404 ページから locale 切り替えを促す導線はないため)。
   // 人気ディール 5 件（割引率の高い順）— 404 からの離脱を防ぐ救済導線
   let popularDeals: Awaited<ReturnType<typeof getActiveDeals>> = [];
   try {

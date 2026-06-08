@@ -79,7 +79,7 @@ export default async function DisclosurePage({
           ))}
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

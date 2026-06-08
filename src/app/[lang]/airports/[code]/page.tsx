@@ -18,7 +18,7 @@ import { getHotelSlugByIata } from "@/data/hotel-destinations";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
 
-type Props = { params: Promise<{ code: string }> };
+type Props = { params: Promise<{ code: string; lang: string;}> };
 
 // ISR: 1800秒キャッシュ (30分)
 export const revalidate = 1800;
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const airport = getAirportByCode(code.toUpperCase());
   if (!airport) return { title: "Not Found" };
 
-  const title = `${airport.fullNameJa} (${airport.iata}) 発着の格安航空券・セール情報 | BEATRIP`;
+  const title = `${airport.nameJa} (${airport.iata}) 発着セール・航空券 | BEATRIP`;
   const description = `${airport.fullNameJa}（${airport.nameEn} ${airport.iata}）発着の航空券セール情報を最新で集約。${airport.tagline ?? ""}就航航空会社: ${airport.airlines.join(", ")}。人気路線・最安セールをBEATRIPでチェック。`;
 
   return {
@@ -65,7 +65,7 @@ export function generateStaticParams() {
 }
 
 export default async function AirportPage({ params }: Props) {
-  const { code } = await params;
+  const { code, lang} = await params;
   const airport = getAirportByCode(code.toUpperCase());
   if (!airport) notFound();
 
@@ -91,7 +91,6 @@ export default async function AirportPage({ params }: Props) {
     .map((iata) => ({ iata, name: cityNameJa(iata) }))
     .slice(0, 6);
 
-  const isDomestic = true; // 国内空港なので domestic categories
   const aspCategories: AspCategory[] = [
     "flight-domestic",
     "hotel-domestic",
@@ -131,7 +130,37 @@ export default async function AirportPage({ params }: Props) {
       addressRegion: airport.prefecture,
       addressCountry: "JP",
     },
+    image: "https://beatrip.jp/opengraph-image",
+    containedInPlace: {
+      "@type": "AdministrativeArea",
+      name: airport.prefecture,
+    },
     url: `https://beatrip.jp/airports/${airport.iata}`,
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://beatrip.jp/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "空港",
+        item: "https://beatrip.jp/airports",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: airport.fullNameJa,
+        item: `https://beatrip.jp/airports/${airport.iata}`,
+      },
+    ],
   };
 
   const faqJsonLd = {
@@ -149,6 +178,10 @@ export default async function AirportPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(airportJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <script
         type="application/ld+json"
@@ -178,10 +211,10 @@ export default async function AirportPage({ params }: Props) {
           </div>
           <h1 className="mt-3 font-heading text-3xl tracking-wide uppercase sm:text-5xl lg:text-6xl">
             {airport.fullNameJa}
-            <span className="ml-3 font-mono text-xl text-white/70 sm:text-2xl">
-              ({airport.iata})
-            </span>
           </h1>
+          <p className="mt-1 font-mono text-sm tracking-wider text-white/70 sm:text-base">
+            ({airport.iata})
+          </p>
           {airport.tagline && (
             <p className="mt-3 text-sm sm:text-base text-white/90 max-w-2xl">
               {airport.tagline}
@@ -382,7 +415,7 @@ export default async function AirportPage({ params }: Props) {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

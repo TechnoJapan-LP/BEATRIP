@@ -54,6 +54,14 @@ const nextConfig: NextConfig = {
       "font-src 'self' data:",
       "connect-src 'self' https://www.google-analytics.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
       "frame-ancestors 'self'",
+      // Flash / プラグイン経由のコード実行を完全に禁止
+      "object-src 'none'",
+      // <base href> による相対 URL の乗っ取りを防ぐ
+      "base-uri 'self'",
+      // フォーム送信先を自サイトに限定 (CSRF / フィッシング対策)
+      "form-action 'self'",
+      // HTTP からのサブリソースを自動で HTTPS にアップグレード
+      "upgrade-insecure-requests",
     ].join("; ");
     return [
       {

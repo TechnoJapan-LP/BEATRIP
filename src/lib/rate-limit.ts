@@ -12,7 +12,7 @@ import { getKV } from "@/lib/store/kv";
  * 用途別に名前付きで limiter を返す。
  */
 
-type LimiterKey = "newsletter" | "priceAlerts";
+type LimiterKey = "newsletter" | "priceAlerts" | "subscriptions" | "alerts";
 
 const limiters = new Map<LimiterKey, Ratelimit | null>();
 
@@ -31,6 +31,10 @@ function getLimiter(name: LimiterKey): Ratelimit | null {
   const config: Record<LimiterKey, { tokens: number; window: `${number} ${"s" | "m" | "h" | "d"}` }> = {
     newsletter: { tokens: 5, window: "1 h" },
     priceAlerts: { tokens: 20, window: "1 h" },
+    // 通知 webhook 購読は誰でも POST 可能だが本来は管理者操作。乱用防止に絞る。
+    subscriptions: { tokens: 10, window: "1 h" },
+    // push 通知用 alerts。ブラウザからの subscribe 操作 → 5 回 / hour で十分。
+    alerts: { tokens: 5, window: "1 h" },
   };
 
   const c = config[name];
@@ -105,4 +109,33 @@ export async function checkRateLimit(
 export function isHoneypotTripped(body: Record<string, unknown>): boolean {
   const v = body["website"];
   return typeof v === "string" && v.trim().length > 0;
+}
+
+// 自サイトからの fetch のみ許可するホスト allowlist。
+// 環境ごとに dev/preview を許容しつつ、本番ドメインは固定。
+const ALLOWED_ORIGIN_HOSTS = new Set<string>([
+  "beatrip.jp",
+  "www.beatrip.jp",
+  "localhost",
+  "127.0.0.1",
+]);
+
+/**
+ * CSRF / 第三者からの POST を防ぐため Origin / Referer ヘッダで自サイト
+ * 由来かを確認する。Origin が無い場合は Referer に fallback。
+ * どちらも無い (curl 等) は false 扱い。
+ */
+export function isSameOriginRequest(request: NextRequest): boolean {
+  const origin = request.headers.get("origin");
+  const referer = request.headers.get("referer");
+  const candidate = origin ?? referer;
+  if (!candidate) return false;
+  try {
+    const { hostname } = new URL(candidate);
+    // Vercel preview デプロイ (*.vercel.app) も許容
+    if (hostname.endsWith(".vercel.app")) return true;
+    return ALLOWED_ORIGIN_HOSTS.has(hostname);
+  } catch {
+    return false;
+  }
 }

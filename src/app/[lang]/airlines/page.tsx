@@ -56,7 +56,8 @@ async function getSalesData() {
   };
 }
 
-export default async function AirlinesPage() {
+export default async function AirlinesPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const { salesByAirline, lastScraped } = await getSalesData();
 
   const formattedTime = lastScraped
@@ -126,7 +127,7 @@ export default async function AirlinesPage() {
           ))}
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

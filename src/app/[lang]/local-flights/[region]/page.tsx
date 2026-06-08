@@ -21,7 +21,7 @@ import { cityNameJa } from "@/lib/airport-names";
 import { getAirlineByCode } from "@/data/airlines";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 
-type Props = { params: Promise<{ region: string }> };
+type Props = { params: Promise<{ region: string; lang: string;}> };
 
 // ISR: 1800秒キャッシュ (30分)
 export const revalidate = 1800;
@@ -144,7 +144,7 @@ function formatJPY(n: number): string {
 }
 
 export default async function LocalFlightsRegionPage({ params }: Props) {
-  const { region: slug } = await params;
+  const { region: slug, lang} = await params;
   const region = SLUG_TO_REGION[slug.toLowerCase()];
   if (!region) notFound();
 
@@ -270,7 +270,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
           <div className="mt-4 flex items-center gap-3 mb-2">
             <Plane className="h-7 w-7 text-white/90" />
             <MapPin className="h-6 w-6 text-white/80" />
-            <p className="text-[11px] font-bold tracking-widest uppercase text-white/90">
+            <p className="text-[11px] font-bold tracking-wider uppercase text-white/90">
               {region} Local Flight Deals
             </p>
           </div>
@@ -313,7 +313,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                   return (
                     <Link
                       key={a.iata}
-                      href={`/airports/${a.iata.toLowerCase()}`}
+                      href={`/airports/${a.iata}`}
                       className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
                     >
                       <div className="flex items-center justify-between gap-2">
@@ -343,7 +343,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
             </section>
 
             {/* region 内の最安セール */}
-            <section>
+            <section id="deals" className="scroll-mt-24">
               <div className="flex items-center gap-2 mb-3">
                 <Plane className="h-4 w-4 text-zinc-400" />
                 <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-3xl">
@@ -506,7 +506,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                 {airports.slice(0, 2).map((a) => (
                   <Link
                     key={a.iata}
-                    href={`/airports/${a.iata.toLowerCase()}`}
+                    href={`/airports/${a.iata}`}
                     className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 hover:border-sky-200 dark:hover:border-sky-700 transition-colors"
                   >
                     <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
@@ -553,7 +553,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

@@ -21,7 +21,7 @@ import {
 import { mockSaleEvents } from "@/data/mock-deals";
 import { SiteFooter } from "@/components/site-footer";
 
-type Props = { params: Promise<{ code: string }> };
+type Props = { params: Promise<{ code: string; lang: string;}> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
@@ -83,7 +83,7 @@ function formatDateRange(start: string, end: string) {
 }
 
 export default async function AirlineSaleHistoryPage({ params }: Props) {
-  const { code } = await params;
+  const { code, lang} = await params;
   const airline = getAirlineByCode(code);
   if (!airline) notFound();
 
@@ -575,7 +575,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
           </Link>
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

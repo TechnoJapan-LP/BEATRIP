@@ -162,7 +162,8 @@ const FAQS = [
   },
 ];
 
-export default function PackageTourPage() {
+export default async function PackageTourPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -483,7 +484,7 @@ export default function PackageTourPage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

@@ -21,6 +21,9 @@ import { isKVEnabled } from "@/lib/store/kv";
 export const metadata: Metadata = {
   title: "Admin Dashboard | BEATRIP",
   robots: { index: false, follow: false },
+  // /admin?token=XXX を URL で受け取るため、外部リンクへの遷移時に
+  // Referer ヘッダで token が漏れないよう "no-referrer" を強制する。
+  referrer: "no-referrer",
 };
 
 // 常に dynamic (認証 + 最新データ表示)
@@ -154,7 +157,30 @@ export default async function AdminPage({
           <h2 className="font-heading mb-3 text-xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
             航空会社別 scrape 状況
           </h2>
-          <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <div className="sm:hidden divide-y divide-zinc-100 dark:divide-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800">
+            {airlineRows.map((r) => (
+              <div key={r.code} className="p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="font-bold text-zinc-900 dark:text-zinc-100 text-sm">{r.name}</div>
+                    <div className="text-[11px] font-mono text-zinc-400">{r.code}</div>
+                  </div>
+                  <span className="font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100 flex-shrink-0">
+                    {r.saleCount}
+                  </span>
+                </div>
+                <div className={`mt-1 font-mono text-[11px] ${statusColor(r.lastScraped)}`}>
+                  最終 scrape: {fmtDate(r.lastScraped)}
+                </div>
+                {r.lastErr && (
+                  <div className="mt-1 text-[11px] text-rose-500 break-words">
+                    {r.lastErr.slice(0, 80)}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="hidden sm:block overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
             <table className="w-full text-sm">
               <thead className="bg-zinc-50 dark:bg-zinc-900">
                 <tr>
@@ -190,24 +216,34 @@ export default async function AdminPage({
             クリック上位 deals (Top 10)
           </h2>
           {topClicks.length > 0 ? (
-            <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
-              <table className="w-full text-sm">
-                <thead className="bg-zinc-50 dark:bg-zinc-900">
-                  <tr>
-                    <th className="px-4 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">Deal ID</th>
-                    <th className="px-4 py-2 text-right text-[11px] font-bold uppercase tracking-wider text-zinc-500">クリック数</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-                  {topClicks.map((c) => (
-                    <tr key={c.deal_id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
-                      <td className="px-4 py-2.5 font-mono text-xs">{c.deal_id}</td>
-                      <td className="px-4 py-2.5 text-right font-mono font-bold">{c.total_clicks}</td>
+            <>
+              <div className="sm:hidden divide-y divide-zinc-100 dark:divide-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                {topClicks.map((c) => (
+                  <div key={c.deal_id} className="flex items-center justify-between gap-2 p-3">
+                    <span className="font-mono text-[11px] text-zinc-700 dark:text-zinc-300 break-all">{c.deal_id}</span>
+                    <span className="font-mono text-sm font-bold flex-shrink-0">{c.total_clicks}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="hidden sm:block overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <table className="w-full text-sm">
+                  <thead className="bg-zinc-50 dark:bg-zinc-900">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">Deal ID</th>
+                      <th className="px-4 py-2 text-right text-[11px] font-bold uppercase tracking-wider text-zinc-500">クリック数</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                    {topClicks.map((c) => (
+                      <tr key={c.deal_id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                        <td className="px-4 py-2.5 font-mono text-xs">{c.deal_id}</td>
+                        <td className="px-4 py-2.5 text-right font-mono font-bold">{c.total_clicks}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           ) : (
             <p className="text-sm text-zinc-500">クリックデータがまだありません</p>
           )}
@@ -240,32 +276,51 @@ export default async function AdminPage({
             <Users className="inline h-5 w-5 mr-2" />価格アラート 直近 10 件
           </h2>
           {alerts.length > 0 ? (
-            <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
-              <table className="w-full text-sm">
-                <thead className="bg-zinc-50 dark:bg-zinc-900">
-                  <tr>
-                    <th className="px-4 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">Email (mask)</th>
-                    <th className="px-4 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">Route</th>
-                    <th className="px-4 py-2 text-right text-[11px] font-bold uppercase tracking-wider text-zinc-500">しきい値</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
-                  {alerts.slice(0, 10).map((a) => (
-                    <tr key={a.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
-                      <td className="px-4 py-2.5 text-xs">
-                        {a.email.replace(/(.{2}).*(@.*)/, "$1***$2")}
-                      </td>
-                      <td className="px-4 py-2.5 font-mono text-xs">
+            <>
+              <div className="sm:hidden divide-y divide-zinc-100 dark:divide-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                {alerts.slice(0, 10).map((a) => (
+                  <div key={a.id} className="p-3 space-y-1">
+                    <div className="text-xs text-zinc-700 dark:text-zinc-300 break-all">
+                      {a.email.replace(/(.{2}).*(@.*)/, "$1***$2")}
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-[11px] text-zinc-500">
                         {a.routeKey ?? a.dealId ?? "—"}
-                      </td>
-                      <td className="px-4 py-2.5 text-right font-mono">
+                      </span>
+                      <span className="font-mono text-xs font-bold flex-shrink-0">
                         {a.threshold ? `¥${fmt(a.threshold)}` : "—"}
-                      </td>
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="hidden sm:block overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+                <table className="w-full text-sm">
+                  <thead className="bg-zinc-50 dark:bg-zinc-900">
+                    <tr>
+                      <th className="px-4 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">Email (mask)</th>
+                      <th className="px-4 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">Route</th>
+                      <th className="px-4 py-2 text-right text-[11px] font-bold uppercase tracking-wider text-zinc-500">しきい値</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                    {alerts.slice(0, 10).map((a) => (
+                      <tr key={a.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                        <td className="px-4 py-2.5 text-xs">
+                          {a.email.replace(/(.{2}).*(@.*)/, "$1***$2")}
+                        </td>
+                        <td className="px-4 py-2.5 font-mono text-xs">
+                          {a.routeKey ?? a.dealId ?? "—"}
+                        </td>
+                        <td className="px-4 py-2.5 text-right font-mono">
+                          {a.threshold ? `¥${fmt(a.threshold)}` : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           ) : (
             <p className="text-sm text-zinc-500">アラート登録がまだありません</p>
           )}

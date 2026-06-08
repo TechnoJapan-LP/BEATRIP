@@ -58,7 +58,7 @@ export function PriceChart({ prediction }: { prediction: BestTimeToBook }) {
             const ratio = (mp.avg_price - minPrice) / range;
             const height = ratio * 75 + 25;
             return (
-              <div key={mp.month} className="flex-1 min-w-[28px] flex flex-col items-center gap-1 h-full justify-end sm:gap-1.5">
+              <div key={mp.month} className="flex-1 min-w-[24px] flex flex-col items-center gap-1 h-full justify-end sm:gap-1.5">
                 <span className={`text-[8px] font-mono leading-none hidden sm:block ${priceLabelColor(ratio)}`}>
                   ¥{formatPrice(mp.avg_price)}
                 </span>

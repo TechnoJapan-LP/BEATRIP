@@ -1,18 +1,27 @@
-"use client";
+// Server Component:
+// 大型データ (mock-deals-v2 / RecommendedBanner) と辞書ロードは
+// すべてサーバー側で完結させ、クライアント JS バンドルから除外する。
+// 以前は "use client" 化されており、895行の mock-deals がブラウザに送られていた。
 
 import Link from "next/link";
 import { Plane } from "lucide-react";
 import { RecommendedBanner } from "@/components/deals/recommended-banner";
 import { deals } from "@/data/mock-deals-v2";
-import {
-  useDictionary,
-  useLocalizedHref,
-} from "@/components/i18n/locale-provider";
+import { getDictionary, hasLocale } from "@/app/[lang]/dictionaries";
+import { localizeHref, type Locale } from "@/lib/i18n/locale";
 
-export function SiteFooter() {
-  const t = useDictionary<Record<string, string>>("footer");
-  const common = useDictionary<Record<string, string>>("common");
-  const lh = useLocalizedHref();
+export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
+  const locale: Locale = hasLocale(lang) ? lang : "ja";
+  // 辞書は実際には部分的にネスト配列やオブジェクトを持つが、フッターでは
+  // 文字列フィールドしか参照しない。型を厳密にすると不必要に煩雑になるため
+  // unknown 経由で flat な Record にキャストする。
+  const dict = (await getDictionary(locale)) as unknown as Record<
+    string,
+    Record<string, string>
+  >;
+  const t = (dict.footer ?? {}) as Record<string, string>;
+  const common = (dict.common ?? {}) as Record<string, string>;
+  const lh = (href: string) => localizeHref(href, locale);
 
   // 5 カラム構成 (サイトマップ反映):
   //  1. 航空券  — フラッシュディール / 航空会社一覧 / 地方便 / 空港 / セール予測 / 記事
@@ -50,6 +59,9 @@ export function SiteFooter() {
         { href: "/cruise", label: t.cruise ?? "クルーズ" },
         { href: "/package-tour", label: t.packageTour ?? "パッケージツアー" },
         { href: "/esim", label: t.esimGuide ?? "eSIM 比較" },
+        { href: "/seasons/year-end", label: "年末年始" },
+        { href: "/seasons/golden-week", label: "GW" },
+        { href: "/seasons/summer", label: "夏休み" },
       ],
     },
     airlines: {

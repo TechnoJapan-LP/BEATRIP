@@ -59,6 +59,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("/package-tour", "monthly", 0.7),
     ...bilingual("/okinawa", "monthly", 0.7),
     ...bilingual("/ota-sales", "weekly", 0.7),
+    // シーズン特集 — 年末年始 / GW / 夏休みの大型休暇需要
+    ...bilingual("/seasons/year-end", "monthly", 0.7),
+    ...bilingual("/seasons/golden-week", "monthly", 0.7),
+    ...bilingual("/seasons/summer", "monthly", 0.7),
     // 空港ハブ + 地方便特集
     ...bilingual("/airports", "weekly", 0.7),
     ...bilingual("/local-flights", "weekly", 0.7),
@@ -103,9 +107,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   // 路線ページ（/routes/NRT-BKK 等）— ロングテールSEOの柱
+  // deal 由来に加えて AIRPORTS.popularRoutes からも生成 (deal 不在の地方便もインデックス対象)
   const routeKeys = new Set<string>();
   for (const d of deals) {
     routeKeys.add(`${d.origin_code}-${d.destination_code}`);
+  }
+  for (const ap of AIRPORTS) {
+    for (const dst of ap.popularRoutes ?? []) {
+      if (/^[A-Z]{3}$/.test(dst) && dst !== ap.iata) {
+        routeKeys.add(`${ap.iata}-${dst}`);
+      }
+    }
   }
   const routePages: MetadataRoute.Sitemap = Array.from(routeKeys).flatMap(
     (route) =>

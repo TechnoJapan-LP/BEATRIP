@@ -144,8 +144,8 @@ export function SaleDetailCard({
                       </span>
                     )}
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-zinc-400 line-through">
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <span className="hidden sm:inline text-xs text-zinc-400 line-through">
                     ¥{formatPrice(route.originalPrice)}
                   </span>
                   <span className="text-sm font-bold text-zinc-900">

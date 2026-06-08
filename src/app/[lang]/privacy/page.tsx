@@ -73,7 +73,7 @@ export default async function PrivacyPage({
           ))}
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

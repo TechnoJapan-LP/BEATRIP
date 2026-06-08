@@ -16,9 +16,14 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         // 機微・管理系パスは多重に disallow（防御的な意思表示）
+        // /api/clicks は計測用 (リダイレクト) のため allow のまま — indexable では無いが crawl block 不要。
         disallow: [
-          "/api/",
           "/admin",
+          "/admin/",
+          "/api/cron",
+          "/api/admin",
+          "/api/subscriptions",
+          "/api/alerts",
           "/.env",
           "/.env.",
           "/.well-known/",

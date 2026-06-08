@@ -126,7 +126,7 @@ export default async function AboutPage({
           </div>
         </section>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

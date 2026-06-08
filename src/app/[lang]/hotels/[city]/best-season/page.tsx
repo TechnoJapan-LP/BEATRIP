@@ -35,7 +35,7 @@ import {
 } from "@/data/when-to-visit-content";
 import { buildHotelLink } from "@/lib/affiliate/url-builder";
 
-type Props = { params: Promise<{ city: string }> };
+type Props = { params: Promise<{ city: string; lang: string;}> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city } = await params;
@@ -102,7 +102,7 @@ const RATING_CHIP: Record<
 };
 
 export default async function BestSeasonPage({ params }: Props) {
-  const { city } = await params;
+  const { city, lang} = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d) notFound();
 
@@ -451,7 +451,7 @@ export default async function BestSeasonPage({ params }: Props) {
           </aside>
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

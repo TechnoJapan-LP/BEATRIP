@@ -55,8 +55,10 @@ export function DealCard({
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
-            loading={index < 6 ? "eager" : "lazy"}
-            priority={index < 4}
+            // HeroDeal (priority=high) と帯域を奪い合わないため、
+            // grid 内では先頭 1 枚のみ priority、最初の 2 枚のみ eager。
+            loading={index < 2 ? "eager" : "lazy"}
+            priority={index === 0}
             placeholder="blur"
             blurDataURL={BLUR_PLACEHOLDER_DARK}
           />

@@ -26,7 +26,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ArticlesPage() {
+export default async function ArticlesPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const articles = await getAllArticles();
 
   // CollectionPage + ItemList — 記事ハブの構造を検索エンジンに明示
@@ -68,7 +69,7 @@ export default async function ArticlesPage() {
 
         <ArticleList articles={articles} />
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

@@ -49,7 +49,33 @@ function buildNotifications(change: ChangeDetectionResult): NotificationPayload[
   return notifications;
 }
 
+// SSRF guard: 外部 dispatch を許可するホストの allowlist。
+// 動的 URL を fetch する関数では必ず通すこと。
+const ALLOWED_DISPATCH_HOSTS = new Set<string>([
+  "api.line.me",
+  "notify-api.line.me",
+  "api.twitter.com",
+  "api.x.com",
+  "hooks.slack.com",
+  "discord.com",
+  "discordapp.com",
+]);
+
+function isDispatchUrlAllowed(url: string): boolean {
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return false;
+    return ALLOWED_DISPATCH_HOSTS.has(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
 async function sendLine(webhookUrl: string, payload: NotificationPayload) {
+  if (!isDispatchUrlAllowed(webhookUrl)) {
+    console.warn("[Notifier] LINE webhook URL rejected by allowlist");
+    return;
+  }
   try {
     await fetch(webhookUrl, {
       method: "POST",
@@ -77,6 +103,7 @@ export async function sendLineBroadcast(payload: NotificationPayload) {
     : "https://beatrip.jp";
 
   try {
+    // fixed URL only — LINE Messaging API broadcast endpoint
     await fetch("https://api.line.me/v2/bot/message/broadcast", {
       method: "POST",
       headers: {
@@ -149,6 +176,10 @@ export async function sendLineBroadcast(payload: NotificationPayload) {
 }
 
 async function sendX(webhookUrl: string, payload: NotificationPayload) {
+  if (!isDispatchUrlAllowed(webhookUrl)) {
+    console.warn("[Notifier] X webhook URL rejected by allowlist");
+    return;
+  }
   try {
     await fetch(webhookUrl, {
       method: "POST",

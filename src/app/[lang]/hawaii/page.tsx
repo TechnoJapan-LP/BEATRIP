@@ -103,7 +103,8 @@ const FAQS = [
   },
 ];
 
-export default function HawaiiPage() {
+export default async function HawaiiPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -344,7 +345,7 @@ export default function HawaiiPage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

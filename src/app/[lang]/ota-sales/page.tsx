@@ -21,7 +21,7 @@ export const revalidate = 21600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const title =
-    "OTA セール完全ガイド｜Booking / Trip.com / 楽天 / Agoda / じゃらん 徹底比較 | BEATRIP";
+    "OTA セール完全ガイド｜Booking/楽天/Agoda/じゃらん 徹底比較 | BEATRIP";
   const description =
     "ホテル予約サイト (OTA) のセール時期・料金比較・ポイント還元を 1 ページに集約。Booking.com / Trip.com / 楽天トラベル / Agoda / じゃらん / Yahoo!トラベル / 一休.com / Expedia など主要 OTA の特徴と月別キャンペーンカレンダーで「いつ・どこで・どう予約するか」が分かるガイド。";
   return {
@@ -331,7 +331,8 @@ const COVERAGE_BADGE: Record<Coverage, string> = {
     "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-200",
 };
 
-export default function OtaSalesPage() {
+export default async function OtaSalesPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const today = new Date().toISOString().split("T")[0];
 
   const articleJsonLd = {
@@ -528,7 +529,7 @@ export default function OtaSalesPage() {
               <p className="text-sm text-zinc-500 mb-6">
                 各月で開催されやすい主要キャンペーンを一覧化
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {CALENDAR.map((m) => (
                   <div
                     key={m.month}
@@ -685,7 +686,7 @@ export default function OtaSalesPage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

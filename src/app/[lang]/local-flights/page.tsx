@@ -69,6 +69,19 @@ const REGION_ORDER: AirportRegion[] = [
   "沖縄",
 ];
 
+// region 名 → /local-flights/{slug} マッピング
+const REGION_SLUGS: Record<AirportRegion, string> = {
+  "北海道": "hokkaido",
+  "東北": "tohoku",
+  "関東": "kanto",
+  "中部": "chubu",
+  "近畿": "kinki",
+  "中国": "chugoku",
+  "四国": "shikoku",
+  "九州": "kyushu",
+  "沖縄": "okinawa",
+};
+
 // 関東・近畿は「地方発」テーマ的に主要ハブ (HND/NRT/KIX/ITM) を除外し、地方扱いの空港のみ
 const EXCLUDE_IATA = new Set(["HND", "NRT", "KIX", "ITM"]);
 
@@ -160,7 +173,8 @@ function formatJPY(n: number): string {
   return `¥${n.toLocaleString("ja-JP")}`;
 }
 
-export default async function LocalFlightsPage() {
+export default async function LocalFlightsPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const deals = await getActiveDeals();
   const regionStats = buildRegionStats(deals);
 
@@ -255,16 +269,28 @@ export default async function LocalFlightsPage() {
                       <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
                         {region}
                       </h3>
-                      <span className="text-[11px] font-mono text-emerald-600 dark:text-emerald-300">
-                        {dealCount} 件のセール
-                      </span>
+                      {dealCount > 0 ? (
+                        <Link
+                          href={`/local-flights/${REGION_SLUGS[region]}#deals`}
+                          className="text-[11px] font-mono text-emerald-600 dark:text-emerald-300 hover:underline"
+                        >
+                          {dealCount} 件のセール
+                        </Link>
+                      ) : (
+                        <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
+                          {dealCount} 件のセール
+                        </span>
+                      )}
                     </div>
                     <p className="mt-1 text-xs text-zinc-500 leading-relaxed">
                       {REGION_TAGLINE[region]}
                     </p>
 
                     {cheapest && (
-                      <div className="mt-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 px-3 py-2">
+                      <Link
+                        href={`/deals/${cheapest.id}`}
+                        className="mt-3 block rounded-lg bg-emerald-50 dark:bg-emerald-900/30 px-3 py-2 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
+                      >
                         <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-200">
                           最安セール
                         </p>
@@ -277,14 +303,14 @@ export default async function LocalFlightsPage() {
                             総額 / {cheapest.airline_name}
                           </span>
                         </p>
-                      </div>
+                      </Link>
                     )}
 
                     <div className="mt-3 flex flex-wrap gap-1.5">
                       {airports.slice(0, 6).map((a) => (
                         <Link
                           key={a.iata}
-                          href={`/airports/${a.iata.toLowerCase()}`}
+                          href={`/airports/${a.iata}`}
                           className="rounded-full bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 text-[10px] text-sky-700 dark:text-sky-200 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition-colors"
                         >
                           {a.nameJa}
@@ -296,6 +322,14 @@ export default async function LocalFlightsPage() {
                         </span>
                       )}
                     </div>
+
+                    <Link
+                      href={`/local-flights/${REGION_SLUGS[region]}`}
+                      className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 hover:underline"
+                    >
+                      {region}発の詳細を見る
+                      <ArrowRight className="h-3 w-3" />
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -432,7 +466,7 @@ export default async function LocalFlightsPage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

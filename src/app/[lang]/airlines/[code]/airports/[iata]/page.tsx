@@ -21,7 +21,7 @@ import { getHotelSlugByIata } from "@/data/hotel-destinations";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
 
-type Props = { params: Promise<{ code: string; iata: string }> };
+type Props = { params: Promise<{ code: string; iata: string; lang: string;}> };
 
 // ISR: 3600秒キャッシュ (1時間)
 export const revalidate = 3600;
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function AirlineAirportPage({ params }: Props) {
-  const { code, iata } = await params;
+  const { code, iata, lang} = await params;
   const airline = getAirlineByCode(code.toUpperCase());
   const airport = getAirportByCode(iata.toUpperCase());
 
@@ -185,6 +185,31 @@ export default async function AirlineAirportPage({ params }: Props) {
     })),
   };
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: `${airline.name} ${airport.fullNameJa} 発着セール・路線ガイド`,
+    description: `${airline.name}（${airline.nameEn}）の${airport.fullNameJa}発着便、人気路線、セール情報をまとめた最新ガイド。`,
+    dateModified: new Date().toISOString().split("T")[0],
+    datePublished: new Date().toISOString().split("T")[0],
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP 編集部",
+      url: "https://beatrip.jp/about",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://beatrip.jp/opengraph-image",
+      },
+    },
+    image: "https://beatrip.jp/opengraph-image",
+    mainEntityOfPage: `https://beatrip.jp/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`,
+  };
+
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -224,6 +249,10 @@ export default async function AirlineAirportPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(airlineJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
       <script
         type="application/ld+json"
@@ -533,7 +562,7 @@ export default async function AirlineAirportPage({ params }: Props) {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

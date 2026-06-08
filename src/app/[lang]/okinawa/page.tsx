@@ -131,7 +131,8 @@ const FAQS = [
   },
 ];
 
-export default function OkinawaPage() {
+export default async function OkinawaPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -389,7 +390,7 @@ export default function OkinawaPage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

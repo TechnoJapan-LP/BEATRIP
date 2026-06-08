@@ -121,7 +121,8 @@ const FAQS = [
   },
 ];
 
-export default function EsimPage() {
+export default async function EsimPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -362,7 +363,7 @@ export default function EsimPage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

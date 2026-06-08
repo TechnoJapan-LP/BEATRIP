@@ -15,7 +15,7 @@ import {
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { getCityPracticalInfo } from "@/data/city-practical-info";
 
-type Props = { params: Promise<{ city: string }> };
+type Props = { params: Promise<{ city: string; lang: string;}> };
 
 // ISR: 21600 秒キャッシュ (6 時間)
 export const revalidate = 21600;
@@ -66,7 +66,7 @@ const WIFI_DESC: Record<string, string> = {
 };
 
 export default async function CityEsimPage({ params }: Props) {
-  const { city } = await params;
+  const { city, lang} = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d || d.region === "国内") notFound();
 
@@ -372,7 +372,7 @@ export default async function CityEsimPage({ params }: Props) {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

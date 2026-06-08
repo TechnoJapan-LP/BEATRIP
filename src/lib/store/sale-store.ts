@@ -117,11 +117,13 @@ export async function loadAllSales(): Promise<Record<string, StoredSaleData>> {
     }
   }
 
-  const result: Record<string, StoredSaleData> = {};
-  for (const code of codes) {
-    result[code] = await loadSales(code);
-  }
-  return result;
+  // 航空会社コードごとに並列で読み込む (KV / FS の I/O を直列に行うと
+  // 航空会社数 × レイテンシ になり管理ダッシュボードや generateStaticParams
+  // が遅くなる)。
+  const entries = await Promise.all(
+    [...codes].map(async (code) => [code, await loadSales(code)] as const)
+  );
+  return Object.fromEntries(entries);
 }
 
 export type ChangeDetectionResult = {

@@ -72,6 +72,15 @@ export function Header() {
             { href: "/#calendar", label: nav.salesCalendar, desc: "次回セール時期予測", Icon: Calendar },
           ],
         },
+        {
+          label: "地方発から探す",
+          items: [
+            { href: "/local-flights/hokkaido", label: "北海道発", desc: "新千歳・函館・旭川 ほか", Icon: MapPin },
+            { href: "/local-flights/tohoku", label: "東北発", desc: "仙台・福島・青森 ほか", Icon: MapPin },
+            { href: "/local-flights/kyushu", label: "九州発", desc: "福岡・鹿児島・宮崎 ほか", Icon: MapPin },
+            { href: "/local-flights/okinawa", label: "沖縄発", desc: "那覇・石垣・宮古", Icon: MapPin },
+          ],
+        },
       ],
     },
     {
@@ -112,6 +121,14 @@ export function Header() {
             { href: "/package-tour", label: "パッケージツアー", desc: "JTB / NEWT 等を比較", Icon: Package },
             { href: "/esim", label: "eSIM", desc: "海外通信ガイド", Icon: Wifi },
             { href: "/ota-sales", label: "OTAセール比較", desc: "Booking / Trip / 楽天 / じゃらん 完全比較", Icon: BedDouble },
+          ],
+        },
+        {
+          label: "シーズン特集",
+          items: [
+            { href: "/seasons/year-end", label: "年末年始", desc: "12-1月のセール・予約タイミング", Icon: Calendar },
+            { href: "/seasons/golden-week", label: "GW", desc: "4-5月の連休に間に合う狙い目", Icon: Calendar },
+            { href: "/seasons/summer", label: "夏休み", desc: "7-8月のお盆・夏旅セール", Icon: Calendar },
           ],
         },
       ],
@@ -165,7 +182,7 @@ export function Header() {
 
               {activeMenu === menu.key && (
                 <div
-                  className="absolute left-0 top-full mt-1 min-w-[480px] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl p-4 animate-fade-in z-50"
+                  className="absolute left-0 top-full mt-1 min-w-[480px] max-w-[calc(100vw-2rem)] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl p-4 animate-fade-in z-50"
                   onMouseEnter={() => setActiveMenu(menu.key)}
                 >
                   <div className="grid grid-cols-2 gap-4">

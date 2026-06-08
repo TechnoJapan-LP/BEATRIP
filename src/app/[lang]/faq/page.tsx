@@ -95,7 +95,7 @@ export default async function FAQPage({
           ))}
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

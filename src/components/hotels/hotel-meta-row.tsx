@@ -69,7 +69,7 @@ export function HotelMetaRow({ hotel }: { hotel: CuratedHotel }) {
       {/* アメニティアイコン群 */}
       {hotel.amenities && hotel.amenities.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
-          {hotel.amenities.slice(0, 5).map((a) => {
+          {hotel.amenities.slice(0, 4).map((a) => {
             const meta = AMENITY_META[a];
             if (!meta) return null;
             return (
@@ -77,9 +77,9 @@ export function HotelMetaRow({ hotel }: { hotel: CuratedHotel }) {
                 key={a}
                 title={meta.label}
                 aria-label={meta.label}
-                className="inline-flex items-center gap-1 rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-600 dark:text-zinc-300"
+                className="inline-flex items-center gap-1 rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[11px] text-zinc-600 dark:text-zinc-300"
               >
-                <meta.Icon className="h-2.5 w-2.5" />
+                <meta.Icon className="h-3 w-3" />
                 {meta.label}
               </span>
             );
@@ -89,7 +89,7 @@ export function HotelMetaRow({ hotel }: { hotel: CuratedHotel }) {
 
       {/* 推奨利用シーン */}
       {hotel.bestFor && hotel.bestFor.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1 text-[10px] text-zinc-500">
+        <div className="flex flex-wrap items-center gap-1 text-[11px] text-zinc-500">
           <span className="font-bold">おすすめ:</span>
           {hotel.bestFor.map((b) => (
             <span key={b} className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5">

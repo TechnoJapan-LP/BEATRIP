@@ -49,7 +49,8 @@ const SIZE_BADGE: Record<string, { label: string; cls: string }> = {
   minor: { label: "離島・地方", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200" },
 };
 
-export default function AirportsIndexPage() {
+export default async function AirportsIndexPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const grouped = REGION_ORDER.map((region) => ({
     region,
     airports: AIRPORTS.filter((a) => a.region === region).sort((a, b) => {
@@ -156,7 +157,7 @@ export default function AirportsIndexPage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

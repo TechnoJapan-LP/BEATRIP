@@ -20,7 +20,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { getHotelSlugByIata, getHotelDestinationBySlug } from "@/data/hotel-destinations";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ slug: string; lang: string;}> };
 
 // ISR: 21600秒キャッシュ (6時間: 記事は更新少)
 export const revalidate = 21600;
@@ -171,7 +171,7 @@ function renderMarkdown(body: string) {
 }
 
 export default async function ArticleDetailPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug, lang} = await params;
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
@@ -432,7 +432,7 @@ export default async function ArticleDetailPage({ params }: Props) {
           </div>
         )}
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

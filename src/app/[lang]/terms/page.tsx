@@ -73,7 +73,7 @@ export default async function TermsPage({
           ))}
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

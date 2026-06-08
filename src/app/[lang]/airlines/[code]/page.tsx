@@ -17,7 +17,7 @@ import { mockSaleEvents } from "@/data/mock-deals";
 import { UpcomingDealCard } from "@/components/deals/upcoming-deal-card";
 import { SiteFooter } from "@/components/site-footer";
 
-type Props = { params: Promise<{ code: string }> };
+type Props = { params: Promise<{ code: string; lang: string;}> };
 
 // ISR: 3600秒キャッシュ (1時間)
 export const revalidate = 3600;
@@ -62,7 +62,7 @@ async function getAirlineData(code: string) {
 }
 
 export default async function AirlineDetailPage({ params }: Props) {
-  const { code } = await params;
+  const { code, lang} = await params;
   const airline = getAirlineByCode(code);
   if (!airline) notFound();
 
@@ -300,7 +300,7 @@ export default async function AirlineDetailPage({ params }: Props) {
           </div>
         </div>
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

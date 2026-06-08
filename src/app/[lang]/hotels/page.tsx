@@ -24,7 +24,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HotelsIndexPage() {
+export default async function HotelsIndexPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const regions = getHotelDestinationsByRegion();
   // ItemList 化のため、地域フラット化した全目的地リストを作る
   const allDestinations = regions.flatMap((r) => r.items);
@@ -128,7 +129,7 @@ export default function HotelsIndexPage() {
           </section>
         ))}
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

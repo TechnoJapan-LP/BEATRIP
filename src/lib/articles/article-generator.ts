@@ -81,7 +81,11 @@ function generateSaleArticle(sale: AirlineSale): Article {
   });
 
   const cheapest = routes[0];
-  const highestDiscount = Math.max(...routes.map((r) => r.discount ?? 0));
+  // routes が空でも -Infinity にならないよう reduce で初期値 0
+  const highestDiscount = routes.reduce(
+    (acc, r) => Math.max(acc, r.discount ?? 0),
+    0
+  );
 
   const body = `${sale.airlineName}が「${sale.saleName}」を開始しました。${sale.description}
 

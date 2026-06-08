@@ -17,7 +17,7 @@ import { getCityGuide } from "@/data/hotel-city-guides";
 import { getCityPracticalInfo } from "@/data/city-practical-info";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
 
-type Props = { params: Promise<{ city: string }> };
+type Props = { params: Promise<{ city: string; lang: string;}> };
 
 // ISR: 21600 秒キャッシュ (6 時間)
 export const revalidate = 21600;
@@ -58,7 +58,7 @@ export function generateStaticParams() {
 }
 
 export default async function CityActivitiesPage({ params }: Props) {
-  const { city } = await params;
+  const { city, lang} = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d) notFound();
 
@@ -312,7 +312,7 @@ export default async function CityActivitiesPage({ params }: Props) {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

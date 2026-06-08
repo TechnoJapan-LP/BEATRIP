@@ -59,8 +59,13 @@ export function buildMonthlyTrendArticle(
   if (allRoutes.length === 0) return null;
 
   const cheapest = [...allRoutes].sort((a, b) => a.price - b.price).slice(0, 5);
+  // allRoutes は length>0 を上で保証済みだが、安全のため discount 配列が
+  // 空にならないよう reduce で最大値を取る（Math.max(...[]) === -Infinity を回避）
   const minPrice = cheapest[0].price;
-  const maxDiscount = Math.max(...allRoutes.map((r) => r.discount ?? 0));
+  const maxDiscount = allRoutes.reduce(
+    (acc, r) => Math.max(acc, r.discount ?? 0),
+    0
+  );
 
   // destination 別の最安 (上位 6 都市)
   const byDest = new Map<string, typeof allRoutes[0]>();

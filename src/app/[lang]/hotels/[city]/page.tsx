@@ -10,6 +10,7 @@ import { SiteFooter } from "@/components/site-footer";
 import {
   HOTEL_DESTINATIONS,
   getHotelDestinationBySlug,
+  getRelatedHotelDestinations,
 } from "@/data/hotel-destinations";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
@@ -28,7 +29,7 @@ import { CityPracticalCard } from "@/components/hotels/city-practical-card";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
 
-type Props = { params: Promise<{ city: string }> };
+type Props = { params: Promise<{ city: string; lang: string;}> };
 
 // ISR: 3600秒キャッシュ (1時間)
 export const revalidate = 3600;
@@ -73,7 +74,7 @@ function priceFmt(n: number): string {
 }
 
 export default async function HotelCityPage({ params }: Props) {
-  const { city } = await params;
+  const { city, lang} = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d) notFound();
 
@@ -130,6 +131,9 @@ export default async function HotelCityPage({ params }: Props) {
       cityDeals.map((dd) => `${dd.origin_code}-${dd.destination_code}`)
     )
   ).slice(0, 4);
+
+  // 関連都市 — 同 region (海外なら同国優先) で最大 6 件、内部リンクで cluster 横断
+  const relatedCities = getRelatedHotelDestinations(d.slug, 6);
 
   // FAQ — 「{都市} ホテル 安く」「{都市} ホテル どのエリア」「{都市} ホテル 相場」需要に対応
   const faqs = [
@@ -211,7 +215,7 @@ export default async function HotelCityPage({ params }: Props) {
               { label: d.nameJa },
             ]}
           />
-          <h1 className="mt-4 font-heading text-4xl tracking-wide text-white uppercase sm:text-5xl lg:text-6xl">
+          <h1 className="mt-4 font-heading text-3xl tracking-wide text-white uppercase sm:text-5xl lg:text-6xl">
             {d.nameJa}
           </h1>
           <p className="mt-2 text-sm text-white/80 sm:text-base max-w-2xl">
@@ -712,9 +716,42 @@ export default async function HotelCityPage({ params }: Props) {
           </aside>
         </div>
 
+        {/* 関連都市 — 同リージョン (海外は同国優先) の他都市へ内部リンク */}
+        {relatedCities.length > 0 && (
+          <section className="mt-12">
+            <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
+              {d.region === "国内" ? "国内の他の人気都市" : `${d.region}の他の人気都市`}
+            </h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4">
+              {d.nameJa}周辺・同じ{d.region === "国内" ? "国内" : "リージョン"}で人気の宿泊先。気候・予算が近い行き先として比較検討にどうぞ。
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {relatedCities.map((c) => (
+                <Link
+                  key={c.slug}
+                  href={`/hotels/${c.slug}`}
+                  className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
+                >
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
+                    {c.nameJa}
+                  </h3>
+                  <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-2">
+                    {c.tagline}
+                  </p>
+                  {c.priceFromJpy && (
+                    <p className="text-[10px] text-zinc-400 mt-1 font-mono">
+                      ¥{c.priceFromJpy.toLocaleString()}〜/泊
+                    </p>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         <NextTripSuggestions excludeSlug={d.slug} seed={d.slug} />
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

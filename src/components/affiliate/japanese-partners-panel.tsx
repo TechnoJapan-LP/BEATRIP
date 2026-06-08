@@ -1,13 +1,16 @@
-"use client";
+// Server Component:
+// 以前は trackPartnerClick の onClick だけのために "use client" 化していたが、
+// その結果 process.env.a8mat_* が client で undefined となり panel 全体が消える事故
+// が発生しうる。クリック計測は TrackedPartnerLink (小さな client wrapper) に切り出し、
+// パネル本体はサーバーで env を読んでレンダリングする。
 
-import { ArrowUpRight } from "lucide-react";
 import {
   getActiveAspPartners,
   getAspPartnerUrl,
   type AspCategory,
   type AspPartner,
 } from "@/lib/affiliate/asp-partners";
-import { trackPartnerClick } from "@/components/analytics";
+import { TrackedPartnerLink } from "@/components/affiliate/tracked-partner-link";
 
 /**
  * 日本系 ASP (A8.net) 経由 partner の集約パネル。
@@ -46,16 +49,6 @@ const CATEGORY_LABELS: Record<AspCategory, string> = {
   "transfer": "空港送迎",
   "cruise": "クルーズ",
   "airline-direct": "航空会社直販",
-};
-
-const ACCENT_CLASS: Record<AspPartner["accent"], string> = {
-  rose: "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 dark:border-rose-800 dark:bg-rose-900/30 dark:text-rose-200",
-  sky: "border-sky-200 bg-sky-50 text-sky-700 hover:bg-sky-100 dark:border-sky-800 dark:bg-sky-900/30 dark:text-sky-200",
-  emerald: "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200",
-  violet: "border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 dark:border-violet-800 dark:bg-violet-900/30 dark:text-violet-200",
-  amber: "border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-900/30 dark:text-amber-200",
-  blue: "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/30 dark:text-blue-200",
-  zinc: "border-zinc-200 bg-zinc-50 text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-200",
 };
 
 export function JapanesePartnersPanel({
@@ -112,25 +105,17 @@ export function JapanesePartnersPanel({
                 const href = getAspPartnerUrl(p);
                 if (!href) return null;
                 return (
-                  <a
+                  <TrackedPartnerLink
                     key={p.id}
                     href={href}
-                    target="_blank"
-                    rel="sponsored noopener noreferrer nofollow"
-                    onClick={() =>
-                      trackPartnerClick({
-                        partnerId: p.id,
-                        category,
-                        destinationCode,
-                        source,
-                      })
-                    }
+                    partnerId={p.id}
+                    category={category}
+                    destinationCode={destinationCode}
+                    source={source}
+                    label={p.label}
+                    accent={p.accent}
                     title={p.tagline}
-                    className={`group inline-flex items-center gap-1 rounded-full border px-3 py-2 sm:py-1.5 text-sm sm:text-xs font-bold transition-colors ${ACCENT_CLASS[p.accent]}`}
-                  >
-                    {p.label}
-                    <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </a>
+                  />
                 );
               })}
             </div>

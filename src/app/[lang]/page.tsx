@@ -89,6 +89,19 @@ const REGION_ORDER: AirportRegion[] = [
   "沖縄",
 ];
 
+// region 名 → /local-flights/{slug} マッピング
+const REGION_SLUGS: Record<AirportRegion, string> = {
+  "北海道": "hokkaido",
+  "東北": "tohoku",
+  "関東": "kanto",
+  "中部": "chubu",
+  "近畿": "kinki",
+  "中国": "chugoku",
+  "四国": "shikoku",
+  "九州": "kyushu",
+  "沖縄": "okinawa",
+};
+
 // ホームに出す代表的なホテル都市（国内→アジア→欧米まんべんなく）
 const POPULAR_HOTEL_SLUGS = [
   "tokyo",
@@ -322,7 +335,7 @@ export default async function Home({
               return (
                 <Link
                   key={region}
-                  href={lh(`/airports`)}
+                  href={lh(`/local-flights/${REGION_SLUGS[region]}`)}
                   className="group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-all hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 hover:-translate-y-0.5"
                 >
                   <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
@@ -419,7 +432,7 @@ export default async function Home({
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
 
       <NotificationPanel />
     </>

@@ -355,3 +355,30 @@ export function getHotelDestinationsByRegion(): { region: Region; items: HotelDe
     items: HOTEL_DESTINATIONS.filter((d) => d.region === region),
   }));
 }
+
+/**
+ * 同一リージョン (国内は国内、アジアはアジア…) で、同じ国があれば優先的に、
+ * 自分自身を除いた関連目的地を最大 `limit` 件返す。
+ * PageRank を cluster 横断させるため、/hotels/[city] の末尾「関連都市」用。
+ */
+export function getRelatedHotelDestinations(
+  slug: string,
+  limit: number = 6
+): HotelDestination[] {
+  const self = getHotelDestinationBySlug(slug);
+  if (!self) return [];
+
+  const sameRegion = HOTEL_DESTINATIONS.filter(
+    (d) => d.slug !== self.slug && d.region === self.region
+  );
+
+  // 海外は同国を優先。国内は地方区分が無いので region 全体から（slug 順を一定にするため
+  // 単純なソートで安定化）。
+  if (self.region !== "国内" && self.countryEn) {
+    const sameCountry = sameRegion.filter((d) => d.countryEn === self.countryEn);
+    const otherCountry = sameRegion.filter((d) => d.countryEn !== self.countryEn);
+    return [...sameCountry, ...otherCountry].slice(0, limit);
+  }
+
+  return sameRegion.slice(0, limit);
+}

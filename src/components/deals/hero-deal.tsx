@@ -43,7 +43,7 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
           fill
           priority
           fetchPriority="high"
-          sizes="(min-width: 1280px) 1280px, (min-width: 768px) 100vw, 100vw"
+          sizes="(min-width: 1280px) 1216px, 100vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
           placeholder="blur"
           blurDataURL={BLUR_PLACEHOLDER_DARK}

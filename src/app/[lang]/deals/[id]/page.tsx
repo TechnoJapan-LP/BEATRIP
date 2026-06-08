@@ -44,7 +44,7 @@ import { buildCompareLinksFromDeal } from "@/lib/affiliate/url-builder";
 import { SiteFooter } from "@/components/site-footer";
 import { StickyCTA } from "@/components/deals/sticky-cta";
 
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: Promise<{ id: string; lang: string;}> };
 
 // ISR: 1800秒キャッシュ (30分)
 export const revalidate = 1800;
@@ -97,7 +97,7 @@ const badgeConfig = {
 } as const;
 
 export default async function DealDetailPage({ params }: Props) {
-  const { id } = await params;
+  const { id, lang} = await params;
   const [deal, deals] = await Promise.all([
     getDealByIdFromService(id),
     getActiveDeals(),
@@ -639,7 +639,7 @@ export default async function DealDetailPage({ params }: Props) {
           seed={deal.id}
         />
       </main>
-      <SiteFooter />
+      <SiteFooter lang={lang} />
 
       {/* モバイル スティッキーCTA */}
       {deal.affiliate_url && (

@@ -78,7 +78,8 @@ const FAQS = [
   },
 ];
 
-export default function CruisePage() {
+export default async function CruisePage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -281,7 +282,7 @@ export default function CruisePage() {
         </div>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </>
   );
 }

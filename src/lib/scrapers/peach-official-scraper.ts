@@ -32,10 +32,18 @@ const CITY_TO_CODE: Record<string, string> = {
 };
 
 const CITY_PATTERN = Object.keys(CITY_TO_CODE).join("|");
-const ROUTE_RE = new RegExp(
-  `(${CITY_PATTERN})\\s*[〜→ー―~]\\s*(${CITY_PATTERN})`,
-  "g"
-);
+/**
+ * 路線正規表現。並列スクレイプで複数記事を同時に処理した際に regex の
+ * lastIndex 状態が共有されないよう、毎回 new RegExp() で生成する。
+ * (module-level の単一 g フラグ RegExp + .exec/.matchAll はランナー次第で
+ * 取りこぼしや lastIndex 競合の原因になるため避ける)
+ */
+function buildRouteRegex(): RegExp {
+  return new RegExp(
+    `(${CITY_PATTERN})\\s*[〜→ー―~]\\s*(${CITY_PATTERN})`,
+    "g"
+  );
+}
 
 const TITLE_SALE_KW = /セール|キャンペーン|特別運賃|タイムセール|期間限定|お得|割引|スペシャル/;
 const BODY_SALE_KW = /セール|キャンペーン|特別運賃|タイムセール|円〜|円から|片道|往復/;
@@ -90,7 +98,7 @@ export class PeachOfficialScraper extends AirlineScraper {
 
     const routes: SaleRoute[] = [];
     const seen = new Set<string>();
-    for (const m of html.matchAll(ROUTE_RE)) {
+    for (const m of html.matchAll(buildRouteRegex())) {
       const oName = m[1];
       const dName = m[2];
       const oCode = CITY_TO_CODE[oName];

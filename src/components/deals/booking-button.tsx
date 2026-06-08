@@ -43,24 +43,37 @@ export function BookingButton({
 }) {
   const [clicked, setClicked] = useState(false);
 
-  async function trackAndOpen(url: string, provider: string) {
+  function trackAndOpen(url: string, provider: string) {
     setClicked(true);
 
     // GA4 コンバージョンイベント
     trackAffiliateClick({ dealId, provider, price, route });
 
+    // sticky-cta と同型: sendBeacon でナビゲーション直前のトラッキングを
+    // 確実に届けつつ、window.open を await でブロックしない (INP 改善 +
+    // ポップアップブロック回避)。
     try {
-      await fetch("/api/clicks", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          deal_id: dealId,
-          affiliate_provider: provider,
-          affiliate_url: url,
-        }),
+      const payload = JSON.stringify({
+        deal_id: dealId,
+        affiliate_provider: provider,
+        affiliate_url: url,
       });
+      if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+        navigator.sendBeacon(
+          "/api/clicks",
+          new Blob([payload], { type: "application/json" })
+        );
+      } else {
+        // フォールバック (古いブラウザ): keepalive で navigation 後も配信
+        fetch("/api/clicks", {
+          method: "POST",
+          keepalive: true,
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+        }).catch(() => undefined);
+      }
     } catch {
-      // tracking failure should not block navigation
+      /* tracking 失敗は navigation を妨げない */
     }
     window.open(url, "_blank", "noopener,noreferrer");
   }

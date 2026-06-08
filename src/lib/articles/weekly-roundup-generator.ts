@@ -66,14 +66,26 @@ export function buildWeeklyRoundupArticle(
   const { year, week } = isoWeek(at);
   const slug = `weekly-roundup-${year}-w${String(week).padStart(2, "0")}`;
 
-  // セールを「最安路線の価格」で並べ、上位を本文で詳しく扱う
-  const enriched = sales
+  // セールを「最安路線の価格」で並べ、上位を本文で詳しく扱う。
+  // routes が空のセールは cheapest が undefined になるため除外し、
+  // 型上も cheapest を非 undefined に narrow しておく。
+  type Enriched = {
+    sale: AirlineSale;
+    cheapest: AirlineSale["routes"][number];
+    routes: AirlineSale["routes"];
+  };
+  const enriched: Enriched[] = sales
     .map((sale) => {
       const routes = [...sale.routes].sort((a, b) => a.price - b.price);
-      return { sale, cheapest: routes[0], routes };
+      const cheapest = routes[0];
+      if (!cheapest) return null;
+      return { sale, cheapest, routes };
     })
-    .filter((s) => s.cheapest)
+    .filter((e): e is Enriched => e !== null)
     .sort((a, b) => a.cheapest.price - b.cheapest.price);
+
+  // 全 sales の routes が空だった場合は記事を作らない
+  if (enriched.length === 0) return null;
 
   const totalRoutes = enriched.reduce((sum, e) => sum + e.routes.length, 0);
   const airlineCount = new Set(enriched.map((e) => e.sale.airlineCode)).size;
