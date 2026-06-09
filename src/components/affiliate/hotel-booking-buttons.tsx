@@ -1,7 +1,10 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import { HOTEL_SEARCH_PROVIDERS } from "@/lib/affiliate/hotel-search";
+import {
+  HOTEL_SEARCH_PROVIDERS,
+  type HotelDirectUrls,
+} from "@/lib/affiliate/hotel-search";
 import { trackHotelClick } from "@/components/analytics";
 
 /**
@@ -29,6 +32,11 @@ export function HotelBookingButtons({
   /** GA4 イベント用 — 起点ディール or 起点都市コード */
   destinationCode,
   dealId,
+  /**
+   * OTA 別ホテル詳細ページのフル URL。設定があれば検索 URL ではなく
+   * その詳細ページへ直接遷移する。未設定の provider は従来の検索 URL fallback。
+   */
+  otaUrls,
   size = "sm",
   className = "",
 }: {
@@ -38,6 +46,7 @@ export function HotelBookingButtons({
   checkOut?: string;
   destinationCode?: string;
   dealId?: string;
+  otaUrls?: HotelDirectUrls;
   size?: "sm" | "md";
   className?: string;
 }) {
@@ -51,7 +60,7 @@ export function HotelBookingButtons({
       {HOTEL_SEARCH_PROVIDERS.map((p) => (
         <a
           key={p.id}
-          href={p.url(hotelName, cityNameEn, { checkIn, checkOut })}
+          href={p.url(hotelName, cityNameEn, { checkIn, checkOut }, otaUrls)}
           target="_blank"
           rel="sponsored noopener noreferrer"
           onClick={() =>
