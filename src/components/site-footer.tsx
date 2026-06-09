@@ -59,6 +59,8 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
         { href: "/cruise", label: t.cruise ?? "クルーズ" },
         { href: "/package-tour", label: t.packageTour ?? "パッケージツアー" },
         { href: "/esim", label: t.esimGuide ?? "eSIM 比較" },
+        { href: "/credit-cards", label: "クレカ比較" },
+        { href: "/insurance", label: "海外旅行保険" },
         { href: "/seasons/year-end", label: "年末年始" },
         { href: "/seasons/golden-week", label: "GW" },
         { href: "/seasons/summer", label: "夏休み" },

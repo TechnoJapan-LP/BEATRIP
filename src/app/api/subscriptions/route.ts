@@ -9,6 +9,7 @@ import {
   clientId,
   isSameOriginRequest,
 } from "@/lib/rate-limit";
+import { isLikelyBot } from "@/lib/security/bot-detector";
 
 const MAX_BODY_BYTES = 4 * 1024;
 // LINE / X (旧 Twitter) の通知 webhook を想定したホスト allowlist。
@@ -38,6 +39,11 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   // CSRF 対策: 自サイトからの POST 以外は拒否
   if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Bot / 自動化ツール由来の subscribe を拒否 (二重防御)
+  if (isLikelyBot(request.headers.get("user-agent"))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

@@ -59,6 +59,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("/package-tour", "monthly", 0.7),
     ...bilingual("/okinawa", "monthly", 0.7),
     ...bilingual("/ota-sales", "weekly", 0.7),
+    // 高単価 ASP ランディング (クレカ / 海外旅行保険)
+    ...bilingual("/credit-cards", "monthly", 0.75),
+    ...bilingual("/insurance", "monthly", 0.75),
+    // OTA 比較記事 (都市別) — 「{都市} ホテル Booking vs Agoda」の高 CTR ロングテール
+    ...bilingual("/articles/ota-compare/tokyo", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/osaka", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/honolulu", "weekly", 0.75),
     // シーズン特集 — 年末年始 / GW / 夏休みの大型休暇需要
     ...bilingual("/seasons/year-end", "monthly", 0.7),
     ...bilingual("/seasons/golden-week", "monthly", 0.7),

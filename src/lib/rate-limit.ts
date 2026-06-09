@@ -12,7 +12,12 @@ import { getKV } from "@/lib/store/kv";
  * 用途別に名前付きで limiter を返す。
  */
 
-type LimiterKey = "newsletter" | "priceAlerts" | "subscriptions" | "alerts";
+type LimiterKey =
+  | "newsletter"
+  | "priceAlerts"
+  | "subscriptions"
+  | "alerts"
+  | "clicks";
 
 const limiters = new Map<LimiterKey, Ratelimit | null>();
 
@@ -35,6 +40,9 @@ function getLimiter(name: LimiterKey): Ratelimit | null {
     subscriptions: { tokens: 10, window: "1 h" },
     // push 通知用 alerts。ブラウザからの subscribe 操作 → 5 回 / hour で十分。
     alerts: { tokens: 5, window: "1 h" },
+    // affiliate click 計測。実ユーザーの click 頻度を超えない上限。
+    // ASP コミッション凍結リスク低減のため bot / 連打を弾く。
+    clicks: { tokens: 10, window: "1 m" },
   };
 
   const c = config[name];

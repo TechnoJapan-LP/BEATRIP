@@ -10,6 +10,7 @@ import {
   clientId,
   isSameOriginRequest,
 } from "@/lib/rate-limit";
+import { isLikelyBot } from "@/lib/security/bot-detector";
 
 const MAX_BODY_BYTES = 8 * 1024;
 const ALLOWED_WEBHOOK_HOSTS = new Set<string>([
@@ -81,6 +82,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   if (!isSameOriginRequest(request)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Bot / 自動化ツール由来の alert 登録を拒否
+  if (isLikelyBot(request.headers.get("user-agent"))) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

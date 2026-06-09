@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import {
   recordClick,
   loadAllClickStats,
   isValidDealId,
 } from "@/lib/store/click-store";
+import { checkRateLimit, clientId } from "@/lib/rate-limit";
+import { isLikelyBot } from "@/lib/security/bot-detector";
 
 const MAX_BODY_BYTES = 4 * 1024;
 // affiliate_url は HTTPS の任意ドメインを許可 (アフィリエイトリンクは多様)。
@@ -12,10 +14,36 @@ const ALLOWED_URL_PROTOCOLS = new Set(["https:", "http:"]);
 // affiliate_provider は表示・集計用識別子なので英数 + ハイフン/アンダースコアのみ。
 const PROVIDER_RE = /^[a-zA-Z0-9_-]{1,32}$/;
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const contentLength = parseInt(req.headers.get("content-length") ?? "0", 10);
   if (contentLength > MAX_BODY_BYTES) {
     return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
+
+  // Bot 検出: 検索エンジンや scraper による click 計測汚染を排除。
+  // sendBeacon の自動再試行を誘発しないよう 200 OK を返しつつ KV に書かない。
+  const userAgent = req.headers.get("user-agent");
+  if (isLikelyBot(userAgent)) {
+    return NextResponse.json({ success: true, skipped: "bot" });
+  }
+
+  // レート制限: 同一 IP からの過剰 click を弾く (ASP コミッション凍結対策)。
+  // 実ユーザーの click 頻度を超える 10 req/min を上限とする。
+  const id = clientId(req);
+  const limit = await checkRateLimit("clicks", id);
+  if (!limit.allowed) {
+    // sendBeacon の再試行回避のため 200 を返しつつ skip 扱い。
+    // ヘッダで原因を伝えるが本文は success: true で返す。
+    return NextResponse.json(
+      { success: true, skipped: "rate_limited" },
+      {
+        status: 200,
+        headers: {
+          "X-RateLimit-Remaining": String(limit.remaining),
+          "X-RateLimit-Reset": String(limit.reset),
+        },
+      }
+    );
   }
 
   let body: Record<string, unknown>;

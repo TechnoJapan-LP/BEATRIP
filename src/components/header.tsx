@@ -21,6 +21,8 @@ import {
   Palmtree,
   Package,
   Wifi,
+  CreditCard,
+  ShieldCheck,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
@@ -121,6 +123,11 @@ export function Header() {
             { href: "/package-tour", label: "パッケージツアー", desc: "JTB / NEWT 等を比較", Icon: Package },
             { href: "/esim", label: "eSIM", desc: "海外通信ガイド", Icon: Wifi },
             { href: "/ota-sales", label: "OTAセール比較", desc: "Booking / Trip / 楽天 / じゃらん 完全比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/tokyo", label: "東京 OTA 比較", desc: "Booking vs Agoda vs Trip.com 徹底比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/osaka", label: "大阪 OTA 比較", desc: "USJ・心斎橋エリアの最安サイト比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/honolulu", label: "ホノルル OTA 比較", desc: "ワイキキの 4 大 OTA 徹底比較", Icon: BedDouble },
+            { href: "/credit-cards", label: "クレカ比較", desc: "マイル・保険・ラウンジで選ぶ", Icon: CreditCard },
+            { href: "/insurance", label: "海外旅行保険", desc: "クレカ付帯 vs ネット保険", Icon: ShieldCheck },
           ],
         },
         {

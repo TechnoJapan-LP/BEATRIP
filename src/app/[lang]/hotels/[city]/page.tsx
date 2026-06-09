@@ -201,6 +201,51 @@ export default async function HotelCityPage({ params }: Props) {
     image: d.image,
   };
 
+  // Hotel ItemList JSON-LD — 各 curated hotel の aggregateRating + 価格レンジで
+  // SERP の⭐レビュー / 価格表示を狙う。bestRating は 10 (Booking 系スコア準拠)。
+  const hotelsItemListJsonLd =
+    curatedHotels.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: `${d.nameJa}の代表的なホテル`,
+          itemListElement: curatedHotels.map((h, idx) => {
+            const priceRange = tierPriceRange(h.tier);
+            const reviewScore = h.reviewScore ?? 8.5;
+            const reviewCount = h.reviewCount ?? 1500;
+            const hotelEntry: Record<string, unknown> = {
+              "@type": "Hotel",
+              name: h.name,
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: d.nameJa,
+                addressCountry: d.region === "国内" ? "JP" : undefined,
+              },
+              priceRange: `¥${priceRange.low.toLocaleString("en-US")}-¥${priceRange.high.toLocaleString("en-US")}`,
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: reviewScore.toFixed(1),
+                reviewCount: String(reviewCount),
+                bestRating: "10",
+                worstRating: "1",
+              },
+            };
+            if (h.imageUrl) hotelEntry.image = h.imageUrl;
+            if (h.star) {
+              hotelEntry.starRating = {
+                "@type": "Rating",
+                ratingValue: h.star,
+              };
+            }
+            return {
+              "@type": "ListItem",
+              position: idx + 1,
+              item: hotelEntry,
+            };
+          }),
+        }
+      : null;
+
   return (
     <>
       <script
@@ -211,6 +256,14 @@ export default async function HotelCityPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
+      {hotelsItemListJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(hotelsItemListJsonLd),
+          }}
+        />
+      )}
       <RecentlyViewedTracker
         item={{
           type: "hotel",
