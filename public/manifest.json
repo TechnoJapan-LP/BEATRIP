@@ -1,15 +1,30 @@
 {
-  "name": "BEATRIP - フライトセール速報",
+  "name": "BEATRIP - 旅行ディール集約",
   "short_name": "BEATRIP",
-  "description": "航空会社のフライトセール情報をリアルタイムで配信",
+  "description": "航空券・ホテル・パッケージツアーのお得なディール情報を集約。セール予測AIが次のチャンスをお知らせ。",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#18181b",
+  "orientation": "portrait",
+  "background_color": "#fafafa",
+  "theme_color": "#10b981",
+  "lang": "ja",
+  "categories": ["travel", "lifestyle", "shopping"],
   "icons": [
     {
       "src": "/icon.svg",
       "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
       "type": "image/svg+xml"
     }
   ]

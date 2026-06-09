@@ -34,6 +34,8 @@ import { EditorPickCallout } from "@/components/hotels/editor-pick-callout";
 import { ComparisonBadge } from "@/components/affiliate/comparison-badge";
 import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
 import { CityPrevNextNav } from "@/components/hotels/city-prev-next-nav";
+import { ComparisonCheckbox } from "@/components/hotels/comparison-checkbox";
+import { buildHotelSlug } from "@/lib/comparison/hotel-slug";
 
 /**
  * tier ベースの 1 泊価格目安レンジ (¥)。実 OTA 価格が未取得でも
@@ -513,6 +515,18 @@ export default async function HotelCityPage({ params }: Props) {
                                 }`}
                               >
                                 {h.tier}
+                              </span>
+                              {/* 比較トグル — 横並び比較ドロワーに追加 */}
+                              <span className="ml-auto">
+                                <ComparisonCheckbox
+                                  item={{
+                                    hotelSlug: buildHotelSlug(d.slug, h.name),
+                                    citySlug: d.slug,
+                                    name: h.name,
+                                    imageUrl: h.imageUrl,
+                                    tier: h.tier,
+                                  }}
+                                />
                               </span>
                             </div>
                             {/* Pack D: レビュー強調 (カード冒頭) — ホテル名直下に大きく */}

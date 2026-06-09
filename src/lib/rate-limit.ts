@@ -17,7 +17,8 @@ type LimiterKey =
   | "priceAlerts"
   | "subscriptions"
   | "alerts"
-  | "clicks";
+  | "clicks"
+  | "chat";
 
 const limiters = new Map<LimiterKey, Ratelimit | null>();
 
@@ -43,6 +44,9 @@ function getLimiter(name: LimiterKey): Ratelimit | null {
     // affiliate click 計測。実ユーザーの click 頻度を超えない上限。
     // ASP コミッション凍結リスク低減のため bot / 連打を弾く。
     clicks: { tokens: 10, window: "1 m" },
+    // AI チャット (Anthropic API)。1 req = 有料 token 消費なので低く抑える。
+    // 通常の対話頻度を超える 20 req/min で abuse をブロック。
+    chat: { tokens: 20, window: "1 m" },
   };
 
   const c = config[name];

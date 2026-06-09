@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/scrape",
       "schedule": "0 18 * * *"
+    },
+    {
+      "path": "/api/newsletter/digest",
+      "schedule": "0 1 * * 1"
     }
   ],
   "functions": {
@@ -14,6 +18,9 @@
     },
     "src/app/api/sales/test-traicy/route.ts": {
       "maxDuration": 30
+    },
+    "src/app/api/newsletter/digest/route.ts": {
+      "maxDuration": 60
     }
   },
   "headers": [

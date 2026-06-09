@@ -3,12 +3,15 @@ import Script from "next/script";
 import { notFound } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Bebas_Neue } from "next/font/google";
-import { ServiceWorkerRegister } from "@/components/sw-register";
+import { RegisterSw } from "@/components/pwa/register-sw";
+import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Analytics } from "@/components/analytics";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { RecentlyViewedDrawer } from "@/components/recently-viewed/recently-viewed-drawer";
+import { ComparisonDrawer } from "@/components/comparison/comparison-drawer";
+import { ChatWidget } from "@/components/chat/chat-widget";
 import { getDictionary, hasLocale, LOCALES } from "./dictionaries";
 import "../globals.css";
 
@@ -173,11 +176,14 @@ export default async function RootLayout({
           メインコンテンツへスキップ
         </a>
         <LocaleProvider locale={lang} dict={dict}>
-          <ServiceWorkerRegister />
           <ScrollToTop />
           {children}
-          <MobileBottomNav />
           <RecentlyViewedDrawer />
+          <ComparisonDrawer />
+          <ChatWidget />
+          <RegisterSw />
+          <InstallPrompt />
+          <MobileBottomNav />
 
           {/* アナリティクス: Vercel Analytics + Speed Insights + GA4 */}
           <Analytics />

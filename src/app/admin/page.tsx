@@ -17,6 +17,7 @@ import { listAlerts } from "@/lib/price-alerts/store";
 import { loadAllClickStats } from "@/lib/store/click-store";
 import { airlines } from "@/data/airlines";
 import { isKVEnabled } from "@/lib/store/kv";
+import { NewsletterDigestButton } from "@/components/admin/newsletter-digest-button";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | BEATRIP",
@@ -152,6 +153,19 @@ export default async function AdminPage({
           <Metric Icon={TrendingUp} label="総クリック" value={fmt(totalClicks)} sub={`${clickStats.length} deals`} />
           <Metric Icon={Database} label="KV ストア" value={kvEnabled ? "有効" : "未設定"} sub={kvEnabled ? "Upstash 接続済" : "FS フォールバック"} accent={kvEnabled ? "emerald" : "rose"} />
         </section>
+
+        {expected && (
+          <section className="mb-8">
+            <h2 className="font-heading mb-3 text-xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
+              <MailOpen className="inline h-5 w-5 mr-2" />週次 digest メール
+            </h2>
+            <p className="mb-2 text-xs text-zinc-500">
+              全購読者へ「今週の TOP ディール + 新着記事 + おすすめホテル」をまとめて配信します。
+              プレビューで内容を確認してから送信してください。同日重複送信は API 側でガード。
+            </p>
+            <NewsletterDigestButton token={expected} />
+          </section>
+        )}
 
         <section className="mb-8">
           <h2 className="font-heading mb-3 text-xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
