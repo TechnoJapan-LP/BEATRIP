@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
@@ -292,6 +293,14 @@ export default async function SummerSeasonPage({ params }: { params: Promise<{ l
               </h2>
               <FAQAccordion items={FAQS} />
             </section>
+
+            {/* 夏休み人気のおすすめホテル */}
+            <CompactHotelsRecommendation
+              citySlugs={["okinawa", "honolulu", "guam", "bangkok"]}
+              title="夏休みに人気のホテル"
+              subtitle="ビーチリゾートと南国エリアの代表的なホテル。"
+              maxHotels={4}
+            />
 
             {/* 関連リンク */}
             <section>

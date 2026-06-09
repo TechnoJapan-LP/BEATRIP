@@ -8,6 +8,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 import { getDestinationImage } from "@/lib/deals/destination-images";
 
 // ISR: 21600秒キャッシュ (6時間)
@@ -283,6 +284,14 @@ export default async function HawaiiPage({ params }: { params: Promise<{ lang: s
               </h2>
               <FAQAccordion items={FAQS} />
             </section>
+
+            {/* おすすめホテル */}
+            <CompactHotelsRecommendation
+              citySlugs={["honolulu"]}
+              title="ハワイのおすすめホテル"
+              subtitle="ワイキキの王道リゾートから、家族向けコンドミニアムまで。"
+              maxHotels={4}
+            />
 
             {/* 関連リンク */}
             <section>

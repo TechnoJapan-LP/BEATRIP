@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
@@ -288,6 +289,14 @@ export default async function EsimPage({ params }: { params: Promise<{ lang: str
               </h2>
               <FAQAccordion items={FAQS} />
             </section>
+
+            {/* 海外人気都市のおすすめホテル */}
+            <CompactHotelsRecommendation
+              citySlugs={["bangkok", "seoul", "taipei", "singapore"]}
+              title="eSIM とあわせて予約したい海外人気ホテル"
+              subtitle="アジア主要都市の代表的なホテルを比較・予約。"
+              maxHotels={4}
+            />
 
             {/* 関連リンク */}
             <section>

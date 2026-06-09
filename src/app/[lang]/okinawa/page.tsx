@@ -8,6 +8,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 import { getDestinationImage } from "@/lib/deals/destination-images";
 
 // ISR: 21600秒キャッシュ (6時間)
@@ -313,6 +314,14 @@ export default async function OkinawaPage({ params }: { params: Promise<{ lang: 
               </h2>
               <FAQAccordion items={FAQS} />
             </section>
+
+            {/* おすすめホテル */}
+            <CompactHotelsRecommendation
+              citySlugs={["okinawa"]}
+              title="沖縄のおすすめホテル"
+              subtitle="リゾート派から離島派まで、編集者が選ぶ代表的なホテル。"
+              maxHotels={4}
+            />
 
             {/* 関連リンク */}
             <section>

@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
@@ -293,6 +294,14 @@ export default async function GoldenWeekSeasonPage({ params }: { params: Promise
               </h2>
               <FAQAccordion items={FAQS} />
             </section>
+
+            {/* GW 人気のおすすめホテル */}
+            <CompactHotelsRecommendation
+              citySlugs={["okinawa", "sapporo", "taipei", "seoul"]}
+              title="GW に人気のホテル"
+              subtitle="国内リゾートからアジアの王道まで、代表的なホテル。"
+              maxHotels={4}
+            />
 
             {/* 関連リンク */}
             <section>

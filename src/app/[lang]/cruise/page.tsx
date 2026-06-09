@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
@@ -221,6 +222,14 @@ export default async function CruisePage({ params }: { params: Promise<{ lang: s
               </h2>
               <FAQAccordion items={FAQS} />
             </section>
+
+            {/* 主要寄港地のおすすめホテル */}
+            <CompactHotelsRecommendation
+              citySlugs={["singapore", "hong-kong", "sydney", "honolulu"]}
+              title="主要寄港地のおすすめホテル"
+              subtitle="クルーズ前後の延泊にぴったり。寄港地の代表的なホテルを比較。"
+              maxHotels={4}
+            />
 
             {/* 関連リンク */}
             <section>

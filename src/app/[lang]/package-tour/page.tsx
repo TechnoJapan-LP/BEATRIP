@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
@@ -393,6 +394,14 @@ export default async function PackageTourPage({ params }: { params: Promise<{ la
               </h2>
               <FAQAccordion items={FAQS} />
             </section>
+
+            {/* 人気ツアー先のおすすめホテル */}
+            <CompactHotelsRecommendation
+              citySlugs={["honolulu", "guam", "seoul", "bangkok"]}
+              title="人気ツアー先のおすすめホテル"
+              subtitle="個別予約で同じホテルに泊まる選択肢も。価格比較に。"
+              maxHotels={4}
+            />
 
             {/* 関連リンク */}
             <section>

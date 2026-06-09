@@ -19,6 +19,8 @@ import { cityNameJa } from "@/lib/airport-names";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getHotelSlugByIata } from "@/data/hotel-destinations";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { getHotelCitiesForAirport } from "@/lib/hotels/area-hotel-mapping";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
 
 type Props = { params: Promise<{ code: string; iata: string; lang: string;}> };
@@ -89,6 +91,7 @@ export default async function AirlineAirportPage({ params }: Props) {
   if (!airport.airlines.includes(airline.code)) notFound();
 
   const hotelSlug = getHotelSlugByIata(airport.iata);
+  const hotelCitySlugs = getHotelCitiesForAirport(airport.iata);
 
   // 関連 deals: airline_id 一致 かつ origin/destination が当該空港
   const allDeals = await getActiveDeals();
@@ -462,6 +465,16 @@ export default async function AirlineAirportPage({ params }: Props) {
               </h2>
               <FAQAccordion items={faqs} />
             </section>
+
+            {/* おすすめホテル (該当エリア) */}
+            {hotelCitySlugs.length > 0 && (
+              <CompactHotelsRecommendation
+                citySlugs={hotelCitySlugs}
+                title={`${airport.nameJa}周辺のおすすめホテル`}
+                subtitle="フライトと合わせて宿泊もまとめて比較・予約。"
+                maxHotels={4}
+              />
+            )}
 
             {/* 5. 関連リンク */}
             <section>

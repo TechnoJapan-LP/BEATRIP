@@ -16,6 +16,8 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { getHotelCitiesForRegion } from "@/lib/hotels/area-hotel-mapping";
 import { AIRPORTS, type AirportRegion, type Airport } from "@/data/airports";
 import { cityNameJa } from "@/lib/airport-names";
 import { getAirlineByCode } from "@/data/airlines";
@@ -150,6 +152,8 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
 
   const airports = AIRPORTS.filter((a) => a.region === region);
   if (airports.length === 0) notFound();
+
+  const hotelCitySlugs = getHotelCitiesForRegion(slug);
 
   const airportCodes = new Set(airports.map((a) => a.iata));
   const airlineCodes = Array.from(
@@ -436,6 +440,16 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                   ))}
                 </div>
               </section>
+            )}
+
+            {/* おすすめホテル (該当エリア) */}
+            {hotelCitySlugs.length > 0 && (
+              <CompactHotelsRecommendation
+                citySlugs={hotelCitySlugs}
+                title={`${region}のおすすめホテル`}
+                subtitle="飛行機と一緒に宿泊予約も。編集者が選ぶ代表的なホテル。"
+                maxHotels={4}
+              />
             )}
 
             {/* ベストシーズン */}

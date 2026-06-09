@@ -15,6 +15,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 
 // ISR: 21600 秒キャッシュ (6時間)
 export const revalidate = 21600;
@@ -586,6 +587,14 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
               </h2>
               <FAQAccordion items={FAQS} />
             </section>
+
+            {/* 人気目的地のおすすめホテル */}
+            <CompactHotelsRecommendation
+              citySlugs={["tokyo", "osaka", "seoul", "bangkok"]}
+              title="人気目的地のおすすめホテル"
+              subtitle="OTA セール対象になりやすい都市の代表的なホテル。"
+              maxHotels={4}
+            />
 
             {/* 5. 関連リンク */}
             <section>
