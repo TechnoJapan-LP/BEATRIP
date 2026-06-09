@@ -31,6 +31,16 @@ export function buildHotelPhotoProxyUrl(
   return `/api/hotel-photo?ref=${encodeURIComponent(value)}&w=${maxWidthPx}`;
 }
 
+/**
+ * その画像 URL が /api/hotel-photo proxy 経由かどうか。
+ * proxy は Google Places 側で既に maxWidthPx リサイズ済みのため、
+ * next/image の再最適化は不要 (かつ localPatterns 設定を避けられる)。
+ * → 該当 Image には unoptimized を付ける。
+ */
+export function isProxyPhotoUrl(url: string | null | undefined): boolean {
+  return typeof url === "string" && url.startsWith("/api/hotel-photo");
+}
+
 export function getHotelImageUrl(
   citySlug: string,
   hotel: Pick<CuratedHotel, "name" | "imageUrl">

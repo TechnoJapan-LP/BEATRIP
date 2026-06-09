@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BedDouble, Star } from "lucide-react";
 import { CURATED_HOTELS, type CuratedHotel } from "@/data/hotel-curated";
 import { getHotelDestinationBySlug } from "@/data/hotel-destinations";
-import { getHotelImageUrl } from "@/lib/hotels/hotel-image-url";
+import { getHotelImageUrl, isProxyPhotoUrl } from "@/lib/hotels/hotel-image-url";
 
 type Variant = "grid" | "horizontal";
 
@@ -144,6 +144,7 @@ export function CompactHotelsRecommendation({
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                     loading="lazy"
                     className="object-cover"
+                    unoptimized={isProxyPhotoUrl(hotelImageUrl)}
                   />
                 ) : (
                   <div

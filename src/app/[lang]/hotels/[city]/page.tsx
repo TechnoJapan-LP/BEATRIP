@@ -36,7 +36,7 @@ import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
 import { CityPrevNextNav } from "@/components/hotels/city-prev-next-nav";
 import { ComparisonCheckbox } from "@/components/hotels/comparison-checkbox";
 import { buildHotelSlug } from "@/lib/comparison/hotel-slug";
-import { getHotelImageUrl } from "@/lib/hotels/hotel-image-url";
+import { getHotelImageUrl, isProxyPhotoUrl } from "@/lib/hotels/hotel-image-url";
 
 /**
  * tier ベースの 1 泊価格目安レンジ (¥)。実 OTA 価格が未取得でも
@@ -609,6 +609,7 @@ export default async function HotelCityPage({ params }: Props) {
                                 sizes="(min-width: 640px) 192px, 100vw"
                                 loading="lazy"
                                 className="object-cover"
+                                unoptimized={isProxyPhotoUrl(hotelImageUrl)}
                               />
                             ) : (
                               <div
