@@ -32,6 +32,7 @@ const NewsletterCTA = dynamic(() =>
   }))
 );
 import { DestinationSpotlight } from "@/components/home/destination-spotlight";
+import { PopularRoutesSection } from "@/components/home/popular-routes-section";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { AIRPORTS, type AirportRegion } from "@/data/airports";
@@ -223,6 +224,9 @@ export default async function Home({
             lh={lh}
           />
         </section>
+
+        {/* 人気路線 TOP 10 — discount % 上位の route カード */}
+        <PopularRoutesSection deals={deals} lh={lh} />
 
         {/* 高単価 ASP の上位露出: ホーム ファーストビュー直下 */}
         <section className="mb-12">

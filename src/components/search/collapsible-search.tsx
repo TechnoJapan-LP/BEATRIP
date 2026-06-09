@@ -1,10 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Search, ChevronDown } from "lucide-react";
-import { FlightSearchForm } from "@/components/search/flight-search-form";
 import { useDictionary } from "@/components/i18n/locale-provider";
 import type { DealSchema } from "@/data/deal-schema";
+
+// FlightSearchForm は ~360 行 / 9KB+ の重い client コンポーネント。
+// 折りたたみバーをタップした瞬間に初めて必要になるため、initial JS
+// バンドルから外し、open=true になった時に lazy-load する。
+const FlightSearchForm = dynamic(
+  () =>
+    import("@/components/search/flight-search-form").then((m) => ({
+      default: m.FlightSearchForm,
+    })),
+  { ssr: false }
+);
 
 /**
  * ファーストビュー最適化: 検索フォームを既定で折りたたみ、

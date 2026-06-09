@@ -1,4 +1,19 @@
 import type { NextConfig } from "next";
+// @next/bundle-analyzer: ANALYZE=true 時のみ有効化。
+// Turbopack ビルド下では plugin 自体は no-op になり警告が出る。
+// 実 bundle サイズの内訳は `next experimental-analyze` で取得する想定。
+// require は dev-dependency にあるため、未インストール環境を考慮して try で包む。
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let withBundleAnalyzer: (cfg: NextConfig) => NextConfig = (cfg) => cfg;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  withBundleAnalyzer = require("@next/bundle-analyzer")({
+    enabled: process.env.ANALYZE === "true",
+    openAnalyzer: false,
+  });
+} catch {
+  // dev-dependency が未インストールの本番ビルドでも落ちないように。
+}
 
 const nextConfig: NextConfig = {
   // X-Powered-By ヘッダを抑止（Next.js 利用のフィンガープリント漏洩を防ぐ）
@@ -8,6 +23,11 @@ const nextConfig: NextConfig = {
   // per-export tree-shake させる。Turbopack が compile 時に解決し、未参照
   // export を初期バンドルから除外する。
   experimental: {
+    // lucide-react / date-fns は Next.js 16 がデフォルトで最適化対象に含めている
+    // (公式ドキュメント: optimizePackageImports.md) ため明示は不要だが、
+    // 将来 Next.js 側がリストから外す可能性に備えて明示しておく。
+    // 追加候補: clsx / tailwind-merge は二次的に大きいが named-export 個別
+    // 取り込みでも常に同じ関数を 1 本 import するため optimize は効きにくい。
     optimizePackageImports: [
       "lucide-react",
       "@base-ui/react",
@@ -114,4 +134,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);

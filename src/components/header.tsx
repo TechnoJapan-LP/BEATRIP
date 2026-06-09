@@ -25,6 +25,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { GlobalSearch } from "@/components/search/global-search";
 import {
   useDictionary,
   useLocale,
@@ -162,6 +163,11 @@ export function Header() {
           </span>
         </Link>
 
+        {/* PC グローバル検索: lg 以上で展開 */}
+        <div className="ml-6 hidden min-w-0 max-w-xs flex-1 lg:block">
+          <GlobalSearch compact placeholder="都市・空港・航空会社を検索" />
+        </div>
+
         {/* PC ナビ: 3 メガメニュー + 記事 */}
         <nav className="hidden items-center gap-1 sm:flex">
           {menus.map((menu) => (
@@ -288,6 +294,9 @@ export function Header() {
       {/* モバイル: アコーディオン */}
       {open && (
         <nav className="animate-fade-in border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-2 pt-2 sm:hidden max-h-[calc(100vh-3.5rem)] overflow-y-auto" style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}>
+          <div className="px-1 pb-2">
+            <GlobalSearch placeholder="都市・空港・航空会社を検索" />
+          </div>
           {menus.map((menu) => {
             const isExpanded = mobileExpanded === menu.key;
             return (

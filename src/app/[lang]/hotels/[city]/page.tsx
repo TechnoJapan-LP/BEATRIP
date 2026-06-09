@@ -33,6 +33,7 @@ import { RecentlyViewedTracker } from "@/components/recently-viewed/recently-vie
 import { EditorPickCallout } from "@/components/hotels/editor-pick-callout";
 import { ComparisonBadge } from "@/components/affiliate/comparison-badge";
 import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
+import { CityPrevNextNav } from "@/components/hotels/city-prev-next-nav";
 
 /**
  * tier ベースの 1 泊価格目安レンジ (¥)。実 OTA 価格が未取得でも
@@ -929,6 +930,9 @@ export default async function HotelCityPage({ params }: Props) {
         )}
 
         <NextTripSuggestions excludeSlug={d.slug} seed={d.slug} />
+
+        {/* Wave 2-B3: 同 region の前/次の都市へ wrap-around ナビ — 回遊性向上 */}
+        <CityPrevNextNav currentSlug={d.slug} />
       </main>
       <SiteFooter lang={lang} />
 
