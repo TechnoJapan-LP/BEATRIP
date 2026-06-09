@@ -3,9 +3,9 @@ import Link from "next/link";
 import {
   CreditCard,
   Plane,
-  ShieldCheck,
   Sparkles,
   ArrowRight,
+  Wallet,
 } from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -17,22 +17,23 @@ import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-
 export const revalidate = 21600;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "旅行に強いクレジットカード比較｜マイル・海外旅行保険・ラウンジ | BEATRIP";
+  const title = "旅行に強いクレジットカード比較｜年会費無料・空港ラウンジ・プレミアム | BEATRIP";
   const description =
-    "旅行用クレジットカードを目的別に比較。マイル特化（JAL/ANA/アメックス スカイ・トラベラー）、海外旅行保険付帯（エポス・セゾン・ブルー・アメックス ゴールド）、空港ラウンジ・特典重視（プラチナ・ダイナース）の 3 セグメントで、年会費・還元率・補償額・ラウンジ条件を整理。BEATRIP 編集部が解説します。";
+    "旅行用クレジットカードを目的別に比較。コスパ重視・年会費無料（楽天 / JCB CARD W / リクルート / ライフ / イオン）、旅行特化・空港ラウンジ（dカード GOLD / 三井住友 NL / エポス / セゾン）、プレミアム・ステータス（アメックス / ダイナース / JAL / ANA）の 3 セグメントで、年会費・還元率・補償額・ラウンジ条件を整理。BEATRIP 編集部が解説します。";
   return {
     title,
     description,
     keywords: [
       "旅行 クレジットカード",
-      "マイル カード",
+      "年会費無料 クレカ",
+      "JCB CARD W",
+      "楽天カード",
+      "dカード GOLD",
+      "リクルートカード",
+      "三井住友カード NL",
+      "エポスカード 海外旅行",
       "海外旅行保険 クレカ",
       "空港ラウンジ カード",
-      "JAL カード",
-      "ANA カード",
-      "アメックス ゴールド",
-      "アメックス プラチナ",
-      "エポスカード 海外旅行",
       "プライオリティ・パス",
     ],
     openGraph: { title, description, type: "website" },
@@ -56,34 +57,68 @@ type CardEntry = {
   pitch: string;
 };
 
-const MILE_CARDS: CardEntry[] = [
+// セグメント 1: コスパ重視・年会費無料
+const FREE_CARDS: CardEntry[] = [
   {
-    name: "JAL カード（普通／CLUB-A／CLUB-A ゴールド）",
-    annualFee: "2,200 円〜 17,600 円（種別による）",
-    earningRate: "200 円につき 1 マイル（ショッピングマイル・プレミアム加入で 2 倍）",
-    insurance: "海外旅行傷害保険 最高 1,000〜5,000 万円（CLUB-A 以上で自動付帯）",
-    lounge: "ゴールド以上で国内主要空港ラウンジ無料",
-    pitch: "搭乗ボーナスマイル＋毎年初回搭乗ボーナスでフライトが多い人ほど有利。JAL 特典航空券に確実に貯める設計。",
+    name: "楽天カード",
+    annualFee: "永年無料",
+    earningRate: "100 円につき 1 ポイント（楽天市場で 3 倍・楽天トラベルで 1%+）",
+    insurance: "海外旅行傷害保険 最高 2,000 万円（利用付帯）",
+    lounge: "なし",
+    pitch: "楽天トラベルとの相性が抜群。楽天ポイントでホテル予約に直接充当できる旅行ユーザーの定番 1 枚目。",
   },
   {
-    name: "ANA カード（一般／ワイド／ワイドゴールド）",
-    annualFee: "2,200 円〜 15,400 円（種別による）",
-    earningRate: "200 円につき 1 マイル（10 マイルコース選択時は 100 円につき 1 マイル）",
-    insurance: "海外旅行傷害保険 最高 1,000〜5,000 万円（ワイド以上で自動付帯）",
-    lounge: "ワイドゴールド以上で国内主要空港ラウンジ無料",
-    pitch: "毎年継続ボーナス＋区間ボーナスマイルで ANA 便を貯めやすい。スカイコインに交換して航空券割引にも使える。",
+    name: "JCB CARD W",
+    annualFee: "永年無料（39 歳以下限定で申込）",
+    earningRate: "100 円につき 2 ポイント（常時 Oki Doki ポイント 2 倍）",
+    insurance: "海外旅行傷害保険 最高 2,000 万円（利用付帯）",
+    lounge: "なし（JCB プラザ ラウンジは海外で利用可）",
+    pitch: "若年層なら年会費無料で還元率 1%。Amazon・スタバ・セブンで還元率が跳ね上がる。",
   },
   {
-    name: "アメリカン・エキスプレス・スカイ・トラベラー・カード",
-    annualFee: "11,000 円（税込）",
-    earningRate: "対象航空券・対象旅行代理店で 100 円につき 3 ポイント（提携 15 航空会社のマイルに交換可）",
-    insurance: "海外旅行傷害保険 最高 3,000 万円（利用付帯）",
-    lounge: "国内主要空港ラウンジ 同伴者 1 名まで無料",
-    pitch: "JAL・ANA だけでなく ユナイテッド・キャセイ・シンガポール 等 15 社のマイルに交換できる柔軟性が強み。",
+    name: "リクルートカード",
+    annualFee: "永年無料",
+    earningRate: "100 円につき 1.2 ポイント（公共料金・税金もポイント対象）",
+    insurance: "海外旅行傷害保険 最高 2,000 万円（利用付帯）",
+    lounge: "なし",
+    pitch: "年会費無料カードで還元率 1.2% は最高クラス。じゃらん・ホットペッパーで還元率 3〜4% に。",
+  },
+  {
+    name: "ライフカード",
+    annualFee: "永年無料",
+    earningRate: "1,000 円につき 1 ポイント（誕生月は 3 倍）",
+    insurance: "なし（海外旅行は別途加入を推奨）",
+    lounge: "なし",
+    pitch: "誕生月還元 3 倍・初年度ポイント 1.5 倍と独自施策が強い。学生向けデザインも豊富。",
+  },
+  {
+    name: "イオンカードセレクト",
+    annualFee: "永年無料",
+    earningRate: "200 円につき 1 ポイント（イオン系列で常時 2 倍・5%off 日あり）",
+    insurance: "なし（カードによる）",
+    lounge: "なし",
+    pitch: "イオン・マックスバリュ系での 5%off 日が強力。WAON 一体型でキャッシュレス完結。",
   },
 ];
 
-const INSURANCE_CARDS: CardEntry[] = [
+// セグメント 2: 旅行特化・空港ラウンジ
+const TRAVEL_CARDS: CardEntry[] = [
+  {
+    name: "dカード GOLD",
+    annualFee: "11,000 円（税込）",
+    earningRate: "100 円につき 1 ポイント（ドコモ・ahamo 利用料金は 10% 還元）",
+    insurance: "海外旅行傷害保険 最高 1 億円（利用付帯）",
+    lounge: "国内主要空港ラウンジ無料",
+    pitch: "ドコモ料金 10% 還元でドコモユーザーなら年会費を回収できる。空港ラウンジ＋ケータイ補償 10 万円も付帯。",
+  },
+  {
+    name: "三井住友カード（NL）",
+    annualFee: "永年無料",
+    earningRate: "対象店舗で最大 7%（セブン・ローソン・マック等）",
+    insurance: "海外旅行傷害保険 最高 2,000 万円（利用付帯）",
+    lounge: "なし（ゴールド NL で国内主要空港ラウンジ無料）",
+    pitch: "ナンバーレスでセキュリティ◎。対象コンビニ・飲食で最大 7% 還元はキャッシュレス決済で抜きん出る。",
+  },
   {
     name: "エポスカード",
     annualFee: "永年無料",
@@ -100,6 +135,10 @@ const INSURANCE_CARDS: CardEntry[] = [
     lounge: "ゴールド以上で国内ラウンジ無料",
     pitch: "若年層は年会費無料で海外旅行保険を確保。永久不滅ポイントの失効なしで貯められる。",
   },
+];
+
+// セグメント 3: プレミアム・ステータス (env 設定時のみ partner 表示)
+const PREMIUM_CARDS: CardEntry[] = [
   {
     name: "アメリカン・エキスプレス・ゴールド・プリファード・カード",
     annualFee: "39,600 円（税込）",
@@ -108,9 +147,6 @@ const INSURANCE_CARDS: CardEntry[] = [
     lounge: "国内主要空港ラウンジ 同伴者 1 名まで無料",
     pitch: "ゴールド帯ながら補償額がプラチナ並み。家族特約・航空便遅延・手荷物遅延もカバー。",
   },
-];
-
-const LOUNGE_CARDS: CardEntry[] = [
   {
     name: "アメリカン・エキスプレス・プラチナ・カード",
     annualFee: "165,000 円（税込）",
@@ -128,8 +164,8 @@ const LOUNGE_CARDS: CardEntry[] = [
     pitch: "グルメ優待・空港ラウンジ網が独自に強い。プライオリティ・パスとは別系統のネットワーク。",
   },
   {
-    name: "JAL カード CLUB-A ゴールド（プラチナ含む）",
-    annualFee: "17,600 円〜（プラチナは別途）",
+    name: "JAL カード CLUB-A ゴールド（マイル特化）",
+    annualFee: "17,600 円〜",
     earningRate: "100 円につき 1 マイル（ショッピングマイル・プレミアム標準付帯）",
     insurance: "海外旅行傷害保険 最高 5,000 万円〜 1 億円（自動付帯）",
     lounge: "国内主要空港・ハワイ ホノルル ラウンジ無料",
@@ -139,27 +175,27 @@ const LOUNGE_CARDS: CardEntry[] = [
 
 const SEGMENTS: { id: string; title: string; subtitle: string; icon: typeof Plane; cards: CardEntry[]; partnerCategories: ("credit-card")[] }[] = [
   {
-    id: "mile",
-    title: "マイル特化",
-    subtitle: "フライト機会が多い人・特典航空券狙いの人向け",
+    id: "free",
+    title: "コスパ重視・年会費無料",
+    subtitle: "1 枚目に持つメインカード・サブカードを探している人向け",
+    icon: Wallet,
+    cards: FREE_CARDS,
+    partnerCategories: ["credit-card"],
+  },
+  {
+    id: "travel",
+    title: "旅行特化・空港ラウンジ",
+    subtitle: "ラウンジ・海外旅行保険を重視する出張・年数回の旅行向け",
     icon: Plane,
-    cards: MILE_CARDS,
+    cards: TRAVEL_CARDS,
     partnerCategories: ["credit-card"],
   },
   {
-    id: "insurance",
-    title: "海外旅行保険 付帯",
-    subtitle: "クレカ付帯保険をメイン or サブで使いたい人向け",
-    icon: ShieldCheck,
-    cards: INSURANCE_CARDS,
-    partnerCategories: ["credit-card"],
-  },
-  {
-    id: "lounge",
-    title: "空港ラウンジ・特典重視",
-    subtitle: "出張・年数回の海外旅行でラウンジを使い倒したい人向け",
+    id: "premium",
+    title: "プレミアム・ステータス",
+    subtitle: "年会費を払ってでも補償額・コンシェルジュ・ステータスを取りたい人向け",
     icon: Sparkles,
-    cards: LOUNGE_CARDS,
+    cards: PREMIUM_CARDS,
     partnerCategories: ["credit-card"],
   },
 ];
@@ -193,9 +229,9 @@ export default async function CreditCardsPage({ params }: { params: Promise<{ la
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "旅行に強いクレジットカード比較｜マイル・海外旅行保険・ラウンジ",
+    headline: "旅行に強いクレジットカード比較｜年会費無料・空港ラウンジ・プレミアム",
     description:
-      "旅行用クレジットカードを目的別 3 セグメント (マイル特化／海外旅行保険付帯／ラウンジ重視) で比較。",
+      "旅行用クレジットカードを目的別 3 セグメント (コスパ重視・年会費無料／旅行特化・空港ラウンジ／プレミアム・ステータス) で比較。",
     inLanguage: "ja-JP",
     datePublished: "2026-06-09",
     dateModified: new Date().toISOString().split("T")[0],
