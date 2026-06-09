@@ -23,6 +23,7 @@ import { BookingButton } from "@/components/deals/booking-button";
 import { ShareButtons } from "@/components/deals/share-buttons";
 import { PriceAlertForm } from "@/components/deals/price-alert-form";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
+import { DealHotelHighlights } from "@/components/deals/deal-hotel-highlights";
 import { TravelCompanions } from "@/components/affiliate/travel-companions";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
@@ -344,6 +345,12 @@ export default async function DealDetailPage({ params }: Props) {
               checkIn={deal.departure_date}
               checkOut={deal.return_date}
               dealId={deal.id}
+            />
+
+            {/* 同エリアの代表ホテル（折りたたみ）— /hotels/{city} への送客導線 */}
+            <DealHotelHighlights
+              destinationCode={deal.destination_code}
+              destinationLabel={deal.destination}
             />
 
             {/* 行先別 必需品 CTA (eSIM / 保険 / 現地アクティビティ) — Pack B */}
