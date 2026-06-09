@@ -11,27 +11,29 @@ import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title = "海外eSIM比較ガイド｜旅行用おすすめeSIMの選び方 | BEATRIP";
-  const description =
-    "海外旅行用 eSIM を比較・選び方ガイド。Wi-Fi レンタル・物理 SIM との違い、対応端末（iPhone XS 以降 / Pixel 3 以降 / Galaxy S20 以降）、データ量・期間・国別の選び方を解説。BEATRIP厳選の日本語対応 eSIM 5 サービスから比較できます。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Travel eSIM comparison — pick the right plan for your trip | BEATRIP"
+    : "海外eSIM比較ガイド｜旅行用おすすめeSIMの選び方 | BEATRIP";
+  const description = isEn
+    ? "Compare travel eSIM providers and learn how to pick the right one. eSIM vs. pocket Wi-Fi vs. physical SIM, supported devices (iPhone XS and later, Pixel 3 and later, Galaxy S20 and later), and how to choose by data, days, and country. Compare across 5 traveler-friendly eSIM brands curated by BEATRIP."
+    : "海外旅行用 eSIM を比較・選び方ガイド。Wi-Fi レンタル・物理 SIM との違い、対応端末（iPhone XS 以降 / Pixel 3 以降 / Galaxy S20 以降）、データ量・期間・国別の選び方を解説。BEATRIP厳選の日本語対応 eSIM 5 サービスから比較できます。";
+  const path = isEn ? "/en/esim" : "/esim";
   return {
     title,
     description,
-    keywords: [
-      "eSIM 海外",
-      "eSIM 比較",
-      "海外 eSIM おすすめ",
-      "eSIM 設定",
-      "Wi-Fi レンタル 比較",
-      "海外 通信",
-      "eSIM 対応端末",
-      "eSIM 旅行",
-      "プリペイド eSIM",
-    ],
+    keywords: isEn
+      ? ["travel eSIM", "eSIM comparison", "best eSIM for travel", "eSIM vs pocket WiFi", "international eSIM", "prepaid eSIM", "eSIM supported devices"]
+      : ["eSIM 海外", "eSIM 比較", "海外 eSIM おすすめ", "eSIM 設定", "Wi-Fi レンタル 比較", "海外 通信", "eSIM 対応端末", "eSIM 旅行", "プリペイド eSIM"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/esim",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/esim",
         en: "https://beatrip.jp/en/esim",

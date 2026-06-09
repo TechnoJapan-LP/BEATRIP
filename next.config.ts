@@ -38,7 +38,8 @@ const nextConfig: NextConfig = {
     ],
   },
   images: {
-    // 配信元を許可（Unsplash の都市背景 / Wikimedia の代表画像 = ホテル建物実写）
+    // 配信元を許可（Unsplash の都市背景 / Wikimedia の代表画像 = ホテル建物実写 /
+    // Google Places photo media = Wikimedia でカバーしきれないホテルの実物写真）
     remotePatterns: [
       {
         protocol: "https",
@@ -47,6 +48,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "places.googleapis.com",
       },
     ],
     // AVIF/WebP で配信（JPEG比で大幅軽量化）

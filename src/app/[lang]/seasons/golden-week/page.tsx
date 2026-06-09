@@ -11,28 +11,29 @@ import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title =
-    "GW (ゴールデンウィーク) の航空券・ホテル予約完全ガイド｜2026 最安タイミング | BEATRIP";
-  const description =
-    "GW (4月末〜5月初旬) の航空券・ホテルを最安で取るコツ、人気目的地、ピークと底値、早期予約割引まで。国内・海外それぞれの戦略を網羅。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Golden Week travel from Japan — 2026 booking guide for the lowest fares | BEATRIP"
+    : "GW (ゴールデンウィーク) の航空券・ホテル予約完全ガイド｜2026 最安タイミング | BEATRIP";
+  const description = isEn
+    ? "How to book Golden Week (late April–early May) flights and hotels at the lowest price. Peak vs. shoulder dates, early-bird discounts, top destinations, and separate strategies for domestic and overseas trips."
+    : "GW (4月末〜5月初旬) の航空券・ホテルを最安で取るコツ、人気目的地、ピークと底値、早期予約割引まで。国内・海外それぞれの戦略を網羅。";
+  const path = isEn ? "/en/seasons/golden-week" : "/seasons/golden-week";
   return {
     title,
     description,
-    keywords: [
-      "GW 航空券",
-      "ゴールデンウィーク 旅行",
-      "GW ホテル",
-      "GW 海外旅行",
-      "GW 国内旅行",
-      "5月 航空券 安い",
-      "GW おすすめ 目的地",
-      "GW 最安",
-      "GW 早期予約",
-    ],
+    keywords: isEn
+      ? ["Golden Week Japan", "Golden Week travel 2026", "May flights Japan", "GW travel from Japan", "Japan May holidays", "Golden Week destinations"]
+      : ["GW 航空券", "ゴールデンウィーク 旅行", "GW ホテル", "GW 海外旅行", "GW 国内旅行", "5月 航空券 安い", "GW おすすめ 目的地", "GW 最安", "GW 早期予約"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/seasons/golden-week",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/seasons/golden-week",
         en: "https://beatrip.jp/en/seasons/golden-week",

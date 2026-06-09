@@ -35,7 +35,7 @@ const REGION_SLUGS: Record<AirportRegion, string> = {
   沖縄: "okinawa",
 };
 
-type Props = { params: Promise<{ route: string }> };
+type Props = { params: Promise<{ route: string; lang: string }> };
 
 // ISR: 1800秒キャッシュ (30分)
 export const revalidate = 1800;
@@ -48,7 +48,7 @@ function parseRoute(slug: string) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { route } = await params;
+  const { route, lang } = await params;
   const parsed = parseRoute(route);
   if (!parsed) return { title: "Not Found" };
 
@@ -62,36 +62,57 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? Math.min(...routeDeals.map((d) => d.sale_price))
     : null;
 
-  const origin = routeDeals[0]?.origin ?? cityNameJa(parsed.origin);
-  const dest = routeDeals[0]?.destination ?? cityNameJa(parsed.destination);
+  const isEn = lang === "en";
+  const originJa = routeDeals[0]?.origin ?? cityNameJa(parsed.origin);
+  const destJa = routeDeals[0]?.destination ?? cityNameJa(parsed.destination);
+  const originEn = cityNameEn(parsed.origin);
+  const destEn = cityNameEn(parsed.destination);
 
-  // GSCで「{出発} {目的地} 飛行機」需要を確認。タイトルに"飛行機"も含めて取りに行く。
-  const title = `${origin}→${dest} 格安航空券・飛行機セール${cheapest ? `（最安¥${cheapest.toLocaleString()}〜）` : ""} | BEATRIP`;
-  const description = `${origin}から${dest}への格安フライトセール最新情報。${cheapest ? `最安¥${cheapest.toLocaleString()}〜、` : ""}複数航空会社の価格比較・次回セール時期の予測・過去最安値まで。`;
+  const title = isEn
+    ? `${originEn} to ${destEn} — cheap flights and current sales${cheapest ? ` (from JPY ${cheapest.toLocaleString()})` : ""} | BEATRIP`
+    : `${originJa}→${destJa} 格安航空券・飛行機セール${cheapest ? `（最安¥${cheapest.toLocaleString()}〜）` : ""} | BEATRIP`;
+  const description = isEn
+    ? `Latest flight sales from ${originEn} to ${destEn}. ${cheapest ? `Fares from JPY ${cheapest.toLocaleString()}, ` : ""}price comparisons across multiple airlines, next-sale forecasts, and historical lows.`
+    : `${originJa}から${destJa}への格安フライトセール最新情報。${cheapest ? `最安¥${cheapest.toLocaleString()}〜、` : ""}複数航空会社の価格比較・次回セール時期の予測・過去最安値まで。`;
+  const path = isEn ? `/en/routes/${route}` : `/routes/${route}`;
 
   return {
     title,
     description,
-    keywords: [
-      `${origin} ${dest} 飛行機`,
-      `${origin} ${dest} 格安`,
-      `${origin} ${dest} 航空券`,
-      `${origin} ${dest} セール`,
-      `${origin} ${dest} 最安`,
-      `${parsed.origin} ${parsed.destination}`,
-      `${dest} 旅行 格安`,
-      "航空券セール",
-      "格安航空券",
-    ],
+    keywords: isEn
+      ? [
+          `${originEn} to ${destEn} flights`,
+          `cheap ${originEn} ${destEn}`,
+          `${originEn} ${destEn} sale`,
+          `${parsed.origin} ${parsed.destination}`,
+          `${destEn} cheap flights`,
+          "flight sale",
+          "cheap flights from Japan",
+        ]
+      : [
+          `${originJa} ${destJa} 飛行機`,
+          `${originJa} ${destJa} 格安`,
+          `${originJa} ${destJa} 航空券`,
+          `${originJa} ${destJa} セール`,
+          `${originJa} ${destJa} 最安`,
+          `${parsed.origin} ${parsed.destination}`,
+          `${destJa} 旅行 格安`,
+          "航空券セール",
+          "格安航空券",
+        ],
     openGraph: {
       title,
-      description: cheapest
-        ? `${origin}→${dest} 最安¥${cheapest.toLocaleString()}〜 | 複数航空会社の価格を比較`
-        : `${origin}→${dest}のセール情報`,
+      description: isEn
+        ? cheapest
+          ? `${originEn} → ${destEn} from JPY ${cheapest.toLocaleString()} — compare fares across airlines`
+          : `Sales on ${originEn} → ${destEn} flights`
+        : cheapest
+        ? `${originJa}→${destJa} 最安¥${cheapest.toLocaleString()}〜 | 複数航空会社の価格を比較`
+        : `${originJa}→${destJa}のセール情報`,
       type: "website",
     },
     alternates: {
-      canonical: `https://beatrip.jp/routes/${route}`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/routes/${route}`,
         en: `https://beatrip.jp/en/routes/${route}`,

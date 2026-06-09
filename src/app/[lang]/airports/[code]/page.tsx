@@ -32,27 +32,41 @@ const SIZE_BADGE: Record<Airport["size"], { label: string; cls: string }> = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { code } = await params;
+  const { code, lang } = await params;
   const airport = getAirportByCode(code.toUpperCase());
   if (!airport) return { title: "Not Found" };
 
-  const title = `${airport.nameJa} (${airport.iata}) 発着セール・航空券 | BEATRIP`;
-  const description = `${airport.fullNameJa}（${airport.nameEn} ${airport.iata}）発着の航空券セール情報を最新で集約。${airport.tagline ?? ""}就航航空会社: ${airport.airlines.join(", ")}。人気路線・最安セールをBEATRIPでチェック。`;
+  const isEn = lang === "en";
+  const title = isEn
+    ? `${airport.nameEn} Airport (${airport.iata}) — flight sales and cheap fares | BEATRIP`
+    : `${airport.nameJa} (${airport.iata}) 発着セール・航空券 | BEATRIP`;
+  const description = isEn
+    ? `Latest flight sales out of ${airport.nameEn} Airport (${airport.iata}) in ${airport.prefecture}. ${airport.tagline ?? ""} Carriers serving the airport: ${airport.airlines.join(", ")}. Find popular routes and the cheapest fares on BEATRIP.`
+    : `${airport.fullNameJa}（${airport.nameEn} ${airport.iata}）発着の航空券セール情報を最新で集約。${airport.tagline ?? ""}就航航空会社: ${airport.airlines.join(", ")}。人気路線・最安セールをBEATRIPでチェック。`;
+  const path = isEn ? `/en/airports/${airport.iata}` : `/airports/${airport.iata}`;
 
   return {
     title,
     description,
-    keywords: [
-      `${airport.nameJa} 空港`,
-      `${airport.nameJa} 航空券`,
-      `${airport.nameJa} 格安`,
-      `${airport.fullNameJa}`,
-      `${airport.iata} 空港`,
-      `${airport.prefecture} 飛行機`,
-    ],
+    keywords: isEn
+      ? [
+          `${airport.nameEn} Airport`,
+          `${airport.iata} flights`,
+          `cheap flights from ${airport.nameEn}`,
+          `${airport.nameEn} ${airport.iata}`,
+          `flights from ${airport.prefecture}`,
+        ]
+      : [
+          `${airport.nameJa} 空港`,
+          `${airport.nameJa} 航空券`,
+          `${airport.nameJa} 格安`,
+          `${airport.fullNameJa}`,
+          `${airport.iata} 空港`,
+          `${airport.prefecture} 飛行機`,
+        ],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: `https://beatrip.jp/airports/${airport.iata}`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/airports/${airport.iata}`,
         en: `https://beatrip.jp/en/airports/${airport.iata}`,

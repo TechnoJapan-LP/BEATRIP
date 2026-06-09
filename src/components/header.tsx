@@ -23,6 +23,9 @@ import {
   Wifi,
   CreditCard,
   ShieldCheck,
+  Trophy,
+  Coins,
+  TrendingUp,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { GlobalSearch } from "@/components/search/global-search";
@@ -127,8 +130,22 @@ export function Header() {
             { href: "/articles/ota-compare/tokyo", label: "東京 OTA 比較", desc: "Booking vs Agoda vs Trip.com 徹底比較", Icon: BedDouble },
             { href: "/articles/ota-compare/osaka", label: "大阪 OTA 比較", desc: "USJ・心斎橋エリアの最安サイト比較", Icon: BedDouble },
             { href: "/articles/ota-compare/honolulu", label: "ホノルル OTA 比較", desc: "ワイキキの 4 大 OTA 徹底比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/seoul", label: "ソウル OTA 比較", desc: "明洞・弘大・江南の最安サイト比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/bangkok", label: "バンコク OTA 比較", desc: "コスパ最強都市の 4 大 OTA 比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/singapore", label: "シンガポール OTA 比較", desc: "マリーナベイ周辺の高単価ホテル比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/taipei", label: "台北 OTA 比較", desc: "中山・西門町・信義の OTA 比較", Icon: BedDouble },
             { href: "/credit-cards", label: "クレカ比較", desc: "マイル・保険・ラウンジで選ぶ", Icon: CreditCard },
             { href: "/insurance", label: "海外旅行保険", desc: "クレカ付帯 vs ネット保険", Icon: ShieldCheck },
+            { href: "/articles/miles-booking-guide", label: "マイル予約ガイド", desc: "JAL/ANA マイルで予約 完全ガイド", Icon: Coins },
+            { href: "/articles/sale-prediction-2027", label: "2027 セール予測", desc: "JAL/ANA/LCC のセール時期予測", Icon: TrendingUp },
+          ],
+        },
+        {
+          label: "ランキング",
+          items: [
+            { href: "/articles/rankings/couples", label: "カップル向け TOP 10", desc: "二人旅・記念日に最適なホテル", Icon: Trophy },
+            { href: "/articles/rankings/family", label: "ファミリー向け TOP 10", desc: "子連れに優しい設備・キッズ対応", Icon: Trophy },
+            { href: "/articles/rankings/solo", label: "一人旅向け TOP 10", desc: "ソロ滞在で快適なホテル", Icon: Trophy },
           ],
         },
         {
@@ -137,6 +154,8 @@ export function Header() {
             { href: "/seasons/year-end", label: "年末年始", desc: "12-1月のセール・予約タイミング", Icon: Calendar },
             { href: "/seasons/golden-week", label: "GW", desc: "4-5月の連休に間に合う狙い目", Icon: Calendar },
             { href: "/seasons/summer", label: "夏休み", desc: "7-8月のお盆・夏旅セール", Icon: Calendar },
+            { href: "/articles/seasonal/autumn-2026", label: "2026 秋", desc: "紅葉・温泉・秋グルメ月別ガイド", Icon: Calendar },
+            { href: "/articles/seasonal/winter-2026", label: "2026 冬", desc: "雪国・温泉・避寒地ガイド", Icon: Calendar },
           ],
         },
       ],

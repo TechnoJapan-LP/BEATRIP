@@ -11,26 +11,29 @@ import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title = "クルーズ旅行・船旅の予約ガイド｜国内・海外発着の比較 | BEATRIP";
-  const description =
-    "国内・海外発着のクルーズ旅行を比較・予約。日本発着の太平洋クルーズ、地中海・カリブ海・アラスカなど世界の主要航路、所要日数別の選び方、初心者向けのポイントまで網羅。BEATRIP厳選のクルーズ予約サイトから検索できます。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Cruise travel guide — compare cruises from Japan and worldwide | BEATRIP"
+    : "クルーズ旅行・船旅の予約ガイド｜国内・海外発着の比較 | BEATRIP";
+  const description = isEn
+    ? "Compare and book cruises departing from Japan and around the world. Pacific cruises out of Yokohama and Kobe, plus the Mediterranean, Caribbean, Alaska and other classic routes — choose by trip length and find first-timer tips. Search through BEATRIP's curated cruise booking partners."
+    : "国内・海外発着のクルーズ旅行を比較・予約。日本発着の太平洋クルーズ、地中海・カリブ海・アラスカなど世界の主要航路、所要日数別の選び方、初心者向けのポイントまで網羅。BEATRIP厳選のクルーズ予約サイトから検索できます。";
+  const path = isEn ? "/en/cruise" : "/cruise";
   return {
     title,
     description,
-    keywords: [
-      "クルーズ旅行",
-      "クルーズ 比較",
-      "船旅",
-      "日本発着 クルーズ",
-      "地中海クルーズ",
-      "カリブ海クルーズ",
-      "クルーズ 予約",
-      "クルーズ 安い",
-    ],
+    keywords: isEn
+      ? ["cruise from Japan", "Mediterranean cruise", "Caribbean cruise", "Alaska cruise", "Pacific cruise", "cruise comparison", "cruise booking"]
+      : ["クルーズ旅行", "クルーズ 比較", "船旅", "日本発着 クルーズ", "地中海クルーズ", "カリブ海クルーズ", "クルーズ 予約", "クルーズ 安い"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/cruise",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/cruise",
         en: "https://beatrip.jp/en/cruise",

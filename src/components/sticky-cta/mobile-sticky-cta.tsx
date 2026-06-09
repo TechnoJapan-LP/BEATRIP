@@ -1,8 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { trackHotelClick, trackAffiliateClick } from "@/components/analytics";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
+import {
+  consumeTurnstileToken,
+  isTurnstileEnabled,
+  setTurnstileToken,
+} from "@/lib/security/click-token";
 
 /**
  * MobileStickyCta — モバイル限定の sticky CTA バー。
@@ -67,6 +73,9 @@ export function MobileStickyCta({
   bottomNavOffset = true,
 }: MobileStickyCtaProps) {
   const [visible, setVisible] = useState(false);
+  const handleToken = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -120,6 +129,7 @@ export function MobileStickyCta({
         destination_code: trackingContext?.destinationCode ?? "",
         deal_id: trackingContext?.dealId ?? "",
         provider: trackingContext?.provider ?? "",
+        turnstile_token: consumeTurnstileToken(),
       });
       if (typeof navigator !== "undefined" && navigator.sendBeacon) {
         navigator.sendBeacon(
@@ -156,6 +166,7 @@ export function MobileStickyCta({
           : "calc(env(safe-area-inset-bottom, 0px) + 8px)",
       }}
     >
+      {isTurnstileEnabled() && <TurnstileWidget onToken={handleToken} />}
       <div className="mx-auto flex max-w-md items-center justify-between gap-3 rounded-2xl border border-zinc-200/70 bg-white/95 px-3 py-2.5 shadow-lg shadow-black/15 backdrop-blur-md dark:border-zinc-700/70 dark:bg-zinc-900/95">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-100">

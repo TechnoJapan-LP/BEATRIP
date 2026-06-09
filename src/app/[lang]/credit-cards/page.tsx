@@ -16,29 +16,29 @@ import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-
 // ISR: 21600 秒 (6 時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title = "旅行に強いクレジットカード比較｜年会費無料・空港ラウンジ・プレミアム | BEATRIP";
-  const description =
-    "旅行用クレジットカードを目的別に比較。コスパ重視・年会費無料（楽天 / JCB CARD W / リクルート / ライフ / イオン）、旅行特化・空港ラウンジ（dカード GOLD / 三井住友 NL / エポス / セゾン）、プレミアム・ステータス（アメックス / ダイナース / JAL / ANA）の 3 セグメントで、年会費・還元率・補償額・ラウンジ条件を整理。BEATRIP 編集部が解説します。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Travel credit cards in Japan — no-fee, lounge access, and premium | BEATRIP"
+    : "旅行に強いクレジットカード比較｜年会費無料・空港ラウンジ・プレミアム | BEATRIP";
+  const description = isEn
+    ? "Compare travel-friendly credit cards available in Japan, sorted by use case. Best value / no annual fee (Rakuten, JCB CARD W, Recruit, Life, AEON), travel-focused with airport lounge access (d Card GOLD, SMBC NL, EPOS, Saison), and premium / status (Amex, Diners, JAL, ANA). We break down annual fees, points rates, insurance limits, and lounge eligibility."
+    : "旅行用クレジットカードを目的別に比較。コスパ重視・年会費無料（楽天 / JCB CARD W / リクルート / ライフ / イオン）、旅行特化・空港ラウンジ（dカード GOLD / 三井住友 NL / エポス / セゾン）、プレミアム・ステータス（アメックス / ダイナース / JAL / ANA）の 3 セグメントで、年会費・還元率・補償額・ラウンジ条件を整理。BEATRIP 編集部が解説します。";
+  const path = isEn ? "/en/credit-cards" : "/credit-cards";
   return {
     title,
     description,
-    keywords: [
-      "旅行 クレジットカード",
-      "年会費無料 クレカ",
-      "JCB CARD W",
-      "楽天カード",
-      "dカード GOLD",
-      "リクルートカード",
-      "三井住友カード NL",
-      "エポスカード 海外旅行",
-      "海外旅行保険 クレカ",
-      "空港ラウンジ カード",
-      "プライオリティ・パス",
-    ],
+    keywords: isEn
+      ? ["travel credit card Japan", "no annual fee credit card", "JCB Card W", "Rakuten Card", "d Card Gold", "EPOS card travel", "credit card travel insurance", "airport lounge card", "Priority Pass"]
+      : ["旅行 クレジットカード", "年会費無料 クレカ", "JCB CARD W", "楽天カード", "dカード GOLD", "リクルートカード", "三井住友カード NL", "エポスカード 海外旅行", "海外旅行保険 クレカ", "空港ラウンジ カード", "プライオリティ・パス"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/credit-cards",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/credit-cards",
         en: "https://beatrip.jp/en/credit-cards",

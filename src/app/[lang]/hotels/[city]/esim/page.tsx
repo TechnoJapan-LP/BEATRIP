@@ -28,27 +28,41 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { city } = await params;
+  const { city, lang } = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d || d.region === "国内") return { title: "Not Found" };
 
-  const title = `${d.nameJa}の eSIM 比較・おすすめ｜現地で快適に使える通信ガイド | BEATRIP`;
-  const description = `${d.nameJa}（${d.nameEn}）旅行で使える eSIM を比較。各社の料金プラン、対応端末、現地通信品質、設定方法まで網羅。Wi-Fi レンタルとの比較も掲載。`;
+  const isEn = lang === "en";
+  const title = isEn
+    ? `Best eSIM for ${d.nameEn} — stay connected on your trip | BEATRIP`
+    : `${d.nameJa}の eSIM 比較・おすすめ｜現地で快適に使える通信ガイド | BEATRIP`;
+  const description = isEn
+    ? `Compare travel eSIMs for ${d.nameEn}. Plans, supported devices, local network quality, and setup steps — plus how an eSIM stacks up against pocket Wi-Fi.`
+    : `${d.nameJa}（${d.nameEn}）旅行で使える eSIM を比較。各社の料金プラン、対応端末、現地通信品質、設定方法まで網羅。Wi-Fi レンタルとの比較も掲載。`;
+  const path = isEn ? `/en/hotels/${d.slug}/esim` : `/hotels/${d.slug}/esim`;
 
   return {
     title,
     description,
-    keywords: [
-      `${d.nameJa} eSIM`,
-      `${d.nameJa} Wi-Fi`,
-      `${d.nameJa} 通信`,
-      `${d.nameJa} スマホ`,
-      `${d.nameJa} SIM`,
-      `${d.nameEn} eSIM`,
-    ],
+    keywords: isEn
+      ? [
+          `${d.nameEn} eSIM`,
+          `${d.nameEn} SIM card`,
+          `${d.nameEn} mobile data`,
+          `${d.nameEn} WiFi`,
+          `best eSIM for ${d.nameEn}`,
+        ]
+      : [
+          `${d.nameJa} eSIM`,
+          `${d.nameJa} Wi-Fi`,
+          `${d.nameJa} 通信`,
+          `${d.nameJa} スマホ`,
+          `${d.nameJa} SIM`,
+          `${d.nameEn} eSIM`,
+        ],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: `https://beatrip.jp/hotels/${d.slug}/esim`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/hotels/${d.slug}/esim`,
         en: `https://beatrip.jp/en/hotels/${d.slug}/esim`,

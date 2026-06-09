@@ -20,28 +20,29 @@ import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-
 // ISR: 21600 秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title =
-    "OTA セール完全ガイド｜Booking/楽天/Agoda/じゃらん 徹底比較 | BEATRIP";
-  const description =
-    "ホテル予約サイト (OTA) のセール時期・料金比較・ポイント還元を 1 ページに集約。Booking.com / Trip.com / 楽天トラベル / Agoda / じゃらん / Yahoo!トラベル / 一休.com / Expedia など主要 OTA の特徴と月別キャンペーンカレンダーで「いつ・どこで・どう予約するか」が分かるガイド。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "OTA hotel-sale guide — Booking, Agoda, Trip.com, Rakuten compared | BEATRIP"
+    : "OTA セール完全ガイド｜Booking/楽天/Agoda/じゃらん 徹底比較 | BEATRIP";
+  const description = isEn
+    ? "All the major hotel OTA sales in one place. Compare Booking.com, Trip.com, Rakuten Travel, Agoda, Jalan, Yahoo Travel, Ikyu, and Expedia by strengths and reward points, plus a month-by-month sale calendar that tells you when, where, and how to book."
+    : "ホテル予約サイト (OTA) のセール時期・料金比較・ポイント還元を 1 ページに集約。Booking.com / Trip.com / 楽天トラベル / Agoda / じゃらん / Yahoo!トラベル / 一休.com / Expedia など主要 OTA の特徴と月別キャンペーンカレンダーで「いつ・どこで・どう予約するか」が分かるガイド。";
+  const path = isEn ? "/en/ota-sales" : "/ota-sales";
   return {
     title,
     description,
-    keywords: [
-      "OTA セール",
-      "OTA 比較",
-      "ホテル予約サイト 比較",
-      "Booking キャンペーン",
-      "楽天トラベル スーパーセール",
-      "Agoda セール",
-      "じゃらん セール",
-      "ホテル予約 安い時期",
-      "ホテル 最安値",
-    ],
+    keywords: isEn
+      ? ["OTA hotel sale", "Booking.com sale", "Agoda sale", "Trip.com sale", "Rakuten Travel super sale", "hotel sale comparison", "best time to book hotel", "lowest hotel price"]
+      : ["OTA セール", "OTA 比較", "ホテル予約サイト 比較", "Booking キャンペーン", "楽天トラベル スーパーセール", "Agoda セール", "じゃらん セール", "ホテル予約 安い時期", "ホテル 最安値"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/ota-sales",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/ota-sales",
         en: "https://beatrip.jp/en/ota-sales",

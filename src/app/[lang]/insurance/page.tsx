@@ -16,28 +16,29 @@ import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-
 // ISR: 21600 秒 (6 時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title = "海外旅行保険の選び方｜クレカ付帯 vs 別途加入 完全比較 | BEATRIP";
-  const description =
-    "海外旅行保険の選び方を整理。クレジットカード付帯保険の限界（補償額・期間・疾病）、ネット保険（AIG・Chubb・損保ジャパン・楽天損保）の比較、期間別（7／14／30／90 日）の選び方、シニア・持病・妊婦・アクティビティ系の特殊ケースまで BEATRIP 編集部が解説します。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "How to choose travel insurance — credit-card cover vs. standalone plans | BEATRIP"
+    : "海外旅行保険の選び方｜クレカ付帯 vs 別途加入 完全比較 | BEATRIP";
+  const description = isEn
+    ? "Pick the right travel insurance with BEATRIP's editorial guide. We compare credit-card travel cover (limits on payout, duration, illness) with online plans from AIG, Chubb, Sompo Japan, and Rakuten Sonpo. Plus how to choose by trip length (7/14/30/90 days) and tips for seniors, pre-existing conditions, pregnancy, and adventure sports."
+    : "海外旅行保険の選び方を整理。クレジットカード付帯保険の限界（補償額・期間・疾病）、ネット保険（AIG・Chubb・損保ジャパン・楽天損保）の比較、期間別（7／14／30／90 日）の選び方、シニア・持病・妊婦・アクティビティ系の特殊ケースまで BEATRIP 編集部が解説します。";
+  const path = isEn ? "/en/insurance" : "/insurance";
   return {
     title,
     description,
-    keywords: [
-      "海外旅行保険",
-      "海外旅行保険 比較",
-      "クレカ 海外旅行保険",
-      "AIG 海外旅行保険",
-      "Chubb 海外旅行保険",
-      "損保ジャパン off",
-      "楽天損保 海外旅行保険",
-      "海外旅行保険 選び方",
-      "シニア 海外旅行保険",
-      "海外旅行 持病",
-    ],
+    keywords: isEn
+      ? ["travel insurance Japan", "travel insurance comparison", "credit card travel insurance", "AIG travel insurance", "Chubb travel insurance", "Sompo travel insurance", "senior travel insurance", "pre-existing condition travel"]
+      : ["海外旅行保険", "海外旅行保険 比較", "クレカ 海外旅行保険", "AIG 海外旅行保険", "Chubb 海外旅行保険", "損保ジャパン off", "楽天損保 海外旅行保険", "海外旅行保険 選び方", "シニア 海外旅行保険", "海外旅行 持病"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/insurance",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/insurance",
         en: "https://beatrip.jp/en/insurance",

@@ -26,14 +26,16 @@ type Props = { params: Promise<{ slug: string; lang: string;}> };
 export const revalidate = 21600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, lang } = await params;
   const article = await getArticleBySlug(slug);
   if (!article) return { title: "Not Found" };
 
+  const isEn = lang === "en";
   const tags = [
     ...(article.airline_tags ?? []),
     ...(article.route_tags ?? []),
   ];
+  const path = isEn ? `/en/articles/${slug}` : `/articles/${slug}`;
   return {
     title: article.title,
     description: article.excerpt,
@@ -41,8 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       article.category,
       ...tags,
       "BEATRIP",
-      "格安航空券",
-      "セール",
+      ...(isEn ? ["cheap flights", "airline sale", "Japan travel"] : ["格安航空券", "セール"]),
     ],
     openGraph: {
       title: article.title,
@@ -54,7 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       tags,
     },
     alternates: {
-      canonical: `https://beatrip.jp/articles/${slug}`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/articles/${slug}`,
         en: `https://beatrip.jp/en/articles/${slug}`,

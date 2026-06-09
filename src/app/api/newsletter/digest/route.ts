@@ -4,6 +4,7 @@ import { generateWeeklyDigest } from "@/lib/newsletter/digest-generator";
 import { unsubscribeUrl } from "@/lib/newsletter/token";
 import { getResend, MAIL_FROM as FROM } from "@/lib/email/client";
 import { getKV } from "@/lib/store/kv";
+import { writeAuditLog } from "@/lib/audit/audit-log";
 
 /**
  * Weekly digest 配信エンドポイント (Wave 3-C3)
@@ -282,6 +283,16 @@ async function handle(req: NextRequest): Promise<NextResponse> {
 
   if (sent > 0) {
     await setSentRecord(date, sent);
+    await writeAuditLog(req, {
+      action: "newsletter.digest.sent",
+      target: "/api/newsletter/digest",
+      metadata: {
+        sent,
+        subscribers: subscribers.length,
+        failedChunks: errors.length,
+        date,
+      },
+    });
   }
 
   const elapsed = Date.now() - startedAt;

@@ -23,27 +23,41 @@ type Props = { params: Promise<{ city: string; lang: string;}> };
 export const revalidate = 21600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { city } = await params;
+  const { city, lang } = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d) return { title: "Not Found" };
 
-  const title = `${d.nameJa}の現地ツアー・アクティビティ予約｜日本語ガイド対応 | BEATRIP`;
-  const description = `${d.nameJa}（${d.nameEn}）の現地ツアー・観光アクティビティを比較・予約。日本語ガイド対応のツアーや、人気のオプショナルツアーが探せます。${d.bestSeason}の最新ツアー情報も掲載。`;
+  const isEn = lang === "en";
+  const title = isEn
+    ? `Tours and activities in ${d.nameEn} — book the best things to do | BEATRIP`
+    : `${d.nameJa}の現地ツアー・アクティビティ予約｜日本語ガイド対応 | BEATRIP`;
+  const description = isEn
+    ? `Compare and book tours and activities in ${d.nameEn}. Popular sightseeing tours, day trips, and experiences — plus what to do during ${d.bestSeason}.`
+    : `${d.nameJa}（${d.nameEn}）の現地ツアー・観光アクティビティを比較・予約。日本語ガイド対応のツアーや、人気のオプショナルツアーが探せます。${d.bestSeason}の最新ツアー情報も掲載。`;
+  const path = isEn ? `/en/hotels/${d.slug}/activities` : `/hotels/${d.slug}/activities`;
 
   return {
     title,
     description,
-    keywords: [
-      `${d.nameJa} ツアー`,
-      `${d.nameJa} オプショナルツアー`,
-      `${d.nameJa} アクティビティ`,
-      `${d.nameJa} 観光`,
-      `${d.nameJa} 現地ツアー`,
-      `${d.nameEn} tours`,
-    ],
+    keywords: isEn
+      ? [
+          `${d.nameEn} tours`,
+          `things to do in ${d.nameEn}`,
+          `${d.nameEn} activities`,
+          `${d.nameEn} sightseeing`,
+          `${d.nameEn} day tours`,
+        ]
+      : [
+          `${d.nameJa} ツアー`,
+          `${d.nameJa} オプショナルツアー`,
+          `${d.nameJa} アクティビティ`,
+          `${d.nameJa} 観光`,
+          `${d.nameJa} 現地ツアー`,
+          `${d.nameEn} tours`,
+        ],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: `https://beatrip.jp/hotels/${d.slug}/activities`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/hotels/${d.slug}/activities`,
         en: `https://beatrip.jp/en/hotels/${d.slug}/activities`,

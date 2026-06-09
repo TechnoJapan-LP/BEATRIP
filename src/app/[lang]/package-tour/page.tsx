@@ -11,28 +11,29 @@ import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title =
-    "パッケージツアー比較・予約ガイド｜国内・海外の選び方とお得に取るコツ | BEATRIP";
-  const description =
-    "国内・海外パッケージツアーを比較・予約。個人手配との費用・手間・自由度の違い、出発地/予算/テーマ/期間別の選び方、早期割引・直前割引・動的パッケージ（エアトリプラス等）のお得活用術まで網羅。JTB・NEWT・日本旅行・J-TRIP などBEATRIP厳選のツアー予約サイトから検索できます。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Package tours from Japan — domestic and overseas, how to book smart | BEATRIP"
+    : "パッケージツアー比較・予約ガイド｜国内・海外の選び方とお得に取るコツ | BEATRIP";
+  const description = isEn
+    ? "Compare and book domestic and overseas package tours from Japan. Package tour vs. DIY booking (cost, effort, freedom), how to choose by departure city / budget / theme / trip length, plus tips on early-bird and last-minute discounts and dynamic packages. Search through BEATRIP's curated partners — JTB, NEWT, Nippon Travel, J-TRIP and more."
+    : "国内・海外パッケージツアーを比較・予約。個人手配との費用・手間・自由度の違い、出発地/予算/テーマ/期間別の選び方、早期割引・直前割引・動的パッケージ（エアトリプラス等）のお得活用術まで網羅。JTB・NEWT・日本旅行・J-TRIP などBEATRIP厳選のツアー予約サイトから検索できます。";
+  const path = isEn ? "/en/package-tour" : "/package-tour";
   return {
     title,
     description,
-    keywords: [
-      "パッケージツアー",
-      "パッケージツアー 比較",
-      "パッケージツアー 予約",
-      "海外ツアー",
-      "国内ツアー",
-      "ダイナミックパッケージ",
-      "エアトリプラス",
-      "ツアー 早期割引",
-      "ツアー 安い",
-    ],
+    keywords: isEn
+      ? ["package tour from Japan", "Japan package tour comparison", "JTB tour", "NEWT tour", "dynamic package Japan", "tour early bird discount", "cheap package tour"]
+      : ["パッケージツアー", "パッケージツアー 比較", "パッケージツアー 予約", "海外ツアー", "国内ツアー", "ダイナミックパッケージ", "エアトリプラス", "ツアー 早期割引", "ツアー 安い"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/package-tour",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/package-tour",
         en: "https://beatrip.jp/en/package-tour",

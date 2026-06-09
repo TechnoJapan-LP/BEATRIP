@@ -36,6 +36,7 @@ import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
 import { CityPrevNextNav } from "@/components/hotels/city-prev-next-nav";
 import { ComparisonCheckbox } from "@/components/hotels/comparison-checkbox";
 import { buildHotelSlug } from "@/lib/comparison/hotel-slug";
+import { getHotelImageUrl } from "@/lib/hotels/hotel-image-url";
 
 /**
  * tier ベースの 1 泊価格目安レンジ (¥)。実 OTA 価格が未取得でも
@@ -60,27 +61,41 @@ type Props = { params: Promise<{ city: string; lang: string;}> };
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { city } = await params;
+  const { city, lang } = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d) return { title: "Not Found" };
 
-  const title = `${d.nameJa}のホテル予約・最安値検索｜エリア別の特徴と相場 | BEATRIP`;
-  const description = `${d.nameJa}（${d.nameEn}）のホテルを最安値で検索。${d.tagline}。${d.priceFromJpy ? `1泊¥${d.priceFromJpy.toLocaleString()}〜の目安。` : ""}主要エリアの特徴、ベストシーズン、関連フライトディールも掲載。`;
+  const isEn = lang === "en";
+  const title = isEn
+    ? `Hotels in ${d.nameEn} — compare best rates by neighborhood | BEATRIP`
+    : `${d.nameJa}のホテル予約・最安値検索｜エリア別の特徴と相場 | BEATRIP`;
+  const description = isEn
+    ? `Find best-priced hotels in ${d.nameEn}. ${d.tagline}${d.priceFromJpy ? ` From around JPY ${d.priceFromJpy.toLocaleString()} per night.` : ""} Neighborhood guides, the best time to visit, and current flight deals into the city.`
+    : `${d.nameJa}（${d.nameEn}）のホテルを最安値で検索。${d.tagline}。${d.priceFromJpy ? `1泊¥${d.priceFromJpy.toLocaleString()}〜の目安。` : ""}主要エリアの特徴、ベストシーズン、関連フライトディールも掲載。`;
+  const path = isEn ? `/en/hotels/${d.slug}` : `/hotels/${d.slug}`;
 
   return {
     title,
     description,
-    keywords: [
-      `${d.nameJa} ホテル`,
-      `${d.nameJa} ホテル 格安`,
-      `${d.nameJa} ホテル 予約`,
-      `${d.nameJa} 宿泊`,
-      `${d.nameJa} ホテル 最安値`,
-      `${d.nameEn} hotel`,
-    ],
+    keywords: isEn
+      ? [
+          `${d.nameEn} hotels`,
+          `cheap hotels ${d.nameEn}`,
+          `best hotels in ${d.nameEn}`,
+          `${d.nameEn} hotel deals`,
+          `where to stay in ${d.nameEn}`,
+        ]
+      : [
+          `${d.nameJa} ホテル`,
+          `${d.nameJa} ホテル 格安`,
+          `${d.nameJa} ホテル 予約`,
+          `${d.nameJa} 宿泊`,
+          `${d.nameJa} ホテル 最安値`,
+          `${d.nameEn} hotel`,
+        ],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: `https://beatrip.jp/hotels/${d.slug}`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/hotels/${d.slug}`,
         en: `https://beatrip.jp/en/hotels/${d.slug}`,
@@ -233,7 +248,8 @@ export default async function HotelCityPage({ params }: Props) {
                 worstRating: "1",
               },
             };
-            if (h.imageUrl) hotelEntry.image = h.imageUrl;
+            const _hImg = getHotelImageUrl(d.slug, h);
+            if (_hImg) hotelEntry.image = _hImg;
             if (h.star) {
               hotelEntry.starRating = {
                 "@type": "Rating",
@@ -491,6 +507,7 @@ export default async function HotelCityPage({ params }: Props) {
                     const reviewScore = h.reviewScore ?? 8.5;
                     const reviewCount = h.reviewCount ?? 1500;
                     const isLuxury = h.tier === "ラグジュアリー";
+                    const hotelImageUrl = getHotelImageUrl(d.slug, h);
                     return (
                       <div
                         key={h.name}
@@ -523,7 +540,7 @@ export default async function HotelCityPage({ params }: Props) {
                                     hotelSlug: buildHotelSlug(d.slug, h.name),
                                     citySlug: d.slug,
                                     name: h.name,
-                                    imageUrl: h.imageUrl,
+                                    imageUrl: hotelImageUrl ?? undefined,
                                     tier: h.tier,
                                   }}
                                 />
@@ -584,9 +601,9 @@ export default async function HotelCityPage({ params }: Props) {
 
                           {/* 右 (PC: w-48 / mobile: 上 full-width 16:9) */}
                           <div className="order-1 sm:order-2 relative sm:w-48 sm:flex-shrink-0 aspect-[16/9] sm:aspect-auto bg-zinc-100 dark:bg-zinc-800">
-                            {h.imageUrl ? (
+                            {hotelImageUrl ? (
                               <Image
-                                src={h.imageUrl}
+                                src={hotelImageUrl}
                                 alt={h.name}
                                 fill
                                 sizes="(min-width: 640px) 192px, 100vw"

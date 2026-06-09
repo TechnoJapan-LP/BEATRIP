@@ -38,30 +38,44 @@ import { buildHotelLink } from "@/lib/affiliate/url-builder";
 type Props = { params: Promise<{ city: string; lang: string;}> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { city } = await params;
+  const { city, lang } = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d) return { title: "Not Found" };
 
   const w = getWhenToVisitContent(d.slug);
-  const title = `${d.nameJa}のベストシーズンはいつ？月別カレンダーと服装ガイド | BEATRIP`;
-  const description = `${d.nameJa}（${d.nameEn}）旅行のベストシーズンを月別に解説。おすすめは${w.bestMonthsLabel}。安く行ける時期は${w.cheapMonthsLabel}。気候・服装・年間イベント・FAQまで網羅。`;
+  const isEn = lang === "en";
+  const title = isEn
+    ? `Best time to visit ${d.nameEn} — month-by-month guide and what to pack | BEATRIP`
+    : `${d.nameJa}のベストシーズンはいつ？月別カレンダーと服装ガイド | BEATRIP`;
+  const description = isEn
+    ? `When to visit ${d.nameEn}, month by month. Best months: ${w.bestMonthsLabel}. Cheapest months: ${w.cheapMonthsLabel}. Climate, packing tips, yearly events, and FAQs.`
+    : `${d.nameJa}（${d.nameEn}）旅行のベストシーズンを月別に解説。おすすめは${w.bestMonthsLabel}。安く行ける時期は${w.cheapMonthsLabel}。気候・服装・年間イベント・FAQまで網羅。`;
+  const path = isEn ? `/en/hotels/${d.slug}/best-season` : `/hotels/${d.slug}/best-season`;
 
   return {
     title,
     description,
-    keywords: [
-      `${d.nameJa} ベストシーズン`,
-      `${d.nameJa} 何月`,
-      `${d.nameJa} 旅行 時期`,
-      `${d.nameJa} 旅行 おすすめ 時期`,
-      `${d.nameJa} 気候`,
-      `${d.nameJa} 服装`,
-      `${d.nameJa} 安い時期`,
-      `${d.nameEn} best time to visit`,
-    ],
+    keywords: isEn
+      ? [
+          `${d.nameEn} best time to visit`,
+          `${d.nameEn} when to go`,
+          `${d.nameEn} weather`,
+          `${d.nameEn} what to pack`,
+          `${d.nameEn} cheapest month`,
+        ]
+      : [
+          `${d.nameJa} ベストシーズン`,
+          `${d.nameJa} 何月`,
+          `${d.nameJa} 旅行 時期`,
+          `${d.nameJa} 旅行 おすすめ 時期`,
+          `${d.nameJa} 気候`,
+          `${d.nameJa} 服装`,
+          `${d.nameJa} 安い時期`,
+          `${d.nameEn} best time to visit`,
+        ],
     openGraph: { title, description, type: "article" },
     alternates: {
-      canonical: `https://beatrip.jp/hotels/${d.slug}/best-season`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/hotels/${d.slug}/best-season`,
         en: `https://beatrip.jp/en/hotels/${d.slug}/best-season`,

@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ExternalLink, Zap, Search, TrendingDown, CalendarCheck, BarChart3 } from "lucide-react";
 import { trackAffiliateClick } from "@/components/analytics";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
+import {
+  consumeTurnstileToken,
+  isTurnstileEnabled,
+  setTurnstileToken,
+} from "@/lib/security/click-token";
 
 type CompareLink = {
   url: string;
@@ -42,6 +48,9 @@ export function BookingButton({
   isLowest?: boolean;
 }) {
   const [clicked, setClicked] = useState(false);
+  const handleToken = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
 
   function trackAndOpen(url: string, provider: string) {
     setClicked(true);
@@ -57,6 +66,8 @@ export function BookingButton({
         deal_id: dealId,
         affiliate_provider: provider,
         affiliate_url: url,
+        // Turnstile 未設定 (env なし) のとき "" が入るが server 側 skip 扱い
+        turnstile_token: consumeTurnstileToken(),
       });
       if (typeof navigator !== "undefined" && navigator.sendBeacon) {
         navigator.sendBeacon(
@@ -86,6 +97,7 @@ export function BookingButton({
 
   return (
     <div className="space-y-3">
+      {isTurnstileEnabled() && <TurnstileWidget onToken={handleToken} />}
       <button
         onClick={() => trackAndOpen(affiliateUrl, affiliateProvider)}
         className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 py-4 text-sm font-bold text-white dark:text-zinc-900 transition-all hover:bg-zinc-700 dark:hover:bg-zinc-300 active:scale-[0.98] shadow-lg hover:shadow-xl"

@@ -1,14 +1,14 @@
 {
   "common": {
-    "seeAll": "See all",
+    "seeAll": "View all",
     "home": "Home",
-    "tagline": "Automatically tracking flight sales. Never miss the lowest fares with flash deals, sale-timing predictions, and price-history data."
+    "tagline": "We track airline sales so you don't have to. Flash deals, sale-timing forecasts, and price history — never miss the lowest fare."
   },
   "nav": {
     "flashDeals": "Flash Deals",
     "airlineSales": "Airline Sales",
     "hotels": "Hotels",
-    "localFlights": "Local Flights",
+    "localFlights": "Regional Flights",
     "airports": "Airports",
     "salePrediction": "Sale Forecast",
     "articles": "Articles",
@@ -16,25 +16,25 @@
     "menu": "Menu",
     "language": "Language",
     "flights": "Flights",
-    "stay": "Stay",
-    "features": "Features",
+    "stay": "Hotels",
+    "features": "Guides",
     "destinations": "Destinations",
     "esimGuide": "eSIM Compare",
-    "bestSeason": "Best Season",
-    "localActivities": "Local Tours",
+    "bestSeason": "Best Time to Visit",
+    "localActivities": "Tours & Activities",
     "salesCalendar": "Sale Forecast",
     "routes": "Routes",
-    "destinationsListed": "By City / Airport"
+    "destinationsListed": "Browse by city / airport"
   },
   "home": {
     "flashDealsTitle": "Flash Deals",
-    "flashDealsSubtitle": "Limited-time flight sales you can book right now",
-    "popularTitle": "Popular Deals",
-    "popularSubtitle": "Top deals with the biggest discounts",
+    "flashDealsSubtitle": "Limited-time fares you can book right now",
+    "popularTitle": "Top Deals",
+    "popularSubtitle": "The biggest discounts on the site",
     "articlesTitle": "Articles",
-    "articlesSubtitle": "Sale alerts & booking guides",
+    "articlesSubtitle": "Sale alerts and booking guides",
     "airlinesTitle": "Airlines",
-    "airlinesSubtitle": "Airline sale information"
+    "airlinesSubtitle": "Latest sales by carrier"
   },
   "filters": {
     "all": "All",
@@ -43,151 +43,151 @@
     "new": "New",
     "ending": "Ending soon",
     "niche": "Niche LCC",
-    "hiddenGem": "Hidden gem",
-    "searchPlaceholder": "Search by city, airport, or airline...",
-    "noResults": "No matching deals found",
-    "noResultsHint": "Try changing the filters",
-    "popularSuggestion": "Popular deals"
+    "hiddenGem": "Hidden gems",
+    "searchPlaceholder": "Search city, airport, or airline...",
+    "noResults": "No matching deals",
+    "noResultsHint": "Try adjusting your filters",
+    "popularSuggestion": "Trending deals"
   },
   "hero": {
-    "badge": "This week's biggest discount",
-    "viewDeal": "View this deal"
+    "badge": "Biggest discount this week",
+    "viewDeal": "View deal"
   },
   "search": {
     "barTitle": "Search flights",
-    "barSubtitle": "Find sale fares by origin, destination, and dates",
+    "barSubtitle": "Find sale fares by origin, destination, and travel dates",
     "formTitle": "Flight search",
-    "formSubtitle": "Find flights on sale by destination and dates",
+    "formSubtitle": "Find flights on sale by destination and travel dates",
     "close": "Close",
     "closeAria": "Close search",
     "all": "All",
     "domestic": "Domestic",
     "international": "International",
-    "origin": "Origin",
-    "destination": "Destination",
-    "selectOrigin": "Select origin",
+    "origin": "From",
+    "destination": "To",
+    "selectOrigin": "Select departure city",
     "selectDestination": "Select destination",
     "swapAria": "Swap origin and destination",
-    "departDate": "Departure date",
-    "returnDate": "Return date",
+    "departDate": "Depart",
+    "returnDate": "Return",
     "submit": "Search",
-    "popular": "Popular:"
+    "popular": "Trending:"
   },
   "newsletter": {
     "title": "Never miss a sale",
-    "body": "Get notified by email the moment an airline sale starts. Never miss the lowest-fare window.",
-    "placeholder": "Email address",
-    "submit": "Subscribe free",
-    "successTitle": "You're in",
-    "successBody": "We'll send you sale alerts. Stay tuned!",
+    "body": "Get an email the moment an airline sale starts — and catch the lowest-fare window every time.",
+    "placeholder": "Your email address",
+    "submit": "Subscribe for free",
+    "successTitle": "You're subscribed",
+    "successBody": "Sale alerts are on the way. Talk soon!",
     "error": "Subscription failed. Please try again.",
     "note": "Unsubscribe anytime. No spam, ever."
   },
   "footer": {
     "dealsTitle": "Deals",
     "airlinesTitle": "Airlines",
-    "aboutTitle": "Site info",
+    "aboutTitle": "About this site",
     "flashDeals": "Flash Deals",
     "hotels": "Hotels",
     "saleCalendar": "Sale forecast calendar",
     "airlineSales": "Airline sales",
-    "articles": "Sale articles & guides",
+    "articles": "Sale articles and guides",
     "about": "About BEATRIP",
     "faq": "FAQ",
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
     "disclosure": "Ad disclosure",
-    "disclaimer": "* Sale information shown is collected from each airline's official website. Prices and seat availability change constantly, so always confirm the latest details on the airline's official site before booking. This site does not sell tickets and is for informational purposes only.",
+    "disclaimer": "* Sale listings are aggregated from each airline's official website. Fares and seat availability change constantly, so always confirm the latest details on the airline's official site before booking. BEATRIP does not sell tickets and is provided for informational purposes only.",
     "copyright": "© 2026 BEATRIP. All rights reserved.",
     "flightsTitle": "Flights",
-    "stayTitle": "Stay",
-    "featuresTitle": "Features",
-    "localFlights": "Local Flights",
+    "stayTitle": "Hotels & Stays",
+    "featuresTitle": "Guides",
+    "localFlights": "Regional Flights",
     "airports": "Airports",
-    "bestSeason": "Best Season by City",
-    "activities": "Local Tours",
-    "esimGuide": "eSIM Compare",
-    "otaSales": "OTA Sales Compare",
-    "cruise": "Cruise",
+    "bestSeason": "Best time to visit",
+    "activities": "Tours & Activities",
+    "esimGuide": "eSIM comparison",
+    "otaSales": "OTA sale comparison",
+    "cruise": "Cruises",
     "hawaii": "Hawaii",
     "okinawa": "Okinawa",
-    "packageTour": "Package Tours"
+    "packageTour": "Package tours"
   },
   "about": {
     "metaTitle": "About BEATRIP",
-    "metaDescription": "BEATRIP is a flight-deal portal that automatically collects airline sale information and provides flash deals, sale-timing forecasts, and price-history data.",
+    "metaDescription": "BEATRIP is a flight-deal portal for travel in and out of Japan. We automatically aggregate airline sales and surface flash deals, sale-timing forecasts, and price history in one place.",
     "breadcrumb": "About",
     "title": "About BEATRIP",
-    "intro": "BEATRIP is a flight-deal portal built around one idea: never miss the lowest fare. We automatically collect and analyze airline sale information.",
-    "featuresTitle": "Features",
+    "intro": "BEATRIP is a flight-deal portal built around a single promise: never miss the lowest fare. We continuously aggregate and analyze airline sales across Japan.",
+    "featuresTitle": "What we do",
     "features": [
       {
-        "title": "Automatic sale tracking",
-        "description": "We automatically collect sale information from major airlines such as ANA, JAL, Peach, and Jetstar — no more manual checking."
+        "title": "Automated sale tracking",
+        "description": "We pull sale data from major Japanese carriers including ANA, JAL, Peach, and Jetstar — so you don't have to check ten airline sites yourself."
       },
       {
         "title": "Sale-timing forecasts",
-        "description": "AI analyzes historical sale data to predict the timing and probability of the next sale, so you can book at the best moment."
+        "description": "Our model analyzes historical sale patterns to predict when the next sale is most likely, helping you book at the right moment."
       },
       {
         "title": "Price alerts",
-        "description": "Get notified instantly when a route you care about drops below your target price. Never miss the chance."
+        "description": "Set a target price on any route you're watching, and we'll ping you the instant a fare drops below it."
       },
       {
-        "title": "Reliable data",
-        "description": "All information is sourced directly from airline official websites, delivering accurate and up-to-date sale information."
+        "title": "Trustworthy data",
+        "description": "Every listing is sourced directly from airline official websites, so the fares and sale dates you see are accurate and current."
       }
     ],
-    "missionTitle": "Mission",
+    "missionTitle": "Why BEATRIP",
     "mission": [
-      "Airline sale information is scattered across individual airline sites and social media, and it's easy to miss. BEATRIP aggregates it in one place and combines it with data-driven sale forecasts so users can book flights at the cheapest possible time.",
-      "We do not sell tickets directly — we are an information-only service. Always confirm details on each airline's official website before booking."
+      "Airline sale information is scattered across dozens of carrier sites and social posts, and most of it is easy to miss. BEATRIP brings it all into one place and pairs it with data-driven forecasts, so you can book flights at the cheapest possible moment.",
+      "We do not sell tickets — we're an information-only service. Always confirm details on the airline's official website before completing a booking."
     ],
-    "dataSourcesTitle": "Data Sources",
-    "dataSourcesIntro": "Sale information is collected from the following airline official websites:"
+    "dataSourcesTitle": "Data sources",
+    "dataSourcesIntro": "Sale information is collected from the official websites of the following airlines:"
   },
   "faq": {
     "metaTitle": "Frequently Asked Questions (FAQ)",
-    "metaDescription": "Answers to common questions about using BEATRIP, reading sale information, and setting up price alerts.",
+    "metaDescription": "Common questions about using BEATRIP — how our sale data works, how to set up price alerts, and more.",
     "breadcrumb": "FAQ",
     "title": "FAQ",
     "subtitle": "Frequently asked questions",
     "items": [
       {
         "q": "What is BEATRIP?",
-        "a": "BEATRIP is a flight-deal information site that automatically collects airline sale information and provides flash deals, sale-timing forecasts, and price-history data. We do not sell tickets directly and are for informational purposes only."
+        "a": "BEATRIP is a flight-deal site that automatically aggregates airline sales and surfaces flash deals, sale-timing forecasts, and price history. We do not sell tickets — the site is informational only."
       },
       {
-        "q": "Where does the sale information come from?",
-        "a": "We automatically collect sale information from the official websites of major airlines such as ANA, JAL, Peach, Jetstar Japan, and Scoot. Information is updated regularly, but please confirm the latest prices and seat availability on the airline's official site."
+        "q": "Where does the sale data come from?",
+        "a": "We pull sale data directly from the official websites of major carriers including ANA, JAL, Peach, Jetstar Japan, and Scoot. Listings refresh regularly, but always confirm the current fare and seat availability on the airline's official site."
       },
       {
-        "q": "Are the listed prices accurate?",
-        "a": "Listed prices are accurate as of the time of collection. Airfares constantly fluctuate based on seat availability and exchange rates, so actual prices may differ. Always confirm the latest price on the airline's official site before booking."
+        "q": "Are the prices on BEATRIP accurate?",
+        "a": "Prices are accurate as of when we fetched them. Airfares fluctuate constantly based on seat availability and exchange rates, so the real-time price may differ. Always confirm the latest fare on the airline's official site before booking."
       },
       {
-        "q": "How is the 'Sale Forecast' calculated?",
-        "a": "AI analyzes historical sale records (dates, frequency, discount rates, etc.) to predict the timing and probability of the next sale. Forecasts are reference information only and do not guarantee that a sale will actually occur."
+        "q": "How does the Sale Forecast work?",
+        "a": "Our model analyzes historical sale records — start dates, frequency, discount depth, and more — to predict when the next sale is most likely. Forecasts are guidance, not a guarantee that a sale will run."
       },
       {
         "q": "How do I set up a price alert?",
-        "a": "In the 'Price Alert' section on each deal's detail page, you can set the price at which you'd like to be notified. We'll let you know when it drops to or below that amount. Currently only browser notifications are supported."
+        "a": "On any deal's detail page, use the Price Alert section to set the price you'd like to be notified at. We'll alert you when the fare drops to or below that amount. Browser notifications are currently supported."
       },
       {
-        "q": "How do I use the favorites feature?",
-        "a": "Click the heart icon on any deal card to add it to your favorites. Favorites are saved in your browser's local storage, so they'll appear again when you visit from the same browser."
+        "q": "How do favorites work?",
+        "a": "Tap the heart icon on any deal card to save it. Favorites live in your browser's local storage, so they'll be there the next time you visit from the same browser."
       },
       {
-        "q": "Can I book flights on BEATRIP?",
-        "a": "You cannot book flights directly on BEATRIP. Clicking the 'Book' button takes you to the airline's official site or a partner booking site. Complete your booking on the destination site."
+        "q": "Can I book flights through BEATRIP?",
+        "a": "No — we don't sell tickets. The Book button takes you to the airline's official site or a partner booking site, where you complete the booking."
       },
       {
-        "q": "Can I use it on a smartphone?",
-        "a": "Yes. BEATRIP supports PWA (Progressive Web App), so you can add it to your smartphone's home screen and use it like an app. Select 'Add to Home Screen' from your browser menu."
+        "q": "Does BEATRIP work on mobile?",
+        "a": "Yes. BEATRIP is a PWA (Progressive Web App), so you can add it to your phone's home screen and use it like a native app. Pick 'Add to Home Screen' in your browser menu."
       },
       {
         "q": "Is there a dark mode?",
-        "a": "Yes. Click the sun/moon icon at the top right of the header to switch between light and dark mode. The setting is saved in your browser."
+        "a": "Yes. Tap the sun/moon icon at the top right of the header to switch between light and dark mode. Your preference is saved in your browser."
       }
     ]
   },

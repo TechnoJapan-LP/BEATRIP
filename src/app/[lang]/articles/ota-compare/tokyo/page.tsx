@@ -20,8 +20,9 @@ type Props = { params: Promise<{ lang: string }> };
 // ISR: 21600 秒 (6 時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  return buildOtaCompareMetadata("tokyo");
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  return buildOtaCompareMetadata("tokyo", lang);
 }
 
 const PROFILE: CityOtaProfile = {

@@ -168,27 +168,43 @@ const ACCENT_BG: Record<OtaCompareRow["accent"], string> = {
     "bg-violet-50 text-violet-700 ring-violet-200 dark:bg-violet-900/30 dark:text-violet-200 dark:ring-violet-800",
 };
 
-export function buildOtaCompareMetadata(slug: string): Metadata {
+export function buildOtaCompareMetadata(slug: string, lang: string = "ja"): Metadata {
   const d = getHotelDestinationBySlug(slug);
   if (!d) return { title: "Not Found" };
-  const title = `${d.nameJa}のホテル Booking/Agoda/Trip.com 徹底比較 — 最安サイトはどれ? | BEATRIP`;
-  const description = `${d.nameJa}のホテルを最安で予約するなら? 4 大 OTA (Booking.com / Agoda / Trip.com / Hotellook) を編集部が比較・推奨を解説。実際の価格傾向・キャンセル条件・特徴を一覧で。`;
+  const isEn = lang === "en";
+  const title = isEn
+    ? `${d.nameEn} hotels — Booking vs. Agoda vs. Trip.com (which is cheapest?) | BEATRIP`
+    : `${d.nameJa}のホテル Booking/Agoda/Trip.com 徹底比較 — 最安サイトはどれ? | BEATRIP`;
+  const description = isEn
+    ? `Where to book ${d.nameEn} hotels at the lowest price. Our editors compare the four major OTAs (Booking.com, Agoda, Trip.com, Hotellook) with real price trends, cancellation rules, and per-site strengths.`
+    : `${d.nameJa}のホテルを最安で予約するなら? 4 大 OTA (Booking.com / Agoda / Trip.com / Hotellook) を編集部が比較・推奨を解説。実際の価格傾向・キャンセル条件・特徴を一覧で。`;
+  const path = isEn ? `/en/articles/ota-compare/${slug}` : `/articles/ota-compare/${slug}`;
   return {
     title,
     description,
-    keywords: [
-      `${d.nameJa} ホテル 比較`,
-      `${d.nameJa} ホテル 予約 サイト`,
-      `${d.nameJa} Booking.com`,
-      `${d.nameJa} Agoda`,
-      `${d.nameJa} Trip.com`,
-      `${d.nameJa} 最安`,
-      `${d.nameJa} OTA`,
-      "ホテル予約サイト 比較",
-    ],
+    keywords: isEn
+      ? [
+          `${d.nameEn} hotel comparison`,
+          `${d.nameEn} hotel booking sites`,
+          `${d.nameEn} Booking.com`,
+          `${d.nameEn} Agoda`,
+          `${d.nameEn} Trip.com`,
+          `cheapest hotels in ${d.nameEn}`,
+          "hotel OTA comparison",
+        ]
+      : [
+          `${d.nameJa} ホテル 比較`,
+          `${d.nameJa} ホテル 予約 サイト`,
+          `${d.nameJa} Booking.com`,
+          `${d.nameJa} Agoda`,
+          `${d.nameJa} Trip.com`,
+          `${d.nameJa} 最安`,
+          `${d.nameJa} OTA`,
+          "ホテル予約サイト 比較",
+        ],
     openGraph: { title, description, type: "article" },
     alternates: {
-      canonical: `https://beatrip.jp/articles/ota-compare/${slug}`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/articles/ota-compare/${slug}`,
         en: `https://beatrip.jp/en/articles/ota-compare/${slug}`,

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BedDouble, Star } from "lucide-react";
 import { CURATED_HOTELS, type CuratedHotel } from "@/data/hotel-curated";
 import { getHotelDestinationBySlug } from "@/data/hotel-destinations";
+import { getHotelImageUrl } from "@/lib/hotels/hotel-image-url";
 
 type Variant = "grid" | "horizontal";
 
@@ -127,6 +128,7 @@ export function CompactHotelsRecommendation({
       <div className={containerCls}>
         {picks.map(({ hotel: h, citySlug, cityNameJa }) => {
           const reviewScore = h.reviewScore ?? 8.5;
+          const hotelImageUrl = getHotelImageUrl(citySlug, h);
           return (
             <Link
               key={`${citySlug}-${h.name}`}
@@ -134,9 +136,9 @@ export function CompactHotelsRecommendation({
               className={`group block overflow-hidden rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors ${cardCls}`}
             >
               <div className="relative aspect-[16/10] bg-zinc-100 dark:bg-zinc-800">
-                {h.imageUrl ? (
+                {hotelImageUrl ? (
                   <Image
-                    src={h.imageUrl}
+                    src={hotelImageUrl}
                     alt={h.name}
                     fill
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"

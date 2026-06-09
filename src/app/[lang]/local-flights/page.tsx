@@ -21,32 +21,29 @@ import type { DealSchema } from "@/data/deal-schema";
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title =
-    "地方発の格安航空券特集｜北海道・東北・九州・四国から | BEATRIP";
-  const description =
-    "東京・大阪以外、地方空港発の格安航空券を一覧。仙台・札幌・福岡・那覇・松山・旭川など 45 空港の最新セールを region 別に集約。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Cheap flights from regional Japan — Hokkaido, Tohoku, Kyushu, Shikoku | BEATRIP"
+    : "地方発の格安航空券特集｜北海道・東北・九州・四国から | BEATRIP";
+  const description = isEn
+    ? "Cheap flights from regional airports outside Tokyo and Osaka. The latest sales from 45 airports — Sendai, Sapporo, Fukuoka, Naha, Matsuyama, Asahikawa and more — organized by region."
+    : "東京・大阪以外、地方空港発の格安航空券を一覧。仙台・札幌・福岡・那覇・松山・旭川など 45 空港の最新セールを region 別に集約。";
+  const path = isEn ? "/en/local-flights" : "/local-flights";
   return {
     title,
     description,
-    keywords: [
-      "地方発",
-      "格安航空券",
-      "地方空港",
-      "地方便",
-      "LCC",
-      "Peach",
-      "Skymark",
-      "AIRDO",
-      "札幌発",
-      "仙台発",
-      "福岡発",
-      "那覇発",
-      "松山発",
-    ],
+    keywords: isEn
+      ? ["regional flights Japan", "cheap flights Japan", "Sapporo flights", "Sendai flights", "Fukuoka flights", "Naha flights", "Peach", "Skymark", "AIRDO"]
+      : ["地方発", "格安航空券", "地方空港", "地方便", "LCC", "Peach", "Skymark", "AIRDO", "札幌発", "仙台発", "福岡発", "那覇発", "松山発"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/local-flights",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/local-flights",
         en: "https://beatrip.jp/en/local-flights",

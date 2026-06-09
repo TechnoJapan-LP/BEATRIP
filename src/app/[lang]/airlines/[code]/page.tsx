@@ -23,20 +23,26 @@ type Props = { params: Promise<{ code: string; lang: string;}> };
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { code } = await params;
+  const { code, lang } = await params;
   const airline = getAirlineByCode(code);
   if (!airline) return { title: "Not Found" };
 
-  // 「{社名} セール」「{社名} タイムセール」需要に合わせる
-  const title = `${airline.name} セール最新情報・タイムセール開催状況 | BEATRIP`;
-  const description = `${airline.name}の最新フライトセール・タイムセール・キャンペーン一覧。${airline.type === "LCC" ? "格安LCC" : "フルサービスキャリア"}の現在開催中セール、過去の開催実績、次回予測まで一目で。`;
+  const isEn = lang === "en";
+  const airlineName = isEn ? (airline.nameEn || airline.name) : airline.name;
+  const title = isEn
+    ? `${airlineName} sales — latest flash sales and promo campaigns | BEATRIP`
+    : `${airlineName} セール最新情報・タイムセール開催状況 | BEATRIP`;
+  const description = isEn
+    ? `Track every current sale, flash sale, and campaign from ${airlineName} (${airline.type === "LCC" ? "low-cost carrier" : "full-service carrier"}). See live sales, past sale history, and our forecast for when the next one is likely.`
+    : `${airlineName}の最新フライトセール・タイムセール・キャンペーン一覧。${airline.type === "LCC" ? "格安LCC" : "フルサービスキャリア"}の現在開催中セール、過去の開催実績、次回予測まで一目で。`;
+  const path = isEn ? `/en/airlines/${code}` : `/airlines/${code}`;
 
   return {
     title,
     description,
     openGraph: { title, description },
     alternates: {
-      canonical: `https://beatrip.jp/airlines/${code}`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/airlines/${code}`,
         en: `https://beatrip.jp/en/airlines/${code}`,

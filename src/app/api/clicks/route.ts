@@ -6,6 +6,11 @@ import {
 } from "@/lib/store/click-store";
 import { checkRateLimit, clientId } from "@/lib/rate-limit";
 import { isLikelyBot } from "@/lib/security/bot-detector";
+import {
+  isTurnstileConfigured,
+  verifyTurnstileToken,
+} from "@/lib/security/turnstile";
+import { extractIp } from "@/lib/audit/audit-log";
 
 const MAX_BODY_BYTES = 4 * 1024;
 // affiliate_url は HTTPS の任意ドメインを許可 (アフィリエイトリンクは多様)。
@@ -53,11 +58,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const { deal_id, affiliate_provider, affiliate_url } = body as {
+  const { deal_id, affiliate_provider, affiliate_url, turnstile_token } = body as {
     deal_id?: unknown;
     affiliate_provider?: unknown;
     affiliate_url?: unknown;
+    turnstile_token?: unknown;
   };
+
+  // Cloudflare Turnstile 検証: TURNSTILE_SECRET_KEY が設定されているときのみ実施。
+  // 未設定なら既存挙動を維持 (skip)。検証失敗時は sendBeacon の再試行を誘発しないよう
+  // 200 + skipped:"turnstile_failed" を返す。
+  if (isTurnstileConfigured()) {
+    const tokenStr = typeof turnstile_token === "string" ? turnstile_token : "";
+    const verified = await verifyTurnstileToken(tokenStr, extractIp(req));
+    if (!verified.ok) {
+      return NextResponse.json(
+        {
+          success: true,
+          skipped: "turnstile_failed",
+          errorCodes: verified.configured ? verified.errorCodes ?? [] : [],
+        },
+        { status: 200 }
+      );
+    }
+  }
 
   // deal_id の path traversal 対策: 厳格な allowlist 検証
   // (内部 file path に join されるため、`../` / `/` / NUL バイト等の混入は致命的)

@@ -32,6 +32,7 @@ const NewsletterCTA = dynamic(() =>
   }))
 );
 import { DestinationSpotlight } from "@/components/home/destination-spotlight";
+import { SeasonalHero } from "@/components/home/seasonal-hero";
 import { PopularRoutesSection } from "@/components/home/popular-routes-section";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { getActiveDeals } from "@/lib/deals/deal-service";
@@ -198,13 +199,16 @@ export default async function Home({
       />
       <Header />
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+        {/* シーズナル ビジュアル Hero — 第一印象向上 */}
+        <SeasonalHero locale={locale} />
+
         {/* ファーストビュー: 注目ディール（雑誌風の一面）— 即フック */}
         <section className="mb-6 animate-fade-up">
           <HeroDeal deals={deals} />
         </section>
 
         {/* コンパクト検索（タップで展開） */}
-        <section className="mb-4">
+        <section id="beatrip-search" className="mb-4 scroll-mt-24">
           <CollapsibleSearch deals={deals} />
         </section>
 

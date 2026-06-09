@@ -11,28 +11,29 @@ import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title =
-    "年末年始の航空券・ホテル予約完全ガイド｜12月〜1月の最安タイミング | BEATRIP";
-  const description =
-    "年末年始 (12月後半〜1月初旬) の航空券・ホテル予約を最安で取るタイミング、人気目的地、予約のコツを完全網羅。ピークと底値時期、早期予約割引、おすすめ国内・海外目的地まで。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Japan year-end & New Year travel — best booking windows for Dec–Jan | BEATRIP"
+    : "年末年始の航空券・ホテル予約完全ガイド｜12月〜1月の最安タイミング | BEATRIP";
+  const description = isEn
+    ? "Plan your year-end and New Year trip from Japan (late December through early January). When fares peak, when they bottom out, early-bird discounts, and our picks for top domestic and overseas destinations during the holidays."
+    : "年末年始 (12月後半〜1月初旬) の航空券・ホテル予約を最安で取るタイミング、人気目的地、予約のコツを完全網羅。ピークと底値時期、早期予約割引、おすすめ国内・海外目的地まで。";
+  const path = isEn ? "/en/seasons/year-end" : "/seasons/year-end";
   return {
     title,
     description,
-    keywords: [
-      "年末年始 航空券",
-      "年末年始 ホテル",
-      "年末年始 旅行",
-      "正月 旅行",
-      "12月 航空券 安い",
-      "1月 旅行 おすすめ",
-      "年末年始 海外旅行",
-      "年末年始 国内旅行",
-      "年末年始 ピーク",
-    ],
+    keywords: isEn
+      ? ["Japan New Year travel", "year-end Japan flights", "Oshogatsu travel", "December flights Japan", "January travel Japan", "Japan holiday peak season"]
+      : ["年末年始 航空券", "年末年始 ホテル", "年末年始 旅行", "正月 旅行", "12月 航空券 安い", "1月 旅行 おすすめ", "年末年始 海外旅行", "年末年始 国内旅行", "年末年始 ピーク"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/seasons/year-end",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/seasons/year-end",
         en: "https://beatrip.jp/en/seasons/year-end",

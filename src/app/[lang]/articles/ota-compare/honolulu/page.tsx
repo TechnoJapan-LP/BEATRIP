@@ -18,8 +18,9 @@ type Props = { params: Promise<{ lang: string }> };
 
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  return buildOtaCompareMetadata("honolulu");
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { lang } = await params;
+  return buildOtaCompareMetadata("honolulu", lang);
 }
 
 const PROFILE: CityOtaProfile = {

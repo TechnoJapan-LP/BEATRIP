@@ -10,6 +10,8 @@ import {
   BellRing,
   TrendingUp,
   Server,
+  ShieldCheck,
+  Activity,
 } from "lucide-react";
 import { loadAllSales, type StoredSaleData } from "@/lib/store/sale-store";
 import { listSubscribers } from "@/lib/newsletter/store";
@@ -18,6 +20,10 @@ import { loadAllClickStats } from "@/lib/store/click-store";
 import { airlines } from "@/data/airlines";
 import { isKVEnabled } from "@/lib/store/kv";
 import { NewsletterDigestButton } from "@/components/admin/newsletter-digest-button";
+import { HotelPhotosRefreshButton } from "@/components/admin/hotel-photos-refresh-button";
+import { TotpInput } from "@/components/admin/totp-input";
+import { verifySessionToken } from "@/lib/auth/totp";
+import { listRecentAuditLogs } from "@/lib/audit/audit-log";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard | BEATRIP",
@@ -33,16 +39,30 @@ export const dynamic = "force-dynamic";
 /**
  * /admin — 運用ダッシュボード (認証必須、本番非公開)
  *
- * 認証方式: ADMIN_API_KEY を Cookie `beatrip_admin` または
- * `Authorization: Bearer` で受け取る。クエリ ?token=... でも可。
+ * 認証方式:
+ *   1. ADMIN_API_KEY を Cookie `beatrip_admin` / `Authorization: Bearer` / `?token=`
+ *   2. ADMIN_TOTP_SECRET が設定されていれば追加で TOTP (2FA) 必須
+ *      → cookie `beatrip_admin_2fa` の HMAC 署名 token を検証
+ *      → 未設定なら 2FA フローは skip (既存挙動互換)
  */
-async function isAuthenticated(): Promise<boolean> {
+async function checkPrimaryAuth(): Promise<boolean> {
   const expected = process.env.ADMIN_API_KEY;
   if (!expected) return false;
   const cookieStore = await cookies();
   if (cookieStore.get("beatrip_admin")?.value === expected) return true;
   const headerStore = await headers();
   return headerStore.get("authorization") === `Bearer ${expected}`;
+}
+
+async function check2FA(): Promise<boolean> {
+  const adminKey = process.env.ADMIN_API_KEY;
+  const totpSecret = process.env.ADMIN_TOTP_SECRET;
+  // 2FA 未設定なら常に pass (既存挙動互換)
+  if (!adminKey || !totpSecret) return true;
+  const cookieStore = await cookies();
+  const sess = cookieStore.get("beatrip_admin_2fa")?.value;
+  if (!sess) return false;
+  return verifySessionToken(`${adminKey}:${totpSecret}`, sess);
 }
 
 function fmt(n: number) {
@@ -67,9 +87,11 @@ export default async function AdminPage({
 }) {
   const sp = await searchParams;
   const expected = process.env.ADMIN_API_KEY;
-  const authed = (await isAuthenticated()) || (expected != null && sp.token === expected);
+  const totpEnabled = Boolean(expected && process.env.ADMIN_TOTP_SECRET);
+  const primaryAuthed =
+    (await checkPrimaryAuth()) || (expected != null && sp.token === expected);
 
-  if (!authed) {
+  if (!primaryAuthed) {
     return (
       <>
         <Header />
@@ -92,12 +114,43 @@ export default async function AdminPage({
     );
   }
 
+  // 2FA チェック (ADMIN_TOTP_SECRET が設定されていれば必須)
+  const twoFAOk = await check2FA();
+  if (!twoFAOk && expected) {
+    return (
+      <>
+        <Header />
+        <main className="mx-auto max-w-md px-4 py-20 sm:px-6">
+          <div className="rounded-xl border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-900">
+            <h1 className="flex items-center justify-center gap-2 font-heading text-2xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
+              <ShieldCheck className="h-5 w-5 text-emerald-500" />
+              2FA 認証
+            </h1>
+            <p className="mt-3 text-center text-xs text-zinc-500">
+              認証アプリの 6 桁コードを入力してください。
+              <br />
+              成功すると 10 分間 cookie で記憶されます。
+            </p>
+            <div className="mt-6">
+              <TotpInput token={expected} />
+            </div>
+            <p className="mt-4 text-center text-[10px] text-zinc-400">
+              初回設定は <a className="underline" href={`/admin/setup-2fa?token=${encodeURIComponent(expected)}`}>/admin/setup-2fa</a>
+            </p>
+          </div>
+        </main>
+        <SiteFooter />
+      </>
+    );
+  }
+
   // 認証済 → 各種統計を並列取得
-  const [allSales, subscribers, alerts, clickStats] = await Promise.all([
+  const [allSales, subscribers, alerts, clickStats, auditLogs] = await Promise.all([
     loadAllSales().catch(() => ({} as Record<string, StoredSaleData>)),
     listSubscribers().catch(() => [] as string[]),
     listAlerts().catch(() => []),
     loadAllClickStats().catch(() => []),
+    listRecentAuditLogs(20, 7).catch(() => []),
   ]);
 
   const totalActiveSales = Object.values(allSales).reduce(
@@ -131,6 +184,8 @@ export default async function AdminPage({
     HAS_BLUESKY: process.env.BLUESKY_HANDLE ? "yes" : "no",
     HAS_TRAVELPAYOUTS: process.env.TRAVELPAYOUTS_MARKER ? "yes" : "no",
     HAS_ADMIN_KEY: process.env.ADMIN_API_KEY ? "yes" : "no",
+    HAS_2FA: totpEnabled ? "yes" : "no",
+    HAS_TURNSTILE: process.env.TURNSTILE_SECRET_KEY ? "yes" : "no",
   };
 
   return (
@@ -164,6 +219,20 @@ export default async function AdminPage({
               プレビューで内容を確認してから送信してください。同日重複送信は API 側でガード。
             </p>
             <NewsletterDigestButton token={expected} />
+          </section>
+        )}
+
+        {expected && (
+          <section className="mb-8">
+            <h2 className="font-heading mb-3 text-xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
+              <Database className="inline h-5 w-5 mr-2" />ホテル実物写真 (Google Places)
+            </h2>
+            <p className="mb-2 text-xs text-zinc-500">
+              CURATED_HOTELS のうち <code>imageUrl</code> 未設定の項目について、
+              Google Places API (New) から実物写真の photo reference を取得し
+              Upstash KV に 30 日 TTL でキャッシュします。GOOGLE_PLACES_API_KEY 必須。
+            </p>
+            <HotelPhotosRefreshButton token={expected} />
           </section>
         )}
 
@@ -283,6 +352,40 @@ export default async function AdminPage({
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="font-heading mb-3 text-xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
+            <Activity className="inline h-5 w-5 mr-2" />最近の操作ログ (最新 20 件)
+          </h2>
+          {auditLogs.length > 0 ? (
+            <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+              <table className="w-full text-xs">
+                <thead className="bg-zinc-50 dark:bg-zinc-900">
+                  <tr>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-zinc-500">時刻</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-zinc-500">アクション</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-zinc-500">対象</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wider text-zinc-500">IP (mask)</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                  {auditLogs.map((log, i) => (
+                    <tr key={`${log.timestamp}-${i}`} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                      <td className="px-3 py-2 font-mono text-[11px] text-zinc-500">{fmtDate(log.timestamp)}</td>
+                      <td className="px-3 py-2 font-mono">{log.action}</td>
+                      <td className="px-3 py-2 font-mono text-zinc-600 dark:text-zinc-400 break-all">{log.target}</td>
+                      <td className="px-3 py-2 font-mono text-[11px] text-zinc-500">{log.ip_masked}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-sm text-zinc-500">
+              監査ログがまだありません {!kvEnabled && "(KV 未設定 — Upstash 連携後に蓄積されます)"}
+            </p>
+          )}
         </section>
 
         <section className="mb-8">

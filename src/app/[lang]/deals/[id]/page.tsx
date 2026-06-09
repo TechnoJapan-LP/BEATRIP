@@ -67,19 +67,35 @@ type Props = { params: Promise<{ id: string; lang: string;}> };
 export const revalidate = 1800;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
+  const { id, lang } = await params;
   const deal = await getDealByIdFromService(id);
   if (!deal) return { title: "Not Found" };
 
+  const isEn = lang === "en";
+  const originEn = cityNameEn(deal.origin_code);
+  const destEn = cityNameEn(deal.destination_code);
+  const path = isEn ? `/en/deals/${id}` : `/deals/${id}`;
+
   return {
-    title: `${deal.origin_code}→${deal.destination_code} ¥${deal.sale_price.toLocaleString()}`,
-    description: `${deal.airline_name} ${deal.sale_name} — ${deal.origin}から${deal.destination}まで¥${deal.sale_price.toLocaleString()}。${deal.discount_percent}%OFF。`,
+    title: isEn
+      ? `${deal.origin_code} → ${deal.destination_code} from JPY ${deal.sale_price.toLocaleString()}`
+      : `${deal.origin_code}→${deal.destination_code} ¥${deal.sale_price.toLocaleString()}`,
+    description: isEn
+      ? `${deal.airline_name} ${deal.sale_name} — ${originEn} to ${destEn} from JPY ${deal.sale_price.toLocaleString()} (${deal.discount_percent}% off).`
+      : `${deal.airline_name} ${deal.sale_name} — ${deal.origin}から${deal.destination}まで¥${deal.sale_price.toLocaleString()}。${deal.discount_percent}%OFF。`,
     openGraph: {
-      title: `${deal.destination} ¥${deal.sale_price.toLocaleString()} (-${deal.discount_percent}%)`,
+      title: isEn
+        ? `${destEn} from JPY ${deal.sale_price.toLocaleString()} (-${deal.discount_percent}%)`
+        : `${deal.destination} ¥${deal.sale_price.toLocaleString()} (-${deal.discount_percent}%)`,
       description: `${deal.airline_name} ${deal.sale_name}`,
     },
     alternates: {
-      canonical: `https://beatrip.jp/deals/${id}`,
+      canonical: `https://beatrip.jp${path}`,
+      languages: {
+        ja: `https://beatrip.jp/deals/${id}`,
+        en: `https://beatrip.jp/en/deals/${id}`,
+        "x-default": `https://beatrip.jp/deals/${id}`,
+      },
     },
   };
 }

@@ -66,10 +66,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("/articles/ota-compare/tokyo", "weekly", 0.75),
     ...bilingual("/articles/ota-compare/osaka", "weekly", 0.75),
     ...bilingual("/articles/ota-compare/honolulu", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/seoul", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/bangkok", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/singapore", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/taipei", "weekly", 0.75),
+    // セグメント別ホテルランキング — 「カップル ホテル」「家族 ホテル ランキング」等
+    ...bilingual("/articles/rankings/couples", "weekly", 0.7),
+    ...bilingual("/articles/rankings/family", "weekly", 0.7),
+    ...bilingual("/articles/rankings/solo", "weekly", 0.7),
     // シーズン特集 — 年末年始 / GW / 夏休みの大型休暇需要
     ...bilingual("/seasons/year-end", "monthly", 0.7),
     ...bilingual("/seasons/golden-week", "monthly", 0.7),
     ...bilingual("/seasons/summer", "monthly", 0.7),
+    // 月別シーズナル特集 — 2026 秋 / 冬の月別ガイド (年末年始除く狙い目時期)
+    ...bilingual("/articles/seasonal/autumn-2026", "monthly", 0.7),
+    ...bilingual("/articles/seasonal/winter-2026", "monthly", 0.7),
+    // 高検索ボリュームランディング — セール予測 / マイル予約ガイド
+    ...bilingual("/articles/sale-prediction-2027", "weekly", 0.75),
+    ...bilingual("/articles/miles-booking-guide", "monthly", 0.75),
     // 空港ハブ + 地方便特集
     ...bilingual("/airports", "weekly", 0.7),
     ...bilingual("/local-flights", "weekly", 0.7),

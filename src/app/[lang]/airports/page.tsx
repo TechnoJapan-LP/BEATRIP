@@ -9,27 +9,37 @@ import { AIRPORTS, type AirportRegion } from "@/data/airports";
 // ISR: 21600秒 (6時間)
 export const revalidate = 21600;
 
-export const metadata: Metadata = {
-  title: "日本国内の全空港一覧 | 主要空港〜地方空港の航空券セール | BEATRIP",
-  description:
-    "羽田・成田・関空などの主要空港から、松山・旭川・石垣などの地方・離島空港まで、日本国内45空港の発着セール情報を集約。お住まいのエリアから最安便を探せます。",
-  keywords: [
-    "空港一覧",
-    "国内空港",
-    "地方空港",
-    "空港 セール",
-    "格安航空券 空港",
-    "離島 空港",
-  ],
-  alternates: {
-    canonical: "https://beatrip.jp/airports",
-    languages: {
-      ja: "https://beatrip.jp/airports",
-      en: "https://beatrip.jp/en/airports",
-      "x-default": "https://beatrip.jp/airports",
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Every airport in Japan — flight sales from Haneda, Narita, Kansai and 42 more | BEATRIP"
+    : "日本国内の全空港一覧 | 主要空港〜地方空港の航空券セール | BEATRIP";
+  const description = isEn
+    ? "Browse flight sales from all 45 airports across Japan — from the major hubs (HND, NRT, KIX) to regional and island airports like Matsuyama, Asahikawa, and Ishigaki. Find the cheapest fare from the airport closest to you."
+    : "羽田・成田・関空などの主要空港から、松山・旭川・石垣などの地方・離島空港まで、日本国内45空港の発着セール情報を集約。お住まいのエリアから最安便を探せます。";
+  const path = isEn ? "/en/airports" : "/airports";
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    keywords: isEn
+      ? ["Japan airports", "Haneda flights", "Narita flights", "Kansai flights", "regional airports Japan", "Japan domestic flights"]
+      : ["空港一覧", "国内空港", "地方空港", "空港 セール", "格安航空券 空港", "離島 空港"],
+    alternates: {
+      canonical: `https://beatrip.jp${path}`,
+      languages: {
+        ja: "https://beatrip.jp/airports",
+        en: "https://beatrip.jp/en/airports",
+        "x-default": "https://beatrip.jp/airports",
+      },
     },
-  },
-};
+  };
+}
 
 const REGION_ORDER: AirportRegion[] = [
   "北海道",

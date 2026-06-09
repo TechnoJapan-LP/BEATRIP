@@ -14,27 +14,29 @@ import { getDestinationImage } from "@/lib/deals/destination-images";
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title = "ハワイ旅行ガイド｜オアフ・マウイ・ハワイ島の予約・比較 | BEATRIP";
-  const description =
-    "ハワイ旅行を最安値で予約。オアフ島ワイキキの王道から、マウイ・ハワイ島・カウアイの離島まで、ベストシーズン・必須持ち物・eSIM・現地アクティビティのガイドつき。BEATRIP厳選のハワイ専門予約サイトから比較できます。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Hawaii travel guide — Oahu, Maui, Big Island deals from Japan | BEATRIP"
+    : "ハワイ旅行ガイド｜オアフ・マウイ・ハワイ島の予約・比較 | BEATRIP";
+  const description = isEn
+    ? "Book Hawaii at the lowest fare. From Waikiki on Oahu to the outer islands of Maui, the Big Island, and Kauai — with the best time to visit, what to pack, eSIM tips, and local activities. Compare across BEATRIP's curated Hawaii booking partners."
+    : "ハワイ旅行を最安値で予約。オアフ島ワイキキの王道から、マウイ・ハワイ島・カウアイの離島まで、ベストシーズン・必須持ち物・eSIM・現地アクティビティのガイドつき。BEATRIP厳選のハワイ専門予約サイトから比較できます。";
+  const path = isEn ? "/en/hawaii" : "/hawaii";
   return {
     title,
     description,
-    keywords: [
-      "ハワイ 旅行",
-      "ハワイ ツアー",
-      "ハワイ 格安",
-      "オアフ島",
-      "ワイキキ",
-      "マウイ島",
-      "ハワイ島",
-      "ハワイ 航空券",
-      "ハワイ ベストシーズン",
-    ],
+    keywords: isEn
+      ? ["Hawaii travel", "Hawaii from Japan", "Oahu", "Waikiki", "Maui", "Big Island", "Hawaii flights", "best time to visit Hawaii"]
+      : ["ハワイ 旅行", "ハワイ ツアー", "ハワイ 格安", "オアフ島", "ワイキキ", "マウイ島", "ハワイ島", "ハワイ 航空券", "ハワイ ベストシーズン"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/hawaii",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/hawaii",
         en: "https://beatrip.jp/en/hawaii",

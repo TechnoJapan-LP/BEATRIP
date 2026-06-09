@@ -4,24 +4,34 @@ import { Header } from "@/components/header";
 // ISR: 21600秒キャッシュ (6時間: 航空会社マスタは静的)
 export const revalidate = 21600;
 
-export const metadata: Metadata = {
-  title: "航空会社セール一覧",
-  description:
-    "「ANA セール」「JAL セール」「Peach タイムセール」「Jetstar セール」で検索する方へ。日本発着の主要キャリア／LCC の最新セール・キャンペーン・割引情報を自動収集してまとめて掲載。次回開催時期の予測も。",
-  openGraph: {
-    title: "航空会社セール一覧",
-    description:
-      "ANA・JAL・Peach・Jetstar など日本発着の航空会社セールをリアルタイムで自動収集・横断比較。",
-  },
-  alternates: {
-    canonical: "https://beatrip.jp/airlines",
-    languages: {
-      ja: "https://beatrip.jp/airlines",
-      en: "https://beatrip.jp/en/airlines",
-      "x-default": "https://beatrip.jp/airlines",
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Airline sales from Japan — ANA, JAL, Peach, Jetstar and more"
+    : "航空会社セール一覧";
+  const description = isEn
+    ? "Track current sales, flash sales, and promo campaigns from every major Japanese carrier and LCC — ANA, JAL, Peach, Jetstar Japan, Scoot and more — auto-aggregated in one place. Plus forecasts for when the next sale is likely to run."
+    : "「ANA セール」「JAL セール」「Peach タイムセール」「Jetstar セール」で検索する方へ。日本発着の主要キャリア／LCC の最新セール・キャンペーン・割引情報を自動収集してまとめて掲載。次回開催時期の予測も。";
+  const path = isEn ? "/en/airlines" : "/airlines";
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    alternates: {
+      canonical: `https://beatrip.jp${path}`,
+      languages: {
+        ja: "https://beatrip.jp/airlines",
+        en: "https://beatrip.jp/en/airlines",
+        "x-default": "https://beatrip.jp/airlines",
+      },
     },
-  },
-};
+  };
+}
 import { AirlineCard } from "@/components/airlines/airline-card";
 import { airlines } from "@/data/airlines";
 import { loadAllSales } from "@/lib/store/sale-store";

@@ -14,28 +14,29 @@ import { getDestinationImage } from "@/lib/deals/destination-images";
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title = "沖縄旅行ガイド｜本島・宮古・石垣の予約・比較 | BEATRIP";
-  const description =
-    "沖縄旅行を最安値で予約。本島の王道リゾートから、宮古島・石垣島・西表島・久米島の離島まで、ベストシーズン・必需品・レンタカー・那覇空港アクセスのガイドつき。BEATRIP厳選の沖縄専門予約サイトから比較できます。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Okinawa travel guide — main island, Miyako, Ishigaki and beyond | BEATRIP"
+    : "沖縄旅行ガイド｜本島・宮古・石垣の予約・比較 | BEATRIP";
+  const description = isEn
+    ? "Book Okinawa at the lowest fare. From the main island's resort coast to the outer islands of Miyako, Ishigaki, Iriomote and Kume — with the best time to visit, what to pack, rental car tips, and Naha airport access. Compare across BEATRIP's curated Okinawa booking partners."
+    : "沖縄旅行を最安値で予約。本島の王道リゾートから、宮古島・石垣島・西表島・久米島の離島まで、ベストシーズン・必需品・レンタカー・那覇空港アクセスのガイドつき。BEATRIP厳選の沖縄専門予約サイトから比較できます。";
+  const path = isEn ? "/en/okinawa" : "/okinawa";
   return {
     title,
     description,
-    keywords: [
-      "沖縄 旅行",
-      "沖縄 ツアー",
-      "沖縄 格安",
-      "沖縄本島",
-      "宮古島",
-      "石垣島",
-      "西表島",
-      "久米島",
-      "沖縄 ベストシーズン",
-      "沖縄 レンタカー",
-    ],
+    keywords: isEn
+      ? ["Okinawa travel", "Okinawa from Tokyo", "Miyako Island", "Ishigaki", "Iriomote", "Naha", "Okinawa best season", "Okinawa rental car"]
+      : ["沖縄 旅行", "沖縄 ツアー", "沖縄 格安", "沖縄本島", "宮古島", "石垣島", "西表島", "久米島", "沖縄 ベストシーズン", "沖縄 レンタカー"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/okinawa",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/okinawa",
         en: "https://beatrip.jp/en/okinawa",

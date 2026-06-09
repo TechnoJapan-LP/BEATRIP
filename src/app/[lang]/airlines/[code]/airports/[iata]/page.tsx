@@ -49,34 +49,50 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { code, iata } = await params;
+  const { code, iata, lang } = await params;
   const airline = getAirlineByCode(code.toUpperCase());
   const airport = getAirportByCode(iata.toUpperCase());
   if (!airline || !airport) return { title: "Not Found" };
 
-  const title = `${airline.name}の${airport.fullNameJa}発着セール・航空券情報 | BEATRIP`;
-  const description = `${airline.name}（${airline.nameEn}）が${airport.fullNameJa}（${airport.iata}）で運航する航空券の最新セール情報・人気路線・予約サイト比較。${airport.tagline ?? ""}`;
+  const isEn = lang === "en";
+  const airlineName = isEn ? (airline.nameEn || airline.name) : airline.name;
+  const airportName = isEn ? `${airport.nameEn} Airport` : airport.fullNameJa;
+  const title = isEn
+    ? `${airlineName} flights from ${airportName} — current sales and fares | BEATRIP`
+    : `${airline.name}の${airport.fullNameJa}発着セール・航空券情報 | BEATRIP`;
+  const description = isEn
+    ? `Latest sales on ${airlineName} flights out of ${airportName} (${airport.iata}). Popular routes, fare comparisons across booking sites. ${airport.tagline ?? ""}`
+    : `${airline.name}（${airline.nameEn}）が${airport.fullNameJa}（${airport.iata}）で運航する航空券の最新セール情報・人気路線・予約サイト比較。${airport.tagline ?? ""}`;
 
-  const canonical = `https://beatrip.jp/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`;
+  const canonicalJa = `https://beatrip.jp/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`;
+  const canonicalEn = `https://beatrip.jp/en/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`;
+  const canonical = isEn ? canonicalEn : canonicalJa;
 
   return {
     title,
     description,
-    keywords: [
-      `${airline.name} ${airport.nameJa}`,
-      `${airline.name} ${airport.fullNameJa}`,
-      `${airline.name} ${airport.iata}`,
-      `${airline.nameEn} ${airport.iata}`,
-      `${airport.nameJa} ${airline.name} セール`,
-      `${airport.nameJa} ${airline.name} 格安`,
-    ],
+    keywords: isEn
+      ? [
+          `${airlineName} ${airport.nameEn}`,
+          `${airlineName} ${airport.iata}`,
+          `${airport.nameEn} ${airlineName} flights`,
+          `cheap ${airlineName} flights ${airport.nameEn}`,
+        ]
+      : [
+          `${airline.name} ${airport.nameJa}`,
+          `${airline.name} ${airport.fullNameJa}`,
+          `${airline.name} ${airport.iata}`,
+          `${airline.nameEn} ${airport.iata}`,
+          `${airport.nameJa} ${airline.name} セール`,
+          `${airport.nameJa} ${airline.name} 格安`,
+        ],
     openGraph: { title, description, type: "website" },
     alternates: {
       canonical,
       languages: {
-        ja: canonical,
-        en: `https://beatrip.jp/en/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`,
-        "x-default": canonical,
+        ja: canonicalJa,
+        en: canonicalEn,
+        "x-default": canonicalJa,
       },
     },
   };

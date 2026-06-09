@@ -11,28 +11,29 @@ import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title =
-    "夏休み・お盆の航空券・ホテル予約完全ガイド｜7月〜8月の最安タイミング | BEATRIP";
-  const description =
-    "夏休み・お盆の航空券・ホテルを最安で取る方法、人気ビーチ・リゾート目的地、ピーク回避テクニック、家族・カップル別おすすめを網羅。";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Summer & Obon travel from Japan — July–August booking guide | BEATRIP"
+    : "夏休み・お盆の航空券・ホテル予約完全ガイド｜7月〜8月の最安タイミング | BEATRIP";
+  const description = isEn
+    ? "How to book summer-vacation and Obon flights and hotels at the lowest price. Top beach and resort destinations, how to avoid the peak, plus picks for family trips and couples getaways."
+    : "夏休み・お盆の航空券・ホテルを最安で取る方法、人気ビーチ・リゾート目的地、ピーク回避テクニック、家族・カップル別おすすめを網羅。";
+  const path = isEn ? "/en/seasons/summer" : "/seasons/summer";
   return {
     title,
     description,
-    keywords: [
-      "夏休み 航空券",
-      "お盆 航空券",
-      "夏休み 旅行",
-      "お盆 旅行",
-      "夏休み 海外",
-      "夏休み ビーチ",
-      "8月 航空券 安い",
-      "夏休み 家族旅行",
-      "お盆 最安",
-    ],
+    keywords: isEn
+      ? ["Japan summer travel", "Obon travel", "August flights Japan", "summer beach Japan", "Japan summer destinations", "family travel Japan summer"]
+      : ["夏休み 航空券", "お盆 航空券", "夏休み 旅行", "お盆 旅行", "夏休み 海外", "夏休み ビーチ", "8月 航空券 安い", "夏休み 家族旅行", "お盆 最安"],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: "https://beatrip.jp/seasons/summer",
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/seasons/summer",
         en: "https://beatrip.jp/en/seasons/summer",

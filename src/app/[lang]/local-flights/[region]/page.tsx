@@ -102,30 +102,58 @@ export function generateStaticParams() {
   return Object.values(REGION_SLUGS).map((slug) => ({ region: slug }));
 }
 
+const REGION_EN: Record<AirportRegion, string> = {
+  北海道: "Hokkaido",
+  東北: "Tohoku",
+  関東: "Kanto",
+  中部: "Chubu",
+  近畿: "Kinki",
+  中国: "Chugoku",
+  四国: "Shikoku",
+  九州: "Kyushu",
+  沖縄: "Okinawa",
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { region: slug } = await params;
+  const { region: slug, lang } = await params;
   const region = SLUG_TO_REGION[slug.toLowerCase()];
   if (!region) return { title: "Not Found" };
 
+  const isEn = lang === "en";
   const airports = AIRPORTS.filter((a) => a.region === region);
-  const repNames = airports.slice(0, 3).map((a) => a.fullNameJa).join("・");
+  const repNamesJa = airports.slice(0, 3).map((a) => a.fullNameJa).join("・");
+  const repNamesEn = airports.slice(0, 3).map((a) => a.nameEn).join(", ");
+  const regionEn = REGION_EN[region];
 
-  const title = `${region}発の格安航空券セール｜主要空港・人気路線完全ガイド | BEATRIP`;
-  const description = `${region} (${repNames}) 発着の最新セール情報、就航航空会社、人気路線、ベストシーズンを集約。地方発の格安便を見逃さない。`;
+  const title = isEn
+    ? `Cheap flights from ${regionEn}, Japan — guide to airports and popular routes | BEATRIP`
+    : `${region}発の格安航空券セール｜主要空港・人気路線完全ガイド | BEATRIP`;
+  const description = isEn
+    ? `Latest flight sales from airports in ${regionEn}, Japan (${repNamesEn}) — carriers serving the region, popular routes, and the best time to travel. Don't miss cheap fares out of regional Japan.`
+    : `${region} (${repNamesJa}) 発着の最新セール情報、就航航空会社、人気路線、ベストシーズンを集約。地方発の格安便を見逃さない。`;
+  const path = isEn ? `/en/local-flights/${slug}` : `/local-flights/${slug}`;
 
   return {
     title,
     description,
-    keywords: [
-      `${region} 発 航空券`,
-      `${region} LCC`,
-      `${region} 格安`,
-      `${region} 空港`,
-      ...airports.slice(0, 6).map((a) => `${a.nameJa} セール`),
-    ],
+    keywords: isEn
+      ? [
+          `flights from ${regionEn}`,
+          `${regionEn} airports`,
+          `${regionEn} cheap flights`,
+          `${regionEn} Japan LCC`,
+          ...airports.slice(0, 6).map((a) => `${a.nameEn} flights`),
+        ]
+      : [
+          `${region} 発 航空券`,
+          `${region} LCC`,
+          `${region} 格安`,
+          `${region} 空港`,
+          ...airports.slice(0, 6).map((a) => `${a.nameJa} セール`),
+        ],
     openGraph: { title, description, type: "website" },
     alternates: {
-      canonical: `https://beatrip.jp/local-flights/${slug}`,
+      canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/local-flights/${slug}`,
         en: `https://beatrip.jp/en/local-flights/${slug}`,

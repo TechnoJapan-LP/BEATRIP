@@ -1,8 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { trackAffiliateClick } from "@/components/analytics";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
+import {
+  consumeTurnstileToken,
+  isTurnstileEnabled,
+  setTurnstileToken,
+} from "@/lib/security/click-token";
 
 export function StickyCTA({
   dealId,
@@ -21,6 +27,9 @@ export function StickyCTA({
   route?: string;
 }) {
   const [clicked, setClicked] = useState(false);
+  const handleToken = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
 
   function handleClick() {
     setClicked(true);
@@ -35,6 +44,7 @@ export function StickyCTA({
         deal_id: dealId,
         affiliate_provider: affiliateProvider,
         affiliate_url: affiliateUrl,
+        turnstile_token: consumeTurnstileToken(),
       });
       if (navigator.sendBeacon) {
         navigator.sendBeacon(
@@ -62,6 +72,7 @@ export function StickyCTA({
       // iOS のノッチ/ホームインジケータと重ならないよう safe-area を加算
       style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
     >
+      {isTurnstileEnabled() && <TurnstileWidget onToken={handleToken} />}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-baseline gap-2 min-w-0">
           <span className="text-lg font-heading tracking-wide text-zinc-900 dark:text-zinc-100 whitespace-nowrap">

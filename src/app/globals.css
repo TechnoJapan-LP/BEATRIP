@@ -94,13 +94,15 @@
   --secondary: #27272a;
   --secondary-foreground: #fafafa;
   --muted: #27272a;
-  --muted-foreground: #a1a1aa;
+  /* muted-foreground を一段明るく (zinc-400 → zinc-300相当) してコントラスト向上 */
+  --muted-foreground: #d4d4d8;
   --accent: #27272a;
   --accent-foreground: #fafafa;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: #27272a;
-  --input: #27272a;
-  --ring: #52525b;
+  /* border / input をやや明るくして要素境界の視認性を高める */
+  --border: #3f3f46;
+  --input: #3f3f46;
+  --ring: #71717a;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -149,6 +151,20 @@
   /* キーボードフォーカスを視覚的に分かりやすく（a11y） */
   :focus-visible {
     @apply outline-2 outline-offset-2 outline-zinc-900 dark:outline-zinc-100;
+  }
+
+  /* ダークモード時の低コントラスト補強:
+     全画面で text-zinc-500 / text-zinc-600 を 1 段明るくレベルアップ。
+     WCAG AA を満たすため、dark 背景 (#09090b〜#18181b) 上での読みやすさを底上げ。
+     個別 component に dark: クラスを足さなくても全体の品質が上がる。 */
+  .dark .text-zinc-500 {
+    color: #a1a1aa; /* zinc-400 */
+  }
+  .dark .text-zinc-600 {
+    color: #d4d4d8; /* zinc-300 */
+  }
+  .dark .text-zinc-400 {
+    color: #c4c4c8; /* やや明るく */
   }
 }
 

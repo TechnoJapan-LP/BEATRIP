@@ -7,24 +7,34 @@ import { SiteFooter } from "@/components/site-footer";
 // ISR: 3600秒キャッシュ (1時間)
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
-  title: "セール記事・攻略ガイド",
-  description:
-    "「航空会社セール」「格安航空券 攻略」で検索する方へ。ANA・JAL・Peach・Jetstar などのセール速報、最安値で取るための予約タイミング・路線別の傾向・旅行Tipsまで。BEATRIP編集部が毎日更新。",
-  openGraph: {
-    title: "セール記事・攻略ガイド",
-    description:
-      "航空会社セール速報、格安航空券の攻略ガイド、路線別の予約タイミング、旅行Tipsを毎日更新。",
-  },
-  alternates: {
-    canonical: "https://beatrip.jp/articles",
-    languages: {
-      ja: "https://beatrip.jp/articles",
-      en: "https://beatrip.jp/en/articles",
-      "x-default": "https://beatrip.jp/articles",
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Flight sale articles and booking guides"
+    : "セール記事・攻略ガイド";
+  const description = isEn
+    ? "Daily updates from the BEATRIP editorial team — flash sale alerts on ANA, JAL, Peach, Jetstar and more, plus booking-window guides, route-specific tips, and travel hacks for the cheapest fares out of Japan."
+    : "「航空会社セール」「格安航空券 攻略」で検索する方へ。ANA・JAL・Peach・Jetstar などのセール速報、最安値で取るための予約タイミング・路線別の傾向・旅行Tipsまで。BEATRIP編集部が毎日更新。";
+  const path = isEn ? "/en/articles" : "/articles";
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    alternates: {
+      canonical: `https://beatrip.jp${path}`,
+      languages: {
+        ja: "https://beatrip.jp/articles",
+        en: "https://beatrip.jp/en/articles",
+        "x-default": "https://beatrip.jp/articles",
+      },
     },
-  },
-};
+  };
+}
 
 export default async function ArticlesPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;

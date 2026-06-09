@@ -26,6 +26,7 @@ import { postSalesToBluesky } from "@/lib/social/bluesky";
 import { getPostedIds, markPosted } from "@/lib/social/posted-store";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
+import { writeAuditLog } from "@/lib/audit/audit-log";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -232,6 +233,17 @@ export async function GET(request: NextRequest) {
     };
 
     console.log(`[CRON] Scrape complete:`, JSON.stringify(summary, null, 2));
+    await writeAuditLog(request, {
+      action: "cron.scrape.complete",
+      target: airlineCode ?? "all",
+      metadata: {
+        airlines: results.length,
+        totalSales: summary.totalSales,
+        newSales: summary.changes.newSales,
+        generatedArticles,
+        elapsedMs: elapsed,
+      },
+    });
     return NextResponse.json(summary);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

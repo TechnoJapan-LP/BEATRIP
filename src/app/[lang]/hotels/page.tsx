@@ -11,18 +11,34 @@ import { getHotelDestinationsByRegion } from "@/data/hotel-destinations";
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 21600;
 
-export const metadata: Metadata = {
-  title: "ホテル予約・最安値検索｜目的地別の宿泊情報 | BEATRIP",
-  description: "東京・大阪・バンコク・ソウル・ホノルル等、人気目的地のホテルを最安値で検索。エリア別の特徴・相場・ベストシーズンも掲載。フライトとあわせて予約準備に。",
-  alternates: {
-    canonical: "https://beatrip.jp/hotels",
-    languages: {
-      ja: "https://beatrip.jp/hotels",
-      en: "https://beatrip.jp/en/hotels",
-      "x-default": "https://beatrip.jp/hotels",
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const isEn = lang === "en";
+  const title = isEn
+    ? "Hotels in Tokyo, Osaka, Bangkok, Seoul, Honolulu and more | BEATRIP"
+    : "ホテル予約・最安値検索｜目的地別の宿泊情報 | BEATRIP";
+  const description = isEn
+    ? "Compare best-priced hotels in Tokyo, Osaka, Bangkok, Seoul, Honolulu and other top destinations. Neighborhood guides, typical nightly rates, and the best time to visit — paired with current flight deals to the same city."
+    : "東京・大阪・バンコク・ソウル・ホノルル等、人気目的地のホテルを最安値で検索。エリア別の特徴・相場・ベストシーズンも掲載。フライトとあわせて予約準備に。";
+  const path = isEn ? "/en/hotels" : "/hotels";
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    alternates: {
+      canonical: `https://beatrip.jp${path}`,
+      languages: {
+        ja: "https://beatrip.jp/hotels",
+        en: "https://beatrip.jp/en/hotels",
+        "x-default": "https://beatrip.jp/hotels",
+      },
     },
-  },
-};
+  };
+}
 
 export default async function HotelsIndexPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
