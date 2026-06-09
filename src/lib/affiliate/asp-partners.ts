@@ -1,7 +1,7 @@
 /**
  * ASP 経由提携先のメタデータと BEATRIP 内での配置設計
  *
- * 各 partner は network (A8.net / バリューコマース / アクセストレード / 楽天アフィリエイト / 直リンク)
+ * 各 partner は network (A8.net mat トークン / 外部 ASP の click URL / 直リンク)
  * と env を持つ。env 未設定なら disabled = true となり UI 側で出さない
  * (収益が立たないリンクは表示しない方針)。
  *
@@ -16,14 +16,18 @@
  * ─── ネットワーク別の env 設計 ───
  * - network='a8'           : matEnv に A8 a8mat (例 "4B5OO8+1NJE1M+AD2+67RK2") を入れる
  *                            buildA8Link でクリック URL を組み立てる
- * - network='valuecommerce': matEnv に バリューコマースのクリック URL 全文を入れる
- *                            (例 "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=...")
+ * - network='external_url' : matEnv に任意 ASP のクリック URL 全文を入れる
+ *                            (バリューコマース / アクセストレード / 楽天アフィリエイト /
+ *                             Rakuten Advertising / TGアフィリエイト / felmat 等、ASP 中立)
  *                            ASP 側で素材ごとに URL が変わるため丸ごと保持
- * - network='accesstrade'  : matEnv にアクセストレードのクリック URL 全文を入れる
+ *                            (例 "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=...")
  *                            (例 "https://h.accesstrade.net/sp/cc?rk=...")
- * - network='rakuten'      : matEnv に楽天アフィリエイトのリンク URL を入れる
  *                            (例 "https://hb.afl.rakuten.co.jp/hgc/...")
  * - network='direct'       : 直リンク (A/B テスト・自社オファー用)。directUrl を使う
+ *
+ * クレカ・保険系の ASP は変動が激しい (例: アメックスが バリューコマース廃止 →
+ * Rakuten Advertising / TGアフィリエイト経由) ため、env 名は ASP 中立な
+ * `AFFILIATE_URL_*` プレフィックスで統一する。
  */
 
 import { buildA8Link, isValidA8Mat } from "./a8-link";
@@ -54,9 +58,14 @@ export type AspCategory =
 
 /**
  * 対応 ASP ネットワーク。
- * 日本のカード/保険系は A8 単一では揃わないため、複数 ASP を統一型で扱う。
+ * - 'a8'           : A8.net の a8mat トークンから URL を組み立てる
+ * - 'external_url' : 任意 ASP のクリック URL 全文を env にそのまま格納
+ *                    (バリューコマース / アクセストレード / 楽天アフィリエイト /
+ *                     Rakuten Advertising / TGアフィリエイト / felmat 等、ASP 中立)
+ *                    クレカ・保険系は ASP が変動しやすいため URL を直接保持する方式に統一
+ * - 'direct'       : directUrl フィールドの URL を直接使用 (自社オファー等)
  */
-export type AspNetwork = "a8" | "valuecommerce" | "accesstrade" | "rakuten" | "direct";
+export type AspNetwork = "a8" | "external_url" | "direct";
 
 export type AspPartner = {
   id: string;
@@ -73,20 +82,19 @@ export type AspPartner = {
   /**
    * env 名。network により入れる値のフォーマットが異なる:
    * - a8           : a8mat (例 "4B5OO8+ABCDE+AD2+12345")
-   * - valuecommerce: クリック URL 全文
-   * - accesstrade  : クリック URL 全文
-   * - rakuten      : 楽天アフィリエイトの URL
+   * - external_url : 任意 ASP のクリック URL 全文 (http(s):// で始まる)
    * - direct       : (任意) この場合は directUrl を直接使うので未使用でも可
    */
   matEnv: string;
   /**
-   * valuecommerce / accesstrade で別途 site_id 等が必要な場合の env 名。
-   * 現状はクリック URL 全文を matEnv に入れる方式に統一しているため通常未使用。
+   * 外部 ASP 経由 (network='external_url') の場合に、想定される ASP 候補。
+   * UI/コードには影響しないドキュメント目的のフィールド。
+   * クレカ・保険は ASP 変動が激しいため、特定 ASP に依存しない設計。
    */
-  siteIdEnv?: string;
+  preferredAsp?: string;
   /**
    * network='direct' 用の直リンク URL。
-   * a8/valuecommerce/accesstrade/rakuten では使われない。
+   * a8 / external_url では使われない。
    */
   directUrl?: string;
   /** デフォルトの遷移先 (a8ejpredirect なしの場合に広告主LP に飛ぶ) */
@@ -591,19 +599,20 @@ export const ASP_PARTNERS: AspPartner[] = [
 
   // ─── クレジットカード ───
   // 旅行系クレカは 1 件 ¥10,000〜¥25,000 と高単価。マイル・海外保険・ラウンジの
-  // 3 軸で並べる。各カードの ASP は実情に合わせて分配:
-  //   - アメックス系     → バリューコマース
-  //   - JAL/ANA/SMBC/PayPay → アクセストレード
-  //   - 楽天カード        → 楽天アフィリエイト
-  //   - エポス/セゾン/MUFG → A8.net (既存)
-  //   - ダイナース        → バリューコマース
+  // 3 軸で並べる。
+  // クレカ・保険系の ASP は変動が激しい (例: アメックスがバリューコマース廃止 →
+  // Rakuten Advertising / TGアフィリエイト経由) ため、env 名は ASP 中立な
+  // `AFFILIATE_URL_*` プレフィックスで統一する。preferredAsp は推奨候補の参考値。
+  //   - エポス/セゾン/MUFG → A8.net (既存・mat トークン)
+  //   - その他           → external_url (任意 ASP のクリック URL)
   {
     id: "amex-skytraveler",
     label: "アメックス・スカイ・トラベラー・カード",
     tagline: "マイル特化・年会費 11,000 円・3 倍ボーナスポイント",
     categories: ["credit-card"],
-    network: "valuecommerce",
-    matEnv: "VC_AMEX_SKYTRAVELER_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_AMEX_SKYTRAVELER",
+    preferredAsp: "Rakuten Advertising / TGアフィリエイト / felmat / 直接申込",
     accent: "amber",
     priority: 1,
   },
@@ -612,8 +621,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "アメックス・ゴールド・プリファード・カード",
     tagline: "海外旅行保険＋空港ラウンジ＋ポイント還元のオールラウンド",
     categories: ["credit-card"],
-    network: "valuecommerce",
-    matEnv: "VC_AMEX_GOLD_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_AMEX_GOLD",
+    preferredAsp: "Rakuten Advertising / TGアフィリエイト / felmat / 直接申込",
     accent: "amber",
     priority: 1,
   },
@@ -622,8 +632,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "アメックス・プラチナ・カード",
     tagline: "プライオリティ・パス無料・コンシェルジュ・最高 1 億円補償",
     categories: ["credit-card"],
-    network: "valuecommerce",
-    matEnv: "VC_AMEX_PLATINUM_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_AMEX_PLATINUM",
+    preferredAsp: "Rakuten Advertising / TGアフィリエイト / felmat / 直接申込",
     accent: "amber",
     priority: 2,
   },
@@ -632,8 +643,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "JAL カード",
     tagline: "搭乗ごとにマイルが貯まる・国内線特典航空券に強い",
     categories: ["credit-card"],
-    network: "accesstrade",
-    matEnv: "AT_JAL_CARD_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_JAL_CARD",
+    preferredAsp: "アクセストレード / felmat",
     accent: "rose",
     priority: 1,
   },
@@ -642,8 +654,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "ANA カード",
     tagline: "ANA マイル・スカイコイン・継続ボーナスマイル",
     categories: ["credit-card"],
-    network: "accesstrade",
-    matEnv: "AT_ANA_CARD_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_ANA_CARD",
+    preferredAsp: "アクセストレード",
     accent: "sky",
     priority: 1,
   },
@@ -672,8 +685,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "ダイナースクラブカード",
     tagline: "国内外ラウンジ・グルメ優待・コンパニオンカード無料",
     categories: ["credit-card"],
-    network: "valuecommerce",
-    matEnv: "VC_DINERS_CLUB_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_DINERS_CLUB",
+    preferredAsp: "バリューコマース / Rakuten Advertising",
     accent: "zinc",
     priority: 2,
   },
@@ -683,8 +697,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "楽天カード",
     tagline: "年会費無料・楽天ポイント還元・楽天トラベルとの相性◎",
     categories: ["credit-card"],
-    network: "rakuten",
-    matEnv: "RAKUTEN_CARD_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_RAKUTEN_CARD",
+    preferredAsp: "楽天アフィリエイト (即時)",
     accent: "rose",
     priority: 1,
   },
@@ -693,8 +708,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "三井住友カード（NL）",
     tagline: "年会費永年無料・ナンバーレス・対象店舗で最大 7% 還元",
     categories: ["credit-card"],
-    network: "accesstrade",
-    matEnv: "AT_SMBC_NL_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_SMBC_NL",
+    preferredAsp: "アクセストレード / felmat",
     accent: "blue",
     priority: 1,
   },
@@ -713,25 +729,25 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "PayPay カード",
     tagline: "PayPay 残高チャージ可・Yahoo!ショッピングでポイント還元",
     categories: ["credit-card"],
-    network: "accesstrade",
-    matEnv: "AT_PAYPAY_CARD_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_PAYPAY_CARD",
+    preferredAsp: "アクセストレード",
     accent: "rose",
     priority: 2,
   },
 
   // ─── 海外旅行保険 ───
   // 1 件 ¥1,000〜¥3,000。短期渡航向けネット保険を中心に。
-  //   - AIG      → バリューコマース
-  //   - Chubb    → アクセストレード
-  //   - 損保ジャパン off! / tabiho → A8 (既存)
-  //   - 楽天損保 → 楽天アフィリエイト
+  //   - 損保ジャパン off! / tabiho → A8 (既存・mat トークン)
+  //   - その他 → external_url (任意 ASP のクリック URL)
   {
     id: "aig-travel-insurance",
     label: "AIG 損保 海外旅行保険",
     tagline: "ネット完結・出発当日まで申込可・24 時間日本語サポート",
     categories: ["insurance"],
-    network: "valuecommerce",
-    matEnv: "VC_AIG_INSURANCE_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_AIG_INSURANCE",
+    preferredAsp: "バリューコマース / Rakuten Advertising",
     accent: "blue",
     priority: 1,
   },
@@ -740,8 +756,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "Chubb 損保 海外旅行保険",
     tagline: "オンライン申込・短期から長期まで柔軟プラン",
     categories: ["insurance"],
-    network: "accesstrade",
-    matEnv: "AT_CHUBB_INSURANCE_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_CHUBB_INSURANCE",
+    preferredAsp: "アクセストレード",
     accent: "violet",
     priority: 1,
   },
@@ -760,8 +777,9 @@ export const ASP_PARTNERS: AspPartner[] = [
     label: "楽天損保 海外旅行保険",
     tagline: "楽天ポイントが貯まる・ネット申込で割引",
     categories: ["insurance"],
-    network: "rakuten",
-    matEnv: "RAKUTEN_INSURANCE_URL",
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_RAKUTEN_INSURANCE",
+    preferredAsp: "楽天アフィリエイト (即時)",
     accent: "rose",
     priority: 2,
   },
@@ -790,9 +808,7 @@ function isPartnerEnabled(partner: AspPartner): boolean {
   switch (partner.network) {
     case "a8":
       return isValidA8Mat(process.env[partner.matEnv]);
-    case "valuecommerce":
-    case "accesstrade":
-    case "rakuten": {
+    case "external_url": {
       const v = process.env[partner.matEnv];
       // クリック URL 全文を入れる方式なので http(s) で始まる文字列を要求
       return typeof v === "string" && /^https?:\/\//.test(v.trim());
@@ -819,9 +835,7 @@ export function getActiveAspPartners(category: AspCategory): AspPartner[] {
  * partner のクリック URL を組み立て。
  * network ごとに env の解釈が異なる:
  *  - a8           : a8mat を A8 のクリック URL に組み立てる (任意で redirect 付与)
- *  - valuecommerce: env に入っているクリック URL 全文をそのまま返す
- *  - accesstrade  : 同上
- *  - rakuten      : 同上
+ *  - external_url : env に入っているクリック URL 全文をそのまま返す (任意 ASP 中立)
  *  - direct       : directUrl をそのまま返す
  *
  * @param destinationUrl A8 の a8ejpredirect 用。他 network では現状無視 (ASP 側の
@@ -842,9 +856,7 @@ export function getAspPartnerUrl(
         destinationUrl ? { redirectUrl: destinationUrl } : undefined
       );
     }
-    case "valuecommerce":
-    case "accesstrade":
-    case "rakuten": {
+    case "external_url": {
       const url = process.env[partner.matEnv];
       if (!url) return null;
       return url.trim();
