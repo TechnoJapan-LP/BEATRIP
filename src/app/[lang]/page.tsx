@@ -224,6 +224,18 @@ export default async function Home({
           />
         </section>
 
+        {/* 高単価 ASP の上位露出: ホーム ファーストビュー直下 */}
+        <section className="mb-12">
+          <JapanesePartnersPanel
+            title="旅行をもっとお得に"
+            subtitle="BEATRIP 厳選の旅行関連パートナー"
+            categories={["insurance", "credit-card", "cruise", "esim-wifi"]}
+            compact
+            maxChips={6}
+            source="home_top_premium"
+          />
+        </section>
+
         <section id="deals">
           <div className="mb-8">
             <h1 className="font-heading text-3xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-4xl lg:text-5xl">

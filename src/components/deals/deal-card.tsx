@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode } from "@/data/airlines";
 import { cityNameJa } from "@/lib/airport-names";
 import type { DealSchema } from "@/data/deal-schema";
+import { CountdownBadge } from "@/components/deals/countdown-badge";
 
 const badgeConfig = {
   NEW: { label: "NEW", className: "bg-emerald-500 text-white hover:bg-emerald-600" },
@@ -70,11 +71,12 @@ export function DealCard({
             </Badge>
           )}
 
-          <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
+          <div className="absolute top-2 right-2 flex flex-col items-end gap-1 sm:top-3 sm:right-3">
             <div className="flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 backdrop-blur-sm sm:gap-1 sm:px-2.5 sm:py-1 sm:text-xs">
               <TrendingDown className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
               -{deal.discount_percent}%
             </div>
+            <CountdownBadge deadline={deal.booking_deadline} />
           </div>
 
           {deal.seats_remaining !== undefined && deal.seats_remaining <= 10 && (

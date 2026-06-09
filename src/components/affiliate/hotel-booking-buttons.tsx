@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, TrendingDown } from "lucide-react";
 import {
   HOTEL_SEARCH_PROVIDERS,
   type HotelDirectUrls,
@@ -50,32 +50,53 @@ export function HotelBookingButtons({
   size?: "sm" | "md";
   className?: string;
 }) {
-  const padding =
+  const basePadding =
     size === "md"
       ? "px-3 py-2 text-sm sm:py-1.5 sm:text-xs"
       : "px-3 py-1.5 text-xs sm:px-2.5 sm:py-1 sm:text-[11px]";
+  const priorityPadding =
+    size === "md"
+      ? "px-3.5 py-2.5 text-sm sm:py-2 sm:text-[13px]"
+      : "px-3.5 py-2 text-[13px] sm:px-3 sm:py-1.5 sm:text-xs";
 
   return (
-    <div className={`flex flex-wrap gap-1.5 ${className}`}>
-      {HOTEL_SEARCH_PROVIDERS.map((p) => (
-        <a
-          key={p.id}
-          href={p.url(hotelName, cityNameEn, { checkIn, checkOut }, otaUrls)}
-          target="_blank"
-          rel="sponsored noopener noreferrer"
-          onClick={() =>
-            trackHotelClick({
-              destinationCode: destinationCode ?? cityNameEn,
-              dealId,
-              provider: p.id,
-            })
-          }
-          className={`group inline-flex items-center gap-1 rounded-full ${padding} font-bold ring-1 transition-colors ${ACCENT_CLASS[p.accent]}`}
-        >
-          {p.label}
-          <ArrowUpRight className="h-2.5 w-2.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-        </a>
-      ))}
+    <div className={`space-y-2 ${className}`}>
+      {/* 4 OTA 比較サマリー: CTA 群の心理的 anchor */}
+      <div className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-200 dark:ring-emerald-800">
+        <TrendingDown className="h-3.5 w-3.5" />
+        <span>
+          {HOTEL_SEARCH_PROVIDERS.length} サイトで価格比較
+          <span className="ml-1.5 font-medium text-emerald-600 dark:text-emerald-300">
+            — 最安値が見つかります
+          </span>
+        </span>
+      </div>
+
+      <div className="flex flex-wrap gap-1.5">
+        {HOTEL_SEARCH_PROVIDERS.map((p) => {
+          const padding = p.priority ? priorityPadding : basePadding;
+          const weight = p.priority ? "font-extrabold" : "font-bold";
+          return (
+            <a
+              key={p.id}
+              href={p.url(hotelName, cityNameEn, { checkIn, checkOut }, otaUrls)}
+              target="_blank"
+              rel="sponsored noopener noreferrer"
+              onClick={() =>
+                trackHotelClick({
+                  destinationCode: destinationCode ?? cityNameEn,
+                  dealId,
+                  provider: p.id,
+                })
+              }
+              className={`group inline-flex items-center gap-1 rounded-full ${padding} ${weight} ring-1 transition-colors ${ACCENT_CLASS[p.accent]}`}
+            >
+              {p.label}
+              <ArrowUpRight className="h-2.5 w-2.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          );
+        })}
+      </div>
     </div>
   );
 }

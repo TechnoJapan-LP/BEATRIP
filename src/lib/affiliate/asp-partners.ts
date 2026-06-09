@@ -34,6 +34,7 @@ export type AspCategory =
   | "transport-europe"    // 欧州交通 (鉄道・バス)
   | "esim-wifi"           // eSIM / Wi-Fi レンタル
   | "insurance"           // 海外旅行保険
+  | "credit-card"         // プレミアム / 旅行系クレジットカード
   | "transfer"            // 空港送迎
   | "cruise"              // クルーズ旅行
   | "airline-direct"      // 海外航空会社直販
@@ -69,7 +70,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["flight-domestic"],
     matEnv: "A8_AIRTRIP_DOMESTIC_FLIGHT_MAT",
     accent: "rose",
-    priority: 1,
+    priority: 2,
   },
   {
     id: "airtrip-rental",
@@ -79,7 +80,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["rental-car"],
     matEnv: "A8_AIRTRIP_RENTAL_MAT",
     accent: "rose",
-    priority: 5,
+    priority: 3,
   },
   {
     id: "airtrip-night-bus",
@@ -88,7 +89,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["bus-domestic"],
     matEnv: "A8_AIRTRIP_NIGHT_BUS_MAT",
     accent: "rose",
-    priority: 6,
+    priority: 3,
   },
   {
     id: "airtrip-overseas-package",
@@ -97,7 +98,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["flight-overseas", "tour-overseas"],
     matEnv: "A8_AIRTRIP_OVERSEAS_PACKAGE_MAT",
     accent: "rose",
-    priority: 2,
+    priority: 1,
   },
   {
     id: "airtrip-plus",
@@ -115,7 +116,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-package", "tour-okinawa"],
     matEnv: "A8_AIRTRIP_DOMESTIC_TOUR_MAT",
     accent: "rose",
-    priority: 4,
+    priority: 3,
   },
   {
     id: "airtrip-hawaii",
@@ -133,7 +134,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["hotel-domestic"],
     matEnv: "A8_AIRTRIP_DOMESTIC_HOTEL_MAT",
     accent: "rose",
-    priority: 5,
+    priority: 2,
   },
 
   // ─── 大手旅行代理店 ───
@@ -145,7 +146,8 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-package", "hotel-domestic", "hotel-overseas"],
     matEnv: "A8_JTB_MAT",
     accent: "blue",
-    priority: 1,
+    // tour-package / hotel 系統では高 EPC のため上位扱い
+    priority: 2,
   },
   {
     id: "okinawa-tourist",
@@ -155,7 +157,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-okinawa"],
     matEnv: "A8_OKINAWA_TOURIST_MAT",
     accent: "emerald",
-    priority: 1,
+    priority: 2,
   },
   {
     id: "newt",
@@ -165,7 +167,8 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-overseas", "tour-package"],
     matEnv: "A8_NEWT_MAT",
     accent: "sky",
-    priority: 2,
+    // 海外ツアーは高単価のため上位
+    priority: 1,
   },
 
   // ─── ホテル系 ───
@@ -177,7 +180,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["hotel-domestic"],
     matEnv: "A8_YAHOO_TRAVEL_MAT",
     accent: "violet",
-    priority: 2,
+    priority: 3,
   },
   {
     id: "ichikyu",
@@ -198,6 +201,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     accent: "rose",
     priority: 2,
   },
+  // (hotel-luxury) 一休系は priority=1 維持
   {
     id: "travelist-hotel",
     label: "トラベリスト（国内ホテル）",
@@ -205,7 +209,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["hotel-domestic"],
     matEnv: "A8_TRAVELIST_HOTEL_MAT",
     accent: "sky",
-    priority: 4,
+    priority: 3,
   },
   {
     id: "resort-glamping",
@@ -214,7 +218,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["hotel-glamping"],
     matEnv: "A8_RESORT_GLAMPING_MAT",
     accent: "emerald",
-    priority: 1,
+    priority: 2,
   },
 
   // ─── 海外航空券・ツアー ───
@@ -227,6 +231,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     accent: "sky",
     priority: 2,
   },
+  // 海外系は単価高めだが PV per click が分散するため price=2 で並列扱い
   {
     id: "travelwest-package",
     label: "トラベルウエスト（航空券＋ホテル）",
@@ -234,7 +239,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-package", "tour-overseas"],
     matEnv: "A8_TRAVELWEST_PACKAGE_MAT",
     accent: "sky",
-    priority: 3,
+    priority: 2,
   },
   {
     id: "travelwest-tour",
@@ -243,7 +248,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-overseas"],
     matEnv: "A8_TRAVELWEST_TOUR_MAT",
     accent: "sky",
-    priority: 3,
+    priority: 2,
   },
   {
     id: "travelist-overseas-flight",
@@ -252,7 +257,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["flight-overseas"],
     matEnv: "A8_TRAVELIST_OVERSEAS_FLIGHT_MAT",
     accent: "sky",
-    priority: 3,
+    priority: 2,
   },
 
   // ─── 国内航空券 (エアトリ以外) ───
@@ -273,7 +278,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["flight-domestic"],
     matEnv: "A8_CHEAP_FLIGHT_MALL_MAT",
     accent: "rose",
-    priority: 4,
+    priority: 3,
   },
   {
     id: "travelist-domestic-flight",
@@ -282,7 +287,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["flight-domestic"],
     matEnv: "A8_TRAVELIST_DOMESTIC_FLIGHT_MAT",
     accent: "sky",
-    priority: 5,
+    priority: 3,
   },
 
   // ─── 鉄道・交通 ───
@@ -302,7 +307,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["flight-domestic"],
     matEnv: "A8_NAVITIME_FLIGHT_MAT",
     accent: "emerald",
-    priority: 5,
+    priority: 3,
   },
   {
     id: "omio",
@@ -353,7 +358,8 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["esim-wifi"],
     matEnv: "A8_GLOBAL_WIFI_MAT",
     accent: "zinc",
-    priority: 3,
+    // ハードウェアレンタルは EPC 高い (1 件 ¥800〜1500)
+    priority: 1,
   },
   {
     id: "voye-global",
@@ -362,7 +368,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["esim-wifi"],
     matEnv: "A8_VOYE_GLOBAL_MAT",
     accent: "violet",
-    priority: 2,
+    priority: 1,
   },
   {
     id: "trifa",
@@ -380,7 +386,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["esim-wifi"],
     matEnv: "A8_TORA_ESIM_MAT",
     accent: "amber",
-    priority: 4,
+    priority: 3,
   },
   {
     id: "japan-global-esim",
@@ -389,7 +395,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["esim-wifi"],
     matEnv: "A8_JAPAN_GLOBAL_ESIM_MAT",
     accent: "blue",
-    priority: 5,
+    priority: 3,
   },
   {
     id: "saily",
@@ -398,7 +404,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["esim-wifi"],
     matEnv: "A8_SAILY_MAT",
     accent: "emerald",
-    priority: 6,
+    priority: 3,
   },
 
   // ─── 航空会社直販 ───
@@ -451,7 +457,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-package", "hotel-domestic"],
     matEnv: "A8_BIG_HOLIDAY_MAT",
     accent: "emerald",
-    priority: 4,
+    priority: 3,
   },
   {
     id: "nippon-travel",
@@ -469,7 +475,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-package", "flight-domestic"],
     matEnv: "A8_J_TRIP_MAT",
     accent: "rose",
-    priority: 4,
+    priority: 3,
   },
   {
     id: "needs-tour",
@@ -487,7 +493,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["tour-package", "flight-domestic"],
     matEnv: "A8_TRAVELWEST_DOMESTIC_PACKAGE_MAT",
     accent: "sky",
-    priority: 5,
+    priority: 3,
   },
 
   // ─── クルーズ ───
@@ -507,12 +513,18 @@ export function getAspPartner(id: string): AspPartner | undefined {
   return ASP_PARTNERS.find((p) => p.id === id);
 }
 
-/** 指定カテゴリで、ENV 設定済み (= 有効) の partner だけ返す */
+/**
+ * 指定カテゴリで、ENV 設定済み (= 有効) の partner だけ返す。
+ * 並び順: priority asc → label asc (priority=1 を最上位に固定露出)。
+ */
 export function getActiveAspPartners(category: AspCategory): AspPartner[] {
   return ASP_PARTNERS.filter(
     (p) =>
       p.categories.includes(category) && isValidA8Mat(process.env[p.matEnv])
-  ).sort((a, b) => a.priority - b.priority);
+  ).sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    return a.label.localeCompare(b.label, "ja");
+  });
 }
 
 /** partner の クリック URL を組み立て */

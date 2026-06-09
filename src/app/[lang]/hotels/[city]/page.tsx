@@ -28,6 +28,7 @@ import { HotelMetaRow } from "@/components/hotels/hotel-meta-row";
 import { CityPracticalCard } from "@/components/hotels/city-practical-card";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
+import { RecentlyViewedTracker } from "@/components/recently-viewed/recently-viewed-tracker";
 
 type Props = { params: Promise<{ city: string; lang: string;}> };
 
@@ -188,6 +189,16 @@ export default async function HotelCityPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <RecentlyViewedTracker
+        item={{
+          type: "hotel",
+          id: d.slug,
+          label: d.nameJa,
+          sublabel: d.tagline,
+          href: `/hotels/${d.slug}`,
+          imageUrl: d.image ?? undefined,
+        }}
       />
       <Header />
 

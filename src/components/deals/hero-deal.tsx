@@ -10,6 +10,7 @@ import {
   useDictionary,
   useLocalizedHref,
 } from "@/components/i18n/locale-provider";
+import { CountdownBadge } from "@/components/deals/countdown-badge";
 
 function formatPrice(p: number) {
   return new Intl.NumberFormat("ja-JP").format(p);
@@ -50,10 +51,13 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
 
-        {/* 上部: 今週の最大割引バッジ */}
-        <div className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full bg-rose-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white sm:left-6 sm:top-6 sm:text-xs">
-          <Flame className="h-3.5 w-3.5" />
-          {t.badge}
+        {/* 上部: 今週の最大割引バッジ + セール終了カウントダウン */}
+        <div className="absolute left-4 top-4 flex flex-col items-start gap-1.5 sm:left-6 sm:top-6">
+          <div className="flex items-center gap-1.5 rounded-full bg-rose-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white sm:text-xs">
+            <Flame className="h-3.5 w-3.5" />
+            {t.badge}
+          </div>
+          <CountdownBadge deadline={deal.booking_deadline} />
         </div>
 
         {/* 下部: 情報 */}

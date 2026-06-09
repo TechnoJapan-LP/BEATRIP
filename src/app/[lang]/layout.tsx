@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 import { Analytics } from "@/components/analytics";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
+import { RecentlyViewedDrawer } from "@/components/recently-viewed/recently-viewed-drawer";
 import { getDictionary, hasLocale, LOCALES } from "./dictionaries";
 import "../globals.css";
 
@@ -176,6 +177,7 @@ export default async function RootLayout({
           <ScrollToTop />
           {children}
           <MobileBottomNav />
+          <RecentlyViewedDrawer />
 
           {/* アナリティクス: Vercel Analytics + Speed Insights + GA4 */}
           <Analytics />

@@ -4,6 +4,7 @@
 // が発生しうる。クリック計測は TrackedPartnerLink (小さな client wrapper) に切り出し、
 // パネル本体はサーバーで env を読んでレンダリングする。
 
+import { Star } from "lucide-react";
 import {
   getActiveAspPartners,
   getAspPartnerUrl,
@@ -46,6 +47,7 @@ const CATEGORY_LABELS: Record<AspCategory, string> = {
   "transport-europe": "欧州交通",
   "esim-wifi": "eSIM / Wi-Fi",
   "insurance": "海外旅行保険",
+  "credit-card": "旅行系カード",
   "transfer": "空港送迎",
   "cruise": "クルーズ",
   "airline-direct": "航空会社直販",
@@ -57,6 +59,8 @@ export function JapanesePartnersPanel({
   categories,
   destinationCode,
   source,
+  compact = false,
+  maxChips,
 }: {
   title?: string;
   subtitle?: string;
@@ -66,6 +70,10 @@ export function JapanesePartnersPanel({
   destinationCode?: string;
   /** GA4 計測用の起点ページ識別子 */
   source?: string;
+  /** コンパクト mode (chip 数を絞る + grouping 廃止) */
+  compact?: boolean;
+  /** 表示 chip の上限 (compact 時のデフォルト 6) */
+  maxChips?: number;
 }) {
   // カテゴリごとに有効 partner を取得 + 重複排除
   const seenIds = new Set<string>();
@@ -85,6 +93,46 @@ export function JapanesePartnersPanel({
   // 1 つも有効 partner がなければ panel 自体を出さない
   if (groups.length === 0) return null;
 
+  // compact mode: グループを潰して priority 順で chip を maxChips 件に絞る
+  if (compact) {
+    const limit = maxChips ?? 6;
+    const flat = groups
+      .flatMap((g) =>
+        g.partners.map((p) => ({ partner: p, category: g.category }))
+      )
+      .sort((a, b) => a.partner.priority - b.partner.priority)
+      .slice(0, limit);
+
+    if (flat.length === 0) return null;
+
+    return (
+      <aside className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
+        <header className="border-b border-zinc-100 dark:border-zinc-800 px-5 py-3">
+          <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+            {title}
+          </h3>
+          <p className="text-[11px] text-zinc-500 mt-0.5">{subtitle}</p>
+        </header>
+        <div className="px-5 py-3 flex flex-wrap gap-1.5 items-center">
+          {flat.map(({ partner, category }) => {
+            const href = getAspPartnerUrl(partner);
+            if (!href) return null;
+            return (
+              <PartnerChipWithBadge
+                key={partner.id}
+                partner={partner}
+                category={category}
+                href={href}
+                destinationCode={destinationCode}
+                source={source}
+              />
+            );
+          })}
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
       <header className="border-b border-zinc-100 dark:border-zinc-800 px-5 py-3">
@@ -100,21 +148,18 @@ export function JapanesePartnersPanel({
             <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">
               {CATEGORY_LABELS[category]}
             </p>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1.5 items-center">
               {partners.map((p) => {
                 const href = getAspPartnerUrl(p);
                 if (!href) return null;
                 return (
-                  <TrackedPartnerLink
+                  <PartnerChipWithBadge
                     key={p.id}
-                    href={href}
-                    partnerId={p.id}
+                    partner={p}
                     category={category}
+                    href={href}
                     destinationCode={destinationCode}
                     source={source}
-                    label={p.label}
-                    accent={p.accent}
-                    title={p.tagline}
                   />
                 );
               })}
@@ -123,5 +168,52 @@ export function JapanesePartnersPanel({
         ))}
       </div>
     </aside>
+  );
+}
+
+/**
+ * 1 件分の partner chip。priority=1 の場合は「おすすめ」バッジ付きで wrap。
+ * チップ本体のスタイルは既存 TrackedPartnerLink を維持し、バッジは
+ * 周囲を inline-flex で包んだ装飾のみで CLS を最小化する。
+ */
+function PartnerChipWithBadge({
+  partner,
+  category,
+  href,
+  destinationCode,
+  source,
+}: {
+  partner: AspPartner;
+  category: AspCategory;
+  href: string;
+  destinationCode?: string;
+  source?: string;
+}) {
+  const link = (
+    <TrackedPartnerLink
+      href={href}
+      partnerId={partner.id}
+      category={category}
+      destinationCode={destinationCode}
+      source={source}
+      label={partner.label}
+      accent={partner.accent}
+      title={partner.tagline}
+    />
+  );
+
+  if (partner.priority !== 1) return link;
+
+  return (
+    <span className="relative inline-flex items-center">
+      {link}
+      <span
+        className="ml-1 inline-flex items-center gap-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-200"
+        title="BEATRIP おすすめ"
+      >
+        <Star className="h-2.5 w-2.5 fill-amber-500 text-amber-500" />
+        おすすめ
+      </span>
+    </span>
   );
 }

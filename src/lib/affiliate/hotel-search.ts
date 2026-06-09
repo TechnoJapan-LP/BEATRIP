@@ -46,6 +46,12 @@ export type HotelSearchProvider = {
   /** ボタン色のキー (Tailwind の色) */
   accent: "blue" | "sky" | "rose" | "emerald" | "violet" | "amber";
   /**
+   * 高コミッション OTA を視覚的に目立たせるためのフラグ。
+   * true の provider は hotel-booking-buttons.tsx で 1px 大きい padding + 太字で
+   * 強調表示される。既存呼び出し元は priority を渡さなくても従来通り動作。
+   */
+  priority?: boolean;
+  /**
    * hotelName が空文字列なら都市検索として扱う。
    * directUrls が与えられかつ provider 一致時は検索 URL を捨てて直リンクを返す。
    */
@@ -67,6 +73,7 @@ const BOOKING: HotelSearchProvider = {
   id: "booking",
   label: "Booking.com",
   accent: "blue",
+  priority: true,
   url: (hotelName, cityNameEn, opts, directUrls) => {
     if (directUrls?.booking) {
       return wrapWithTpMedia("TP_BOOKING_PROGRAM_ID", directUrls.booking);
@@ -112,6 +119,7 @@ const AGODA: HotelSearchProvider = {
   id: "agoda",
   label: "Agoda",
   accent: "rose",
+  priority: true,
   url: (hotelName, cityNameEn, opts, directUrls) => {
     if (directUrls?.agoda) {
       return wrapWithTpMedia("TP_AGODA_PROGRAM_ID", directUrls.agoda);
@@ -159,9 +167,19 @@ const HOTELLOOK: HotelSearchProvider = {
   },
 };
 
+/**
+ * 表示順序は高コミッション順:
+ *   1. Booking.com (高: ~25-40%)
+ *   2. Agoda       (高: ~25-35%)
+ *   3. Hotellook   (TravelPayouts 経由: ~7%)
+ *   4. Trip.com    (中: ~5-10%)
+ *
+ * priority: true の provider (Booking / Agoda) は hotel-booking-buttons.tsx 側で
+ * 少し大きい padding + 太字で強調表示される。
+ */
 export const HOTEL_SEARCH_PROVIDERS: HotelSearchProvider[] = [
   BOOKING,
-  TRIP,
   AGODA,
   HOTELLOOK,
+  TRIP,
 ];

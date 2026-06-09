@@ -36,6 +36,8 @@ import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
 import { DealCarousel } from "@/components/deals/deal-carousel";
 import { FavoriteButton } from "@/components/deals/favorite-button";
 import { CountdownTimer } from "@/components/deals/countdown-timer";
+import { CountdownBadge } from "@/components/deals/countdown-badge";
+import { SocialProofBadge } from "@/components/deals/social-proof-badge";
 import { ViewCounter } from "@/components/deals/view-counter";
 import { RecentActivity } from "@/components/deals/recent-activity";
 import { getActiveDeals, getDealById as getDealByIdFromService, getHistoricalPrices } from "@/lib/deals/deal-service";
@@ -43,6 +45,18 @@ import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
 import { buildCompareLinksFromDeal } from "@/lib/affiliate/url-builder";
 import { SiteFooter } from "@/components/site-footer";
 import { StickyCTA } from "@/components/deals/sticky-cta";
+import { RelatedDeals } from "@/components/deals/related-deals";
+import { RecentlyViewedTracker } from "@/components/recently-viewed/recently-viewed-tracker";
+
+// 国内便判定用 (日本の主要 IATA セット — origin/destination 双方が含まれれば国内)
+const JP_IATAS_FOR_COMPANION = new Set([
+  "NRT", "HND", "KIX", "ITM", "NGO", "CTS", "FUK", "OKA",
+  "KOJ", "HIJ", "SDJ", "KMQ", "NGS", "OIT", "MYJ", "KCZ",
+  "TAK", "TKS", "KMJ", "AOJ", "AKJ", "MMB", "OBO", "HKD",
+  "GAJ", "SHM", "UBJ", "IZO", "TTJ", "KMI", "ASJ", "ISG", "MMY",
+  "OKD", "IBR", "KUH", "WKJ", "AXT", "HNA", "FKS",
+  "NKM", "KIJ", "TOY", "FSZ", "HHE", "UKB", "OKJ", "YGJ",
+]);
 
 type Props = { params: Promise<{ id: string; lang: string;}> };
 
@@ -183,6 +197,16 @@ export default async function DealDetailPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <RecentlyViewedTracker
+        item={{
+          type: "deal",
+          id: deal.id,
+          label: `${deal.origin_code} → ${deal.destination}`,
+          sublabel: `¥${deal.sale_price.toLocaleString()} · ${deal.airline_name}`,
+          href: `/deals/${deal.id}`,
+          imageUrl: deal.image_url,
+        }}
+      />
       <Header />
 
       <div className="relative h-[30vh] min-h-[240px] overflow-hidden sm:h-[40vh] sm:min-h-[320px]">
@@ -256,6 +280,11 @@ export default async function DealDetailPage({ params }: Props) {
       </div>
 
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
+        {/* セール終了カウントダウン (即効性 CTA) */}
+        <div className="mb-6 flex items-center gap-2">
+          <CountdownBadge deadline={deal.booking_deadline} />
+        </div>
+
         {/* Best Time to Book — 価格判断の主要シグナル。grid 外で full-width 表示 */}
         {prediction.historical_prices.length > 0 && (
           <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-4 sm:p-6 mb-8">
@@ -296,6 +325,22 @@ export default async function DealDetailPage({ params }: Props) {
               checkIn={deal.departure_date}
               checkOut={deal.return_date}
               dealId={deal.id}
+            />
+
+            {/* 高単価カテゴリの個別 ASP panel — destination ごとに最適化 */}
+            <JapanesePartnersPanel
+              title={`${deal.destination} 旅行のお供`}
+              subtitle="海外旅行保険・カード・eSIM など、出発前に揃えたい高単価サービス"
+              categories={
+                (JP_IATAS_FOR_COMPANION.has(deal.origin_code) &&
+                JP_IATAS_FOR_COMPANION.has(deal.destination_code)
+                  ? ["credit-card", "rental-car", "rail-domestic"]
+                  : ["insurance", "esim-wifi", "credit-card"]) as AspCategory[]
+              }
+              destinationCode={deal.destination_code}
+              source="deal_companion"
+              compact
+              maxChips={8}
             />
 
             <TravelCompanions
@@ -349,7 +394,10 @@ export default async function DealDetailPage({ params }: Props) {
 
           <div className="space-y-6 order-1 lg:order-2">
             {deal.affiliate_url && (
-              <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5">
+              <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5 space-y-3">
+                <div className="empty:hidden">
+                  <SocialProofBadge dealId={deal.id} />
+                </div>
                 <BookingButton
                   dealId={deal.id}
                   affiliateUrl={deal.affiliate_url}
@@ -638,6 +686,9 @@ export default async function DealDetailPage({ params }: Props) {
           excludeSlug={getHotelSlugByIata(deal.destination_code)}
           seed={deal.id}
         />
+
+        {/* 関連ディール (同 destination または ±30% 価格帯) — セッション深度向上 */}
+        <RelatedDeals currentDeal={deal} />
       </main>
       <SiteFooter lang={lang} />
 

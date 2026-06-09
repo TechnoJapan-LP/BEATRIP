@@ -166,6 +166,29 @@ export async function recordClick(event: ClickEvent): Promise<ClickLog> {
   }
 }
 
+/**
+ * 直近 24 時間以内に発生した click 数を返す。
+ *
+ * 内訳:
+ *   - events リスト (最大 KV_EVENT_LIMIT 件) のうち timestamp が
+ *     now - 24h 以降のものをカウント。
+ *   - events リストが空 / 古い場合は 0 を返す。
+ *
+ * KV / FS どちらでも loadClicks を経由するので両対応。
+ * 社会的証明バッジ (「本日 N 人がチェック」) 用。
+ */
+export async function loadTodayClicks(dealId: string): Promise<number> {
+  if (!isValidDealId(dealId)) return 0;
+  const log = await loadClicks(dealId);
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+  let count = 0;
+  for (const ev of log.events) {
+    const ts = new Date(ev.timestamp).getTime();
+    if (Number.isFinite(ts) && ts >= cutoff) count++;
+  }
+  return count;
+}
+
 export async function loadAllClickStats(): Promise<
   { deal_id: string; total_clicks: number }[]
 > {
