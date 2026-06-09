@@ -22,8 +22,13 @@ import { getKV } from "@/lib/store/kv";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const SENT_KEY_PREFIX = "beatrip:newsletter:sent:";
+const LAST_SENT_KEY = "beatrip:newsletter:last_sent_at";
 // 在庫上限 (1 リクエストで配信する最大件数 — DoS / 課金事故ガード)
 const MAX_RECIPIENTS_PER_RUN = 5000;
+// 隔週配信ガード: 前回配信から N 日未満ならスキップ (環境変数で上書き可)
+const MIN_DAYS_BETWEEN_DIGESTS = Number(
+  process.env.NEWSLETTER_MIN_DAYS_BETWEEN ?? "13"
+);
 
 function isAuthorized(req: NextRequest): boolean {
   const adminKey = process.env.ADMIN_API_KEY;
@@ -69,8 +74,27 @@ async function setSentRecord(date: string, count: number): Promise<void> {
     await kv.set(`${SENT_KEY_PREFIX}${date}`, count, {
       ex: 14 * 24 * 60 * 60,
     });
+    // 隔週配信ガード用: 最新送信日時 (ISO 文字列) を 60 日保持
+    await kv.set(LAST_SENT_KEY, new Date().toISOString(), {
+      ex: 60 * 24 * 60 * 60,
+    });
   } catch (e) {
     console.warn("[digest] sent record set failed:", e);
+  }
+}
+
+/** 前回配信からの経過日数。KV 未設定や履歴無しは null。 */
+async function daysSinceLastSent(): Promise<number | null> {
+  const kv = getKV();
+  if (!kv) return null;
+  try {
+    const last = await kv.get<string>(LAST_SENT_KEY);
+    if (!last) return null;
+    const elapsed = (Date.now() - new Date(last).getTime()) / DAY_MS;
+    return Number.isFinite(elapsed) ? elapsed : null;
+  } catch (e) {
+    console.warn("[digest] last_sent_at get failed:", e);
+    return null;
   }
 }
 
@@ -149,6 +173,25 @@ async function handle(req: NextRequest): Promise<NextResponse> {
       skipped: "already_sent_today",
       date,
       previouslySent: alreadySent,
+    });
+  }
+
+  // 隔週配信スロットル: 前回配信から MIN_DAYS_BETWEEN_DIGESTS 日未満なら skip (force=1 で上書き可)
+  const elapsedDays = await daysSinceLastSent();
+  if (
+    elapsedDays !== null &&
+    elapsedDays < MIN_DAYS_BETWEEN_DIGESTS &&
+    !force
+  ) {
+    return NextResponse.json({
+      success: true,
+      skipped: "biweekly_throttle",
+      daysSinceLastSent: Math.round(elapsedDays * 10) / 10,
+      minDaysRequired: MIN_DAYS_BETWEEN_DIGESTS,
+      nextEligibleAfterDays: Math.max(
+        0,
+        Math.ceil(MIN_DAYS_BETWEEN_DIGESTS - elapsedDays)
+      ),
     });
   }
 
