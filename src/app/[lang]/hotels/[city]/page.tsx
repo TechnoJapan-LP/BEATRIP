@@ -369,51 +369,86 @@ export default async function HotelCityPage({ params }: Props) {
                   編集者が選ぶ、価格帯別の代表的なホテル。複数の予約サイトを横断比較して最安値で予約できます。
                 </p>
                 <div className="space-y-2">
-                  {curatedHotels.map((h) => (
-                    <div
-                      key={h.name}
-                      className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                              {h.name}
-                            </h3>
-                            <span
-                              className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                                h.tier === "ラグジュアリー"
-                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
-                                  : h.tier === "ハイクラス"
-                                    ? "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300"
-                                    : h.tier === "ミドル"
-                                      ? "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300"
-                                      : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
-                              }`}
-                            >
-                              {h.tier}
-                            </span>
+                  {curatedHotels.map((h) => {
+                    // tier → グラデーション色 (imageUrl 未設定時の fallback)
+                    const tierGradient =
+                      h.tier === "ラグジュアリー"
+                        ? "from-amber-400 via-rose-500 to-purple-600"
+                        : h.tier === "ハイクラス"
+                          ? "from-sky-400 to-indigo-600"
+                          : h.tier === "ミドル"
+                            ? "from-emerald-400 to-teal-600"
+                            : "from-zinc-400 to-zinc-600";
+                    return (
+                      <div
+                        key={h.name}
+                        className="overflow-hidden rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-colors"
+                      >
+                        <div className="flex flex-col sm:flex-row">
+                          {/* 左 (PC): テキスト情報 / mobile では画像の下 */}
+                          <div className="order-2 sm:order-1 min-w-0 flex-1 p-4">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                                {h.name}
+                              </h3>
+                              <span
+                                className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                                  h.tier === "ラグジュアリー"
+                                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                                    : h.tier === "ハイクラス"
+                                      ? "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300"
+                                      : h.tier === "ミドル"
+                                        ? "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300"
+                                        : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                                }`}
+                              >
+                                {h.tier}
+                              </span>
+                            </div>
+                            <div className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+                              エリア: {h.area}
+                            </div>
+                            <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                              {h.highlight}
+                            </p>
+                            {/* 星評価 / 客室数 / レビュースコア / アメニティ / 推奨利用シーン */}
+                            <HotelMetaRow hotel={h} />
+                            {/* 各OTAへホテル名指定で直接深リンク（複数の予約サイトを比較） */}
+                            <div className="mt-3">
+                              <HotelBookingButtons
+                                hotelName={h.name}
+                                cityNameEn={d.nameEn}
+                                destinationCode={d.iataCodes[0]}
+                              />
+                            </div>
                           </div>
-                          <div className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
-                            エリア: {h.area}
-                          </div>
-                          <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                            {h.highlight}
-                          </p>
-                          {/* 星評価 / 客室数 / レビュースコア / アメニティ / 推奨利用シーン */}
-                          <HotelMetaRow hotel={h} />
-                          {/* 各OTAへホテル名指定で直接深リンク（複数の予約サイトを比較） */}
-                          <div className="mt-3">
-                            <HotelBookingButtons
-                              hotelName={h.name}
-                              cityNameEn={d.nameEn}
-                              destinationCode={d.iataCodes[0]}
-                            />
+
+                          {/* 右 (PC: w-48 / mobile: 上 full-width 16:9) */}
+                          <div className="order-1 sm:order-2 relative sm:w-48 sm:flex-shrink-0 aspect-[16/9] sm:aspect-auto bg-zinc-100 dark:bg-zinc-800">
+                            {h.imageUrl ? (
+                              <Image
+                                src={h.imageUrl}
+                                alt={h.name}
+                                fill
+                                sizes="(min-width: 640px) 192px, 100vw"
+                                loading="lazy"
+                                className="object-cover"
+                              />
+                            ) : (
+                              <div
+                                className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br ${tierGradient}`}
+                                aria-hidden="true"
+                              >
+                                <span className="font-heading text-5xl font-bold text-white/90 drop-shadow">
+                                  {h.name.charAt(0)}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </section>
             )}
