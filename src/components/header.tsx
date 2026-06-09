@@ -182,13 +182,13 @@ export function Header() {
           </span>
         </Link>
 
-        {/* PC グローバル検索: lg 以上で展開 */}
-        <div className="ml-6 hidden min-w-0 max-w-xs flex-1 lg:block">
+        {/* PC グローバル検索: xl 以上で展開 (1280px 未満ではナビ優先で非表示) */}
+        <div className="ml-4 hidden min-w-0 max-w-[240px] flex-1 xl:block 2xl:max-w-xs">
           <GlobalSearch compact placeholder="都市・空港・航空会社を検索" />
         </div>
 
         {/* PC ナビ: 3 メガメニュー + 記事 */}
-        <nav className="hidden items-center gap-1 sm:flex">
+        <nav className="hidden items-center gap-0.5 sm:flex xl:gap-1">
           {menus.map((menu) => (
             <div
               key={menu.key}
@@ -214,16 +214,37 @@ export function Header() {
 
               {activeMenu === menu.key && (
                 <div
-                  className="absolute left-0 top-full mt-1 min-w-[480px] max-w-[calc(100vw-2rem)] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl p-4 animate-fade-in z-50"
+                  className={`absolute top-full mt-1 max-w-[calc(100vw-2rem)] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-xl p-4 animate-fade-in z-50 ${
+                    menu.groups.length >= 4
+                      ? "right-0 w-[760px]"
+                      : "left-0 min-w-[480px]"
+                  }`}
                   onMouseEnter={() => setActiveMenu(menu.key)}
                 >
-                  <div className="grid grid-cols-2 gap-4">
-                    {menu.groups.map((group) => (
-                      <div key={group.label}>
+                  <div
+                    className={`grid gap-x-6 gap-y-2 ${
+                      menu.groups.length >= 4 ? "grid-cols-3" : "grid-cols-2"
+                    }`}
+                  >
+                    {menu.groups.map((group) => {
+                      // 項目数が多いグループ (例: 特集) は全幅にして
+                      // 内部を複数カラムに展開 → 1 列が縦に伸びすぎるのを防ぐ
+                      const isWide = group.items.length > 6;
+                      return (
+                      <div
+                        key={group.label}
+                        className={isWide ? "col-span-full" : undefined}
+                      >
                         <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
                           {group.label}
                         </p>
-                        <div className="space-y-1">
+                        <div
+                          className={
+                            isWide
+                              ? "grid grid-cols-2 gap-x-4 gap-y-1"
+                              : "space-y-1"
+                          }
+                        >
                           {group.items.map((item) => (
                             <Link
                               key={item.href}
@@ -250,7 +271,8 @@ export function Header() {
                           ))}
                         </div>
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}

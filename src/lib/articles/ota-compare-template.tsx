@@ -353,8 +353,11 @@ export function OtaCompareCityPage({ slug, lang, profile }: Props) {
             {d.nameJa}での在庫量・価格競争力・特徴を編集部が中立的に整理。
           </p>
 
-          <div className="overflow-x-auto rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-            <table className="w-full text-sm">
+          <p className="mb-2 text-[11px] text-zinc-400 sm:hidden" aria-hidden="true">
+            ← 表は横にスクロールできます →
+          </p>
+          <div className="overflow-x-auto overscroll-x-contain rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+            <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr className="text-left border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
                   <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">サイト</th>

@@ -24,6 +24,8 @@ export default function robots(): MetadataRoute.Robots {
           "/api/admin",
           "/api/subscriptions",
           "/api/alerts",
+          // 画像 proxy (Google Places 写真の key 非露出経由) — indexable 不要
+          "/api/hotel-photo",
           "/.env",
           "/.env.",
           "/.well-known/",

@@ -89,7 +89,7 @@ export function SeasonalHero({ locale }: { locale: Locale }) {
             "radial-gradient(ellipse at top right, rgba(255,255,255,0.5), transparent 60%), radial-gradient(ellipse at bottom left, rgba(0,0,0,0.35), transparent 55%)",
         }}
       />
-      <div className="relative px-6 py-12 sm:px-10 sm:py-16 lg:py-20">
+      <div className="relative px-5 py-10 sm:px-10 sm:py-16 lg:py-20">
         <div className="max-w-3xl">
           <span
             className={`inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white ring-1 ${copy.ringTone} backdrop-blur-sm`}
@@ -102,24 +102,24 @@ export function SeasonalHero({ locale }: { locale: Locale }) {
           </span>
           <h1
             id="seasonal-hero-title"
-            className="mt-4 font-heading text-5xl leading-[0.95] tracking-wide text-white drop-shadow-sm sm:text-7xl"
+            className="mt-4 font-heading text-4xl leading-[0.95] tracking-wide text-white drop-shadow-sm sm:text-6xl lg:text-7xl"
           >
             {copy.title}
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
             {copy.subtitle}
           </p>
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <a
               href="#beatrip-search"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-zinc-900 shadow-lg ring-1 ring-white/40 transition-transform hover:-translate-y-0.5 hover:bg-zinc-100"
+              className="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-zinc-900 shadow-lg ring-1 ring-white/40 transition-transform hover:-translate-y-0.5 hover:bg-zinc-100"
             >
               <Search className="h-4 w-4" aria-hidden />
               都市・空港・路線を検索
             </a>
             <Link
               href={lh("/#deals")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-zinc-900/30 px-5 py-3 text-sm font-bold text-white ring-1 ring-white/30 backdrop-blur-sm transition-colors hover:bg-zinc-900/45"
+              className="inline-flex min-h-[48px] items-center justify-center gap-1.5 rounded-full bg-zinc-900/30 px-5 py-3 text-sm font-bold text-white ring-1 ring-white/30 backdrop-blur-sm transition-colors hover:bg-zinc-900/45"
             >
               今週のディール一覧
               <ArrowRight className="h-4 w-4" aria-hidden />

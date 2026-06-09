@@ -3,10 +3,8 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type ReactNode,
 } from "react";
 import Link from "next/link";
@@ -211,28 +209,19 @@ export function ChatWidget() {
     }
   }, []);
 
-  const buttonStyle = useMemo<CSSProperties>(
-    () => ({
-      // safe-area + Recently viewed (~52px) + bottom-nav (~56px) を回避
-      // 値は最大値の estimate (実装は CSS で計算)
-      "--chat-safe": "env(safe-area-inset-bottom, 0px)",
-    } as CSSProperties),
-    []
-  );
-
   if (!enabled) return null;
 
   return (
     <>
-      {/* 起動ボタン: PC は右下 24px から 80px 上 / mobile は bottom-nav + recently-viewed を回避 */}
+      {/* 起動ボタン: PC は右下 24px から 80px 上 / mobile は FAB スタック 3 段目
+          (--fab-3)。offset は globals.css の共通トークンで一元管理。 */}
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-label="AI コンシェルジュを開く"
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="fixed right-3 sm:right-6 bottom-[calc(env(safe-area-inset-bottom,0px)+120px)] sm:bottom-20 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all hover:-translate-y-0.5 hover:bg-orange-700 hover:shadow-xl active:scale-95 dark:bg-orange-500 dark:hover:bg-orange-600"
-        style={buttonStyle}
+        className="fixed right-3 sm:right-6 bottom-[var(--fab-3)] sm:bottom-20 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all hover:-translate-y-0.5 hover:bg-orange-700 hover:shadow-xl active:scale-95 dark:bg-orange-500 dark:hover:bg-orange-600"
       >
         <MessageCircle className="h-5 w-5" aria-hidden />
       </button>

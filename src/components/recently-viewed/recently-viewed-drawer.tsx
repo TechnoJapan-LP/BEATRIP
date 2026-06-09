@@ -45,22 +45,15 @@ export function RecentlyViewedDrawer() {
     <>
       {/* フローティング起動ボタン
           z-30 (drawer 内側は z-50)。
-          mobile では bottom-nav (h~56px+safe-area) の上に置く。
-          PC では右下 24px。 */}
+          mobile では FAB スタック 1 段目 (--fab-1, bottom-nav の上)。
+          PC では右下 24px。offset は globals.css の共通トークンで一元管理。 */}
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-label={`最近見たアイテム ${count} 件を開く`}
         aria-haspopup="dialog"
         aria-expanded={open}
-        // bottom: mobile は bottom-nav (56px) + safe-area の上、sm 以上は 24px。
-        // safe-area は inline custom property 経由で渡し、Tailwind class で上書き。
-        className="fixed right-3 sm:right-6 bottom-[calc(var(--rv-safe,0px)+64px)] sm:bottom-6 z-30 flex items-center gap-1.5 rounded-full bg-zinc-900 px-3 py-2 text-white shadow-lg shadow-zinc-900/30 transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-zinc-100/20"
-        style={
-          {
-            ["--rv-safe" as string]: "env(safe-area-inset-bottom, 0px)",
-          } as React.CSSProperties
-        }
+        className="fixed right-3 sm:right-6 bottom-[var(--fab-1)] sm:bottom-6 z-30 flex min-h-[44px] items-center gap-1.5 rounded-full bg-zinc-900 px-3.5 py-2 text-white shadow-lg shadow-zinc-900/30 transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-zinc-100/20"
       >
         <History className="h-4 w-4" aria-hidden="true" />
         <span className="text-xs font-bold">最近 {count}</span>

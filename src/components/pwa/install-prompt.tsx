@@ -111,7 +111,7 @@ export function InstallPrompt() {
     <div
       role="dialog"
       aria-label="アプリとしてインストール"
-      className="fixed inset-x-3 z-40 sm:hidden bottom-[calc(64px+env(safe-area-inset-bottom,0px))]"
+      className="fixed inset-x-3 z-40 sm:hidden bottom-[var(--bar-base)]"
     >
       <div className="rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900 px-4 py-3 flex items-center gap-3">
         <div className="flex-1 min-w-0">

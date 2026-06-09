@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Search,
   Sparkles,
@@ -124,6 +124,29 @@ export function DealFilters({
 }: DealFiltersProps) {
   const t = useDictionary<Record<string, string>>("filters");
   const [advancedOpen, setAdvancedOpen] = useState(false);
+
+  // モバイル drawer 表示中のみ背面ページのスクロールをロックし、Esc で閉じる
+  // (sm 以上では inline パネルなのでロックしない / 他 drawer と挙動を揃える)。
+  useEffect(() => {
+    if (!advancedOpen) return;
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 639px)").matches;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAdvancedOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    if (!isMobile) {
+      return () => window.removeEventListener("keydown", onKey);
+    }
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [advancedOpen]);
+
   const hasAdvanced =
     !!onPriceRangeChange ||
     !!onAreaChange ||
@@ -386,8 +409,9 @@ export function DealFilters({
             />
             <div
               role="dialog"
+              aria-modal="true"
               aria-label="詳細フィルタ"
-              className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-2xl bg-white p-4 shadow-2xl dark:bg-zinc-900"
+              className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto overscroll-contain rounded-t-2xl bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-2xl dark:bg-zinc-900"
             >
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100">

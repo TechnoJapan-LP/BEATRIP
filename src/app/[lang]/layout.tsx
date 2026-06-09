@@ -4,14 +4,11 @@ import { notFound } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Bebas_Neue } from "next/font/google";
 import { RegisterSw } from "@/components/pwa/register-sw";
-import { InstallPrompt } from "@/components/pwa/install-prompt";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { Analytics } from "@/components/analytics";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
-import { RecentlyViewedDrawer } from "@/components/recently-viewed/recently-viewed-drawer";
-import { ComparisonDrawer } from "@/components/comparison/comparison-drawer";
-import { ChatWidget } from "@/components/chat/chat-widget";
+import { FloatingWidgets } from "@/components/floating-widgets";
 import { getDictionary, hasLocale, LOCALES } from "./dictionaries";
 import "../globals.css";
 
@@ -178,11 +175,11 @@ export default async function RootLayout({
         <LocaleProvider locale={lang} dict={dict}>
           <ScrollToTop />
           {children}
-          <RecentlyViewedDrawer />
-          <ComparisonDrawer />
-          <ChatWidget />
+          {/* RecentlyViewed / Comparison / Chat / InstallPrompt は
+              初回ペイント時に何も描画しないため client 限定 (ssr:false) で
+              個別 chunk に分離し、初期バンドルから切り離す。 */}
+          <FloatingWidgets />
           <RegisterSw />
-          <InstallPrompt />
           <MobileBottomNav />
 
           {/* アナリティクス: Vercel Analytics + Speed Insights + GA4 */}

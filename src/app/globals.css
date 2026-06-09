@@ -80,6 +80,30 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* --- フローティング要素の縦スタック (モバイル) ---------------------------
+     右下に重なる FAB 群 (Recently viewed / Comparison / Chat) と、
+     全幅の MobileStickyCta / PWA InstallPrompt が衝突しないよう、
+     共通トークンで bottom offset を一元管理する。
+
+     スタック構造 (下 → 上):
+       0           : MobileBottomNav (h ~56px + safe-area, sm:hidden)
+       --fab-1     : Recently viewed FAB
+       --fab-2     : Comparison FAB
+       --fab-3     : Chat FAB
+       --bar-base  : MobileStickyCta / InstallPrompt (全幅バー, FAB の上)
+
+     PC (sm 以上) では bottom-nav が無いので各コンポーネント側で sm:bottom-*
+     を指定して右下 24px 起点の独立スタックに上書きする。 */
+  --fab-safe: env(safe-area-inset-bottom, 0px);
+  --fab-nav: 56px;            /* MobileBottomNav の高さ */
+  --fab-gap: 12px;            /* nav と最初の FAB の間隔 */
+  --fab-step: 56px;           /* FAB 同士の縦間隔 (44px ボタン + 余白) */
+  --fab-1: calc(var(--fab-safe) + var(--fab-nav) + var(--fab-gap));
+  --fab-2: calc(var(--fab-1) + var(--fab-step));
+  --fab-3: calc(var(--fab-2) + var(--fab-step));
+  /* 全幅バーは FAB スタックの上 (1 段ぶん上) に置いて重なりを防ぐ */
+  --bar-base: calc(var(--fab-3) + var(--fab-step));
 }
 
 .dark {

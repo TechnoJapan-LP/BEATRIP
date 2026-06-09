@@ -159,10 +159,12 @@ export function MobileStickyCta({
           ? "opacity-100 translate-y-0 pointer-events-auto"
           : "opacity-0 translate-y-2 pointer-events-none"
       }`}
-      // bottom-nav (56px + safe-area) の直上、または画面下端に配置
+      // bottom-nav 上の FAB スタックの更に上 (--bar-base) に全幅バーを配置。
+      // bottomNavOffset=false (deal 詳細など nav 非表示) は画面下端寄せ。
+      // offset は globals.css の共通トークンで FAB 群と一元管理 (重なり防止)。
       style={{
         bottom: bottomNavOffset
-          ? "calc(56px + env(safe-area-inset-bottom, 0px) + 8px)"
+          ? "var(--bar-base)"
           : "calc(env(safe-area-inset-bottom, 0px) + 8px)",
       }}
     >
