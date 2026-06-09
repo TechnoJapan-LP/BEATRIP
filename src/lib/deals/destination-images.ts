@@ -19,6 +19,12 @@ const DESTINATION_IMAGES: Record<string, string> = {
   BOM: "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80",
   KUL: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&q=80",
   BKI: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&q=80",
+  DPS: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80",
+  PUS: "https://images.unsplash.com/photo-1604429181848-9bcd61c0bd84?w=800&q=80",
+  CEB: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&q=80",
+  PKX: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80",
+  KHH: "https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800&q=80",
+  CJU: "https://images.unsplash.com/photo-1534274867514-d5b47ef89ed7?w=800&q=80",
 
   // 国際線 — ヨーロッパ
   CDG: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80",
@@ -29,6 +35,12 @@ const DESTINATION_IMAGES: Record<string, string> = {
   FRA: "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80",
   AMS: "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&q=80",
   IST: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&q=80",
+  BER: "https://images.unsplash.com/photo-1560969184-10fe8719e047?w=800&q=80",
+  VIE: "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=800&q=80",
+  PRG: "https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=800&q=80",
+  MUC: "https://images.unsplash.com/photo-1595867818082-083862f3d630?w=800&q=80",
+  MAD: "https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=800&q=80",
+  ATH: "https://images.unsplash.com/photo-1555993539-1732b0258235?w=800&q=80",
 
   // 国際線 — 北米
   JFK: "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=800&q=80",
