@@ -118,3 +118,73 @@ export function buildPhotoUrl(photoName: string, maxWidthPx: number = 600): stri
 export function isPlacesEnabled(): boolean {
   return getApiKey() !== null;
 }
+
+/**
+ * 診断: 1 件のテストクエリを投げて Google Places API の生レスポンスを返す。
+ * API key の権限・有効化状態・課金エラー等を切り分けるための admin デバッグ用途。
+ */
+export async function diagnosePlaces(
+  hotelName = "Park Hyatt Tokyo",
+  cityName = "東京"
+): Promise<{
+  hasKey: boolean;
+  keyLength: number;
+  textSearch: { status: number; ok: boolean; body: unknown };
+  placeDetails?: { status: number; ok: boolean; body: unknown };
+}> {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return {
+      hasKey: false,
+      keyLength: 0,
+      textSearch: { status: 0, ok: false, body: "no api key" },
+    };
+  }
+
+  const tsRes = await fetch(TEXT_SEARCH_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": apiKey,
+      "X-Goog-FieldMask": "places.id,places.displayName",
+    },
+    body: JSON.stringify({
+      textQuery: `${hotelName} ${cityName}`,
+      includedType: "lodging",
+      maxResultCount: 1,
+      languageCode: "ja",
+    }),
+    cache: "no-store",
+  });
+  const tsBody = await tsRes.json().catch(() => "non-json response");
+  const result: {
+    hasKey: boolean;
+    keyLength: number;
+    textSearch: { status: number; ok: boolean; body: unknown };
+    placeDetails?: { status: number; ok: boolean; body: unknown };
+  } = {
+    hasKey: true,
+    keyLength: apiKey.length,
+    textSearch: { status: tsRes.status, ok: tsRes.ok, body: tsBody },
+  };
+
+  const placeId =
+    (tsBody as { places?: Array<{ id?: string }> })?.places?.[0]?.id ?? null;
+  if (placeId) {
+    const pdRes = await fetch(
+      `${PLACE_DETAILS_URL}/${encodeURIComponent(placeId)}?languageCode=ja`,
+      {
+        method: "GET",
+        headers: {
+          "X-Goog-Api-Key": apiKey,
+          "X-Goog-FieldMask": "photos.name",
+        },
+        cache: "no-store",
+      }
+    );
+    const pdBody = await pdRes.json().catch(() => "non-json response");
+    result.placeDetails = { status: pdRes.status, ok: pdRes.ok, body: pdBody };
+  }
+
+  return result;
+}

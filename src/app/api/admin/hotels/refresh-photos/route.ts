@@ -5,6 +5,7 @@ import {
   findPlaceId,
   getPlacePhotoName,
   isPlacesEnabled,
+  diagnosePlaces,
 } from "@/lib/google/places-client";
 import {
   getCachedPlace,
@@ -97,6 +98,12 @@ export async function POST(req: NextRequest) {
   if (dump) {
     const items = await listAllCachedPlaces();
     return NextResponse.json({ success: true, count: items.length, items });
+  }
+
+  // 診断モード: Google Places API の生レスポンスを返す (key 権限/有効化の切り分け)
+  if (sp.get("diag") === "1") {
+    const diag = await diagnosePlaces();
+    return NextResponse.json({ success: true, diagnostic: diag });
   }
 
   if (!cityFilter && !all) {
