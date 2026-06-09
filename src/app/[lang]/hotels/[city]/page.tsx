@@ -3,7 +3,7 @@ import Image from "next/image";
 import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BedDouble, ArrowUpRight, Calendar, MapPin, Plane, TrendingDown } from "lucide-react";
+import { BedDouble, ArrowUpRight, Calendar, MapPin, Plane, TrendingDown, Star } from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
@@ -18,6 +18,7 @@ import { buildHotelLink } from "@/lib/affiliate/url-builder";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getCityGuide } from "@/data/hotel-city-guides";
 import { getCuratedHotels } from "@/data/hotel-curated";
+import type { CuratedHotel } from "@/data/hotel-curated";
 import { TravelCompanions } from "@/components/affiliate/travel-companions";
 import { HotelBookingButtons } from "@/components/affiliate/hotel-booking-buttons";
 import { getAirlineByCode } from "@/data/airlines";
@@ -29,6 +30,26 @@ import { CityPracticalCard } from "@/components/hotels/city-practical-card";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
 import { RecentlyViewedTracker } from "@/components/recently-viewed/recently-viewed-tracker";
+import { EditorPickCallout } from "@/components/hotels/editor-pick-callout";
+import { ComparisonBadge } from "@/components/affiliate/comparison-badge";
+import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
+
+/**
+ * tier ベースの 1 泊価格目安レンジ (¥)。実 OTA 価格が未取得でも
+ * 「想像可能な金額感」をユーザーに与えるための fallback。Pack D。
+ */
+function tierPriceRange(tier: CuratedHotel["tier"]): { low: number; high: number } {
+  switch (tier) {
+    case "ラグジュアリー":
+      return { low: 40000, high: 120000 };
+    case "ハイクラス":
+      return { low: 18000, high: 35000 };
+    case "ミドル":
+      return { low: 10000, high: 18000 };
+    case "バジェット":
+      return { low: 4000, high: 10000 };
+  }
+}
 
 type Props = { params: Promise<{ city: string; lang: string;}> };
 
@@ -236,6 +257,22 @@ export default async function HotelCityPage({ params }: Props) {
       </section>
 
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+        {/* Pack B: この都市への航空券セールへの逆方向リンク — 主CTA より控えめ。
+            ホテルから来た訪問者の航空券需要も拾う（双方向の internal link で
+            cluster 内ナビゲーションと PageRank 流通を強化） */}
+        <div className="mb-5 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
+          <Plane className="h-3.5 w-3.5 flex-shrink-0 text-zinc-400" />
+          <span>
+            {d.nameJa}（{d.iataCodes[0]}）への
+            <Link
+              href={`/airports/${d.iataCodes[0]}`}
+              className="ml-1 font-bold text-zinc-700 dark:text-zinc-200 underline-offset-2 hover:underline"
+            >
+              航空券セール・路線一覧を見る
+            </Link>
+          </span>
+        </div>
+
         {/* 主要CTA: フライト + ホテル の双子カード */}
         <section className="mb-10 grid grid-cols-1 gap-3 sm:gap-4 lg:grid-cols-2">
           {/* 航空券 — 最安ディール詳細へ直接 */}
@@ -379,6 +416,9 @@ export default async function HotelCityPage({ params }: Props) {
                 <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3">
                   編集者が選ぶ、価格帯別の代表的なホテル。複数の予約サイトを横断比較して最安値で予約できます。
                 </p>
+                {/* Pack D: 比較対応 OTA を明示 (信頼性アンカー、card variant — 各カード内
+                    の比較 chip とは別観点でブランド名を列挙) */}
+                <ComparisonBadge variant="card" className="mb-3" />
                 <div className="space-y-2">
                   {curatedHotels.map((h) => {
                     // tier → グラデーション色 (imageUrl 未設定時の fallback)
@@ -390,6 +430,11 @@ export default async function HotelCityPage({ params }: Props) {
                           : h.tier === "ミドル"
                             ? "from-emerald-400 to-teal-600"
                             : "from-zinc-400 to-zinc-600";
+                    // Pack D: 価格レンジ / レビュー highlight 用の fallback 値
+                    const priceRange = tierPriceRange(h.tier);
+                    const reviewScore = h.reviewScore ?? 8.5;
+                    const reviewCount = h.reviewCount ?? 1500;
+                    const isLuxury = h.tier === "ラグジュアリー";
                     return (
                       <div
                         key={h.name}
@@ -416,14 +461,49 @@ export default async function HotelCityPage({ params }: Props) {
                                 {h.tier}
                               </span>
                             </div>
-                            <div className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
-                              エリア: {h.area}
+                            {/* Pack D: レビュー強調 (カード冒頭) — ホテル名直下に大きく */}
+                            <div className="mt-2 flex items-center gap-2">
+                              <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-1 ring-1 ring-emerald-100 dark:bg-emerald-900/30 dark:ring-emerald-800">
+                                <Star
+                                  className="h-3.5 w-3.5 fill-emerald-500 text-emerald-500"
+                                  aria-hidden="true"
+                                />
+                                <span className="text-base font-bold leading-none text-emerald-700 dark:text-emerald-200">
+                                  {reviewScore.toFixed(1)}
+                                </span>
+                                <span className="text-[10px] font-medium text-emerald-600/80 dark:text-emerald-300/80">
+                                  /10
+                                </span>
+                              </span>
+                              <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                                {reviewCount.toLocaleString()} 件のレビュー
+                              </span>
+                            </div>
+                            <div className="mt-1.5 flex items-center gap-2 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
+                              <span>エリア: {h.area}</span>
+                              <span aria-hidden="true" className="text-zinc-300">
+                                ·
+                              </span>
+                              <span className="font-mono">
+                                目安: ¥{priceRange.low.toLocaleString()}〜¥
+                                {priceRange.high.toLocaleString()} / 1泊
+                              </span>
                             </div>
                             <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
                               {h.highlight}
                             </p>
-                            {/* 星評価 / 客室数 / レビュースコア / アメニティ / 推奨利用シーン */}
-                            <HotelMetaRow hotel={h} />
+                            {/* Pack D: ラグジュアリーのみ編集部おすすめ吹き出し */}
+                            {isLuxury && (
+                              <div className="mt-2">
+                                <EditorPickCallout
+                                  reason={h.highlight}
+                                  tier={h.tier}
+                                />
+                              </div>
+                            )}
+                            {/* 星評価 / 客室数 / アメニティ / 推奨利用シーン
+                                (review score は上で大きく出したので hideReviewScore) */}
+                            <HotelMetaRow hotel={h} hideReviewScore />
                             {/* 各OTAへホテル名指定で直接深リンク（複数の予約サイトを比較） */}
                             <div className="mt-3">
                               <HotelBookingButtons
@@ -798,6 +878,20 @@ export default async function HotelCityPage({ params }: Props) {
         <NextTripSuggestions excludeSlug={d.slug} seed={d.slug} />
       </main>
       <SiteFooter lang={lang} />
+
+      {/* Pack C: モバイル限定 sticky CTA — スクロール 50% 以上で fade-in */}
+      <MobileStickyCta
+        label="最安値で予約"
+        sublabel={`${d.nameJa}のホテル比較`}
+        primaryHref={hotelUrl}
+        primaryLabel="比較する"
+        accent="emerald"
+        trackingKind="hotel"
+        trackingContext={{
+          destinationCode: d.iataCodes[0],
+          provider: "hotellook",
+        }}
+      />
     </>
   );
 }

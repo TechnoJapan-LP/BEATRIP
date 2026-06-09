@@ -47,6 +47,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { StickyCTA } from "@/components/deals/sticky-cta";
 import { RelatedDeals } from "@/components/deals/related-deals";
 import { RecentlyViewedTracker } from "@/components/recently-viewed/recently-viewed-tracker";
+import { BundlePromo } from "@/components/deals/bundle-promo";
+import { TravelEssentialsCta } from "@/components/deals/travel-essentials-cta";
+import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
 
 // 国内便判定用 (日本の主要 IATA セット — origin/destination 双方が含まれれば国内)
 const JP_IATAS_FOR_COMPANION = new Set([
@@ -327,6 +330,9 @@ export default async function DealDetailPage({ params }: Props) {
               dealId={deal.id}
             />
 
+            {/* 行先別 必需品 CTA (eSIM / 保険 / 現地アクティビティ) — Pack B */}
+            <TravelEssentialsCta deal={deal} />
+
             {/* 高単価カテゴリの個別 ASP panel — destination ごとに最適化 */}
             <JapanesePartnersPanel
               title={`${deal.destination} 旅行のお供`}
@@ -421,6 +427,10 @@ export default async function DealDetailPage({ params }: Props) {
                 />
               </div>
             )}
+
+            {/* Pack B: 航空券 + ホテル バンドル試算 — BookingButton 直下で総額感を提示し
+                ホテル送客 CTR を底上げ */}
+            <BundlePromo deal={deal} />
 
             <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5">
               <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
@@ -692,16 +702,39 @@ export default async function DealDetailPage({ params }: Props) {
       </main>
       <SiteFooter lang={lang} />
 
-      {/* モバイル スティッキーCTA */}
+      {/* モバイル スティッキーCTA — Pack C で多階層化
+          - sm 未満: 新 MobileStickyCta (scroll 50% で fade-in, 軽量バッジ型)
+          - sm〜lg: 既存 StickyCTA (常時表示, full-width)
+          deal 詳細では bottom-nav が自身を非表示にするため z-30 同階層でも衝突しない。*/}
       {deal.affiliate_url && (
-        <StickyCTA
-          dealId={deal.id}
-          price={deal.sale_price}
-          discountPercent={deal.discount_percent}
-          affiliateUrl={deal.affiliate_url}
-          affiliateProvider={deal.affiliate_provider ?? "パートナーサイト"}
-          route={`${deal.origin_code}→${deal.destination_code}`}
-        />
+        <>
+          <div className="hidden sm:block">
+            <StickyCTA
+              dealId={deal.id}
+              price={deal.sale_price}
+              discountPercent={deal.discount_percent}
+              affiliateUrl={deal.affiliate_url}
+              affiliateProvider={deal.affiliate_provider ?? "パートナーサイト"}
+              route={`${deal.origin_code}→${deal.destination_code}`}
+            />
+          </div>
+          <MobileStickyCta
+            label={`¥${deal.sale_price.toLocaleString("ja-JP")} -${deal.discount_percent}%`}
+            sublabel={`${deal.origin_code} → ${deal.destination_code} · ${deal.airline_name}`}
+            primaryHref={deal.affiliate_url}
+            primaryLabel="今すぐ予約"
+            accent="rose"
+            bottomNavOffset={false}
+            trackingKind="deal"
+            trackingContext={{
+              dealId: deal.id,
+              provider: deal.affiliate_provider ?? "パートナーサイト",
+              price: deal.sale_price,
+              route: `${deal.origin_code}→${deal.destination_code}`,
+              destinationCode: deal.destination_code,
+            }}
+          />
+        </>
       )}
     </>
   );

@@ -34,7 +34,14 @@ const BEST_FOR_LABEL: Record<NonNullable<CuratedHotel["bestFor"]>[number], strin
   "long-stay": "長期滞在",
 };
 
-export function HotelMetaRow({ hotel }: { hotel: CuratedHotel }) {
+export function HotelMetaRow({
+  hotel,
+  hideReviewScore = false,
+}: {
+  hotel: CuratedHotel;
+  /** Pack D: カード冒頭に大きな review highlight を別配置する場合は省略 */
+  hideReviewScore?: boolean;
+}) {
   return (
     <div className="mt-2 space-y-2 text-[11px] text-zinc-600 dark:text-zinc-400">
       {/* 星評価 + 客室数 + レビュースコア */}
@@ -46,7 +53,7 @@ export function HotelMetaRow({ hotel }: { hotel: CuratedHotel }) {
             ))}
           </span>
         )}
-        {hotel.reviewScore != null && (
+        {!hideReviewScore && hotel.reviewScore != null && (
           <span className="inline-flex items-center gap-1">
             <span className="rounded bg-emerald-100 dark:bg-emerald-900/40 px-1.5 py-0.5 font-bold text-emerald-700 dark:text-emerald-200">
               {hotel.reviewScore.toFixed(1)}
