@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
     ],
   },
   images: {
-    // 配信元を許可（Unsplash の写真 / Wikimedia の都市代表画像）
+    // 配信元を許可（Unsplash の都市背景 / Wikimedia の代表画像 = ホテル建物実写）
     remotePatterns: [
       {
         protocol: "https",
