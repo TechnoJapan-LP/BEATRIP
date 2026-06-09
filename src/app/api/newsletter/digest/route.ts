@@ -33,6 +33,10 @@ function isAuthorized(req: NextRequest): boolean {
   if (cronSecret && header === `Bearer ${cronSecret}`) return true;
   // Vercel Cron は `x-vercel-cron` ヘッダを付ける (検証用に許容)
   if (cronSecret && req.headers.get("x-vercel-cron") === "1") return true;
+  // ?token=ADMIN_API_KEY クエリ認証 (HTML プレビュー用 — Bearer header を付けられない
+  // ブラウザの新規タブ open リンク向け)。admin ページの referrer:no-referrer 設定で
+  // Referer 漏れは防止済。token を URL に含めるリスクは admin 内に限定。
+  if (adminKey && req.nextUrl.searchParams.get("token") === adminKey) return true;
   return false;
 }
 

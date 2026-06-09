@@ -93,12 +93,12 @@ export function NewsletterDigestButton({ token }: { token: string }) {
           {loading === "send" ? "送信中…" : "全購読者へ送信"}
         </button>
         <a
-          href={`/api/newsletter/digest?preview=html`}
+          href={`/api/newsletter/digest?preview=html&token=${encodeURIComponent(token)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-zinc-500 underline hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
         >
-          HTML を別タブで開く (要 Bearer)
+          HTML を別タブで開く
         </a>
       </div>
       {error && (
