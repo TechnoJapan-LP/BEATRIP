@@ -151,25 +151,34 @@ export async function POST(req: NextRequest) {
   }
 
   const { targets, totalHotels, skippedWithImage } = collectTargets(cityFilter);
-  const slice = targets.slice(0, MAX_PER_RUN);
 
-  let processed = 0;
-  let cachedSkip = 0;
+  let attempted = 0; // 実 API 取得を試みた件数 (MAX_PER_RUN はこれを制限)
+  let cachedSkip = 0; // 成功キャッシュ (photoName あり) を skip した件数
+  let needsWork = 0; // photoName をまだ持たない target の総数 (remaining 計算用)
   let lookupFailed = 0;
   let succeeded = 0;
   let apiCalls = 0;
   const failures: Array<{ citySlug: string; hotelName: string; reason: string }> = [];
 
-  for (const t of slice) {
-    processed++;
-
+  // slice しない: 全 targets を走査。成功キャッシュは無制限に skip し、
+  // 未取得 / 過去に失敗 (photoName=null) のものだけを最大 MAX_PER_RUN 件 API 取得する。
+  for (const t of targets) {
     if (!force) {
       const cached = await getCachedPlace(t.citySlug, t.hotelName);
-      if (cached) {
+      // photoName を持つ成功キャッシュのみ skip。null (過去の失敗) は再取得対象。
+      if (cached && cached.photoName) {
         cachedSkip++;
         continue;
       }
     }
+
+    // ここに到達 = 未取得 or 過去に失敗 (null) or force。取得が必要。
+    needsWork++;
+    if (attempted >= MAX_PER_RUN) {
+      // この run の API 予算は尽きた。カウントのみ (remaining に反映) して次へ。
+      continue;
+    }
+    attempted++;
 
     const placeId = await findPlaceId(t.hotelName, t.cityNameJa);
     apiCalls++;
@@ -180,7 +189,6 @@ export async function POST(req: NextRequest) {
         hotelName: t.hotelName,
         reason: "placeId not found",
       });
-      // 学習エントリも残す (短期間の再試行を抑える)
       await setCachedPlace(t.citySlug, t.hotelName, {
         placeId: null,
         photoName: null,
@@ -219,12 +227,12 @@ export async function POST(req: NextRequest) {
       total_curated_hotels: totalHotels,
       already_have_imageUrl: skippedWithImage,
       candidates_without_image: targets.length,
-      processed_in_this_run: processed,
+      processed_in_this_run: attempted,
       cached_skipped: cachedSkip,
       newly_succeeded: succeeded,
       lookup_failed: lookupFailed,
       api_calls: apiCalls,
-      remaining: Math.max(0, targets.length - processed),
+      remaining: Math.max(0, needsWork - succeeded),
     },
     failures: failures.slice(0, 20),
     note:
