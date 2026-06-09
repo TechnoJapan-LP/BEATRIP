@@ -84,6 +84,33 @@ function collectTargets(
   return { targets, totalHotels, skippedWithImage };
 }
 
+/**
+ * GET: 読み取り専用の diag / dump のみ。ブラウザで URL を直接開いて確認できる
+ * (シェルの & エスケープ問題を回避)。取得 (副作用あり) は POST のみ。
+ */
+export async function GET(req: NextRequest) {
+  if (!isAuthorized(req)) {
+    return NextResponse.json({ success: false, error: "unauthorized" }, { status: 401 });
+  }
+  const sp = req.nextUrl.searchParams;
+  if (sp.get("diag") === "1") {
+    const diag = await diagnosePlaces();
+    return NextResponse.json({ success: true, diagnostic: diag });
+  }
+  if (sp.get("dump") === "1") {
+    const items = await listAllCachedPlaces();
+    return NextResponse.json({ success: true, count: items.length, items });
+  }
+  return NextResponse.json(
+    {
+      success: false,
+      error:
+        "GET は ?diag=1 または ?dump=1 のみ対応。写真取得は POST ?all=1 / ?city=<slug> を使用。",
+    },
+    { status: 400 }
+  );
+}
+
 export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
     return NextResponse.json({ success: false, error: "unauthorized" }, { status: 401 });
