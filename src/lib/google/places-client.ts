@@ -16,7 +16,6 @@
 
 const TEXT_SEARCH_URL = "https://places.googleapis.com/v1/places:searchText";
 const PLACE_DETAILS_URL = "https://places.googleapis.com/v1/places";
-const PHOTO_BASE_URL = "https://places.googleapis.com/v1";
 
 function getApiKey(): string | null {
   const key = process.env.GOOGLE_PLACES_API_KEY;
@@ -104,20 +103,16 @@ export async function getPlacePhotoName(
 }
 
 /**
- * photo name + maxWidthPx から photo media URL を構築する。
- * key= に GOOGLE_PLACES_API_KEY をクエリ付与する (Photo Media は GET 専用)。
+ * photo name + maxWidthPx から **クライアント安全な** photo URL を構築する。
  *
- * 注意: API key が URL 露出するため、Google Cloud Console 側で
- *  - HTTP リファラ制限 (本番ドメイン)
- *  - Places API の Photo Media SKU のみ許可
- * を必ず設定すること。
+ * API key を URL に埋めると HTML/JS に露出するため、ここでは key を付けず
+ * /api/hotel-photo proxy への相対 URL を返す。proxy がサーバー側で
+ * GOOGLE_PLACES_API_KEY を付与して Google Places Photo Media を取得する。
  *
- * key 未設定時は空文字を返す (呼び出し側で吸収)。
+ * photoName は "places/XXX/photos/YYY" 形式を想定。
  */
 export function buildPhotoUrl(photoName: string, maxWidthPx: number = 600): string {
-  const apiKey = getApiKey();
-  if (!apiKey) return "";
-  return `${PHOTO_BASE_URL}/${photoName}/media?key=${apiKey}&maxWidthPx=${maxWidthPx}`;
+  return `/api/hotel-photo?ref=${encodeURIComponent(photoName)}&w=${maxWidthPx}`;
 }
 
 export function isPlacesEnabled(): boolean {
