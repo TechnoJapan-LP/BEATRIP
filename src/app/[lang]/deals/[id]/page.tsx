@@ -345,12 +345,12 @@ export default async function DealDetailPage({ params }: Props) {
               checkIn={deal.departure_date}
               checkOut={deal.return_date}
               dealId={deal.id}
-            />
-
-            {/* 同エリアの代表ホテル（折りたたみ）— /hotels/{city} への送客導線 */}
-            <DealHotelHighlights
-              destinationCode={deal.destination_code}
-              destinationLabel={deal.destination}
+              hotelHighlights={
+                <DealHotelHighlights
+                  destinationCode={deal.destination_code}
+                  destinationLabel={deal.destination}
+                />
+              }
             />
 
             {/* 行先別 必需品 CTA (eSIM / 保険 / 現地アクティビティ) — Pack B */}

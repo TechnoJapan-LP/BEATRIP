@@ -16,6 +16,9 @@ import { getHotelImageUrl, isProxyPhotoUrl } from "@/lib/hotels/hotel-image-url"
  * <details> ネイティブ折りたたみで JS 不要・Server Component で完結。
  * 既定は閉じた状態 (ページを圧迫しない)。同エリアに curated hotel が
  * 無い destination では何も描画しない。
+ *
+ * HotelCrossSell の slot として、検索ヒーローと OTA ピルの間 (カード内中段) に
+ * 差し込まれる前提。そのため自前の rounded/bg/border は持たず border-t 区切りのみ。
  */
 
 const tierBadgeClass: Record<CuratedHotel["tier"], string> = {
@@ -68,10 +71,10 @@ export function DealHotelHighlights({
   if (hotels.length === 0) return null;
 
   return (
-    <details className="group rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden">
-      <summary className="flex cursor-pointer list-none items-center gap-4 p-5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-        <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-          <BedDouble className="h-5 w-5" />
+    <details className="group border-t border-zinc-100 dark:border-zinc-800">
+      <summary className="flex cursor-pointer list-none items-center gap-4 px-5 py-4 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
+          <BedDouble className="h-4 w-4" />
         </div>
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">

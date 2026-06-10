@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { BedDouble, ArrowUpRight } from "lucide-react";
 import { buildHotelLink } from "@/lib/affiliate/url-builder";
 import { cityNameEn } from "@/lib/airport-names";
@@ -22,6 +23,7 @@ export function HotelCrossSell({
   checkIn,
   checkOut,
   dealId,
+  hotelHighlights,
 }: {
   destinationCode: string;
   /** 表示用の都市名（日本語） */
@@ -30,13 +32,18 @@ export function HotelCrossSell({
   checkOut?: string;
   /** 起点となったディールID（イベント属性として送信） */
   dealId?: string;
+  /**
+   * 「{都市}の代表的なホテル」折りたたみ（Server Component を slot で受け取る）。
+   * ヒーローと OTA ピルの間に差し込み、ホテル関連 UI を 1 枚のカードに統合する。
+   */
+  hotelHighlights?: ReactNode;
 }) {
   const cityEn = cityNameEn(destinationCode);
   const heroHref = buildHotelLink(cityEn, checkIn, checkOut);
 
   return (
     <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden">
-      {/* ヒーロー: Hotellook 横断検索 */}
+      {/* 1) ヒーロー: Hotellook 横断検索 */}
       <a
         href={heroHref}
         target="_blank"
@@ -64,7 +71,10 @@ export function HotelCrossSell({
         <ArrowUpRight className="h-4 w-4 flex-shrink-0 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
       </a>
 
-      {/* OTA ピル: Booking / Trip / Agoda / Hotellook */}
+      {/* 2) 代表的なホテル（折りたたみ） — 同カード内・中段 */}
+      {hotelHighlights}
+
+      {/* 3) OTA ピル: Booking / Agoda / Hotellook / Trip — 一番下 */}
       <div className="border-t border-zinc-100 dark:border-zinc-800 px-5 py-3">
         <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 mb-2">
           価格比較・予約サイト
