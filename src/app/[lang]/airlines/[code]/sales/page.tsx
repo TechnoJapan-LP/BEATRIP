@@ -12,6 +12,7 @@ import {
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode, airlines } from "@/data/airlines";
 import {
@@ -525,11 +526,15 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               })}
             </div>
           ) : (
-            <div className="rounded-xl border border-zinc-100 bg-white py-12 text-center">
-              <p className="text-zinc-400 text-sm">
-                セール履歴データがありません
-              </p>
-            </div>
+            <EmptyState
+              icon={Calendar}
+              title="セール履歴データがありません"
+              description={`${airline.name}のセール実績は順次収集しています。最新のセール情報や他社の実績もあわせてご覧ください。`}
+              action={{ label: "最新のセールを見る", href: "/" }}
+              secondaryActions={[
+                { label: "航空会社一覧", href: "/airlines" },
+              ]}
+            />
           )}
         </div>
 

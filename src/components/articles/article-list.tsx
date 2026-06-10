@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search, FileSearch } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ArticleCard } from "@/components/articles/article-card";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Article } from "@/data/mock-articles";
 
 const categories = ["すべて", "セール速報", "攻略ガイド", "航空会社ニュース", "旅行Tips"] as const;
@@ -71,9 +72,17 @@ export function ArticleList({ articles }: { articles: Article[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="py-20 text-center text-zinc-400 text-sm">
-          該当する記事が見つかりませんでした
-        </div>
+        <EmptyState
+          icon={FileSearch}
+          title="該当する記事が見つかりませんでした"
+          description="キーワードやカテゴリを変えて再検索するか、最新のセール情報をチェックしてみてください。"
+          action={{ label: "最新のセールを見る", href: "/" }}
+          secondaryActions={[
+            { label: "攻略ガイドを読む", href: "/articles" },
+            { label: "ホテルを探す", href: "/hotels" },
+          ]}
+          className="my-8"
+        />
       ) : (
         <>
           {featured && (

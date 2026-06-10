@@ -12,6 +12,20 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { TableOfContents } from "@/components/ui/table-of-contents";
+import {
+  getAspPartner,
+  getAspPartnerUrl,
+} from "@/lib/affiliate/asp-partners";
+import { TrackedPartnerLink } from "@/components/affiliate/tracked-partner-link";
+
+const TOC_ITEMS = [
+  { id: "credit-limits", label: "クレカ付帯保険の限界" },
+  { id: "net-insurance", label: "おすすめネット保険" },
+  { id: "period", label: "期間別の選び方" },
+  { id: "special-cases", label: "特殊ケースの注意点" },
+  { id: "faq", label: "よくある質問" },
+];
 
 // ISR: 21600 秒 (6 時間)
 export const revalidate = 21600;
@@ -71,29 +85,41 @@ const CREDIT_LIMITS: { item: string; detail: string }[] = [
   },
 ];
 
-const NET_INSURANCE: { name: string; pitch: string; bestFor: string }[] = [
+// partnerId は asp-partners.ts の id。env (ASP click URL / a8mat) 設定済みの
+// 場合のみ各カードに「公式サイトで申込」CTA を出す (未設定なら情報カードのまま)。
+const NET_INSURANCE: {
+  name: string;
+  pitch: string;
+  bestFor: string;
+  partnerId?: string;
+}[] = [
   {
     name: "AIG 損保 海外旅行保険",
+    partnerId: "aig-travel-insurance",
     pitch: "ネット完結で出発当日まで申込可能。24 時間日本語アシスタンスサービスを完備し、キャッシュレス医療サービス提携病院が世界中に広がる。",
     bestFor: "初めての海外旅行・サポート手厚さ重視",
   },
   {
     name: "Chubb 損保 海外旅行保険",
+    partnerId: "chubb-travel-insurance",
     pitch: "オンライン申込でプランをカスタマイズ。短期から長期渡航まで柔軟、世界規模の保険グループならではのネットワーク。",
     bestFor: "プランを細かく組み立てたい人・出張多めの人",
   },
   {
     name: "損保ジャパン 新・海外旅行保険【off!】",
+    partnerId: "sompo-travel-insurance",
     pitch: "ネット専用商品で必要な補償だけ選べる組立式。同行家族のセット申込で割安。",
     bestFor: "費用を抑えたい人・家族旅行",
   },
   {
     name: "楽天損保 海外旅行保険",
+    partnerId: "rakuten-travel-insurance",
     pitch: "ネット申込割引＋楽天ポイント付与。楽天会員なら年間複数回の海外旅行で総コストを抑えやすい。",
     bestFor: "楽天経済圏ユーザー・年複数回渡航する人",
   },
   {
     name: "tabiho（たびほ・ジェイアイ傷害火災）",
+    partnerId: "tabiho-travel-insurance",
     pitch: "出発当日まで申込可・e チケット完結でスマホで証券受取。短期渡航の駆け込み加入に強い。",
     bestFor: "出発直前の駆け込み・スマホ完結派",
   },
@@ -289,22 +315,42 @@ export default async function InsurancePage({ params }: { params: Promise<{ lang
                 </div>
               </div>
               <div className="space-y-3">
-                {NET_INSURANCE.map((ins) => (
-                  <article
-                    key={ins.name}
-                    className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
-                  >
-                    <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-                      {ins.name}
-                    </h3>
-                    <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed mb-2">
-                      {ins.pitch}
-                    </p>
-                    <p className="text-[11px] uppercase tracking-wider text-blue-700 dark:text-blue-200 font-bold">
-                      向いている人: {ins.bestFor}
-                    </p>
-                  </article>
-                ))}
+                {NET_INSURANCE.map((ins) => {
+                  const partner = ins.partnerId
+                    ? getAspPartner(ins.partnerId)
+                    : undefined;
+                  const href = partner ? getAspPartnerUrl(partner) : null;
+                  return (
+                    <article
+                      key={ins.name}
+                      className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
+                    >
+                      <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+                        {ins.name}
+                      </h3>
+                      <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed mb-2">
+                        {ins.pitch}
+                      </p>
+                      <p className="text-[11px] uppercase tracking-wider text-blue-700 dark:text-blue-200 font-bold">
+                        向いている人: {ins.bestFor}
+                      </p>
+                      {partner && href && (
+                        <div className="mt-3">
+                          <TrackedPartnerLink
+                            href={href}
+                            partnerId={partner.id}
+                            category="insurance"
+                            source="insurance-compare"
+                            placement="compare"
+                            label="公式サイトで申込"
+                            accent={partner.accent}
+                            title={partner.tagline}
+                          />
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
               </div>
             </section>
 
@@ -378,7 +424,7 @@ export default async function InsurancePage({ params }: { params: Promise<{ lang
             </section>
 
             {/* FAQ */}
-            <section>
+            <section id="faq">
               <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-6 sm:text-3xl">
                 海外旅行保険のよくある質問
               </h2>
@@ -441,7 +487,8 @@ export default async function InsurancePage({ params }: { params: Promise<{ lang
           </div>
 
           {/* サイドバー */}
-          <aside className="space-y-6">
+          <aside className="space-y-6 lg:sticky lg:top-20 lg:self-start">
+            <TableOfContents items={TOC_ITEMS} className="hidden lg:block" />
             <JapanesePartnersPanel
               title="海外旅行保険を比較"
               subtitle="出発当日まで申込可能なネット保険"

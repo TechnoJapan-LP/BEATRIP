@@ -416,8 +416,27 @@ export function GlobalSearch({
           )}
 
           {showResults && results.length === 0 ? (
-            <li className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">
-              該当する結果が見つかりませんでした
+            <li className="px-4 py-6 text-center">
+              <span className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
+                <Search className="h-4 w-4 text-zinc-400" aria-hidden />
+              </span>
+              <p className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                該当する結果が見つかりませんでした
+              </p>
+              <p className="mt-0.5 text-xs text-zinc-400 dark:text-zinc-500">
+                都市名・空港コード・航空会社名で検索できます
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setQuery("");
+                  router.push(lh("/"));
+                }}
+                className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-zinc-900 px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+              >
+                最新のセールを見る
+              </button>
             </li>
           ) : (
             activeList.map((r, i) => {

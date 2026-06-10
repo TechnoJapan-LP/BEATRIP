@@ -171,6 +171,14 @@
     overscroll-behavior-x: none;
     /* タップハイライトをサイトの統一感のある淡いカラーに */
     -webkit-tap-highlight-color: rgba(24, 24, 27, 0.06);
+    /* アンカーリンク (#hash) のスムーズスクロール。
+       reduced-motion 環境では下部のクエリで auto に上書きされる。 */
+    scroll-behavior: smooth;
+  }
+  /* 固定ヘッダーにアンカー先が隠れないようスクロール余白を確保。
+       id 付き section へ直接ジャンプした際の頭切れを防ぐ。 */
+  :where(section[id], [id].scroll-anchor) {
+    scroll-margin-top: 5.5rem;
   }
   /* キーボードフォーカスを視覚的に分かりやすく（a11y） */
   :focus-visible {
@@ -243,6 +251,30 @@
   .animate-ken-burns {
     animation: beatrip-ken-burns 24s ease-in-out infinite;
   }
+  /* カード hover の統一感 (lift + shadow + border)。
+     回遊導線カードに付与すると、クリック可能性が伝わりやすくなる。
+     reduced-motion 環境では transform を抑止 (下部クエリ)。 */
+  .card-interactive {
+    transition-property: transform, box-shadow, border-color, background-color;
+    transition-duration: 0.18s;
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .card-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 24px -8px rgba(24, 24, 27, 0.12),
+      0 2px 6px -2px rgba(24, 24, 27, 0.08);
+  }
+  .card-interactive:active {
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card-interactive:hover,
+    .card-interactive:active {
+      transform: none;
+    }
+  }
+
   /* "今が買い時" バッジ用のソフトパルス */
   @keyframes beatrip-soft-pulse {
     0%,100% { box-shadow: 0 0 0 0 rgba(244,63,94,0.4); }

@@ -44,13 +44,21 @@ export function HotelMetaRow({
 }) {
   return (
     <div className="mt-2 space-y-2 text-[11px] text-zinc-600 dark:text-zinc-400">
-      {/* 星評価 + 客室数 + レビュースコア */}
+      {/* 星評価 + 客室数 + レビュースコア + 人気バッジ */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         {hotel.star && (
           <span className="inline-flex items-center gap-0.5">
             {Array.from({ length: hotel.star }).map((_, i) => (
               <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />
             ))}
+          </span>
+        )}
+        {/* ソーシャルプルーフ: レビュー件数に応じて「予約多数 / 人気」を表示。
+            実データ (reviewCount) ベースなので誇張にならない。 */}
+        {hotel.reviewCount != null && hotel.reviewCount >= 500 && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-1.5 py-0.5 font-bold text-rose-600 ring-1 ring-rose-200 dark:bg-rose-900/30 dark:text-rose-300 dark:ring-rose-800">
+            <Sparkles className="h-3 w-3" />
+            {hotel.reviewCount >= 2000 ? "予約多数" : "人気"}
           </span>
         )}
         {!hideReviewScore && hotel.reviewScore != null && (

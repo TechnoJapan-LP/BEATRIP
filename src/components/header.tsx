@@ -26,6 +26,8 @@ import {
   Trophy,
   Coins,
   TrendingUp,
+  BookOpen,
+  BookA,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { GlobalSearch } from "@/components/search/global-search";
@@ -134,6 +136,12 @@ export function Header() {
             { href: "/articles/ota-compare/bangkok", label: "バンコク OTA 比較", desc: "コスパ最強都市の 4 大 OTA 比較", Icon: BedDouble },
             { href: "/articles/ota-compare/singapore", label: "シンガポール OTA 比較", desc: "マリーナベイ周辺の高単価ホテル比較", Icon: BedDouble },
             { href: "/articles/ota-compare/taipei", label: "台北 OTA 比較", desc: "中山・西門町・信義の OTA 比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/okinawa", label: "沖縄 OTA 比較", desc: "那覇・恩納村リゾートの最安サイト比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/sapporo", label: "札幌 OTA 比較", desc: "雪まつり期も狙う 4 大 OTA 比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/fukuoka", label: "福岡 OTA 比較", desc: "博多・天神の駅近ホテル比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/paris", label: "パリ OTA 比較", desc: "欧州系ホテルに強い OTA を比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/hong-kong", label: "香港 OTA 比較", desc: "中環・尖沙咀の高層ホテル比較", Icon: BedDouble },
+            { href: "/articles/ota-compare/busan", label: "釜山 OTA 比較", desc: "海雲台・西面の最安サイト比較", Icon: BedDouble },
             { href: "/credit-cards", label: "クレカ比較", desc: "マイル・保険・ラウンジで選ぶ", Icon: CreditCard },
             { href: "/insurance", label: "海外旅行保険", desc: "クレカ付帯 vs ネット保険", Icon: ShieldCheck },
             { href: "/articles/miles-booking-guide", label: "マイル予約ガイド", desc: "JAL/ANA マイルで予約 完全ガイド", Icon: Coins },
@@ -156,6 +164,20 @@ export function Header() {
             { href: "/seasons/summer", label: "夏休み", desc: "7-8月のお盆・夏旅セール", Icon: Calendar },
             { href: "/articles/seasonal/autumn-2026", label: "2026 秋", desc: "紅葉・温泉・秋グルメ月別ガイド", Icon: Calendar },
             { href: "/articles/seasonal/winter-2026", label: "2026 冬", desc: "雪国・温泉・避寒地ガイド", Icon: Calendar },
+          ],
+        },
+        {
+          label: "旅行ガイド・用語集",
+          items: [
+            { href: "/articles/guides/lcc-tips", label: "LCC 活用の 10 のコツ", desc: "格安航空券で失敗しない使い方", Icon: BookOpen },
+            { href: "/articles/guides/best-booking-timing", label: "航空券の最安タイミング", desc: "予約時期の考え方", Icon: BookOpen },
+            { href: "/articles/guides/first-overseas-checklist", label: "初海外 準備チェックリスト", desc: "パスポートから出発まで", Icon: BookOpen },
+            { href: "/articles/guides/miles-complete-guide", label: "マイル 完全ガイド", desc: "貯め方・使い方を基礎から", Icon: BookOpen },
+            { href: "/articles/guides/baggage-rules", label: "手荷物の完全ルール", desc: "サイズ・重量・液体物の基準", Icon: BookOpen },
+            { href: "/articles/guides/transit-guide", label: "乗り継ぎ・トランジット", desc: "接続時間と過ごし方", Icon: BookOpen },
+            { href: "/articles/guides/esim-setup-guide", label: "eSIM 設定ガイド", desc: "海外スマホ通信の設定方法", Icon: BookOpen },
+            { href: "/articles/guides/family-travel-tips", label: "子連れ旅行のコツ", desc: "移動・宿選び・持ち物", Icon: BookOpen },
+            { href: "/glossary", label: "旅行用語集", desc: "航空・ホテル・予約の用語解説", Icon: BookA },
           ],
         },
       ],

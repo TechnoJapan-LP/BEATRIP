@@ -12,6 +12,12 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { TableOfContents } from "@/components/ui/table-of-contents";
+import {
+  getAspPartner,
+  getAspPartnerUrl,
+} from "@/lib/affiliate/asp-partners";
+import { TrackedPartnerLink } from "@/components/affiliate/tracked-partner-link";
 
 // ISR: 21600 秒 (6 時間)
 export const revalidate = 21600;
@@ -55,12 +61,18 @@ type CardEntry = {
   insurance: string;
   lounge: string;
   pitch: string;
+  /**
+   * asp-partners.ts の id。env (ASP click URL / a8mat) 設定済みのときだけ
+   * 「公式サイトで申込」CTA を出す (未設定なら情報カードのまま)。
+   */
+  partnerId?: string;
 };
 
 // セグメント 1: コスパ重視・年会費無料
 const FREE_CARDS: CardEntry[] = [
   {
     name: "楽天カード",
+    partnerId: "rakuten-card",
     annualFee: "永年無料",
     earningRate: "100 円につき 1 ポイント（楽天市場で 3 倍・楽天トラベルで 1%+）",
     insurance: "海外旅行傷害保険 最高 2,000 万円（利用付帯）",
@@ -69,6 +81,7 @@ const FREE_CARDS: CardEntry[] = [
   },
   {
     name: "JCB CARD W",
+    partnerId: "jcb-card-w",
     annualFee: "永年無料（39 歳以下限定で申込）",
     earningRate: "100 円につき 2 ポイント（常時 Oki Doki ポイント 2 倍）",
     insurance: "海外旅行傷害保険 最高 2,000 万円（利用付帯）",
@@ -77,6 +90,7 @@ const FREE_CARDS: CardEntry[] = [
   },
   {
     name: "リクルートカード",
+    partnerId: "recruit-card",
     annualFee: "永年無料",
     earningRate: "100 円につき 1.2 ポイント（公共料金・税金もポイント対象）",
     insurance: "海外旅行傷害保険 最高 2,000 万円（利用付帯）",
@@ -85,6 +99,7 @@ const FREE_CARDS: CardEntry[] = [
   },
   {
     name: "ライフカード",
+    partnerId: "life-card",
     annualFee: "永年無料",
     earningRate: "1,000 円につき 1 ポイント（誕生月は 3 倍）",
     insurance: "なし（海外旅行は別途加入を推奨）",
@@ -93,6 +108,7 @@ const FREE_CARDS: CardEntry[] = [
   },
   {
     name: "イオンカードセレクト",
+    partnerId: "aeon-card",
     annualFee: "永年無料",
     earningRate: "200 円につき 1 ポイント（イオン系列で常時 2 倍・5%off 日あり）",
     insurance: "なし（カードによる）",
@@ -105,6 +121,7 @@ const FREE_CARDS: CardEntry[] = [
 const TRAVEL_CARDS: CardEntry[] = [
   {
     name: "dカード GOLD",
+    partnerId: "d-card-gold",
     annualFee: "11,000 円（税込）",
     earningRate: "100 円につき 1 ポイント（ドコモ・ahamo 利用料金は 10% 還元）",
     insurance: "海外旅行傷害保険 最高 1 億円（利用付帯）",
@@ -113,6 +130,7 @@ const TRAVEL_CARDS: CardEntry[] = [
   },
   {
     name: "三井住友カード（NL）",
+    partnerId: "smbc-nl-card",
     annualFee: "永年無料",
     earningRate: "対象店舗で最大 7%（セブン・ローソン・マック等）",
     insurance: "海外旅行傷害保険 最高 2,000 万円（利用付帯）",
@@ -121,6 +139,7 @@ const TRAVEL_CARDS: CardEntry[] = [
   },
   {
     name: "エポスカード",
+    partnerId: "epos-card",
     annualFee: "永年無料",
     earningRate: "200 円につき 1 ポイント（マルイ・モディで 2 倍）",
     insurance: "海外旅行傷害保険 最高 3,000 万円（疾病治療 270 万円・自動付帯）",
@@ -129,6 +148,7 @@ const TRAVEL_CARDS: CardEntry[] = [
   },
   {
     name: "セゾン・ブルー・アメックス",
+    partnerId: "saison-blue-amex",
     annualFee: "1,100 円（26 歳以下は無料）",
     earningRate: "1,000 円につき 1 ポイント（永久不滅）／海外利用 2 倍",
     insurance: "海外旅行傷害保険 最高 3,000 万円（自動付帯）",
@@ -141,6 +161,7 @@ const TRAVEL_CARDS: CardEntry[] = [
 const PREMIUM_CARDS: CardEntry[] = [
   {
     name: "アメリカン・エキスプレス・ゴールド・プリファード・カード",
+    partnerId: "amex-gold",
     annualFee: "39,600 円（税込）",
     earningRate: "100 円につき 1 ポイント（対象加盟店で 3 倍）",
     insurance: "海外旅行傷害保険 最高 1 億円（利用付帯）／航空便遅延補償あり",
@@ -149,6 +170,7 @@ const PREMIUM_CARDS: CardEntry[] = [
   },
   {
     name: "アメリカン・エキスプレス・プラチナ・カード",
+    partnerId: "amex-platinum",
     annualFee: "165,000 円（税込）",
     earningRate: "100 円につき 1 ポイント（メンバーシップ・リワード）",
     insurance: "海外旅行傷害保険 最高 1 億円（自動付帯）",
@@ -157,6 +179,7 @@ const PREMIUM_CARDS: CardEntry[] = [
   },
   {
     name: "ダイナースクラブカード",
+    partnerId: "diners-club",
     annualFee: "24,200 円（税込）",
     earningRate: "100 円につき 1 ポイント",
     insurance: "海外旅行傷害保険 最高 1 億円（利用付帯）",
@@ -165,6 +188,7 @@ const PREMIUM_CARDS: CardEntry[] = [
   },
   {
     name: "JAL カード CLUB-A ゴールド（マイル特化）",
+    partnerId: "jal-card",
     annualFee: "17,600 円〜",
     earningRate: "100 円につき 1 マイル（ショッピングマイル・プレミアム標準付帯）",
     insurance: "海外旅行傷害保険 最高 5,000 万円〜 1 億円（自動付帯）",
@@ -312,51 +336,71 @@ export default async function CreditCardsPage({ params }: { params: Promise<{ la
                   </div>
                 </div>
                 <div className="space-y-3">
-                  {seg.cards.map((card) => (
-                    <article
-                      key={card.name}
-                      className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
-                    >
-                      <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">
-                        {card.name}
-                      </h3>
-                      <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
-                        {card.pitch}
-                      </p>
-                      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-[11px]">
-                        <div>
-                          <dt className="font-bold uppercase tracking-wider text-zinc-400">
-                            年会費
-                          </dt>
-                          <dd className="text-zinc-700 dark:text-zinc-200 mt-0.5">{card.annualFee}</dd>
-                        </div>
-                        <div>
-                          <dt className="font-bold uppercase tracking-wider text-zinc-400">
-                            還元率
-                          </dt>
-                          <dd className="text-zinc-700 dark:text-zinc-200 mt-0.5">{card.earningRate}</dd>
-                        </div>
-                        <div>
-                          <dt className="font-bold uppercase tracking-wider text-zinc-400">
-                            海外旅行保険
-                          </dt>
-                          <dd className="text-zinc-700 dark:text-zinc-200 mt-0.5">{card.insurance}</dd>
-                        </div>
-                        <div>
-                          <dt className="font-bold uppercase tracking-wider text-zinc-400">
-                            空港ラウンジ
-                          </dt>
-                          <dd className="text-zinc-700 dark:text-zinc-200 mt-0.5">{card.lounge}</dd>
-                        </div>
-                      </dl>
-                    </article>
-                  ))}
+                  {seg.cards.map((card) => {
+                    const partner = card.partnerId
+                      ? getAspPartner(card.partnerId)
+                      : undefined;
+                    const href = partner ? getAspPartnerUrl(partner) : null;
+                    return (
+                      <article
+                        key={card.name}
+                        className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
+                      >
+                        <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mb-2">
+                          {card.name}
+                        </h3>
+                        <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed mb-3">
+                          {card.pitch}
+                        </p>
+                        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-[11px]">
+                          <div>
+                            <dt className="font-bold uppercase tracking-wider text-zinc-400">
+                              年会費
+                            </dt>
+                            <dd className="text-zinc-700 dark:text-zinc-200 mt-0.5">{card.annualFee}</dd>
+                          </div>
+                          <div>
+                            <dt className="font-bold uppercase tracking-wider text-zinc-400">
+                              還元率
+                            </dt>
+                            <dd className="text-zinc-700 dark:text-zinc-200 mt-0.5">{card.earningRate}</dd>
+                          </div>
+                          <div>
+                            <dt className="font-bold uppercase tracking-wider text-zinc-400">
+                              海外旅行保険
+                            </dt>
+                            <dd className="text-zinc-700 dark:text-zinc-200 mt-0.5">{card.insurance}</dd>
+                          </div>
+                          <div>
+                            <dt className="font-bold uppercase tracking-wider text-zinc-400">
+                              空港ラウンジ
+                            </dt>
+                            <dd className="text-zinc-700 dark:text-zinc-200 mt-0.5">{card.lounge}</dd>
+                          </div>
+                        </dl>
+                        {partner && href && (
+                          <div className="mt-3 border-t border-zinc-100 dark:border-zinc-800 pt-3">
+                            <TrackedPartnerLink
+                              href={href}
+                              partnerId={partner.id}
+                              category="credit-card"
+                              source="credit-cards-compare"
+                              placement="compare"
+                              label="公式サイトで申込"
+                              accent={partner.accent}
+                              title={partner.tagline}
+                            />
+                          </div>
+                        )}
+                      </article>
+                    );
+                  })}
                 </div>
               </section>
             ))}
 
             {/* FAQ */}
-            <section>
+            <section id="faq">
               <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-6 sm:text-3xl">
                 クレジットカードのよくある質問
               </h2>
@@ -419,7 +463,14 @@ export default async function CreditCardsPage({ params }: { params: Promise<{ la
           </div>
 
           {/* サイドバー: credit-card partner */}
-          <aside className="space-y-6">
+          <aside className="space-y-6 lg:sticky lg:top-20 lg:self-start">
+            <TableOfContents
+              items={[
+                ...SEGMENTS.map((s) => ({ id: s.id, label: s.title })),
+                { id: "faq", label: "よくある質問" },
+              ]}
+              className="hidden lg:block"
+            />
             <JapanesePartnersPanel
               title="旅行に強いクレカを比較"
               subtitle="マイル・保険・ラウンジに強い厳選カード"

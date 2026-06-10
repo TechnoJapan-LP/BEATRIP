@@ -189,9 +189,8 @@ export async function loadTodayClicks(dealId: string): Promise<number> {
   return count;
 }
 
-export async function loadAllClickStats(): Promise<
-  { deal_id: string; total_clicks: number }[]
-> {
+/** KV index + FS から全 deal_id を収集 (重複排除)。 */
+async function collectDealIds(): Promise<Set<string>> {
   const ids = new Set<string>();
 
   // 1) KV index から ID を集める
@@ -224,10 +223,50 @@ export async function loadAllClickStats(): Promise<
     }
   }
 
+  return ids;
+}
+
+export async function loadAllClickStats(): Promise<
+  { deal_id: string; total_clicks: number }[]
+> {
+  const ids = await collectDealIds();
+
   const stats: { deal_id: string; total_clicks: number }[] = [];
   for (const dealId of ids) {
     const log = await loadClicks(dealId);
     stats.push({ deal_id: dealId, total_clicks: log.total_clicks });
   }
   return stats;
+}
+
+/**
+ * placement (配置位置) 別のクリック内訳を集計して返す。
+ *
+ * 全 deal の直近イベントリスト (各最大 KV_EVENT_LIMIT 件) を走査し、
+ * placement 属性ごとに件数を数える。placement 未付与の古いイベントは
+ * "(未計測)" に丸める。/admin の CTR 分析で「どの導線が効くか」を可視化する用途。
+ *
+ * 注: 集計対象は events リスト (固定長) であり総 click 数 (count) とは別軸。
+ * 直近トレンドの内訳把握を目的とする。
+ */
+export async function loadPlacementBreakdown(): Promise<
+  { placement: string; clicks: number }[]
+> {
+  const ids = await collectDealIds();
+
+  const tally = new Map<string, number>();
+  for (const dealId of ids) {
+    const log = await loadClicks(dealId);
+    for (const ev of log.events) {
+      const key =
+        typeof ev.placement === "string" && ev.placement.length > 0
+          ? ev.placement
+          : "(未計測)";
+      tally.set(key, (tally.get(key) ?? 0) + 1);
+    }
+  }
+
+  return [...tally.entries()]
+    .map(([placement, clicks]) => ({ placement, clicks }))
+    .sort((a, b) => b.clicks - a.clicks);
 }

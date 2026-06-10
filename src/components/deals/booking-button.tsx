@@ -55,8 +55,8 @@ export function BookingButton({
   function trackAndOpen(url: string, provider: string) {
     setClicked(true);
 
-    // GA4 コンバージョンイベント
-    trackAffiliateClick({ dealId, provider, price, route });
+    // GA4 コンバージョンイベント (主要 CTA = ファーストビューの hero 導線)
+    trackAffiliateClick({ dealId, provider, price, route, placement: "hero" });
 
     // sticky-cta と同型: sendBeacon でナビゲーション直前のトラッキングを
     // 確実に届けつつ、window.open を await でブロックしない (INP 改善 +
@@ -66,6 +66,7 @@ export function BookingButton({
         deal_id: dealId,
         affiliate_provider: provider,
         affiliate_url: url,
+        placement: "hero",
         // Turnstile 未設定 (env なし) のとき "" が入るが server 側 skip 扱い
         turnstile_token: consumeTurnstileToken(),
       });
@@ -95,15 +96,43 @@ export function BookingButton({
       (l) => l.url !== affiliateUrl && l.provider !== affiliateProvider
     ) ?? [];
 
+  // 緊急性・ベネフィットの訴求バッジ (実データ連動)。
+  //  - isLowest         → 「今が底値」(最安水準)
+  //  - 高割引 (>=30%)   → 「残りわずか」(セール終了/在庫の示唆)
+  const urgency = isLowest
+    ? { text: "今が底値 — 最安水準のうちに", tone: "emerald" as const }
+    : discountPercent !== undefined && discountPercent >= 30
+      ? { text: "高割引セール — 早めの確保がおすすめ", tone: "rose" as const }
+      : null;
+
+  // 主要 CTA はベネフィットを前面に (「最安値で予約」)。
+  const ctaLabel = clicked
+    ? "予約サイトを開きました"
+    : isLowest
+      ? "最安値で予約に進む"
+      : "このセールを予約する";
+
   return (
     <div className="space-y-3">
       {isTurnstileEnabled() && <TurnstileWidget onToken={handleToken} />}
+      {urgency && (
+        <div
+          className={`flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold ${
+            urgency.tone === "emerald"
+              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+              : "bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300"
+          }`}
+        >
+          <TrendingDown className="h-3.5 w-3.5 flex-shrink-0" />
+          {urgency.text}
+        </div>
+      )}
       <button
         onClick={() => trackAndOpen(affiliateUrl, affiliateProvider)}
         className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 py-4 text-sm font-bold text-white dark:text-zinc-900 transition-all hover:bg-zinc-700 dark:hover:bg-zinc-300 active:scale-[0.98] shadow-lg hover:shadow-xl"
       >
         <Zap className="h-4 w-4" />
-        {clicked ? "予約サイトを開きました" : "このセールを予約する"}
+        {ctaLabel}
         <ExternalLink className="h-4 w-4" />
       </button>
       <div className="flex items-center justify-center gap-2 text-[10px] text-zinc-400">

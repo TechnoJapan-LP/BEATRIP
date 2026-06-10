@@ -31,18 +31,50 @@ export async function getArticleBySlug(
 
 export async function getRelatedArticles(
   slug: string,
-  limit = 3
+  limit = 4
 ): Promise<Article[]> {
   const all = await getAllArticles();
   const article = all.find((a) => a.slug === slug);
   if (!article) return [];
-  return all
-    .filter((a) => a.slug !== slug)
-    .filter(
-      (a) =>
-        a.airline_tags.some((t) => article.airline_tags.includes(t)) ||
-        a.route_tags.some((t) => article.route_tags.includes(t)) ||
-        a.category === article.category
-    )
-    .slice(0, limit);
+
+  const candidates = all.filter((a) => a.slug !== slug);
+
+  // 関連度をスコアリング（路線一致 > 航空会社一致 > 同カテゴリ）。
+  // 同点は新しい順（candidates は既に published_at 降順）。
+  const scored = candidates
+    .map((a) => {
+      let score = 0;
+      const sharedRoutes = a.route_tags.filter((t) =>
+        article.route_tags.includes(t)
+      ).length;
+      const sharedAirlines = a.airline_tags.filter((t) =>
+        article.airline_tags.includes(t)
+      ).length;
+      score += sharedRoutes * 3;
+      score += sharedAirlines * 2;
+      if (a.category === article.category) score += 1;
+      return { a, score };
+    })
+    .filter((x) => x.score > 0)
+    .sort((x, y) => y.score - x.score)
+    .map((x) => x.a);
+
+  // 関連が limit に満たない場合は、同カテゴリ→最新記事で補完して
+  // 必ず limit 件埋める（空状態を避け回遊を促す）。
+  if (scored.length < limit) {
+    const have = new Set(scored.map((a) => a.slug));
+    const fillers = candidates
+      .filter((a) => !have.has(a.slug))
+      .sort((a, b) => {
+        const ac = a.category === article.category ? 0 : 1;
+        const bc = b.category === article.category ? 0 : 1;
+        return ac - bc;
+      });
+    for (const f of fillers) {
+      if (scored.length >= limit) break;
+      scored.push(f);
+    }
+  }
+
+  return scored.slice(0, limit);
 }

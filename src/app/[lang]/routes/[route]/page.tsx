@@ -189,6 +189,66 @@ export default async function RoutePage({ params }: Props) {
   const originRegionSlug = originAirport
     ? REGION_SLUGS[originAirport.region]
     : null;
+
+  // 「次に見るべき路線」を出発地・目的地でグルーピング。
+  // 1) 同じ出発地から別目的地  2) 同じ目的地へ別出発地。
+  // deal がある路線を優先し、不足分は空港データの popularRoutes で補完。
+  type RouteSuggestion = { route: string; o: string; d: string; price: number | null };
+
+  const cheapestForRoute = (o: string, d: string): number | null => {
+    const matched = deals.filter(
+      (dd) => dd.origin_code === o && dd.destination_code === d
+    );
+    return matched.length > 0
+      ? Math.min(...matched.map((dd) => dd.sale_price))
+      : null;
+  };
+  const buildSuggestions = (
+    pairs: { o: string; d: string }[]
+  ): RouteSuggestion[] => {
+    const seen = new Set<string>();
+    const out: RouteSuggestion[] = [];
+    for (const { o, d } of pairs) {
+      if (o === d) continue;
+      const key = `${o}-${d}`;
+      if (key === `${parsed.origin}-${parsed.destination}`) continue;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push({ route: key, o, d, price: cheapestForRoute(o, d) });
+      if (out.length >= 6) break;
+    }
+    // deal あり (price != null) を上に
+    return out.sort((a, b) => {
+      if (a.price === null && b.price !== null) return 1;
+      if (a.price !== null && b.price === null) return -1;
+      return 0;
+    });
+  };
+
+  // 同じ出発地 → 別目的地
+  const sameOriginPairs: { o: string; d: string }[] = [
+    ...deals
+      .filter((dd) => dd.origin_code === parsed.origin)
+      .map((dd) => ({ o: dd.origin_code, d: dd.destination_code })),
+    ...(originAirport?.popularRoutes ?? [])
+      .filter((c) => /^[A-Z]{3}$/.test(c))
+      .map((d) => ({ o: parsed.origin, d })),
+  ];
+  // 同じ目的地 ← 別出発地
+  const sameDestPairs: { o: string; d: string }[] = [
+    ...deals
+      .filter((dd) => dd.destination_code === parsed.destination)
+      .map((dd) => ({ o: dd.origin_code, d: dd.destination_code })),
+    // 目的地を popularRoutes に含む空港を「他の出発地」として提案
+    ...AIRPORTS.filter(
+      (ap) =>
+        ap.iata !== parsed.destination &&
+        (ap.popularRoutes ?? []).includes(parsed.destination)
+    ).map((ap) => ({ o: ap.iata, d: parsed.destination })),
+  ];
+
+  const sameOriginRoutes = buildSuggestions(sameOriginPairs);
+  const sameDestRoutes = buildSuggestions(sameDestPairs);
   // deal が無い場合の checkIn/checkOut フォールバック (60-67 日後)
   const today = new Date();
   const inDays = (n: number) =>
@@ -546,53 +606,71 @@ export default async function RoutePage({ params }: Props) {
               </div>
             )}
 
-            <div className="rounded-xl border border-zinc-100 bg-white p-5">
-              <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
-                他の路線
-              </h3>
-              <div className="space-y-2">
-                {Array.from(
-                  new Set(
-                    deals
-                      .filter(
-                        (d) =>
-                          !(
-                            d.origin_code === parsed.origin &&
-                            d.destination_code === parsed.destination
-                          )
-                      )
-                      .map(
-                        (d) => `${d.origin_code}-${d.destination_code}`
-                      )
-                  )
-                )
-                  .slice(0, 6)
-                  .map((r) => {
-                    const [o, d] = r.split("-");
-                    const sample = deals.find(
-                      (deal) =>
-                        deal.origin_code === o &&
-                        deal.destination_code === d
-                    );
-                    return (
-                      <Link
-                        key={r}
-                        href={`/routes/${r}`}
-                        className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 transition-colors hover:bg-zinc-100"
-                      >
-                        <span className="text-xs font-mono text-zinc-600">
-                          {o}→{d}
+            {sameDestRoutes.length > 0 && (
+              <div className="rounded-xl border border-zinc-100 bg-white p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-1">
+                  {dest}への他の路線
+                </h3>
+                <p className="text-[11px] text-zinc-400 mb-3">
+                  別の出発地から{dest}を目指す
+                </p>
+                <div className="space-y-2">
+                  {sameDestRoutes.map((r) => (
+                    <Link
+                      key={r.route}
+                      href={`/routes/${r.route}`}
+                      className="card-interactive flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 hover:bg-zinc-100"
+                    >
+                      <span className="text-xs text-zinc-600">
+                        <span className="font-medium text-zinc-800">
+                          {cityNameJa(r.o)}
                         </span>
-                        {sample && (
-                          <span className="text-xs font-bold text-zinc-800">
-                            ¥{formatPrice(sample.sale_price)}〜
-                          </span>
-                        )}
-                      </Link>
-                    );
-                  })}
+                        <span className="mx-1 text-zinc-400">→</span>
+                        {cityNameJa(r.d)}
+                      </span>
+                      {r.price !== null && (
+                        <span className="text-xs font-bold text-zinc-800">
+                          ¥{formatPrice(r.price)}〜
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {sameOriginRoutes.length > 0 && (
+              <div className="rounded-xl border border-zinc-100 bg-white p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-1">
+                  {origin}発の他の路線
+                </h3>
+                <p className="text-[11px] text-zinc-400 mb-3">
+                  同じ出発地から別の目的地へ
+                </p>
+                <div className="space-y-2">
+                  {sameOriginRoutes.map((r) => (
+                    <Link
+                      key={r.route}
+                      href={`/routes/${r.route}`}
+                      className="card-interactive flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 hover:bg-zinc-100"
+                    >
+                      <span className="text-xs text-zinc-600">
+                        <span className="font-medium text-zinc-800">
+                          {cityNameJa(r.o)}
+                        </span>
+                        <span className="mx-1 text-zinc-400">→</span>
+                        {cityNameJa(r.d)}
+                      </span>
+                      {r.price !== null && (
+                        <span className="text-xs font-bold text-zinc-800">
+                          ¥{formatPrice(r.price)}〜
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

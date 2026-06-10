@@ -36,12 +36,17 @@ export function AirlineCard({
   upcomingEvents?: SaleEvent[];
 }) {
   const activeSales = sales.filter((s) => s.isActive);
-  const lowestPrice = activeSales
-    .flatMap((s) => s.routes)
-    .reduce((min, r) => Math.min(min, r.price), Infinity);
-  const maxDiscount = activeSales
-    .flatMap((s) => s.routes)
-    .reduce((max, r) => Math.max(max, r.discount), 0);
+  const activeRoutes = activeSales.flatMap((s) => s.routes);
+  // routes が空 (active だが路線未設定) でも ¥∞ を出さないようガード。
+  const hasActiveRoutes = activeRoutes.length > 0;
+  const lowestPrice = activeRoutes.reduce(
+    (min, r) => Math.min(min, r.price),
+    Infinity
+  );
+  const maxDiscount = activeRoutes.reduce(
+    (max, r) => Math.max(max, r.discount),
+    0
+  );
 
   const maxItems = 2;
   const activeToShow = activeSales.slice(0, maxItems);
@@ -146,7 +151,7 @@ export function AirlineCard({
               })}
             </div>
 
-            {activeSales.length > 0 && (
+            {activeSales.length > 0 && hasActiveRoutes && (
               <div className="flex items-center justify-between border-t border-zinc-100 pt-3">
                 <div className="flex items-center gap-1">
                   <Tag className="h-3 w-3 text-emerald-500" />

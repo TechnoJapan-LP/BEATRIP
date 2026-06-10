@@ -87,6 +87,7 @@ export function HotelBookingButtons({
                   destinationCode: destinationCode ?? cityNameEn,
                   dealId,
                   provider: p.id,
+                  placement: "pill",
                 })
               }
               className={`group inline-flex items-center gap-1 rounded-full ${padding} ${weight} ring-1 transition-colors ${ACCENT_CLASS[p.accent]}`}

@@ -1,4 +1,5 @@
 import { getResend, MAIL_FROM as FROM, SITE_URL as SITE } from "@/lib/email/client";
+import { getAirportByCode } from "@/data/airports";
 import { alertCancelUrl } from "./token";
 
 export type AlertMatch = {
@@ -16,10 +17,76 @@ function yen(n: number): string {
   return new Intl.NumberFormat("ja-JP").format(n);
 }
 
+/**
+ * メール内リンクに UTM を付与。utm_source=price_alert / utm_medium=email 固定。
+ * 内部ランディング (deal / route / esim / insurance / hotels) に付与し、
+ * GA4 で価格アラートメール経由の流入とコンバージョンを計測できるようにする。
+ */
+function withUtm(path: string, campaign: string): string {
+  const sep = path.includes("?") ? "&" : "?";
+  return `${SITE}${path}${sep}utm_source=price_alert&utm_medium=email&utm_campaign=${campaign}`;
+}
+
+/**
+ * 目的地が海外か (= 日本の空港リストに無い) を判定。
+ * 海外 → eSIM / 海外旅行保険、国内 → 国内ホテルを上位に出し分ける (文脈マッチング)。
+ */
+function isOverseasDestination(destinationCode: string): boolean {
+  return getAirportByCode(destinationCode) === undefined;
+}
+
+/** メール下部のアフィリエイト誘導ブロック (UTM 付き)。 */
+function affiliateBlock(m: AlertMatch): string {
+  const overseas = isOverseasDestination(m.destinationCode);
+
+  // 文脈マッチング: 海外なら eSIM + 海外旅行保険、国内なら国内ホテル。
+  const items = overseas
+    ? [
+        {
+          href: withUtm("/esim", "alert_esim"),
+          title: "現地で使える eSIM を比較",
+          desc: "海外でもアプリだけでネット接続。空港 Wi-Fi 不要に。",
+        },
+        {
+          href: withUtm("/insurance", "alert_insurance"),
+          title: "海外旅行保険を比較",
+          desc: "出発当日まで申込可。ネット完結で割安に。",
+        },
+      ]
+    : [
+        {
+          href: withUtm("/hotels", "alert_hotel"),
+          title: "目的地のホテルを比較",
+          desc: "複数サイトの料金をまとめて比較し最安値を見つける。",
+        },
+      ];
+
+  const rows = items
+    .map(
+      (it) => `
+        <a href="${it.href}" style="display:block;text-decoration:none;border:1px solid #e4e4e7;border-radius:10px;padding:12px 14px;margin:0 0 8px">
+          <span style="display:block;font-size:13px;font-weight:bold;color:#18181b">${it.title} →</span>
+          <span style="display:block;font-size:12px;color:#71717a;margin-top:2px">${it.desc}</span>
+        </a>`
+    )
+    .join("");
+
+  return `
+      <div style="margin:24px 0 0">
+        <p style="font-size:11px;font-weight:bold;letter-spacing:.05em;text-transform:uppercase;color:#a1a1aa;margin:0 0 10px">
+          この旅行の準備に
+        </p>
+        ${rows}
+      </div>`;
+}
+
 function html(m: AlertMatch): string {
   const cancel = alertCancelUrl(m.alertId);
-  const dealUrl = `${SITE}/deals/${encodeURIComponent(m.dealId)}`;
-  const routeUrl = `${SITE}/routes/${m.originCode}-${m.destinationCode}`;
+  const dealUrl = withUtm(`/deals/${encodeURIComponent(m.dealId)}`, "alert_deal");
+  const routeUrl = withUtm(
+    `/routes/${m.originCode}-${m.destinationCode}`,
+    "alert_route"
+  );
   return `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#18181b;background:#fff">
       <h1 style="font-size:20px;letter-spacing:.05em;margin:0 0 4px">BEATRIP</h1>
@@ -37,12 +104,16 @@ function html(m: AlertMatch): string {
       </div>
       <div style="text-align:center;margin:0 0 8px">
         <a href="${dealUrl}" style="display:inline-block;background:#18181b;color:#fff;text-decoration:none;font-size:14px;font-weight:bold;padding:12px 28px;border-radius:10px">
-          このディールを見る
+          今が底値 — 予約に進む
         </a>
       </div>
+      <p style="font-size:11px;color:#71717a;text-align:center;margin:6px 0 0">
+        価格は変動します。空席が埋まる前にお早めにご確認ください。
+      </p>
       <p style="font-size:12px;color:#a1a1aa;text-align:center;margin:8px 0 0">
         <a href="${routeUrl}" style="color:#a1a1aa">この路線の全セールを見る</a>
       </p>
+      ${affiliateBlock(m)}
       <p style="font-size:11px;color:#a1a1aa;line-height:1.6;margin:28px 0 0;border-top:1px solid #f4f4f5;padding-top:16px">
         掲載価格は取得時点のものです。空席状況により実際の価格と異なる場合があります。ご予約前に各航空会社の公式サイトでご確認ください。<br>
         このアラートを解除する場合は <a href="${cancel}" style="color:#a1a1aa">こちら</a>。

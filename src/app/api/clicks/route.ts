@@ -18,6 +18,8 @@ const MAX_BODY_BYTES = 4 * 1024;
 const ALLOWED_URL_PROTOCOLS = new Set(["https:", "http:"]);
 // affiliate_provider は表示・集計用識別子なので英数 + ハイフン/アンダースコアのみ。
 const PROVIDER_RE = /^[a-zA-Z0-9_-]{1,32}$/;
+// placement は配置位置の集計キー。英数 + ハイフン/アンダースコアのみ (短い enum 想定)。
+const PLACEMENT_RE = /^[a-zA-Z0-9_-]{1,32}$/;
 
 export async function POST(req: NextRequest) {
   const contentLength = parseInt(req.headers.get("content-length") ?? "0", 10);
@@ -58,12 +60,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const { deal_id, affiliate_provider, affiliate_url, turnstile_token } = body as {
-    deal_id?: unknown;
-    affiliate_provider?: unknown;
-    affiliate_url?: unknown;
-    turnstile_token?: unknown;
-  };
+  const { deal_id, affiliate_provider, affiliate_url, turnstile_token, placement } =
+    body as {
+      deal_id?: unknown;
+      affiliate_provider?: unknown;
+      affiliate_url?: unknown;
+      turnstile_token?: unknown;
+      placement?: unknown;
+    };
 
   // Cloudflare Turnstile 検証: TURNSTILE_SECRET_KEY が設定されているときのみ実施。
   // 未設定なら既存挙動を維持 (skip)。検証失敗時は sendBeacon の再試行を誘発しないよう
@@ -119,6 +123,12 @@ export async function POST(req: NextRequest) {
       ? affiliate_provider
       : "unknown";
 
+  // placement は任意。allowlist に合致しなければ単に省略する (集計汚染を防ぐ)。
+  const placementValue =
+    typeof placement === "string" && PLACEMENT_RE.test(placement)
+      ? placement
+      : undefined;
+
   const referer = req.headers.get("referer") ?? "";
   const event = {
     deal_id,
@@ -127,6 +137,7 @@ export async function POST(req: NextRequest) {
     timestamp: new Date().toISOString(),
     // referrer はログ容量・PII 観点で長さを制限
     referrer: referer.slice(0, 512),
+    ...(placementValue ? { placement: placementValue } : {}),
   };
 
   const log = await recordClick(event);

@@ -73,6 +73,20 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
         { href: "/articles/seasonal/winter-2026", label: "2026 冬の旅行計画" },
       ],
     },
+    guides: {
+      title: "ガイド・用語集",
+      links: [
+        { href: "/articles/guides/lcc-tips", label: "LCC 活用の 10 のコツ" },
+        { href: "/articles/guides/best-booking-timing", label: "航空券の最安タイミング" },
+        { href: "/articles/guides/first-overseas-checklist", label: "初海外 準備チェックリスト" },
+        { href: "/articles/guides/miles-complete-guide", label: "マイル 完全ガイド" },
+        { href: "/articles/guides/baggage-rules", label: "手荷物の完全ルール" },
+        { href: "/articles/guides/transit-guide", label: "乗り継ぎ・トランジット" },
+        { href: "/articles/guides/esim-setup-guide", label: "eSIM 設定ガイド" },
+        { href: "/articles/guides/family-travel-tips", label: "子連れ旅行のコツ" },
+        { href: "/glossary", label: "旅行用語集" },
+      ],
+    },
     airlines: {
       title: t.airlinesTitle,
       links: [
@@ -116,7 +130,7 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
           </div>
 
           {/* Nav Grid - 5 columns on lg, 2-3 on smaller */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3 lg:grid-cols-6">
             {Object.values(footerNav).map((section) => (
               <div key={section.title}>
                 <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">

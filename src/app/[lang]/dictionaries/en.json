@@ -188,6 +188,54 @@
       {
         "q": "Is there a dark mode?",
         "a": "Yes. Tap the sun/moon icon at the top right of the header to switch between light and dark mode. Your preference is saved in your browser."
+      },
+      {
+        "q": "Can I book hotels on BEATRIP?",
+        "a": "No. BEATRIP does not handle hotel bookings directly. From our hotel and OTA-comparison pages, the booking buttons take you to partner sites such as Booking.com, Agoda, and Trip.com, where you complete the reservation."
+      },
+      {
+        "q": "Which booking site (OTA) is the cheapest?",
+        "a": "There is no single site that is always cheapest. The lowest price shifts depending on dates, room type, membership tier, and sale timing. Compare the total price (taxes and fees included) across several sites before booking. Our per-city OTA comparison articles can help."
+      },
+      {
+        "q": "How do payments work?",
+        "a": "BEATRIP does not process payments. Accepted methods (credit card, pay-at-property, etc.) and brands depend on the airline or booking site you are redirected to. Always check the available payment options and any fees on the booking screen."
+      },
+      {
+        "q": "Where do I cancel or change a reservation?",
+        "a": "Cancellations and changes are handled by the airline or booking site where you made the reservation. BEATRIP does not hold your booking, so it cannot be cancelled from our site. Always check the cancellation terms (free cancellation vs. non-refundable rate) before booking."
+      },
+      {
+        "q": "Does BEATRIP show affiliate advertising?",
+        "a": "Yes. Some links on BEATRIP are affiliate links. We may receive a referral fee when a booking is completed through a link, but this does not increase the price you pay. See our advertising and affiliate disclosure page for details."
+      },
+      {
+        "q": "Is the display order determined by advertising fees?",
+        "a": "Listing order reflects a combination of our editorial assessment and commission rates, but prices and terms must always be confirmed on the linked site. We avoid one-sided endorsements and aim for neutral comparisons."
+      },
+      {
+        "q": "Are the hotel and flight prices shown accurate?",
+        "a": "Displayed prices are indicative as of the time they were retrieved and constantly change with availability, exchange rates, and sales. Confirm the actual price and inventory on the final booking screen (total including taxes and fees)."
+      },
+      {
+        "q": "How is data accuracy maintained?",
+        "a": "Sale information and hotel data are updated automatically on a regular basis, but we cannot fully guarantee accuracy or timeliness. Always verify critical details (fares, cancellation terms, entry requirements) on official sites or public authorities."
+      },
+      {
+        "q": "Is there information about miles and award tickets?",
+        "a": "Yes. We provide a complete guide to earning and using miles, as well as an award-ticket booking guide, and we are continually expanding our beginner-friendly travel guides."
+      },
+      {
+        "q": "Can I research travel insurance and eSIMs too?",
+        "a": "Yes. We offer a travel insurance comparison page and an eSIM comparison page, plus guide articles explaining how to set them up. Use them together with our pre-trip checklist."
+      },
+      {
+        "q": "What if I do not understand a travel term?",
+        "a": "We have a travel glossary covering aviation, hotel, and booking terms such as LCC, codeshare, open-jaw, OTA, and no-show, explained in plain language for first-time travelers."
+      },
+      {
+        "q": "Is there an English version?",
+        "a": "Yes. Use the language switcher in the header to switch to the English version (/en). Major pages support both Japanese and English."
       }
     ]
   },

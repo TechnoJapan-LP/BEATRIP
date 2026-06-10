@@ -31,6 +31,7 @@ export function TrackedPartnerLink({
   label,
   accent,
   title,
+  placement = "pill",
 }: {
   href: string;
   partnerId: string;
@@ -40,6 +41,8 @@ export function TrackedPartnerLink({
   label: string;
   accent: TrackedPartnerAccent;
   title?: string;
+  /** 配置位置 (GA4 計測用)。partner chip は既定 "pill"。 */
+  placement?: import("@/components/analytics").AffiliatePlacement;
 }) {
   return (
     <a
@@ -47,7 +50,7 @@ export function TrackedPartnerLink({
       target="_blank"
       rel="sponsored noopener noreferrer nofollow"
       onClick={() =>
-        trackPartnerClick({ partnerId, category, destinationCode, source })
+        trackPartnerClick({ partnerId, category, destinationCode, source, placement })
       }
       title={title}
       className={`group inline-flex items-center gap-1 rounded-full border px-3 py-2 sm:py-1.5 text-sm sm:text-xs font-bold transition-colors ${ACCENT_CLASS[accent]}`}

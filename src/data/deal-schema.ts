@@ -38,6 +38,12 @@ export type ClickEvent = {
   affiliate_url: string;
   timestamp: string;
   referrer: string;
+  /**
+   * 配置位置 (どの導線からのクリックか)。
+   * 例: hero / pill / highlight / sticky / exit-modal / cross-sell / compare。
+   * 後方互換のため任意。未送信のイベントは undefined。
+   */
+  placement?: string;
 };
 
 export type DealHistoricalPrice = {

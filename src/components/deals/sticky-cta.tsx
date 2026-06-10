@@ -34,8 +34,14 @@ export function StickyCTA({
   function handleClick() {
     setClicked(true);
 
-    // GA4 コンバージョンイベント（モバイル予約導線）
-    trackAffiliateClick({ dealId, provider: affiliateProvider, price, route });
+    // GA4 コンバージョンイベント（モバイル sticky 予約導線）
+    trackAffiliateClick({
+      dealId,
+      provider: affiliateProvider,
+      price,
+      route,
+      placement: "sticky",
+    });
 
     // sendBeacon でナビゲーション直前のトラッキングを確実に届ける。
     // 失敗しても navigation はブロックしない。
@@ -44,6 +50,7 @@ export function StickyCTA({
         deal_id: dealId,
         affiliate_provider: affiliateProvider,
         affiliate_url: affiliateUrl,
+        placement: "sticky",
         turnstile_token: consumeTurnstileToken(),
       });
       if (navigator.sendBeacon) {
@@ -86,7 +93,7 @@ export function StickyCTA({
           onClick={handleClick}
           className="flex items-center gap-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-5 py-3 text-sm font-bold text-white dark:text-zinc-900 transition-all hover:bg-zinc-700 dark:hover:bg-zinc-300 active:scale-[0.98] whitespace-nowrap flex-shrink-0"
         >
-          {clicked ? "開きました" : "予約サイトへ"}
+          {clicked ? "開きました" : "最安値で予約"}
           <ExternalLink className="h-4 w-4" />
         </button>
       </div>

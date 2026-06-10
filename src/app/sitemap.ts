@@ -70,6 +70,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("/articles/ota-compare/bangkok", "weekly", 0.75),
     ...bilingual("/articles/ota-compare/singapore", "weekly", 0.75),
     ...bilingual("/articles/ota-compare/taipei", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/okinawa", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/sapporo", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/fukuoka", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/paris", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/hong-kong", "weekly", 0.75),
+    ...bilingual("/articles/ota-compare/busan", "weekly", 0.75),
+    // 旅行 Tips / ハウツーガイド — 「LCC コツ」「航空券 安い時期」等の汎用 long-tail
+    ...bilingual("/articles/guides/lcc-tips", "monthly", 0.65),
+    ...bilingual("/articles/guides/best-booking-timing", "monthly", 0.65),
+    ...bilingual("/articles/guides/first-overseas-checklist", "monthly", 0.65),
+    ...bilingual("/articles/guides/miles-complete-guide", "monthly", 0.65),
+    ...bilingual("/articles/guides/baggage-rules", "monthly", 0.65),
+    ...bilingual("/articles/guides/transit-guide", "monthly", 0.65),
+    ...bilingual("/articles/guides/esim-setup-guide", "monthly", 0.65),
+    ...bilingual("/articles/guides/family-travel-tips", "monthly", 0.65),
+    // 旅行用語集 — 「旅行 用語」「LCC とは」等の辞書系 long-tail
+    ...bilingual("/glossary", "monthly", 0.6),
     // セグメント別ホテルランキング — 「カップル ホテル」「家族 ホテル ランキング」等
     ...bilingual("/articles/rankings/couples", "weekly", 0.7),
     ...bilingual("/articles/rankings/family", "weekly", 0.7),

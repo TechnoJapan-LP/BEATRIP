@@ -105,19 +105,21 @@ export function MobileStickyCta({
   }, []);
 
   function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
-    // GA4 イベント
+    // GA4 イベント (sticky 導線)
     if (trackingKind === "deal" && trackingContext?.dealId) {
       trackAffiliateClick({
         dealId: trackingContext.dealId,
         provider: trackingContext.provider ?? "partner",
         price: trackingContext.price,
         route: trackingContext.route,
+        placement: "sticky",
       });
     } else {
       trackHotelClick({
         destinationCode: trackingContext?.destinationCode ?? "",
         dealId: trackingContext?.dealId,
         provider: trackingContext?.provider,
+        placement: "sticky",
       });
     }
 
@@ -129,6 +131,7 @@ export function MobileStickyCta({
         destination_code: trackingContext?.destinationCode ?? "",
         deal_id: trackingContext?.dealId ?? "",
         provider: trackingContext?.provider ?? "",
+        placement: "sticky",
         turnstile_token: consumeTurnstileToken(),
       });
       if (typeof navigator !== "undefined" && navigator.sendBeacon) {

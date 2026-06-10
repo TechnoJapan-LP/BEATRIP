@@ -16,7 +16,10 @@ import {
 import { loadAllSales, type StoredSaleData } from "@/lib/store/sale-store";
 import { listSubscribers } from "@/lib/newsletter/store";
 import { listAlerts } from "@/lib/price-alerts/store";
-import { loadAllClickStats } from "@/lib/store/click-store";
+import {
+  loadAllClickStats,
+  loadPlacementBreakdown,
+} from "@/lib/store/click-store";
 import { airlines } from "@/data/airlines";
 import { isKVEnabled } from "@/lib/store/kv";
 import { NewsletterDigestButton } from "@/components/admin/newsletter-digest-button";
@@ -145,13 +148,19 @@ export default async function AdminPage({
   }
 
   // 認証済 → 各種統計を並列取得
-  const [allSales, subscribers, alerts, clickStats, auditLogs] = await Promise.all([
-    loadAllSales().catch(() => ({} as Record<string, StoredSaleData>)),
-    listSubscribers().catch(() => [] as string[]),
-    listAlerts().catch(() => []),
-    loadAllClickStats().catch(() => []),
-    listRecentAuditLogs(20, 7).catch(() => []),
-  ]);
+  const [allSales, subscribers, alerts, clickStats, auditLogs, placementBreakdown] =
+    await Promise.all([
+      loadAllSales().catch(() => ({} as Record<string, StoredSaleData>)),
+      listSubscribers().catch(() => [] as string[]),
+      listAlerts().catch(() => []),
+      loadAllClickStats().catch(() => []),
+      listRecentAuditLogs(20, 7).catch(() => []),
+      loadPlacementBreakdown().catch(
+        () => [] as { placement: string; clicks: number }[]
+      ),
+    ]);
+
+  const placementTotal = placementBreakdown.reduce((s, p) => s + p.clicks, 0);
 
   const totalActiveSales = Object.values(allSales).reduce(
     (s, v) => s + v.sales.length,
@@ -329,6 +338,47 @@ export default async function AdminPage({
             </>
           ) : (
             <p className="text-sm text-zinc-500">クリックデータがまだありません</p>
+          )}
+        </section>
+
+        <section className="mb-8">
+          <h2 className="font-heading mb-3 text-xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
+            <TrendingUp className="inline h-5 w-5 mr-2" />配置位置 (placement) 別 CTR 内訳
+          </h2>
+          <p className="mb-3 text-xs text-zinc-500">
+            直近イベント (各 deal 最大 500 件) を導線別に集計。どの CTA 配置が
+            クリックを生んでいるかを把握し、コピー・配置の PDCA に活用します。
+            placement 未付与の旧イベントは「(未計測)」に丸めています。
+          </p>
+          {placementBreakdown.length > 0 ? (
+            <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
+              <table className="w-full text-sm">
+                <thead className="bg-zinc-50 dark:bg-zinc-900">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-zinc-500">配置位置</th>
+                    <th className="px-4 py-2 text-right text-[11px] font-bold uppercase tracking-wider text-zinc-500">クリック</th>
+                    <th className="px-4 py-2 text-right text-[11px] font-bold uppercase tracking-wider text-zinc-500">構成比</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                  {placementBreakdown.map((p) => {
+                    const pct =
+                      placementTotal > 0
+                        ? Math.round((p.clicks / placementTotal) * 1000) / 10
+                        : 0;
+                    return (
+                      <tr key={p.placement} className="hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                        <td className="px-4 py-2.5 font-mono text-xs text-zinc-700 dark:text-zinc-300">{p.placement}</td>
+                        <td className="px-4 py-2.5 text-right font-mono font-bold">{p.clicks}</td>
+                        <td className="px-4 py-2.5 text-right font-mono text-xs text-zinc-500">{pct}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="text-sm text-zinc-500">placement 計測データがまだありません</p>
           )}
         </section>
 

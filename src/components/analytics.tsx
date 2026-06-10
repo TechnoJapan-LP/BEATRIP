@@ -58,12 +58,38 @@ function track(eventName: string, params: Record<string, unknown> = {}) {
   w.gtag("event", eventName, params);
 }
 
+/**
+ * 配置位置 (placement) — どの導線が効くかを分析するための共通属性。
+ * GA4 上で affiliate_click / hotel_click / partner_click を placement で
+ * セグメントすることで、CTA 設計の PDCA を回せるようにする。
+ *
+ *  - hero        : ファーストビュー内の主要 CTA
+ *  - pill        : チップ / pill 型のリンク群
+ *  - highlight   : 同エリア代表ホテル等のハイライトブロック
+ *  - sticky      : 画面下部固定の sticky CTA
+ *  - exit-modal  : exit-intent / scroll-depth ポップアップ
+ *  - cross-sell  : ホテル併売など本文内クロスセル
+ *  - compare     : 比較表 / 比較記事内
+ *  - email       : 価格アラート等メール内リンク (UTM 併用)
+ */
+export type AffiliatePlacement =
+  | "hero"
+  | "pill"
+  | "highlight"
+  | "sticky"
+  | "exit-modal"
+  | "cross-sell"
+  | "compare"
+  | "email";
+
 /** 航空券アフィリエイトリンクのクリック（既存） */
 export function trackAffiliateClick(params: {
   dealId: string;
   provider: string;
   price?: number;
   route?: string;
+  /** 配置位置 (どの導線か)。未指定は "" でOK。 */
+  placement?: AffiliatePlacement;
 }) {
   track("affiliate_click", {
     deal_id: params.dealId,
@@ -71,6 +97,7 @@ export function trackAffiliateClick(params: {
     value: params.price ?? 0,
     currency: "JPY",
     route: params.route ?? "",
+    placement: params.placement ?? "",
   });
 }
 
@@ -80,11 +107,14 @@ export function trackHotelClick(params: {
   dealId?: string;
   /** OTA識別子（booking / trip / agoda / hotellook 等）。未指定はHotellook既定。 */
   provider?: string;
+  /** 配置位置 (どの導線か)。未指定は "" でOK。 */
+  placement?: AffiliatePlacement;
 }) {
   track("hotel_click", {
     destination_code: params.destinationCode,
     deal_id: params.dealId ?? "",
     affiliate_provider: params.provider ?? "hotellook",
+    placement: params.placement ?? "",
   });
 }
 
@@ -101,12 +131,15 @@ export function trackPartnerClick(params: {
   destinationCode?: string;
   /** 起点ページ識別子（deal / route / hotel-city 等） */
   source?: string;
+  /** 配置位置 (どの導線か)。未指定は "" でOK。 */
+  placement?: AffiliatePlacement;
 }) {
   track("partner_click", {
     partner_id: params.partnerId,
     partner_category: params.category,
     destination_code: params.destinationCode ?? "",
     source: params.source ?? "",
+    placement: params.placement ?? "",
   });
 }
 

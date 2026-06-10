@@ -108,6 +108,20 @@ export default async function AirportPage({ params }: Props) {
     .map((iata) => ({ iata, name: cityNameJa(iata) }))
     .slice(0, 6);
 
+  // 近隣の空港: まず同一都道府県、足りなければ同一地域で補完。
+  const samePrefecture = AIRPORTS.filter(
+    (a) => a.prefecture === airport.prefecture && a.iata !== airport.iata
+  );
+  const sameRegion = AIRPORTS.filter(
+    (a) => a.region === airport.region && a.iata !== airport.iata
+  );
+  const nearbyAirports = samePrefecture.slice(0, 6);
+  // 同地域 (近隣の都道府県を除く) — 重複を避ける
+  const nearbyIata = new Set(nearbyAirports.map((a) => a.iata));
+  const regionAirports = sameRegion
+    .filter((a) => !nearbyIata.has(a.iata))
+    .slice(0, 8);
+
   const aspCategories: AspCategory[] = [
     "flight-domestic",
     "hotel-domestic",
@@ -385,26 +399,47 @@ export default async function AirportPage({ params }: Props) {
               />
             )}
 
-            {/* 関連リンク */}
-            <section>
-              <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3 sm:text-2xl">
-                {airport.region}の他の空港
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {AIRPORTS.filter(
-                  (a) => a.region === airport.region && a.iata !== airport.iata
-                ).slice(0, 8).map((a) => (
-                  <Link
-                    key={a.iata}
-                    href={`/airports/${a.iata}`}
-                    className="inline-flex items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
-                  >
-                    {a.nameJa}
-                    <span className="font-mono text-zinc-400">{a.iata}</span>
-                  </Link>
-                ))}
-              </div>
-            </section>
+            {/* 近隣の空港 (同一都道府県) */}
+            {nearbyAirports.length > 0 && (
+              <section>
+                <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3 sm:text-2xl">
+                  {airport.prefecture}の近隣空港
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {nearbyAirports.map((a) => (
+                    <Link
+                      key={a.iata}
+                      href={`/airports/${a.iata}`}
+                      className="inline-flex items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                    >
+                      {a.nameJa}
+                      <span className="font-mono text-zinc-400">{a.iata}</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* 関連リンク: 同地域の他空港 */}
+            {regionAirports.length > 0 && (
+              <section>
+                <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3 sm:text-2xl">
+                  {airport.region}の他の空港
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {regionAirports.map((a) => (
+                    <Link
+                      key={a.iata}
+                      href={`/airports/${a.iata}`}
+                      className="inline-flex items-center gap-1 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-1 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors"
+                    >
+                      {a.nameJa}
+                      <span className="font-mono text-zinc-400">{a.iata}</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* サイドバー */}

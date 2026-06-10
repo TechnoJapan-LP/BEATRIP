@@ -9,6 +9,7 @@ import { Analytics } from "@/components/analytics";
 import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { FloatingWidgets } from "@/components/floating-widgets";
+import { ExitIntent } from "@/components/conversion/exit-intent";
 import { getDictionary, hasLocale, LOCALES } from "./dictionaries";
 import "../globals.css";
 
@@ -179,6 +180,9 @@ export default async function RootLayout({
               初回ペイント時に何も描画しないため client 限定 (ssr:false) で
               個別 chunk に分離し、初期バンドルから切り離す。 */}
           <FloatingWidgets />
+          {/* 離脱直前 (PC) / scroll-depth (モバイル) のコンバージョン強化モーダル。
+              7 日間 dismiss を localStorage で記録するため、うっとうしくない頻度。 */}
+          <ExitIntent />
           <RegisterSw />
           <MobileBottomNav />
 
