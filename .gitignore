@@ -50,3 +50,7 @@ next-env.d.ts
 # Claude Code ローカル設定
 .claude/settings.local.json
 .claude/worktrees/
+
+# editor/merge backup files
+*.orig
+*.bak
