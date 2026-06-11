@@ -71,6 +71,7 @@ function track(eventName: string, params: Record<string, unknown> = {}) {
  *  - cross-sell  : ホテル併売など本文内クロスセル
  *  - compare     : 比較表 / 比較記事内
  *  - email       : 価格アラート等メール内リンク (UTM 併用)
+ *  - travel-goods: 記事内の物販 (旅行用品) ブロック
  */
 export type AffiliatePlacement =
   | "hero"
@@ -80,7 +81,8 @@ export type AffiliatePlacement =
   | "exit-modal"
   | "cross-sell"
   | "compare"
-  | "email";
+  | "email"
+  | "travel-goods";
 
 /** 航空券アフィリエイトリンクのクリック（既存） */
 export function trackAffiliateClick(params: {

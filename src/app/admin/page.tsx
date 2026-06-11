@@ -12,6 +12,7 @@ import {
   Server,
   ShieldCheck,
   Activity,
+  ShoppingBag,
 } from "lucide-react";
 import { loadAllSales, type StoredSaleData } from "@/lib/store/sale-store";
 import { listSubscribers } from "@/lib/newsletter/store";
@@ -22,6 +23,7 @@ import {
 } from "@/lib/store/click-store";
 import { airlines } from "@/data/airlines";
 import { getAirlineAffiliateEnvStatus } from "@/lib/affiliate/url-builder";
+import { getTravelGoodsEnvStatus } from "@/data/travel-goods";
 import { isKVEnabled } from "@/lib/store/kv";
 import { NewsletterDigestButton } from "@/components/admin/newsletter-digest-button";
 import { HotelPhotosRefreshButton } from "@/components/admin/hotel-photos-refresh-button";
@@ -188,6 +190,9 @@ export default async function AdminPage({
   const kvEnabled = isKVEnabled();
   // 航空会社直販 ASP (AFFILIATE_URL_AIRLINE_*) の設定状況 (値は表示しない)
   const airlineAspStatus = getAirlineAffiliateEnvStatus();
+  // 物販 (旅行用品) AFFILIATE_URL_GOODS_* の設定状況 (値は表示しない)
+  const travelGoodsStatus = getTravelGoodsEnvStatus();
+  const travelGoodsSetCount = travelGoodsStatus.filter((g) => g.set).length;
   const env = {
     NODE_ENV: process.env.NODE_ENV ?? "?",
     SCRAPER_MODE: process.env.SCRAPER_MODE ?? "?",
@@ -433,6 +438,39 @@ export default async function AdminPage({
                 </p>
                 <p className="mt-0.5 break-all font-mono text-[9px] text-zinc-400">
                   {a.envKey}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="font-heading mb-3 text-xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
+            <ShoppingBag className="inline h-5 w-5 mr-2" />物販 (旅行用品) 設定状況
+          </h2>
+          <p className="mb-3 text-xs text-zinc-500">
+            AFFILIATE_URL_GOODS_* (もしも かんたんリンク等) が設定済みの商品は
+            ガイド記事内の物販ブロックに表示されます。未設定は非表示 (全未設定なら
+            ブロックごと非表示)。現在 {travelGoodsSetCount} / {travelGoodsStatus.length} 件設定済。
+            取得ガイドは .env.example を参照。
+          </p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-4">
+            {travelGoodsStatus.map((g) => (
+              <div key={g.envKey} className="rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                  {g.label}
+                </p>
+                <p
+                  className={`text-sm font-mono font-bold ${
+                    g.set
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-rose-600 dark:text-rose-400"
+                  }`}
+                >
+                  {g.set ? "設定済 (収益化)" : "未設定"}
+                </p>
+                <p className="mt-0.5 break-all font-mono text-[9px] text-zinc-400">
+                  {g.envKey}
                 </p>
               </div>
             ))}

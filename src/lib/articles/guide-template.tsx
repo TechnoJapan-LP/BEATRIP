@@ -25,6 +25,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { TravelGoodsBlock } from "@/components/affiliate/travel-goods-block";
 import { PrNotice } from "@/components/compliance/pr-notice";
 import { localizeHref, type Locale } from "@/lib/i18n/locale";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
@@ -199,6 +200,12 @@ export function GuidePage({ content: c, lang }: { content: GuideContent; lang: s
             categories={c.aspCategories}
             source={c.aspSource}
           />
+        </section>
+
+        {/* 物販 (旅行用品) — env (AFFILIATE_URL_GOODS_*) 設定済みの記事のみ表示。
+            recommendedFor に該当しない / env 未設定なら自動的に何も出ない。 */}
+        <section>
+          <TravelGoodsBlock articleSlug={c.slug} source={c.aspSource} />
         </section>
 
         {/* FAQ */}
