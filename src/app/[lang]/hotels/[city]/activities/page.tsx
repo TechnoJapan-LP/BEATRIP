@@ -20,7 +20,7 @@ import type { AspCategory } from "@/lib/affiliate/asp-partners";
 type Props = { params: Promise<{ city: string; lang: string;}> };
 
 // ISR: 21600 秒キャッシュ (6 時間)
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city, lang } = await params;

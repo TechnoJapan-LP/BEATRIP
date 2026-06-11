@@ -43,7 +43,7 @@ import { localizeHref } from "@/lib/i18n/locale";
 import type { Metadata } from "next";
 
 // ISR: 1800秒キャッシュ (30分: deal が頻繁に変わる top)
-export const revalidate = 1800;
+export const revalidate = 21600;
 
 export async function generateMetadata({
   params,

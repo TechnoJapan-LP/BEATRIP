@@ -26,7 +26,7 @@ import type { AspCategory } from "@/lib/affiliate/asp-partners";
 type Props = { params: Promise<{ code: string; iata: string; lang: string;}> };
 
 // ISR: 3600秒キャッシュ (1時間)
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 /**
  * 航空会社 × 空港の組み合わせは爆発するため、

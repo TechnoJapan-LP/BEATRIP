@@ -23,7 +23,7 @@ import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 const PUBLISHED = "2026-06-01";
 

@@ -59,7 +59,7 @@ function tierPriceRange(tier: CuratedHotel["tier"]): { low: number; high: number
 type Props = { params: Promise<{ city: string; lang: string;}> };
 
 // ISR: 3600秒キャッシュ (1時間)
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city, lang } = await params;

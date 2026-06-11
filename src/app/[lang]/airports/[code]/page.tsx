@@ -23,7 +23,7 @@ import type { AspCategory } from "@/lib/affiliate/asp-partners";
 type Props = { params: Promise<{ code: string; lang: string;}> };
 
 // ISR: 1800秒キャッシュ (30分)
-export const revalidate = 1800;
+export const revalidate = 21600;
 
 const SIZE_BADGE: Record<Airport["size"], { label: string; cls: string }> = {
   major: { label: "主要空港", cls: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200" },

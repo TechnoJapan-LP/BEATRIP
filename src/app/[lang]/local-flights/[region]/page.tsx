@@ -26,7 +26,7 @@ import { getActiveDeals } from "@/lib/deals/deal-service";
 type Props = { params: Promise<{ region: string; lang: string;}> };
 
 // ISR: 1800秒キャッシュ (30分)
-export const revalidate = 1800;
+export const revalidate = 21600;
 
 const REGION_SLUGS: Record<AirportRegion, string> = {
   北海道: "hokkaido",

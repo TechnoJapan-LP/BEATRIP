@@ -12,7 +12,7 @@ import {
 
 type Props = { params: Promise<{ lang: string }> };
 
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 const SEG: RankingSegment = {
   slug: "family",

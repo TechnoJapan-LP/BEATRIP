@@ -9,7 +9,7 @@ import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 
 // ISR: 21600秒キャッシュ (6時間)
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,

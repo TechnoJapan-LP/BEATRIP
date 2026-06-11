@@ -23,7 +23,7 @@ import { getHotelSlugByIata, getHotelDestinationBySlug } from "@/data/hotel-dest
 type Props = { params: Promise<{ slug: string; lang: string;}> };
 
 // ISR: 21600秒キャッシュ (6時間: 記事は更新少)
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, lang } = await params;

@@ -12,7 +12,7 @@ import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-
 import { getDestinationImage } from "@/lib/deals/destination-images";
 
 // ISR: 21600秒キャッシュ (6時間)
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,

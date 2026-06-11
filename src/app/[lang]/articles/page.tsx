@@ -13,7 +13,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { localizeHref, type Locale } from "@/lib/i18n/locale";
 
 // ISR: 3600秒キャッシュ (1時間)
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,

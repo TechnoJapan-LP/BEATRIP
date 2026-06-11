@@ -17,7 +17,7 @@ import { localizeHref, type Locale } from "@/lib/i18n/locale";
 
 type Props = { params: Promise<{ lang: string }> };
 
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 const BASE = "https://beatrip.jp";
 

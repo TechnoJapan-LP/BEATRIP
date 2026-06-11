@@ -20,7 +20,7 @@ import { SiteFooter } from "@/components/site-footer";
 type Props = { params: Promise<{ code: string; lang: string;}> };
 
 // ISR: 3600秒キャッシュ (1時間)
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, lang } = await params;

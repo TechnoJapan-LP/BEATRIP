@@ -54,7 +54,7 @@ import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
 type Props = { params: Promise<{ id: string; lang: string;}> };
 
 // ISR: 1800秒キャッシュ (30分)
-export const revalidate = 1800;
+export const revalidate = 21600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, lang } = await params;

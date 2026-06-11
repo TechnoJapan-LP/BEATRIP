@@ -19,7 +19,7 @@ import { getActiveDeals } from "@/lib/deals/deal-service";
 import type { DealSchema } from "@/data/deal-schema";
 
 // ISR: 21600秒キャッシュ (6時間)
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,

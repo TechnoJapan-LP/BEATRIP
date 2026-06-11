@@ -18,7 +18,7 @@ import { getCityPracticalInfo } from "@/data/city-practical-info";
 type Props = { params: Promise<{ city: string; lang: string;}> };
 
 // ISR: 21600 秒キャッシュ (6 時間)
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 /** 海外都市のみ生成 (国内は eSIM 不要のためスキップ) */
 export function generateStaticParams() {

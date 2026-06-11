@@ -19,7 +19,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 const PUBLISHED = "2026-06-01";
 

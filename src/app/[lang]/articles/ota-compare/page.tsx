@@ -19,7 +19,7 @@ import { localizeHref, type Locale } from "@/lib/i18n/locale";
 type Props = { params: Promise<{ lang: string }> };
 
 // ISR: 21600 秒 (6 時間)
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params;

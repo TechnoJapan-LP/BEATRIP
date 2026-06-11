@@ -9,7 +9,7 @@ import { hasWhenToVisitContent } from "@/data/when-to-visit-content";
 const BASE_URL = "https://beatrip.jp";
 
 // ISR: 3600秒キャッシュ (1時間)
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 /**
  * sitemap の言語方針:

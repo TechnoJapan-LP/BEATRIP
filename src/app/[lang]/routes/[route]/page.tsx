@@ -43,7 +43,7 @@ const REGION_SLUGS: Record<AirportRegion, string> = {
 type Props = { params: Promise<{ route: string; lang: string }> };
 
 // ISR: 1800秒キャッシュ (30分)
-export const revalidate = 1800;
+export const revalidate = 21600;
 
 // 既知の空港コード allowlist。AIRPORTS (国内) + airport-names.ts が知っている
 // 国際コードのみ。未知コード (例: QQQ-ZZZ) を許すと 17,576^2 通りの doorway

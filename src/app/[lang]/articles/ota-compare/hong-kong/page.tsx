@@ -16,7 +16,7 @@ import {
 
 type Props = { params: Promise<{ lang: string }> };
 
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params;

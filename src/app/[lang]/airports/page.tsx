@@ -7,7 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { AIRPORTS, type AirportRegion } from "@/data/airports";
 
 // ISR: 21600秒 (6時間)
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,
