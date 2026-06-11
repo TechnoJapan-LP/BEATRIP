@@ -11,6 +11,11 @@ import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { FloatingWidgets } from "@/components/floating-widgets";
 import { ExitIntent } from "@/components/conversion/exit-intent";
 import { getDictionary, hasLocale, LOCALES } from "./dictionaries";
+import {
+  CONTACT_EMAIL,
+  ESTABLISHED,
+  ORGANIZATION_SAME_AS,
+} from "@/lib/site-config";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -142,7 +147,23 @@ export default async function RootLayout({
                     "@type": "ImageObject",
                     url: "https://beatrip.jp/icon.svg",
                   },
-                  sameAs: [],
+                  foundingDate: ESTABLISHED,
+                  // 外部プロフィール (Bluesky 等) — site-config で一元管理。
+                  // 未設定時は空配列を出さず、キー自体を省略する
+                  ...(ORGANIZATION_SAME_AS.length > 0
+                    ? { sameAs: ORGANIZATION_SAME_AS }
+                    : {}),
+                  // 連絡先は CONTACT_EMAIL 設定後に自動で出力される
+                  ...(CONTACT_EMAIL
+                    ? {
+                        contactPoint: {
+                          "@type": "ContactPoint",
+                          contactType: "customer support",
+                          email: CONTACT_EMAIL,
+                          availableLanguage: ["ja", "en"],
+                        },
+                      }
+                    : {}),
                 },
                 {
                   "@type": "WebSite",

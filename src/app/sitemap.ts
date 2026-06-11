@@ -65,6 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("/terms", "yearly", 0.2),
     ...bilingual("/privacy", "yearly", 0.2),
     ...bilingual("/disclosure", "yearly", 0.3),
+    ...bilingual("/editorial-policy", "yearly", 0.3),
     // 特集ランディング
     ...bilingual("/cruise", "monthly", 0.7),
     ...bilingual("/hawaii", "monthly", 0.7),

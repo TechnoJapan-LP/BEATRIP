@@ -92,6 +92,7 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
         { href: "/terms", label: t.terms },
         { href: "/privacy", label: t.privacy },
         { href: "/disclosure", label: t.disclosure ?? "広告開示" },
+        { href: "/editorial-policy", label: t.editorialPolicy ?? "編集ポリシー" },
       ],
     },
   };

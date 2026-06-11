@@ -10,6 +10,8 @@
  * - `TRIP_COM_AFFILIATE_ID`: Trip.com Affiliate Program のID
  * - `TRAVELPAYOUTS_MARKER`: TravelPayouts のマーカーID（推奨）
  * - `A8_NET_*_AFF_ID`: A8.net の各広告主アフィリエイトID
+ * - `AFFILIATE_URL_AIRLINE_{CODE}`: 航空会社直販 ASP のクリック URL
+ *   （設定すると該当航空会社の予約 CTA が ASP 経由になり収益化される）
  *
  * 未設定でも URL は生成され、検索ページにジャンプする（収益は発生しない）。
  */
@@ -147,6 +149,86 @@ const AIRLINE_BOOKING_TEMPLATES: Record<
   },
 };
 
+// ── 航空会社直販 ASP オーバーライド ──
+//
+// env `AFFILIATE_URL_AIRLINE_{CODE}` に ASP (A8 / アクセストレード /
+// バリューコマース等) で発行されたクリック URL 全文を設定すると、
+// その航空会社の予約 CTA が ASP 経由になり収益化される。
+// 検証規約は asp-partners.ts の network='external_url' と同一
+// (https?:// で始まる文字列のみ有効。それ以外は未設定扱い)。
+//
+// 【トレードオフに関する注意】
+// ASP のクリック URL は経路パラメータ (出発地 / 目的地 / 日付) を
+// 引き継げないことが多く、着地は「公式サイトのトップ or キャンペーン LP」
+// になる。つまり routeAware な公式 deep link (路線プリフィル済み予約画面)
+// の UX 優位性と引き換えに収益が立つ。
+// どちらを取るかは env 設定者 (サイト運用者) の判断に委ねる設計:
+// env を設定した航空会社のみ ASP 経由になり、未設定なら従来挙動
+// (routeAware 公式 deep link or Skyscanner フォールバック) を完全維持する。
+
+/**
+ * 内部 airlineCode と env サフィックスの別名対応。
+ * 内部コードが直感的でない会社は人間に分かりやすい別名でも設定できる
+ * (例: Peach は AFFILIATE_URL_AIRLINE_PCH でも AFFILIATE_URL_AIRLINE_PEACH でも可)。
+ */
+const AIRLINE_AFFILIATE_ENV_ALIASES: Record<string, string[]> = {
+  PCH: ["PEACH"],
+  JJP: ["JETSTAR"],
+};
+
+/**
+ * 航空会社直販 ASP のクリック URL を env から引く。
+ *
+ * @param airlineCode 内部航空会社コード (sale.airlineCode / deal.airline_id)
+ * @returns 有効な ASP クリック URL。未設定 / 不正値なら null (= 従来挙動)
+ */
+export function getAirlineAffiliateUrl(airlineCode: string): string | null {
+  if (!airlineCode) return null;
+  // env 名として安全な形に正規化 (例 "6J" はそのまま、小文字は大文字化)
+  const code = airlineCode.toUpperCase().replace(/[^A-Z0-9]/g, "_");
+  const suffixes = [code, ...(AIRLINE_AFFILIATE_ENV_ALIASES[code] ?? [])];
+  for (const suffix of suffixes) {
+    const v = process.env[`AFFILIATE_URL_AIRLINE_${suffix}`];
+    // asp-partners.ts の external_url と同じ検証: http(s):// で始まる URL 全文のみ
+    if (typeof v === "string" && /^https?:\/\//.test(v.trim())) {
+      return v.trim();
+    }
+  }
+  return null;
+}
+
+/**
+ * admin ダッシュボード可視化用: 主要航空会社の ASP env 設定状況。
+ * envKey は .env.example に記載している推奨キー名 (別名側を採用している場合あり)。
+ */
+export const AIRLINE_AFFILIATE_ENV_VARS: {
+  code: string;
+  name: string;
+  envKey: string;
+}[] = [
+  { code: "JAL", name: "JAL", envKey: "AFFILIATE_URL_AIRLINE_JAL" },
+  { code: "ANA", name: "ANA", envKey: "AFFILIATE_URL_AIRLINE_ANA" },
+  { code: "PCH", name: "Peach", envKey: "AFFILIATE_URL_AIRLINE_PEACH" },
+  { code: "JJP", name: "Jetstar", envKey: "AFFILIATE_URL_AIRLINE_JETSTAR" },
+  { code: "SQ", name: "Singapore Airlines", envKey: "AFFILIATE_URL_AIRLINE_SQ" },
+  { code: "CX", name: "Cathay Pacific", envKey: "AFFILIATE_URL_AIRLINE_CX" },
+  { code: "VJ", name: "VietJet Air", envKey: "AFFILIATE_URL_AIRLINE_VJ" },
+  { code: "QR", name: "Qatar Airways", envKey: "AFFILIATE_URL_AIRLINE_QR" },
+];
+
+/** 各航空会社の ASP env が設定済みかどうか (値そのものは返さない) */
+export function getAirlineAffiliateEnvStatus(): {
+  code: string;
+  name: string;
+  envKey: string;
+  set: boolean;
+}[] {
+  return AIRLINE_AFFILIATE_ENV_VARS.map((v) => ({
+    ...v,
+    set: getAirlineAffiliateUrl(v.code) !== null,
+  }));
+}
+
 // ── Skyscanner deep link ──
 function buildSkyscannerUrl(route: SaleRoute, sale: AirlineSale): string {
   const dep = formatDateForSkyscanner(sale.travelPeriodStart);
@@ -282,8 +364,20 @@ export function buildAffiliateLink(
     };
   }
   const template = AIRLINE_BOOKING_TEMPLATES[sale.airlineCode];
+  // 航空会社直販 ASP オーバーライド (env 設定時のみ非 null)。
+  // 注: ASP クリック URL は経路パラメータを引き継げないことが多く、
+  // 公式トップ or キャンペーンページ着地になる (詳細は getAirlineAffiliateUrl 上部)。
+  const airlineAspUrl = getAirlineAffiliateUrl(sale.airlineCode);
+  const airlineProviderName = template?.name ?? `${sale.airlineName}公式`;
 
   if (options.preferProvider === "airline-direct") {
+    if (airlineAspUrl) {
+      return {
+        url: airlineAspUrl,
+        provider: airlineProviderName,
+        strategy: "airline-direct",
+      };
+    }
     if (template) {
       return {
         url: template.build(route, sale),
@@ -294,6 +388,17 @@ export function buildAffiliateLink(
   }
 
   // 主CTA優先度:
+  // 0. 航空会社直販 ASP オーバーライド (env AFFILIATE_URL_AIRLINE_{CODE})。
+  //    route 深リンクの UX 優位 vs ASP 収益のトレードオフは env 設定者の判断。
+  //    env 未設定なら従来挙動 (1 → 2) と完全一致。
+  if (airlineAspUrl) {
+    return {
+      url: airlineAspUrl,
+      provider: airlineProviderName,
+      strategy: "airline-direct",
+    };
+  }
+
   // 1. 路線対応の航空会社直予約（ユーザーが見たセール航空会社の予約画面に
   //    路線プリフィルで直行 → 見た特価がそのまま表示される最良の体験）
   if (template && template.routeAware) {
@@ -359,9 +464,17 @@ export function buildCompareLinks(
 ): AffiliateLink[] {
   const links: AffiliateLink[] = [];
 
-  // 公式
+  // 公式 (ASP env 設定済みなら ASP クリック URL を優先 → 収益化。
+  //  未設定なら従来どおり公式テンプレート URL)
   const template = AIRLINE_BOOKING_TEMPLATES[sale.airlineCode];
-  if (template) {
+  const airlineAspUrl = getAirlineAffiliateUrl(sale.airlineCode);
+  if (airlineAspUrl) {
+    links.push({
+      url: airlineAspUrl,
+      provider: template?.name ?? `${sale.airlineName}公式`,
+      strategy: "airline-direct",
+    });
+  } else if (template) {
     links.push({
       url: template.build(route, sale),
       provider: template.name,

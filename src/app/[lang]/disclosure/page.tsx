@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
@@ -78,6 +79,16 @@ export default async function DisclosurePage({
             </div>
           ))}
         </div>
+
+        {/* 編集ポリシーとの相互リンク */}
+        <p className="mt-8 mb-4">
+          <Link
+            href={localizeHref("/editorial-policy", locale)}
+            className="text-sm text-zinc-600 underline underline-offset-2 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+          >
+            {t.relatedEditorialPolicy}
+          </Link>
+        </p>
       </main>
       <SiteFooter lang={lang} />
     </>

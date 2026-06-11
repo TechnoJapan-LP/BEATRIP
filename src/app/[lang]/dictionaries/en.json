@@ -97,6 +97,7 @@
     "terms": "Terms of Service",
     "privacy": "Privacy Policy",
     "disclosure": "Ad disclosure",
+    "editorialPolicy": "Editorial policy",
     "disclaimer": "* Sale listings are aggregated from each airline's official website. Fares and seat availability change constantly, so always confirm the latest details on the airline's official site before booking. BEATRIP does not sell tickets and is provided for informational purposes only.",
     "copyright": "© 2026 BEATRIP. All rights reserved.",
     "flightsTitle": "Flights",
@@ -144,7 +145,21 @@
       "We do not sell tickets — we're an information-only service. Always confirm details on the airline's official website before completing a booking."
     ],
     "dataSourcesTitle": "Data sources",
-    "dataSourcesIntro": "Sale information is collected from the official websites of the following airlines:"
+    "dataSourcesIntro": "Sale information is collected from the official websites of the following airlines:",
+    "operatorTitle": "Who runs BEATRIP",
+    "operatorNameLabel": "Operator",
+    "contactLabel": "Contact",
+    "contactPending": "Coming soon (a contact channel is being prepared)",
+    "establishedLabel": "Established",
+    "methodologyTitle": "How we collect data and keep it accurate",
+    "methodology": [
+      "Sale listings are collected through a combination of automated monitoring and manual review, sourced from airline official websites, official announcements, and travel news media (such as Traicy). Primary sources (official announcements) always take priority, and we do not publish information we cannot trace to a source.",
+      "All listed prices reflect the moment they were fetched. Airfares and seat availability change constantly, so always confirm the latest price and conditions on the official site before booking.",
+      "Figures such as \"typical price\", \"seasonal index\", and \"sale-timing forecast\" are statistical estimates based on historical data. They are clearly labeled as estimates on the site and do not guarantee actual prices or future sales."
+    ],
+    "editorialPolicyTitle": "Editorial policy",
+    "editorialPolicyText": "Our content standards, how affiliate advertising relates to rankings, and our correction policy are published in the editorial policy.",
+    "editorialPolicyLink": "Read the editorial policy"
   },
   "faq": {
     "metaTitle": "Frequently Asked Questions (FAQ)",
@@ -356,6 +371,39 @@
         "title": "6. Changes",
         "content": "This disclosure will be updated as partner programs are added or ended. The \"last updated\" date above reflects the most recent revision."
       }
-    ]
+    ],
+    "relatedEditorialPolicy": "See also our editorial policy"
+  },
+  "editorialPolicy": {
+    "metaTitle": "Editorial Policy",
+    "metaDescription": "How BEATRIP creates content: primary sources first, estimates clearly labeled, honest disclosure of how affiliate revenue relates to rankings, and a prompt correction policy.",
+    "breadcrumb": "Editorial policy",
+    "title": "Editorial Policy",
+    "updated": "Editorial policy — last updated: 2026-06-11",
+    "intro": "BEATRIP (the \"Service\") covers flight sales, hotels, and travel services — information that directly affects how you spend money. This page explains the standards we apply when creating and publishing content.",
+    "sections": [
+      {
+        "title": "1. Content standards",
+        "content": "Our sale listings and articles follow these standards:\n\n● Primary sources first — airline official websites and official announcements are our primary sources, supplemented by travel news media (such as Traicy). We do not publish information we cannot trace to a source.\n● Freshness — sale listings are refreshed daily by automated collection. Ended sales are marked as ended or archived.\n● Final check on the official site — prices, availability and conditions change constantly, so every page asks you to confirm on the official site before booking."
+      },
+      {
+        "title": "2. How we handle estimates",
+        "content": "Figures such as \"typical price\", \"seasonal index\", \"sale-timing forecast\" and \"best time to book\" are statistical estimates based on historical data. They are labeled as estimates throughout the site and do not guarantee actual prices, future sales, or seat availability. When the underlying data changes, estimates are recalculated and updated."
+      },
+      {
+        "title": "3. Relationship with affiliate advertising",
+        "content": "The Service is funded by performance-based affiliate advertising. In the interest of honest disclosure:\n\n● The order of items in comparison content (credit cards, travel insurance, eSIM, OTAs, etc.) is determined by a combination of editorial assessment and affiliate commission. We never change an assessment solely because of a commission.\n● Sale information itself (price, period, route) is published whenever we can verify it, regardless of whether a commission applies.\n● Our partner programs and how the revenue model works are published on the Advertising Disclosure page.\n● Referral commissions are never marked up to the price you pay."
+      },
+      {
+        "title": "4. Corrections",
+        "content": "When we find an error (wrong price, an ended sale still listed, a broken link, etc.), we verify and correct it promptly. For significant errors, a correction note is added to the affected page. If you spot an error, please let us know via the contact channel below."
+      }
+    ],
+    "contactTitle": "5. Corrections and inquiries",
+    "contactBody": "To report an error or send any other inquiry, please use the channel below.",
+    "contactPending": "A contact channel is currently being prepared. Thank you for your patience.",
+    "relatedTitle": "Related pages",
+    "relatedDisclosure": "Advertising Disclosure",
+    "relatedAbout": "About BEATRIP (operator information)"
   }
 }
