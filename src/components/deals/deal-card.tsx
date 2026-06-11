@@ -65,10 +65,16 @@ export function DealCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-          {badge && (
-            <Badge className={`absolute top-2 left-2 text-[8px] font-bold tracking-[0.1em] uppercase sm:top-3 sm:left-3 sm:text-[10px] sm:tracking-[0.15em] ${badge.className}`}>
-              {badge.label}
-            </Badge>
+          {deal.is_sample ? (
+            <span className="absolute top-2 left-2 rounded-full bg-zinc-700/90 px-2 py-0.5 text-[9px] font-bold text-zinc-100 backdrop-blur-sm sm:top-3 sm:left-3 sm:text-[10px]">
+              参考事例
+            </span>
+          ) : (
+            badge && (
+              <Badge className={`absolute top-2 left-2 text-[8px] font-bold tracking-[0.1em] uppercase sm:top-3 sm:left-3 sm:text-[10px] sm:tracking-[0.15em] ${badge.className}`}>
+                {badge.label}
+              </Badge>
+            )
           )}
 
           <div className="absolute top-2 right-2 flex flex-col items-end gap-1 sm:top-3 sm:right-3">
@@ -79,7 +85,7 @@ export function DealCard({
             <CountdownBadge deadline={deal.booking_deadline} />
           </div>
 
-          {deal.seats_remaining !== undefined && deal.seats_remaining <= 10 && (
+          {!deal.is_sample && deal.seats_remaining !== undefined && deal.seats_remaining <= 10 && (
             <div className="absolute top-10 right-2 flex items-center gap-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] text-white backdrop-blur-sm sm:top-14 sm:right-3 sm:px-2 sm:text-[10px]">
               <Users className="h-2.5 w-2.5" />
               残{deal.seats_remaining}席

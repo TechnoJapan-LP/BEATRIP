@@ -51,13 +51,21 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/20" />
 
-        {/* 上部: 今週の最大割引バッジ + セール終了カウントダウン */}
+        {/* 上部: 今週の最大割引バッジ + セール終了カウントダウン (参考事例ではラベルを置換) */}
         <div className="absolute left-4 top-4 flex flex-col items-start gap-1.5 sm:left-6 sm:top-6">
-          <div className="flex items-center gap-1.5 rounded-full bg-rose-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white sm:text-xs">
-            <Flame className="h-3.5 w-3.5" />
-            {t.badge}
-          </div>
-          <CountdownBadge deadline={deal.booking_deadline} />
+          {deal.is_sample ? (
+            <div className="rounded-full bg-zinc-700/90 px-3 py-1 text-[11px] font-bold text-zinc-100 backdrop-blur-sm sm:text-xs">
+              参考事例
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-1.5 rounded-full bg-rose-500 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white sm:text-xs">
+                <Flame className="h-3.5 w-3.5" />
+                {t.badge}
+              </div>
+              <CountdownBadge deadline={deal.booking_deadline} />
+            </>
+          )}
         </div>
 
         {/* 下部: 情報 */}

@@ -75,10 +75,11 @@ function estimateTaxes(
 }
 
 // ── mock データの取扱い ──
-// mock-deals は架空の価格・残席を含むデモデータのため、本番 (Vercel production)
-// では絶対にユーザーへ表示しない。開発環境でのみ DX のためフォールバックする。
-const IS_PRODUCTION =
-  process.env.NODE_ENV === "production" && process.env.VERCEL === "1";
+// mock-deals は架空の価格・残席を含むデモデータ。実スクレイプの在庫が無いとき
+// (セール端境期・store 空) は本番でも「参考事例」として表示するが、
+// is_sample: true を立てて UI で明示ラベリングし、Product JSON-LD 等
+// 「現在のオファーの事実表明」は出力しない (isMockDeal で抑止)。
+// 完全非表示にするとサイトの中核コンテンツが消えるため、誠実な開示との両立を取る。
 
 const MOCK_DEAL_IDS = new Set(mockDeals.map((d) => d.id));
 
@@ -86,18 +87,19 @@ const MOCK_DEAL_IDS = new Set(mockDeals.map((d) => d.id));
  * deal が mock-deals 由来 (架空データ) かどうか。
  * Product JSON-LD など「事実の表明」になる出力を抑止する判定に使う。
  */
-export function isMockDeal(deal: Pick<DealSchema, "id">): boolean {
-  return MOCK_DEAL_IDS.has(deal.id);
+export function isMockDeal(
+  deal: Pick<DealSchema, "id"> & { is_sample?: boolean }
+): boolean {
+  return MOCK_DEAL_IDS.has(deal.id) || deal.is_sample === true;
 }
 
-/** 開発環境のみ mock にフォールバック。本番では空配列を返す。 */
+/** 実在庫が無いとき mock に「参考事例」フラグ付きでフォールバック。 */
 function mockFallback(reason: string): DealSchema[] {
-  if (IS_PRODUCTION) {
-    console.log(`[DealService] ${reason} — production: returning empty list`);
-    return [];
-  }
-  console.log(`[DealService] ${reason}, using mock data (dev only)`);
-  return withDestinationImages(withReliableAffiliate(mockDeals));
+  console.log(`[DealService] ${reason}, using sample data (labeled as 参考事例)`);
+  return withDestinationImages(withReliableAffiliate(mockDeals)).map((d) => ({
+    ...d,
+    is_sample: true,
+  }));
 }
 
 /**

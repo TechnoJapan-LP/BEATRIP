@@ -30,6 +30,13 @@ export type DealSchema = {
   updated_at: string;
   affiliate_url?: string;
   affiliate_provider?: string;
+  /**
+   * 参考事例フラグ。実スクレイプの在庫が無いときに表示する
+   * 「過去のセール傾向に基づく参考例」(mock 由来) を示す。
+   * true のディールは UI で「参考事例」とラベリングし、
+   * Product JSON-LD 等「現在のオファーの事実表明」は出力しない。
+   */
+  is_sample?: boolean;
 };
 
 export type ClickEvent = {

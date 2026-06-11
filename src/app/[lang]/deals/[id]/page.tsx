@@ -298,10 +298,22 @@ export default async function DealDetailPage({ params }: Props) {
         {/* 景表法: PR 表記 (hero 直下) */}
         <PrNotice className="mb-4" />
 
-        {/* セール終了カウントダウン (即効性 CTA) */}
-        <div className="mb-6 flex items-center gap-2">
-          <CountdownBadge deadline={deal.booking_deadline} />
-        </div>
+        {/* 参考事例の明示 — mock 由来 deal は現在予約可能なオファーではない */}
+        {isMock && (
+          <div className="mb-4 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-xs leading-relaxed text-zinc-600 dark:border-zinc-700 dark:bg-zinc-800/60 dark:text-zinc-300">
+            <span className="mr-2 rounded-full bg-zinc-700 px-2 py-0.5 text-[10px] font-bold text-zinc-100">
+              参考事例
+            </span>
+            このディールは過去のセール傾向に基づく参考例です。現在予約できるセールではない場合があります。最新のセール情報は各航空会社の公式サイトでご確認ください。
+          </div>
+        )}
+
+        {/* セール終了カウントダウン (即効性 CTA) — 参考事例では出さない */}
+        {!isMock && (
+          <div className="mb-6 flex items-center gap-2">
+            <CountdownBadge deadline={deal.booking_deadline} />
+          </div>
+        )}
 
         {/* 3 ゾーン構成:
             - メインカラム (lg:col-span-2): ディール情報 → ホテル → 旅の準備
@@ -441,7 +453,7 @@ export default async function DealDetailPage({ params }: Props) {
                         {deal.cabin}
                       </span>
                     </div>
-                    {deal.seats_remaining !== undefined && (
+                    {!isMock && deal.seats_remaining !== undefined && (
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-zinc-400">残席</span>
                         <div className="flex items-center gap-1">
