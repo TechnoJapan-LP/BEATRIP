@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
@@ -73,6 +75,16 @@ export default async function FAQPage({
         <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
           {t.subtitle}
         </p>
+        <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+          {t.moreGuidesText}{" "}
+          <Link
+            href={localizeHref("/articles", locale)}
+            className="inline-flex items-center gap-1 font-bold text-sky-700 hover:underline dark:text-sky-300"
+          >
+            {t.moreGuidesLinkLabel}
+            <ArrowRight className="h-3 w-3" aria-hidden="true" />
+          </Link>
+        </p>
 
         <div className="mt-8 space-y-4">
           {t.items.map((faq, i) => (
@@ -90,6 +102,23 @@ export default async function FAQPage({
                 <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
                   {faq.a}
                 </p>
+                {faq.links.length > 0 && (
+                  <p className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
+                    <span className="text-zinc-400 dark:text-zinc-500">
+                      {t.readMore}:
+                    </span>
+                    {faq.links.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={localizeHref(link.href, locale)}
+                        className="group inline-flex items-center gap-1 font-bold text-sky-700 hover:underline dark:text-sky-300"
+                      >
+                        {link.label}
+                        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                      </Link>
+                    ))}
+                  </p>
+                )}
               </div>
             </details>
           ))}

@@ -8,6 +8,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Header } from "@/components/header";
+import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
@@ -240,7 +241,7 @@ export default async function InsurancePage({ params }: { params: Promise<{ lang
       <Header />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-700 to-emerald-600 text-white">
+      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.insurance} text-white`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"

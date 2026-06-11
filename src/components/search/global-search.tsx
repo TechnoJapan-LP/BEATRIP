@@ -54,6 +54,22 @@ const TYPE_LABEL: Record<EntryType, string> = {
   term: "用語",
 };
 
+/**
+ * 検索結果の type 優先度 (小さいほど上位)。
+ * 同名都市が複数 type で当たったとき「行き先セール意図 > 都市ホテル > ... > 出発地 (local-flights)」
+ * の順に並ぶようにする。
+ */
+const TYPE_PRIORITY: Record<EntryType, number> = {
+  deal: 0,
+  city: 1,
+  feature: 2,
+  airport: 3,
+  airline: 4,
+  article: 5,
+  term: 6,
+  region: 7,
+};
+
 const TYPE_ICON: Record<EntryType, typeof Plane> = {
   city: MapPin,
   airport: Building2,
@@ -113,12 +129,12 @@ function buildIndex(): Entry[] {
     });
   }
 
-  // 「{都市}行きの航空券セール」 — 行き先意図に応答 (ホームのディール一覧を都市名で絞り込み)
+  // 「{都市}行きの航空券セール」 — 行き先意図に応答 (/deals 一覧を都市名で絞り込み)
   for (const h of HOTEL_DESTINATIONS) {
     out.push({
       label: `${h.nameJa}行きの航空券セール`,
       sublabel: `${h.nameJa} (${h.nameEn}) 行きのセールを一覧で確認`,
-      href: `/?q=${encodeURIComponent(h.nameJa)}#deals`,
+      href: `/deals?q=${encodeURIComponent(h.nameJa)}`,
       type: "deal",
       haystack: [
         h.nameJa,
@@ -309,25 +325,35 @@ function buildIndex(): Entry[] {
     }
   );
 
-  // 用語集の主要用語 — /glossary へ誘導
-  // (用語別アンカーは glossary 側に id が付与され次第 #anchor に切替予定)
-  const glossaryTerms: { term: string; sub: string; kw: string }[] = [
-    { term: "LCC", sub: "格安航空会社 (Low Cost Carrier)", kw: "格安航空 ローコスト peach jetstar" },
-    { term: "FSC", sub: "フルサービスキャリア", kw: "フルサービス ana jal" },
-    { term: "OTA", sub: "オンライン旅行会社 (予約サイト)", kw: "online travel agency 予約サイト booking" },
-    { term: "マイレージ", sub: "航空会社のポイントプログラム", kw: "マイル mileage ポイント" },
-    { term: "特典航空券", sub: "マイルで交換する航空券", kw: "マイル 無料 award" },
-    { term: "トランジット", sub: "乗り継ぎ・経由", kw: "乗り継ぎ 経由 transit レイオーバー" },
-    { term: "オープンジョー", sub: "往路と復路で発着地が異なる旅程", kw: "open jaw 周遊" },
-    { term: "ストップオーバー", sub: "24 時間以上の途中滞在", kw: "stopover 途中降機" },
-    { term: "無料キャンセル", sub: "ホテル予約のキャンセル無料プラン", kw: "キャンセル free cancellation 返金" },
-    { term: "ベストレート", sub: "公式サイト最安値保証", kw: "best rate 最安値保証 公式" },
+  // 用語集の主要用語 — /glossary#{slug} のアンカーへ直接誘導
+  // (slug は glossary/page.tsx の Term.slug と同一規約)
+  const glossaryTerms: { term: string; slug: string; sub: string; kw: string }[] = [
+    { term: "LCC", slug: "lcc", sub: "格安航空会社 (Low Cost Carrier)", kw: "格安航空 ローコスト peach jetstar" },
+    { term: "FSC", slug: "fsc", sub: "フルサービスキャリア", kw: "フルサービス ana jal" },
+    { term: "OTA", slug: "ota", sub: "オンライン旅行会社 (予約サイト)", kw: "online travel agency 予約サイト booking" },
+    { term: "マイレージ", slug: "mileage", sub: "航空会社のポイントプログラム", kw: "マイル mileage ポイント" },
+    { term: "特典航空券", slug: "award-ticket", sub: "マイルで交換する航空券", kw: "マイル 無料 award" },
+    { term: "トランジット", slug: "transit", sub: "乗り継ぎ・経由", kw: "乗り継ぎ 経由 transit レイオーバー" },
+    { term: "オープンジョー", slug: "open-jaw", sub: "往路と復路で発着地が異なる旅程", kw: "open jaw 周遊" },
+    { term: "ストップオーバー", slug: "stopover", sub: "24 時間以上の途中滞在", kw: "stopover 途中降機" },
+    { term: "無料キャンセル", slug: "free-cancellation", sub: "ホテル予約のキャンセル無料プラン", kw: "キャンセル free cancellation 返金" },
+    { term: "ベストレート", slug: "best-rate", sub: "公式サイト最安値保証", kw: "best rate 最安値保証 公式" },
+    { term: "コードシェア", slug: "code-share", sub: "複数社が共同販売する便", kw: "code share 共同運航 運航会社" },
+    { term: "ノーショー", slug: "no-show", sub: "連絡なしの予約不履行", kw: "no show 不泊 キャンセル料" },
+    { term: "オーバーブッキング", slug: "overbooking", sub: "座席数を超える予約受付", kw: "overbooking 振替 補償" },
+    { term: "返金不可レート", slug: "non-refundable", sub: "キャンセル不可の割安プラン", kw: "non refundable 返金不可 キャンセル不可" },
+    { term: "ダイナミックプライシング", slug: "dynamic-pricing", sub: "需要で変動する価格設定", kw: "dynamic pricing 変動価格 値段が変わる" },
+    { term: "メタサーチ", slug: "metasearch", sub: "予約サイト横断の価格比較", kw: "metasearch 横断検索 比較サイト" },
+    { term: "受託手荷物", slug: "checked-baggage", sub: "カウンターで預ける荷物", kw: "預け荷物 checked baggage 重量制限" },
+    { term: "機内持ち込み手荷物", slug: "carry-on-baggage", sub: "座席に持ち込む荷物", kw: "持ち込み carry on 手荷物 サイズ" },
+    { term: "早割", slug: "early-bird", sub: "早期予約の割引運賃", kw: "早期予約 割引 early bird 先得" },
+    { term: "海外旅行保険", slug: "travel-insurance", sub: "渡航中のトラブルに備える保険", kw: "保険 insurance クレカ付帯 補償" },
   ];
   for (const g of glossaryTerms) {
     out.push({
       label: g.term,
       sublabel: `${g.sub} — 旅行用語集`,
-      href: "/glossary",
+      href: `/glossary#${g.slug}`,
       type: "term",
       haystack: [g.term, g.sub, g.kw, "用語 とは 意味"].join(" ").toLowerCase(),
     });
@@ -417,6 +443,8 @@ export function GlobalSearch({
     const matched = index.filter((e) =>
       tokens.every((t) => e.haystack.includes(t))
     );
+    // type 優先度で安定ソート (同 type 内は index 構築順を維持)
+    matched.sort((a, b) => TYPE_PRIORITY[a.type] - TYPE_PRIORITY[b.type]);
     return matched.slice(0, 10);
   }, [index, query]);
 

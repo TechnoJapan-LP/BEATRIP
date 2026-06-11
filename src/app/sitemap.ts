@@ -59,6 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     ...bilingual("", "daily", 1),
     ...bilingual("/airlines", "weekly", 0.8),
+    ...bilingual("/deals", "daily", 0.85),
     ...bilingual("/articles", "daily", 0.8),
     ...bilingual("/about", "monthly", 0.4),
     ...bilingual("/faq", "monthly", 0.4),

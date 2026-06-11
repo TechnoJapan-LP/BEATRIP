@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Package, Calendar, Wallet, Users, Sparkles, ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
+import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
@@ -210,7 +211,7 @@ export default async function PackageTourPage({ params }: { params: Promise<{ la
       <Header />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-emerald-700 via-emerald-500 to-sky-600 text-white">
+      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.tour} text-white`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"

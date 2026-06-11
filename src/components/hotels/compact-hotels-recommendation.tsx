@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BedDouble, Star } from "lucide-react";
 import { CURATED_HOTELS, type CuratedHotel } from "@/data/hotel-curated";
 import { getHotelDestinationBySlug } from "@/data/hotel-destinations";
-import { getHotelImageUrl, isProxyPhotoUrl } from "@/lib/hotels/hotel-image-url";
+import { getHotelImageUrlForCard, isProxyPhotoUrl } from "@/lib/hotels/hotel-image-url";
 
 type Variant = "grid" | "horizontal";
 
@@ -129,7 +129,7 @@ export function CompactHotelsRecommendation({
         {picks.map(({ hotel: h, citySlug, cityNameJa }) => {
           // 実データのあるホテルのみスコアを表示 (捏造フォールバック禁止)
           const reviewScore = h.reviewScore ?? null;
-          const hotelImageUrl = getHotelImageUrl(citySlug, h);
+          const hotelImageUrl = getHotelImageUrlForCard(citySlug, h);
           return (
             <Link
               key={`${citySlug}-${h.name}`}

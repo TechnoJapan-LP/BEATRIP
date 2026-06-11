@@ -12,7 +12,8 @@ import { useLocalizedHref } from "@/components/i18n/locale-provider";
  *   bottom padding が重なる場合は呼び出し側で調整
  */
 const NAV = [
-  { href: "/", label: "ディール", icon: Plane, match: (p: string) => p === "/" || p === "/en" },
+  // ディールは独立一覧ページ /deals へ (ホームも実質ディール一覧のため active 扱い)
+  { href: "/deals", label: "ディール", icon: Plane, match: (p: string) => p === "/" || p === "/en" || p.startsWith("/deals") || p.startsWith("/en/deals") },
   { href: "/hotels", label: "ホテル", icon: BedDouble, match: (p: string) => p.startsWith("/hotels") || p.startsWith("/en/hotels") },
   { href: "/local-flights", label: "地方便", icon: MapPin, match: (p: string) => p.startsWith("/local-flights") || p.startsWith("/airports") || p.startsWith("/en/local-flights") || p.startsWith("/en/airports") },
   { href: "/articles", label: "記事", icon: BookOpen, match: (p: string) => p.startsWith("/articles") || p.startsWith("/en/articles") },

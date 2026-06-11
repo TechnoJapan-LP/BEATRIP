@@ -170,89 +170,177 @@
     "items": [
       {
         "q": "What is BEATRIP?",
-        "a": "BEATRIP is a flight-deal site that automatically aggregates airline sales and surfaces flash deals, sale-timing forecasts, and price history. We do not sell tickets — the site is informational only."
+        "a": "BEATRIP is a flight-deal site that automatically aggregates airline sales and surfaces flash deals, sale-timing forecasts, and price history. We do not sell tickets — the site is informational only.",
+        "links": []
       },
       {
         "q": "Where does the sale data come from?",
-        "a": "We pull sale data directly from the official websites of major carriers including ANA, JAL, Peach, Jetstar Japan, and Scoot. Listings refresh regularly, but always confirm the current fare and seat availability on the airline's official site."
+        "a": "We pull sale data directly from the official websites of major carriers including ANA, JAL, Peach, Jetstar Japan, and Scoot. Listings refresh regularly, but always confirm the current fare and seat availability on the airline's official site.",
+        "links": []
       },
       {
         "q": "Are the prices on BEATRIP accurate?",
-        "a": "Prices are accurate as of when we fetched them. Airfares fluctuate constantly based on seat availability and exchange rates, so the real-time price may differ. Always confirm the latest fare on the airline's official site before booking."
+        "a": "Prices are accurate as of when we fetched them. Airfares fluctuate constantly based on seat availability and exchange rates, so the real-time price may differ. Always confirm the latest fare on the airline's official site before booking.",
+        "links": []
       },
       {
         "q": "How does the Sale Forecast work?",
-        "a": "Our model analyzes historical sale records — start dates, frequency, discount depth, and more — to predict when the next sale is most likely. Forecasts are guidance, not a guarantee that a sale will run."
+        "a": "Our model analyzes historical sale records — start dates, frequency, discount depth, and more — to predict when the next sale is most likely. Forecasts are guidance, not a guarantee that a sale will run.",
+        "links": [
+          {
+            "href": "/articles/guides/best-booking-timing",
+            "label": "Best timing to book the cheapest flights"
+          }
+        ]
       },
       {
         "q": "How do I set up a price alert?",
-        "a": "On any deal's detail page, use the Price Alert section to set the price you'd like to be notified at. We'll alert you when the fare drops to or below that amount. Browser notifications are currently supported."
+        "a": "On any deal's detail page, use the Price Alert section to set the price you'd like to be notified at. We'll alert you when the fare drops to or below that amount. Browser notifications are currently supported.",
+        "links": []
       },
       {
         "q": "How do favorites work?",
-        "a": "Tap the heart icon on any deal card to save it. Favorites live in your browser's local storage, so they'll be there the next time you visit from the same browser."
+        "a": "Tap the heart icon on any deal card to save it. Favorites live in your browser's local storage, so they'll be there the next time you visit from the same browser.",
+        "links": []
       },
       {
         "q": "Can I book flights through BEATRIP?",
-        "a": "No — we don't sell tickets. The Book button takes you to the airline's official site or a partner booking site, where you complete the booking."
+        "a": "No — we don't sell tickets. The Book button takes you to the airline's official site or a partner booking site, where you complete the booking.",
+        "links": []
+      },
+      {
+        "q": "Where can I check carry-on and checked baggage rules?",
+        "a": "Baggage size, weight, and quantity limits vary by airline and fare type, and LCCs tend to be strict. Our guide covers the basics, but always confirm the latest rules on your airline's official site before flying.",
+        "links": [
+          {
+            "href": "/articles/guides/baggage-rules",
+            "label": "Complete carry-on & checked baggage rules"
+          }
+        ]
+      },
+      {
+        "q": "When is the cheapest time to book flights?",
+        "a": "It varies by route and season, but booking several weeks to months in advance and watching for airline sales are generally effective approaches. Our guide explains the thinking in detail.",
+        "links": [
+          {
+            "href": "/articles/guides/best-booking-timing",
+            "label": "Best timing to book the cheapest flights"
+          }
+        ]
       },
       {
         "q": "Does BEATRIP work on mobile?",
-        "a": "Yes. BEATRIP is a PWA (Progressive Web App), so you can add it to your phone's home screen and use it like a native app. Pick 'Add to Home Screen' in your browser menu."
+        "a": "Yes. BEATRIP is a PWA (Progressive Web App), so you can add it to your phone's home screen and use it like a native app. Pick 'Add to Home Screen' in your browser menu.",
+        "links": []
       },
       {
         "q": "Is there a dark mode?",
-        "a": "Yes. Tap the sun/moon icon at the top right of the header to switch between light and dark mode. Your preference is saved in your browser."
+        "a": "Yes. Tap the sun/moon icon at the top right of the header to switch between light and dark mode. Your preference is saved in your browser.",
+        "links": []
       },
       {
         "q": "Can I book hotels on BEATRIP?",
-        "a": "No. BEATRIP does not handle hotel bookings directly. From our hotel and OTA-comparison pages, the booking buttons take you to partner sites such as Booking.com, Agoda, and Trip.com, where you complete the reservation."
+        "a": "No. BEATRIP does not handle hotel bookings directly. From our hotel and OTA-comparison pages, the booking buttons take you to partner sites such as Booking.com, Agoda, and Trip.com, where you complete the reservation.",
+        "links": [
+          {
+            "href": "/ota-sales",
+            "label": "OTA sale comparison"
+          }
+        ]
       },
       {
         "q": "Which booking site (OTA) is the cheapest?",
-        "a": "There is no single site that is always cheapest. The lowest price shifts depending on dates, room type, membership tier, and sale timing. Compare the total price (taxes and fees included) across several sites before booking. Our per-city OTA comparison articles can help."
+        "a": "There is no single site that is always cheapest. The lowest price shifts depending on dates, room type, membership tier, and sale timing. Compare the total price (taxes and fees included) across several sites before booking. Our per-city OTA comparison articles can help.",
+        "links": [
+          {
+            "href": "/articles/ota-compare",
+            "label": "OTA comparison by city"
+          }
+        ]
       },
       {
         "q": "How do payments work?",
-        "a": "BEATRIP does not process payments. Accepted methods (credit card, pay-at-property, etc.) and brands depend on the airline or booking site you are redirected to. Always check the available payment options and any fees on the booking screen."
+        "a": "BEATRIP does not process payments. Accepted methods (credit card, pay-at-property, etc.) and brands depend on the airline or booking site you are redirected to. Always check the available payment options and any fees on the booking screen.",
+        "links": []
       },
       {
         "q": "Where do I cancel or change a reservation?",
-        "a": "Cancellations and changes are handled by the airline or booking site where you made the reservation. BEATRIP does not hold your booking, so it cannot be cancelled from our site. Always check the cancellation terms (free cancellation vs. non-refundable rate) before booking."
+        "a": "Cancellations and changes are handled by the airline or booking site where you made the reservation. BEATRIP does not hold your booking, so it cannot be cancelled from our site. Always check the cancellation terms (free cancellation vs. non-refundable rate) before booking.",
+        "links": [
+          {
+            "href": "/glossary#free-cancellation",
+            "label": "Glossary: free cancellation"
+          }
+        ]
       },
       {
         "q": "Does BEATRIP show affiliate advertising?",
-        "a": "Yes. Some links on BEATRIP are affiliate links. We may receive a referral fee when a booking is completed through a link, but this does not increase the price you pay. See our advertising and affiliate disclosure page for details."
+        "a": "Yes. Some links on BEATRIP are affiliate links. We may receive a referral fee when a booking is completed through a link, but this does not increase the price you pay. See our advertising and affiliate disclosure page for details.",
+        "links": [
+          {
+            "href": "/disclosure",
+            "label": "Advertising & affiliate disclosure"
+          }
+        ]
       },
       {
         "q": "Is the display order determined by advertising fees?",
-        "a": "Listing order reflects a combination of our editorial assessment and commission rates, but prices and terms must always be confirmed on the linked site. We avoid one-sided endorsements and aim for neutral comparisons."
+        "a": "Listing order reflects a combination of our editorial assessment and commission rates, but prices and terms must always be confirmed on the linked site. We avoid one-sided endorsements and aim for neutral comparisons.",
+        "links": []
       },
       {
         "q": "Are the hotel and flight prices shown accurate?",
-        "a": "Displayed prices are indicative as of the time they were retrieved and constantly change with availability, exchange rates, and sales. Confirm the actual price and inventory on the final booking screen (total including taxes and fees)."
+        "a": "Displayed prices are indicative as of the time they were retrieved and constantly change with availability, exchange rates, and sales. Confirm the actual price and inventory on the final booking screen (total including taxes and fees).",
+        "links": []
       },
       {
         "q": "How is data accuracy maintained?",
-        "a": "Sale information and hotel data are updated automatically on a regular basis, but we cannot fully guarantee accuracy or timeliness. Always verify critical details (fares, cancellation terms, entry requirements) on official sites or public authorities."
+        "a": "Sale information and hotel data are updated automatically on a regular basis, but we cannot fully guarantee accuracy or timeliness. Always verify critical details (fares, cancellation terms, entry requirements) on official sites or public authorities.",
+        "links": []
       },
       {
         "q": "Is there information about miles and award tickets?",
-        "a": "Yes. We provide a complete guide to earning and using miles, as well as an award-ticket booking guide, and we are continually expanding our beginner-friendly travel guides."
+        "a": "Yes. We provide a complete guide to earning and using miles, as well as an award-ticket booking guide, and we are continually expanding our beginner-friendly travel guides.",
+        "links": [
+          {
+            "href": "/articles/guides/miles-complete-guide",
+            "label": "Complete guide to earning and using miles"
+          }
+        ]
       },
       {
         "q": "Can I research travel insurance and eSIMs too?",
-        "a": "Yes. We offer a travel insurance comparison page and an eSIM comparison page, plus guide articles explaining how to set them up. Use them together with our pre-trip checklist."
+        "a": "Yes. We offer a travel insurance comparison page and an eSIM comparison page, plus guide articles explaining how to set them up. Use them together with our pre-trip checklist.",
+        "links": [
+          {
+            "href": "/insurance",
+            "label": "Compare travel insurance"
+          },
+          {
+            "href": "/articles/guides/esim-setup-guide",
+            "label": "Phone & eSIM setup guide for overseas travel"
+          }
+        ]
       },
       {
         "q": "What if I do not understand a travel term?",
-        "a": "We have a travel glossary covering aviation, hotel, and booking terms such as LCC, codeshare, open-jaw, OTA, and no-show, explained in plain language for first-time travelers."
+        "a": "We have a travel glossary covering aviation, hotel, and booking terms such as LCC, codeshare, open-jaw, OTA, and no-show, explained in plain language for first-time travelers.",
+        "links": [
+          {
+            "href": "/glossary",
+            "label": "Travel glossary"
+          }
+        ]
       },
       {
         "q": "Is there an English version?",
-        "a": "Yes. Use the language switcher in the header to switch to the English version (/en). Major pages support both Japanese and English."
+        "a": "Yes. Use the language switcher in the header to switch to the English version (/en). Major pages support both Japanese and English.",
+        "links": []
       }
-    ]
+    ],
+    "readMore": "Learn more",
+    "moreGuidesText": "Want to dig deeper?",
+    "moreGuidesLinkLabel": "Browse all travel guides"
   },
   "terms": {
     "metaTitle": "Terms of Service",

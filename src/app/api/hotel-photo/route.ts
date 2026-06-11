@@ -12,9 +12,10 @@ import { NextRequest } from "next/server";
  *
  * GET /api/hotel-photo?ref={photoName}&w={maxWidthPx}
  *   ref … "places/XXX/photos/YYY" 形式の photo name (必須, SSRF 対策で形式検証)
- *   w   … 取得幅 px (任意, default 600, 100〜1600 にクランプ)
+ *   w   … 取得幅 px (任意, default 640, 100〜1600 にクランプ)
  *
  * レスポンス: image/jpeg を 30 日 immutable CDN キャッシュ。
+ * 期限切れ後も stale-while-revalidate で即時表示しつつ裏で再取得。
  * key 未設定時は 404 (ページ側は tier グラデーション fallback に倒れる)。
  */
 
@@ -35,7 +36,8 @@ function getApiKey(): string | null {
 
 function clampWidth(raw: string | null): number {
   const n = Number(raw);
-  if (!Number.isFinite(n)) return 600;
+  // default は hotel-image-url.ts の HOTEL_PHOTO_WIDTH.DEFAULT と整合させる
+  if (!Number.isFinite(n)) return 640;
   return Math.min(1600, Math.max(100, Math.round(n)));
 }
 
@@ -82,7 +84,10 @@ export async function GET(req: NextRequest) {
     headers: {
       "Content-Type": contentType,
       // 30 日 immutable。Vercel CDN が長期キャッシュし、以後は origin を叩かない。
-      "Cache-Control": "public, max-age=2592000, s-maxage=2592000, immutable",
+      // 期限切れ後 7 日間は stale-while-revalidate で stale を即時返しつつ
+      // 裏で再取得する (expiry 直後の白画像フラッシュ防止)。
+      "Cache-Control":
+        "public, max-age=2592000, s-maxage=2592000, stale-while-revalidate=604800, immutable",
     },
   });
 }

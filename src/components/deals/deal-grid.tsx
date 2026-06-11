@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { ArrowRight } from "lucide-react";
 import { DealCard } from "./deal-card";
 import { UpcomingDealCard } from "./upcoming-deal-card";
 import {
@@ -11,8 +13,9 @@ import {
   type AreaFilter,
   type DiscountFilter,
   type BadgeFilter,
+  type SortOption,
 } from "@/components/filters/deal-filters";
-import { useDictionary } from "@/components/i18n/locale-provider";
+import { useDictionary, useLocalizedHref } from "@/components/i18n/locale-provider";
 import type { DealSchema } from "@/data/deal-schema";
 import type { SaleEvent } from "@/data/mock-deals";
 import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
@@ -88,6 +91,10 @@ const VALID_AREA: AreaFilter[] = ["all", "domestic", "overseas", "asia", "europe
 const VALID_DISCOUNT: DiscountFilter[] = ["all", "gte30", "gte50", "gte70"];
 const VALID_BADGE: BadgeFilter[] = ["all", "NEW", "ENDING_SOON", "LOWEST_IN_2_YEARS"];
 const VALID_FLIGHT_TYPE: FlightType[] = ["all", "domestic", "international"];
+const VALID_SORT: SortOption[] = ["discount", "price", "deadline"];
+
+// パーソナライズ: 前回選択したフィルタ (エリア/国内・国際) を保存し次回訪問時に復元
+const PREFERRED_FILTERS_KEY = "beatrip:preferred-filters";
 
 function parseEnum<T extends string>(
   value: string | null,
@@ -101,11 +108,15 @@ function parseEnum<T extends string>(
 export function DealGrid({
   deals,
   upcomingSales = [],
+  showSeeAllLink = true,
 }: {
   deals: DealSchema[];
   upcomingSales?: SaleEvent[];
+  /** /deals 一覧ページ自身では「すべてのディールを見る」リンクを出さない */
+  showSeeAllLink?: boolean;
 }) {
   const t = useDictionary<Record<string, string>>("filters");
+  const lh = useLocalizedHref();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -134,6 +145,49 @@ export function DealGrid({
   const [badge, setBadge] = useState<BadgeFilter>(() =>
     parseEnum(searchParams.get("badge"), VALID_BADGE, "all")
   );
+  const [sort, setSort] = useState<SortOption>(() =>
+    parseEnum(searchParams.get("sort"), VALID_SORT, "discount")
+  );
+
+  // パーソナライズ: 初回マウント時に保存済みフィルタを復元。
+  // URL クエリがある場合はクエリ優先 (共有リンクを壊さない)。
+  // hydration mismatch 防止のため useEffect 内 (クライアント側のみ) で復元する。
+  const [prefsRestored, setPrefsRestored] = useState(false);
+  useEffect(() => {
+    if (searchParams.toString() === "") {
+      try {
+        const raw = window.localStorage.getItem(PREFERRED_FILTERS_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw) as {
+            flightType?: string;
+            area?: string;
+          };
+          setFlightType(
+            parseEnum(saved.flightType ?? null, VALID_FLIGHT_TYPE, "all")
+          );
+          setArea(parseEnum(saved.area ?? null, VALID_AREA, "all"));
+        }
+      } catch {
+        // localStorage 不可 (private mode 等) / 壊れた JSON は無視
+      }
+    }
+    setPrefsRestored(true);
+    // 初回マウント時のみ実行
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 選択したフィルタを保存 (復元完了後のみ — 初期 state での上書きを防止)
+  useEffect(() => {
+    if (!prefsRestored) return;
+    try {
+      window.localStorage.setItem(
+        PREFERRED_FILTERS_KEY,
+        JSON.stringify({ flightType, area })
+      );
+    } catch {
+      // 書き込み不可は無視
+    }
+  }, [prefsRestored, flightType, area]);
 
   useEffect(() => {
     function onSearch(e: Event) {
@@ -158,6 +212,7 @@ export function DealGrid({
     if (discount !== "all") params.set("discount", discount);
     if (airlineFilter !== "all") params.set("airline", airlineFilter);
     if (badge !== "all") params.set("badge", badge);
+    if (sort !== "discount") params.set("sort", sort);
 
     const qs = params.toString();
     const url = qs ? `${pathname}?${qs}` : pathname;
@@ -180,6 +235,7 @@ export function DealGrid({
     discount,
     airlineFilter,
     badge,
+    sort,
   ]);
 
   // 航空会社オプション: 現在の deal 集合から抽出
@@ -257,9 +313,22 @@ export function DealGrid({
       });
     }
 
-    // 表示順: 割引率の高い順
-    return result.sort((a, b) => b.deal.discount_percent - a.deal.discount_percent);
-  }, [filteredDeals]);
+    // 表示順: 選択中のソート (default: 割引率の高い順)
+    return result.sort((a, b) => {
+      switch (sort) {
+        case "price":
+          return a.deal.sale_price - b.deal.sale_price;
+        case "deadline":
+          return (
+            new Date(a.deal.booking_deadline).getTime() -
+            new Date(b.deal.booking_deadline).getTime()
+          );
+        case "discount":
+        default:
+          return b.deal.discount_percent - a.deal.discount_percent;
+      }
+    });
+  }, [filteredDeals, sort]);
 
   const visibleUpcoming = useMemo(() => {
     const cols = 4;
@@ -301,6 +370,19 @@ export function DealGrid({
 
   return (
     <div>
+      {/* /deals 一覧ページへの導線 */}
+      {showSeeAllLink && (
+        <div className="mb-4 flex justify-end">
+          <Link
+            href={lh("/deals")}
+            className="inline-flex items-center gap-1 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+          >
+            すべてのディールを見る
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      )}
+
       <DealFilters
         flightType={flightType}
         onFlightTypeChange={setFlightType}
@@ -325,6 +407,8 @@ export function DealGrid({
         availableAirlines={availableAirlines}
         badge={badge}
         onBadgeChange={setBadge}
+        sort={sort}
+        onSortChange={setSort}
         activeAdvancedCount={activeAdvancedCount}
         onResetAdvanced={resetAdvanced}
         resultCount={displayDeals.length}
@@ -333,7 +417,7 @@ export function DealGrid({
       />
 
       <div
-        key={`${flightType}-${showNew}-${showEnding}-${showNiche}-${showHiddenGem}-${searchQuery}-${priceRange}-${area}-${discount}-${airlineFilter}-${badge}`}
+        key={`${flightType}-${showNew}-${showEnding}-${showNiche}-${showHiddenGem}-${searchQuery}-${priceRange}-${area}-${discount}-${airlineFilter}-${badge}-${sort}`}
         className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4 animate-fade-in"
       >
           {displayDeals.map(({ deal, variantOriginCodes }, i) => (

@@ -4,7 +4,7 @@ import { BedDouble, Star, ArrowRight } from "lucide-react";
 import { getHotelCitiesForAirport } from "@/lib/hotels/area-hotel-mapping";
 import { getCuratedHotels, type CuratedHotel } from "@/data/hotel-curated";
 import { getHotelDestinationBySlug } from "@/data/hotel-destinations";
-import { getHotelImageUrl, isProxyPhotoUrl } from "@/lib/hotels/hotel-image-url";
+import { getHotelImageUrlForCard, isProxyPhotoUrl } from "@/lib/hotels/hotel-image-url";
 
 /**
  * Deal 詳細ページの HotelCrossSell 直下に置く「同エリアの代表ホテル」折りたたみ。
@@ -90,7 +90,7 @@ export function DealHotelHighlights({
       <div className="border-t border-zinc-100 dark:border-zinc-800 p-4">
         <div className="grid grid-cols-2 gap-3">
           {hotels.map((h) => {
-            const img = getHotelImageUrl(citySlug, h);
+            const img = getHotelImageUrlForCard(citySlug, h);
             return (
               <Link
                 key={h.name}
@@ -129,18 +129,23 @@ export function DealHotelHighlights({
                     {h.name}
                   </h4>
                   <div className="mt-1 flex items-center gap-1.5 text-[11px] text-zinc-500 dark:text-zinc-400">
-                    <span className="inline-flex items-center gap-0.5 text-emerald-700 dark:text-emerald-300">
-                      <Star
-                        className="h-3 w-3 fill-emerald-500 text-emerald-500"
-                        aria-hidden="true"
-                      />
-                      <span className="font-bold">
-                        {(h.reviewScore ?? 8.5).toFixed(1)}
-                      </span>
-                    </span>
-                    <span aria-hidden="true" className="text-zinc-300">
-                      ·
-                    </span>
+                    {/* 実データのあるホテルのみスコア表示 (捏造フォールバック禁止) */}
+                    {h.reviewScore !== undefined && (
+                      <>
+                        <span className="inline-flex items-center gap-0.5 text-emerald-700 dark:text-emerald-300">
+                          <Star
+                            className="h-3 w-3 fill-emerald-500 text-emerald-500"
+                            aria-hidden="true"
+                          />
+                          <span className="font-bold">
+                            {h.reviewScore.toFixed(1)}
+                          </span>
+                        </span>
+                        <span aria-hidden="true" className="text-zinc-300">
+                          ·
+                        </span>
+                      </>
+                    )}
                     <span className="truncate">{h.area}</span>
                   </div>
                 </div>

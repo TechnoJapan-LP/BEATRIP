@@ -12,8 +12,15 @@ import { trackNewsletterSignup } from "@/components/analytics";
  * トリガー:
  *  - PC (ポインタあり): マウスが viewport 上端から離れる (clientY <= 0) を検出。
  *    本物の「タブを閉じる/URL バーへ向かう」動作を捉える exit-intent。
- *  - モバイル (ポインタなし / タッチ): 70% スクロール かつ 一定時間 (8 秒) 滞在で発火。
+ *  - モバイル (ポインタなし / タッチ): 70% スクロール かつ 最低滞在時間の経過で発火。
  *    スクロールだけ・短時間滞在では出さない (うっとうしさ回避)。
+ *
+ * 配慮ガード (SERP 流入直後の不快なインタースティシャルを避ける):
+ *  - 最低滞在時間: ページ到達から 15 秒未満は PC / モバイル共通で発火しない。
+ *    Google が嫌う「着地直後 popup」を構造的に排除する。
+ *  - エンゲージメント: PC でもスクロール 25% 未満では発火しない (誤爆防止)。
+ *    スクロール余地がほぼ無い短いページのみ免除。
+ *  - セッション内 1 回まで (sessionStorage)。閉じても同一タブ内では再発火しない。
  *
  * 抑制:
  *  - localStorage に dismiss 記録。7 日間は再表示しない。
@@ -26,9 +33,15 @@ import { trackNewsletterSignup } from "@/components/analytics";
  */
 
 const STORAGE_KEY = "beatrip:exit-intent:dismissed-at";
+const SESSION_KEY = "beatrip:exit-intent:shown";
 const DISMISS_DAYS = 7;
 const MOBILE_SCROLL_THRESHOLD = 0.7;
-const MOBILE_DWELL_MS = 8000;
+/** ページ到達からの最低滞在時間。これ未満では PC / モバイル共に発火しない。 */
+const MIN_DWELL_MS = 15000;
+/** PC のエンゲージメントガード: スクロール到達率がこれ未満なら発火しない。 */
+const MIN_ENGAGEMENT_SCROLL_RATIO = 0.25;
+/** スクロール余地がこれ未満 (px) のページはエンゲージメントガードを免除。 */
+const MIN_SCROLLABLE_PX = 200;
 
 export type ExitIntentDeal = {
   id: string;
@@ -58,6 +71,35 @@ function rememberDismiss() {
   }
 }
 
+/** セッション内に一度表示済みか (タブを閉じるまで再発火しない)。 */
+function isShownThisSession(): boolean {
+  try {
+    return window.sessionStorage.getItem(SESSION_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberShownThisSession() {
+  try {
+    window.sessionStorage.setItem(SESSION_KEY, "1");
+  } catch {
+    /* sessionStorage 不可は無視 (armedRef が同一マウント内の重複は防ぐ) */
+  }
+}
+
+/** スクロール可能な総量 (px)。 */
+function scrollableHeight(): number {
+  return document.documentElement.scrollHeight - window.innerHeight;
+}
+
+/** 現在のスクロール到達率 (0〜1)。スクロール余地が無いページは 0。 */
+function currentScrollRatio(): number {
+  const total = scrollableHeight();
+  if (total <= 0) return 0;
+  return window.scrollY / total;
+}
+
 function yen(n: number): string {
   return new Intl.NumberFormat("ja-JP").format(n);
 }
@@ -79,7 +121,7 @@ export function ExitIntentModal({ deals = [] }: { deals?: ExitIntentDeal[] }) {
 
   // 発火条件のセットアップ
   useEffect(() => {
-    if (isDismissed()) return;
+    if (isDismissed() || isShownThisSession()) return;
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     setReduceMotion(mq.matches);
@@ -87,50 +129,66 @@ export function ExitIntentModal({ deals = [] }: { deals?: ExitIntentDeal[] }) {
     // ポインタの有無で PC / モバイルを判定 (タッチ端末は scroll-depth)
     const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
 
+    // 最低滞在時間ガード (PC / モバイル共通)。
+    // SERP 着地直後のインタースティシャル表示を避ける。
+    let dwellReached = false;
+    const dwellTimer = window.setTimeout(() => {
+      dwellReached = true;
+      // モバイルは「70% 到達後にスクロールが止まったまま 15 秒経過」でも
+      // 発火できるよう、滞在時間達成のタイミングでも一度判定する。
+      if (!hasFinePointer) checkMobileTrigger();
+    }, MIN_DWELL_MS);
+
+    // PC のエンゲージメントガード: 一度でも 25% スクロールしたら true。
+    // スクロール余地のほぼ無い短いページは免除 (25% が意味を持たないため)。
+    let engaged = scrollableHeight() < MIN_SCROLLABLE_PX;
+
     const trigger = () => {
       if (armedRef.current) return;
       if (isDismissed()) return;
       armedRef.current = true;
+      rememberShownThisSession();
       setOpen(true);
     };
 
-    const cleanups: Array<() => void> = [];
+    const checkMobileTrigger = () => {
+      if (!dwellReached) return;
+      if (currentScrollRatio() >= MOBILE_SCROLL_THRESHOLD) trigger();
+    };
+
+    let ticking = false;
+    const onScrollCheck = () => {
+      ticking = false;
+      if (!engaged && currentScrollRatio() >= MIN_ENGAGEMENT_SCROLL_RATIO) {
+        engaged = true;
+      }
+      if (!hasFinePointer) checkMobileTrigger();
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(onScrollCheck);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    const cleanups: Array<() => void> = [
+      () => {
+        window.clearTimeout(dwellTimer);
+        window.removeEventListener("scroll", onScroll);
+      },
+    ];
 
     if (hasFinePointer) {
-      // PC: マウスが viewport 上端を越えて離れたら exit-intent とみなす
+      // PC: マウスが viewport 上端を越えて離れたら exit-intent とみなす。
+      // ただし 15 秒未満の滞在・25% 未満のスクロールでは発火しない。
       const onMouseOut = (e: MouseEvent) => {
         // relatedTarget が null かつ上方向に抜けた場合のみ
-        if (e.clientY <= 0 && !e.relatedTarget) trigger();
+        if (e.clientY > 0 || e.relatedTarget) return;
+        if (!dwellReached || !engaged) return;
+        trigger();
       };
       document.addEventListener("mouseout", onMouseOut);
       cleanups.push(() => document.removeEventListener("mouseout", onMouseOut));
-    } else {
-      // モバイル: 70% スクロール + 8 秒滞在
-      let dwellReached = false;
-      const dwellTimer = window.setTimeout(() => {
-        dwellReached = true;
-      }, MOBILE_DWELL_MS);
-
-      let ticking = false;
-      const check = () => {
-        ticking = false;
-        if (!dwellReached) return;
-        const total = Math.max(
-          1,
-          document.documentElement.scrollHeight - window.innerHeight
-        );
-        if (window.scrollY / total >= MOBILE_SCROLL_THRESHOLD) trigger();
-      };
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        window.requestAnimationFrame(check);
-      };
-      window.addEventListener("scroll", onScroll, { passive: true });
-      cleanups.push(() => {
-        window.clearTimeout(dwellTimer);
-        window.removeEventListener("scroll", onScroll);
-      });
     }
 
     return () => cleanups.forEach((fn) => fn());
@@ -168,6 +226,8 @@ export function ExitIntentModal({ deals = [] }: { deals?: ExitIntentDeal[] }) {
 
   if (!open) return null;
 
+  // 優しい登場: backdrop ごと ease-out フェード (beatrip-fade-in は 0.3s ease-out)。
+  // reduced-motion 時は CSS 側の無効化に加えて JS でもクラスを外す (二重ガード)。
   const anim = reduceMotion ? "" : "animate-fade-in";
 
   return (
@@ -175,7 +235,7 @@ export function ExitIntentModal({ deals = [] }: { deals?: ExitIntentDeal[] }) {
       role="dialog"
       aria-modal="true"
       aria-label="お得情報のご案内"
-      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+      className={`fixed inset-0 z-[60] flex items-center justify-center p-4 ${anim}`}
     >
       {/* backdrop */}
       <button
@@ -185,9 +245,7 @@ export function ExitIntentModal({ deals = [] }: { deals?: ExitIntentDeal[] }) {
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
       />
 
-      <div
-        className={`relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-zinc-900 ${anim}`}
-      >
+      <div className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-zinc-900">
         <button
           type="button"
           onClick={close}

@@ -57,6 +57,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 type Term = {
   /** 見出し語 */
   term: string;
+  /** アンカー用 slug (英数字ケバブケース)。/glossary#{slug} で直接到達できる */
+  slug: string;
   /** 読み (並び替え・補足用) */
   reading?: string;
   /** 定義 */
@@ -74,85 +76,100 @@ const GROUPS: Group[] = [
     terms: [
       {
         term: "LCC",
+        slug: "lcc",
         reading: "エルシーシー",
         def: "Low-Cost Carrier の略で、サービスを簡素化して運賃を抑えた格安航空会社のこと。手荷物や座席指定が別料金になりやすい。",
         link: { href: "/articles/guides/lcc-tips", label: "LCC を最大活用する 10 のコツ" },
       },
       {
         term: "FSC",
+        slug: "fsc",
         reading: "エフエスシー",
         def: "Full-Service Carrier の略で、機内サービスや受託手荷物などを運賃に含むフルサービス航空会社のこと。",
       },
       {
         term: "コードシェア",
+        slug: "code-share",
         reading: "こーどしぇあ",
         def: "1 つの便を複数の航空会社が自社便名で共同販売する仕組み。実際の運航会社と販売会社が異なることがある。",
       },
       {
         term: "オープンジョー",
+        slug: "open-jaw",
         reading: "おーぷんじょー",
         def: "往路の到着地と復路の出発地が異なる旅程のこと。例えば行きは A 都市着、帰りは B 都市発といった組み方。",
       },
       {
         term: "ストップオーバー",
+        slug: "stopover",
         reading: "すとっぷおーばー",
         def: "乗り継ぎ地で一定時間以上 (一般に 24 時間以上) 滞在すること。短時間の乗り継ぎはトランジットと呼ばれる。",
         link: { href: "/articles/guides/transit-guide", label: "乗り継ぎ・トランジットの過ごし方" },
       },
       {
         term: "トランジット",
+        slug: "transit",
         reading: "とらんじっと",
         def: "目的地までの途中で航空機を乗り継ぐこと。経由地で入国せず短時間で次の便に乗り換えるケースを指すことが多い。",
         link: { href: "/articles/guides/transit-guide", label: "乗り継ぎ・トランジットの過ごし方" },
       },
       {
         term: "FIX / OPEN 航空券",
+        slug: "fix-open",
         reading: "ふぃっくす おーぷん",
         def: "FIX は復路の日付などが確定で変更に制限がある航空券、OPEN は復路の日付を後から決められる航空券のこと。FIX ほど安い傾向。",
       },
       {
         term: "マイレージ",
+        slug: "mileage",
         reading: "まいれーじ",
         def: "搭乗や提携サービス利用で貯まるポイント (マイル) を、特典航空券などに交換できる航空会社のプログラム。",
         link: { href: "/articles/guides/miles-complete-guide", label: "マイルの貯め方・使い方 完全ガイド" },
       },
       {
         term: "特典航空券",
+        slug: "award-ticket",
         reading: "とくてんこうくうけん",
         def: "貯めたマイルと交換して受け取れる航空券。必要マイル数はシーズンや空席状況で変わることがある。",
         link: { href: "/articles/miles-booking-guide", label: "マイル予約ガイド" },
       },
       {
         term: "IATA / ICAO",
+        slug: "iata-icao",
         reading: "あいあた いかお",
         def: "IATA は国際航空運送協会、ICAO は国際民間航空機関。空港コードには 3 文字の IATA コードと 4 文字の ICAO コードがある。",
         link: { href: "/airports", label: "空港一覧" },
       },
       {
         term: "受託手荷物",
+        slug: "checked-baggage",
         reading: "じゅたくてにもつ",
         def: "カウンターやセルフ機で預ける荷物のこと。重量・個数の上限があり、超過すると追加料金がかかることが多い。",
         link: { href: "/articles/guides/baggage-rules", label: "機内持ち込み・預け荷物の完全ルール" },
       },
       {
         term: "機内持ち込み手荷物",
+        slug: "carry-on-baggage",
         reading: "きないもちこみてにもつ",
         def: "座席に持ち込む荷物のこと。サイズ・重量・個数に上限があり、特に LCC では厳格な傾向がある。",
         link: { href: "/articles/guides/baggage-rules", label: "機内持ち込み・預け荷物の完全ルール" },
       },
       {
         term: "オーバーブッキング",
+        slug: "overbooking",
         reading: "おーばーぶっきんぐ",
         def: "キャンセルを見込み座席数より多く予約を受け付けること。搭乗者が定員を超えると、別便への振替や補償が行われる場合がある。",
       },
       {
         term: "ローミング",
+        slug: "roaming",
         reading: "ろーみんぐ",
         def: "契約中の携帯回線を海外でそのまま使うこと。料金体系の確認を怠ると高額になることがある。",
         link: { href: "/articles/guides/esim-setup-guide", label: "海外で使えるスマホ/eSIM 設定ガイド" },
       },
       {
         term: "eSIM",
+        slug: "esim",
         reading: "いーしむ",
         def: "物理カードを差し替えずに、端末内蔵のチップへ回線情報を書き込んで使う SIM。渡航前に設定でき、海外通信に便利。",
         link: { href: "/esim", label: "eSIM 比較" },
@@ -164,58 +181,69 @@ const GROUPS: Group[] = [
     terms: [
       {
         term: "OTA",
+        slug: "ota",
         reading: "おーてぃーえー",
         def: "Online Travel Agency の略で、航空券やホテルをオンラインで予約できる旅行予約サイトの総称。Booking.com や Agoda などが代表例。",
         link: { href: "/ota-sales", label: "OTA セール比較" },
       },
       {
         term: "アメニティ",
+        slug: "amenity",
         reading: "あめにてぃ",
         def: "宿泊施設が客室に用意する備品やサービス。歯ブラシ・シャンプー・タオルなどの消耗品を指すことが多い。",
       },
       {
         term: "チェックイン / チェックアウト",
+        slug: "check-in-out",
         reading: "ちぇっくいん ちぇっくあうと",
         def: "チェックインは宿泊手続きを行い入室すること、チェックアウトは退室手続きをすること。施設ごとに開始・締切時刻が決まっている。",
       },
       {
         term: "ノーショー",
+        slug: "no-show",
         reading: "のーしょー",
         def: "予約しながら連絡なく利用しないこと。キャンセル料が満額発生したり、以後の予約に影響する場合がある。",
       },
       {
         term: "返金不可レート",
+        slug: "non-refundable",
         reading: "へんきんふかれーと",
         def: "キャンセルや変更ができない代わりに割安な宿泊料金プラン。予定変更の可能性があるなら無料キャンセル可プランが安心。",
       },
       {
         term: "無料キャンセル",
+        slug: "free-cancellation",
         reading: "むりょうきゃんせる",
         def: "指定された期日までなら無料で予約を取り消せるプラン。返金不可レートより割高なことが多いが柔軟性が高い。",
       },
       {
         term: "ルームチャージ / パーパーソン",
+        slug: "room-charge",
         reading: "るーむちゃーじ ぱーぱーそん",
         def: "ルームチャージは 1 室あたりの料金、パーパーソンは 1 人あたりの料金。料金表示がどちらかで総額が変わるため要確認。",
       },
       {
         term: "素泊まり",
+        slug: "room-only",
         reading: "すどまり",
         def: "食事の付かない宿泊プラン。朝食付き・2 食付きなどと区別される。",
       },
       {
         term: "ベストレート",
+        slug: "best-rate",
         reading: "べすとれーと",
         def: "ある条件下での最安料金や、公式が最安を保証する制度を指すことがある。実際の最安は日付や経路で変わるため比較が重要。",
         link: { href: "/articles/ota-compare/tokyo", label: "OTA 比較 (東京)" },
       },
       {
         term: "リゾートフィー / 観光税",
+        slug: "resort-fee",
         reading: "りぞーとふぃー かんこうぜい",
         def: "宿泊料金とは別に現地で加算される施設利用料や税金。表示価格に含まれないことがあるため総額で確認する。",
       },
       {
         term: "コネクティングルーム",
+        slug: "connecting-room",
         reading: "こねくてぃんぐるーむ",
         def: "室内のドアで隣室とつながる客室。家族やグループで隣同士に泊まりたいときに便利。",
         link: { href: "/articles/guides/family-travel-tips", label: "子連れ旅行を快適にするコツ" },
@@ -227,56 +255,66 @@ const GROUPS: Group[] = [
     terms: [
       {
         term: "電子渡航認証 (ESTA など)",
+        slug: "travel-authorization",
         reading: "でんしとこうにんしょう",
         def: "ビザ免除で渡航する際に、事前のオンライン申請が必要な制度の総称。渡航先により要否や名称が異なる。",
         link: { href: "/articles/guides/first-overseas-checklist", label: "初めての海外旅行 準備チェックリスト" },
       },
       {
         term: "パスポート残存期間",
+        slug: "passport-validity",
         reading: "ぱすぽーとざんぞんきかん",
         def: "入国時に必要なパスポートの有効残存期間。一定期間以上を求める国があるため、渡航前に条件を確認する。",
       },
       {
         term: "ビザ",
+        slug: "visa",
         reading: "びざ",
         def: "他国に入国・滞在するための査証。観光・就労など目的により種類が分かれ、不要な国 (ビザ免除) もある。",
       },
       {
         term: "早割",
+        slug: "early-bird",
         reading: "はやわり",
         def: "早期に予約することで適用される割引運賃。予定が固まっているなら有効だが、変更・払戻に制限があることが多い。",
         link: { href: "/articles/guides/best-booking-timing", label: "航空券を最安で買うベストタイミング" },
       },
       {
         term: "ダイナミックプライシング",
+        slug: "dynamic-pricing",
         reading: "だいなみっくぷらいしんぐ",
         def: "需要や空席状況に応じて価格が変動する仕組み。航空券やホテルで広く使われており、同じ商品でも時期で価格が変わる。",
       },
       {
         term: "バウチャー",
+        slug: "voucher",
         reading: "ばうちゃー",
         def: "予約完了後に発行される利用引換証。現地のチェックインやツアー参加時に提示を求められることがある。",
       },
       {
         term: "メタサーチ",
+        slug: "metasearch",
         reading: "めたさーち",
         def: "複数の予約サイトの価格を横断的に比較できる検索サービス。最安候補を素早く見つけるのに役立つ。",
         link: { href: "/ota-sales", label: "OTA セール比較" },
       },
       {
         term: "アフィリエイト",
+        slug: "affiliate",
         reading: "あふぃりえいと",
         def: "サイトのリンク経由で予約・購入が成立すると紹介料が支払われる仕組み。当サイトも一部リンクでこの仕組みを利用している。",
         link: { href: "/disclosure", label: "広告・アフィリエイト開示" },
       },
       {
         term: "海外旅行保険",
+        slug: "travel-insurance",
         reading: "かいがいりょこうほけん",
         def: "渡航中の病気・けが・トラブルに備える保険。クレジットカードに付帯する場合もあり、補償内容と適用条件の確認が重要。",
         link: { href: "/insurance", label: "海外旅行保険を比較" },
       },
       {
         term: "セール予測",
+        slug: "sale-prediction",
         reading: "せーるよそく",
         def: "過去のセール開催履歴から次回のセール時期を推測する考え方。あくまで参考情報で、開催を保証するものではない。",
         link: { href: "/articles/sale-prediction-2027", label: "2027 セール予測" },
@@ -304,6 +342,7 @@ export default async function GlossaryPage({ params }: Props) {
       "@type": "DefinedTerm",
       name: t.term,
       description: t.def,
+      url: `${BASE}/glossary#${t.slug}`,
       inDefinedTermSet: `${BASE}/glossary`,
     })),
   };
@@ -349,8 +388,9 @@ export default async function GlossaryPage({ params }: Props) {
             <dl className="space-y-3">
               {g.terms.map((t) => (
                 <div
-                  key={t.term}
-                  className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
+                  key={t.slug}
+                  id={t.slug}
+                  className="scroll-mt-24 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
                 >
                   <dt className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                     {t.term}

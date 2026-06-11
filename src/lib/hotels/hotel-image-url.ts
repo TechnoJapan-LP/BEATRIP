@@ -18,12 +18,26 @@ import type { CuratedHotel } from "@/data/hotel-curated";
 const PHOTO_NAME_RE = /^places\/[A-Za-z0-9_-]+\/photos\/[A-Za-z0-9_-]+$/;
 
 /**
+ * 用途別の推奨取得幅 (px)。/api/hotel-photo の w クランプ (100〜1600) 内。
+ *
+ * - DEFAULT (640): モバイル full-width 16:9 カード想定。CSS 幅 360〜430px
+ *   なので DPR 1.5 までをカバーしつつ転送量を抑えるバランス値。
+ * - CARD (480): 2〜4 カラムの小カード (DealHotelHighlights /
+ *   compact-hotels-recommendation 等)。CSS 幅 150〜300px なので
+ *   DPR 2 でも 480px で十分。Fast Origin Transfer 削減に寄与。
+ */
+export const HOTEL_PHOTO_WIDTH = {
+  DEFAULT: 640,
+  CARD: 480,
+} as const;
+
+/**
  * Google Places の photoName を key 露出のない proxy URL に変換する。
  * 既に http(s) の絶対 URL ならそのまま返す (後方互換)。
  */
 export function buildHotelPhotoProxyUrl(
   value: string,
-  maxWidthPx = 600
+  maxWidthPx: number = HOTEL_PHOTO_WIDTH.DEFAULT
 ): string {
   if (value.startsWith("http://") || value.startsWith("https://")) {
     return value;
@@ -43,7 +57,12 @@ export function isProxyPhotoUrl(url: string | null | undefined): boolean {
 
 export function getHotelImageUrl(
   citySlug: string,
-  hotel: Pick<CuratedHotel, "name" | "imageUrl">
+  hotel: Pick<CuratedHotel, "name" | "imageUrl">,
+  /**
+   * proxy 画像の取得幅 (px)。省略時は HOTEL_PHOTO_WIDTH.DEFAULT (640)。
+   * curated の絶対 URL には影響しない (そのまま返す)。
+   */
+  maxWidthPx: number = HOTEL_PHOTO_WIDTH.DEFAULT
 ): string | null {
   // 1. 手動設定 (Wikimedia 等) を最優先 — 122 件の実物写真は絶対に上書きしない
   if (hotel.imageUrl) return hotel.imageUrl;
@@ -53,10 +72,24 @@ export function getHotelImageUrl(
   const photo = HOTEL_PHOTOS[key];
   if (photo) {
     // photoName 形式なら proxy URL に変換、絶対 URL ならそのまま (後方互換)
-    if (PHOTO_NAME_RE.test(photo)) return buildHotelPhotoProxyUrl(photo);
+    if (PHOTO_NAME_RE.test(photo)) {
+      return buildHotelPhotoProxyUrl(photo, maxWidthPx);
+    }
     return photo;
   }
 
   // 3. fallback (tier グラデーション)
   return null;
+}
+
+/**
+ * 小カード (2〜4 カラムのグリッド) 用。proxy 画像を w=480 で取得して
+ * 転送量を抑える。DealHotelHighlights / compact-hotels-recommendation 等の
+ * 呼び出しを getHotelImageUrl からこちらに置き換えるだけで効く。
+ */
+export function getHotelImageUrlForCard(
+  citySlug: string,
+  hotel: Pick<CuratedHotel, "name" | "imageUrl">
+): string | null {
+  return getHotelImageUrl(citySlug, hotel, HOTEL_PHOTO_WIDTH.CARD);
 }

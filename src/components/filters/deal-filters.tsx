@@ -8,6 +8,7 @@ import {
   Flame,
   Clock,
   SlidersHorizontal,
+  ArrowUpDown,
   X,
   Zap,
 } from "lucide-react";
@@ -26,6 +27,7 @@ export type AreaFilter =
   | "oceania-other";
 export type DiscountFilter = "all" | "gte30" | "gte50" | "gte70";
 export type BadgeFilter = "all" | "NEW" | "ENDING_SOON" | "LOWEST_IN_2_YEARS";
+export type SortOption = "discount" | "price" | "deadline";
 
 type DealFiltersProps = {
   flightType: FlightType;
@@ -52,6 +54,9 @@ type DealFiltersProps = {
   availableAirlines?: string[];
   badge?: BadgeFilter;
   onBadgeChange?: (v: BadgeFilter) => void;
+  // 並び替え (任意)
+  sort?: SortOption;
+  onSortChange?: (v: SortOption) => void;
   // 詳細フィルタの有効バッジ数 (UI 表示用)
   activeAdvancedCount?: number;
   onResetAdvanced?: () => void;
@@ -92,6 +97,12 @@ const BADGE_LABELS: Record<BadgeFilter, string> = {
   LOWEST_IN_2_YEARS: "LOWEST IN 2 YEARS",
 };
 
+const SORT_LABELS: Record<SortOption, string> = {
+  discount: "割引率が高い順",
+  price: "価格が安い順",
+  deadline: "締切が近い順",
+};
+
 export function DealFilters({
   flightType,
   onFlightTypeChange,
@@ -116,6 +127,8 @@ export function DealFilters({
   availableAirlines = [],
   badge = "all",
   onBadgeChange,
+  sort = "discount",
+  onSortChange,
   activeAdvancedCount = 0,
   onResetAdvanced,
   resultCount,
@@ -389,6 +402,35 @@ export function DealFilters({
           </button>
         )}
       </div>
+
+      {/* 並び替え: 「とにかく安い順」需要に応えるソートセレクタ (chip UI) */}
+      {onSortChange && (
+        <div
+          role="group"
+          aria-label="並び替え"
+          className="flex flex-wrap items-center gap-1.5"
+        >
+          <span className="mr-0.5 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            <ArrowUpDown className="h-3.5 w-3.5" />
+            並び替え
+          </span>
+          {(Object.keys(SORT_LABELS) as SortOption[]).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onSortChange(v)}
+              aria-pressed={sort === v}
+              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                sort === v
+                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                  : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+              }`}
+            >
+              {SORT_LABELS[v]}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* 詳細フィルタ パネル (desktop: collapsible / mobile: drawer) */}
       {hasAdvanced && advancedOpen && (

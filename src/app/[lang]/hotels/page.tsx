@@ -7,6 +7,7 @@ import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { getHotelDestinationsByRegion } from "@/data/hotel-destinations";
+import { SectionHeading } from "@/components/ui/section-heading";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -83,14 +84,14 @@ export default async function HotelsIndexPage({ params }: { params: Promise<{ la
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
               <BedDouble className="h-5 w-5" />
             </div>
-            <div>
-              <h1 className="font-heading text-3xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-4xl">
-                Hotels
-              </h1>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                目的地別にホテルを最安値で検索
-              </p>
-            </div>
+            <SectionHeading
+              as="h1"
+              size="lg"
+              className="lg:text-4xl"
+              subtitle="目的地別にホテルを最安値で検索"
+            >
+              Hotels
+            </SectionHeading>
           </div>
           <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400 max-w-3xl">
             人気の旅行先を地域別にまとめました。各都市のページでは、エリア別の特徴・相場目安・ベストシーズン、そしてその都市行きの最新フライトディールも合わせて確認できます。
@@ -99,9 +100,9 @@ export default async function HotelsIndexPage({ params }: { params: Promise<{ la
 
         {regions.map(({ region, items }) => (
           <section key={region} className="mb-12">
-            <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4 sm:text-2xl">
+            <SectionHeading size="sm" className="mb-4">
               {region}
-            </h2>
+            </SectionHeading>
             <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
               {items.map((d) => (
                 <Link

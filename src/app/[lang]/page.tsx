@@ -16,6 +16,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { CollapsibleSearch } from "@/components/search/collapsible-search";
 import { HeroDeal } from "@/components/deals/hero-deal";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
+import { SectionHeading } from "@/components/ui/section-heading";
 
 // Below-the-fold + heavy interactive components — code-split out of the
 // initial JS chunk. Note: ssr:false is not allowed in Server Components,
@@ -245,13 +246,10 @@ export default async function Home({
         </section>
 
         <section id="deals">
-          <div className="mb-8">
-            <h2 className="font-heading text-3xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-4xl lg:text-5xl">
+          <div className="mb-6">
+            <SectionHeading size="lg" subtitle={t.flashDealsSubtitle}>
               {t.flashDealsTitle}
-            </h2>
-            <p className="mt-1 text-sm text-zinc-500">
-              {t.flashDealsSubtitle}
-            </p>
+            </SectionHeading>
           </div>
           <DealGrid deals={deals} upcomingSales={mockSaleEvents} />
         </section>
@@ -259,14 +257,9 @@ export default async function Home({
         {/* Popular Hotels — 高料率の収益面、フライト/ホテル両軸の流量に */}
         <section className="mt-12">
           <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-3xl lg:text-4xl">
-                Popular Hotels
-              </h2>
-              <p className="mt-1 text-sm text-zinc-500">
-                人気目的地のホテルを最安値で
-              </p>
-            </div>
+            <SectionHeading subtitle="人気目的地のホテルを最安値で">
+              Popular Hotels
+            </SectionHeading>
             <Link
               href={lh("/hotels")}
               className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
@@ -328,14 +321,9 @@ export default async function Home({
         {/* お住まいの地域から — 出発地別の最安ディール導線 */}
         <section className="mt-12">
           <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-3xl lg:text-4xl">
-                お住まいの地域から
-              </h2>
-              <p className="mt-1 text-sm text-zinc-500">
-                出発地別の最新セール。地方発の格安便も網羅
-              </p>
-            </div>
+            <SectionHeading subtitle="出発地別の最新セール。地方発の格安便も網羅">
+              お住まいの地域から
+            </SectionHeading>
             <Link
               href={lh("/airports")}
               className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
@@ -403,14 +391,9 @@ export default async function Home({
 
         <section className="mt-12">
           <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-3xl lg:text-4xl">
-                {t.articlesTitle}
-              </h2>
-              <p className="mt-1 text-sm text-zinc-500">
-                {t.articlesSubtitle}
-              </p>
-            </div>
+            <SectionHeading subtitle={t.articlesSubtitle}>
+              {t.articlesTitle}
+            </SectionHeading>
             <Link
               href={lh("/articles")}
               className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
@@ -428,14 +411,9 @@ export default async function Home({
 
         <section className="mt-12">
           <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-3xl lg:text-4xl">
-                {t.airlinesTitle}
-              </h2>
-              <p className="mt-1 text-sm text-zinc-500">
-                {t.airlinesSubtitle}
-              </p>
-            </div>
+            <SectionHeading subtitle={t.airlinesSubtitle}>
+              {t.airlinesTitle}
+            </SectionHeading>
             <Link
               href={lh("/airlines")}
               className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Anchor, Calendar, Globe2, Sparkles, MapPin, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Header } from "@/components/header";
+import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
@@ -134,7 +135,7 @@ export default async function CruisePage({ params }: { params: Promise<{ lang: s
       <Header />
 
       {/* Hero */}
-      <section className="relative bg-gradient-to-br from-blue-900 via-blue-700 to-cyan-600 text-white">
+      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.destination} text-white`}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
