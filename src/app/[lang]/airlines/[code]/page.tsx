@@ -24,7 +24,8 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, lang } = await params;
-  const airline = getAirlineByCode(code);
+  // URL は小文字 (/airlines/ana) でも届くため、データ照合は大文字コードで行う
+  const airline = getAirlineByCode(code.toUpperCase());
   if (!airline) return { title: "Not Found" };
 
   const isEn = lang === "en";
@@ -69,10 +70,12 @@ async function getAirlineData(code: string) {
 
 export default async function AirlineDetailPage({ params }: Props) {
   const { code, lang} = await params;
-  const airline = getAirlineByCode(code);
+  // URL は小文字 (/airlines/ana) でも届くため、データ照合は大文字コードで行う
+  const airlineCode = code.toUpperCase();
+  const airline = getAirlineByCode(airlineCode);
   if (!airline) notFound();
 
-  const { sales, history, lastScraped } = await getAirlineData(code);
+  const { sales, history, lastScraped } = await getAirlineData(airlineCode);
   const activeSales = sales.filter((s) => s.isActive);
   const totalRoutes = activeSales.reduce((sum, s) => sum + s.routes.length, 0);
 
@@ -162,15 +165,15 @@ export default async function AirlineDetailPage({ params }: Props) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="font-heading text-xl font-bold tracking-tight text-zinc-900 sm:text-2xl lg:text-3xl">
+                <h1 className="font-heading text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-2xl lg:text-3xl">
                   {airline.name}
                 </h1>
                 <Badge
                   variant="secondary"
                   className={`text-xs ${
                     airline.type === "LCC"
-                      ? "bg-orange-50 text-orange-600"
-                      : "bg-blue-50 text-blue-600"
+                      ? "bg-orange-50 text-orange-600 dark:bg-orange-950/40 dark:text-orange-400"
+                      : "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400"
                   }`}
                 >
                   {airline.type}
@@ -183,19 +186,19 @@ export default async function AirlineDetailPage({ params }: Props) {
           <div className="flex items-center gap-6">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-xl font-bold text-zinc-900">
+                <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                   {activeSales.length}
                 </div>
                 <div className="text-[10px] text-zinc-400">開催中</div>
               </div>
               <div>
-                <div className="text-xl font-bold text-zinc-900">
+                <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                   {totalRoutes}
                 </div>
                 <div className="text-[10px] text-zinc-400">対象路線</div>
               </div>
               <div>
-                <div className="text-xl font-bold text-zinc-900">
+                <div className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
                   {history.length}
                 </div>
                 <div className="text-[10px] text-zinc-400">取得履歴</div>
@@ -224,9 +227,9 @@ export default async function AirlineDetailPage({ params }: Props) {
             ))}
           </div>
         ) : (
-          <div className="rounded-xl border border-zinc-100 bg-white py-16 text-center">
+          <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-16 text-center">
             <p className="text-zinc-400">現在開催中のセールはありません</p>
-            <p className="text-xs text-zinc-300 mt-1">
+            <p className="text-xs text-zinc-300 dark:text-zinc-600 mt-1">
               自動取得で新しいセールが見つかり次第表示されます
             </p>
           </div>
@@ -236,7 +239,7 @@ export default async function AirlineDetailPage({ params }: Props) {
 
         {upcomingEvents.length > 0 && (
           <div className="mt-10">
-            <h2 className="font-heading text-xl tracking-wide text-zinc-900 uppercase mb-4">
+            <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
               セール予測
             </h2>
             <p className="text-xs text-zinc-400 mb-4">
@@ -252,7 +255,7 @@ export default async function AirlineDetailPage({ params }: Props) {
 
         {relatedArticles.length > 0 && (
           <div className="mt-10">
-            <h2 className="font-heading text-xl tracking-wide text-zinc-900 uppercase mb-4">
+            <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
               関連記事
             </h2>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -266,10 +269,10 @@ export default async function AirlineDetailPage({ params }: Props) {
         <div className="mt-8">
           <Link
             href={`/airlines/${code}/sales`}
-            className="flex items-center justify-between rounded-xl border border-zinc-100 bg-white p-5 transition-colors hover:bg-zinc-50"
+            className="flex items-center justify-between rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
           >
             <div>
-              <div className="text-sm font-bold text-zinc-900">
+              <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                 {airline.name} セール時期・実績まとめ
               </div>
               <div className="text-xs text-zinc-400 mt-0.5">
@@ -280,18 +283,18 @@ export default async function AirlineDetailPage({ params }: Props) {
           </Link>
         </div>
 
-        <div className="mt-4 rounded-xl border border-zinc-100 bg-white p-5">
-          <h2 className="font-bold text-zinc-900 mb-3 text-sm">
+        <div className="mt-4 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+          <h2 className="font-bold text-zinc-900 dark:text-zinc-100 mb-3 text-sm">
             データソース
           </h2>
           <div className="space-y-2">
             {airline.scrapeSources.map((source, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2"
+                className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2"
               >
                 <div>
-                  <span className="text-xs font-medium text-zinc-700">
+                  <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
                     {source.name}
                   </span>
                   <span className="ml-2 text-[10px] text-zinc-400 uppercase">

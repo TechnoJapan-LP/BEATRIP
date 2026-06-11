@@ -148,7 +148,19 @@ export async function POST(req: NextRequest) {
   });
 }
 
-export async function GET() {
+// GET (ディール別クリック統計) は事業情報のため一般公開不可。ADMIN_API_KEY 必須。
+// POST (計測 beacon) は無認証のまま維持する。
+function isAdmin(req: NextRequest): boolean {
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (!adminKey) return false;
+  const auth = req.headers.get("authorization");
+  return auth === `Bearer ${adminKey}`;
+}
+
+export async function GET(req: NextRequest) {
+  if (!isAdmin(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const stats = await loadAllClickStats();
   return NextResponse.json({ stats });
 }

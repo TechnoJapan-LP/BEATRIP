@@ -4,7 +4,7 @@ import { ShieldCheck } from "lucide-react";
  * 「比較対応 OTA」バッジ — 信頼性アンカー (Pack D)
  *
  * Pack A の hotel-booking-buttons.tsx 内には既に
- * 「4 サイトで価格比較 — 最安値が見つかります」 emerald badge を実装済。
+ * 「4 サイトで価格比較 — 最安値を比較できます」 emerald badge を実装済。
  * 重複を避けるため、本コンポーネントは **対応 OTA のブランド名を列挙**
  * する別観点 (信頼性 + 透明性) で表示する。
  *
@@ -42,9 +42,9 @@ export function ComparisonBadge({
         title={`比較対応 OTA: ${providers.join(", ")}`}
       >
         <ShieldCheck className="h-3 w-3" aria-hidden="true" />
-        {count} サイト比較済み
+        {count} サイトを一括比較
         <span className="font-medium text-emerald-600 dark:text-emerald-300">
-          · 最安値を保証
+          · 価格を見比べて選べます
         </span>
       </span>
     );
@@ -56,9 +56,9 @@ export function ComparisonBadge({
     >
       <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-200">
         <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-        {count} サイト比較済み
+        {count} サイトを一括比較
         <span className="font-medium text-emerald-600 dark:text-emerald-300">
-          · 最安値を保証
+          · 価格を見比べて選べます
         </span>
       </div>
       <div className="mt-1 flex flex-wrap gap-1.5 text-[10px] text-emerald-700/80 dark:text-emerald-300/80">

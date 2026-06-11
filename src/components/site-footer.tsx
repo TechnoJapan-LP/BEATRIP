@@ -26,7 +26,7 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
   // 5 カラム構成 (サイトマップ反映):
   //  1. 航空券  — フラッシュディール / 航空会社一覧 / 地方便 / 空港 / セール予測 / 記事
   //  2. ホテル  — ホテル一覧 / ベストシーズン / 現地ツアー / eSIM 比較
-  //  3. 特集    — OTAセール比較 / ハワイ / 沖縄 / クルーズ / パッケージツアー
+  //  3. 特集    — OTA 比較ハブ / シーズン特集ハブ / ハワイ / 沖縄 / クルーズ 等 (8 以内、個別記事はハブへ集約)
   //  4. 航空会社 — ANA / JAL / Peach / Jetstar / Skymark (代表 5 社)
   //  5. サイト  — about / FAQ / 利用規約 / プライバシー / 広告開示
   const footerNav = {
@@ -54,23 +54,13 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
       title: t.featuresTitle ?? "特集",
       links: [
         { href: "/ota-sales", label: t.otaSales ?? "OTAセール比較" },
+        { href: "/articles/ota-compare", label: "都市別 OTA 比較 (13 都市)" },
+        { href: "/seasons", label: "シーズン特集" },
         { href: "/hawaii", label: t.hawaii ?? "ハワイ" },
         { href: "/okinawa", label: t.okinawa ?? "沖縄" },
         { href: "/cruise", label: t.cruise ?? "クルーズ" },
         { href: "/package-tour", label: t.packageTour ?? "パッケージツアー" },
-        { href: "/esim", label: t.esimGuide ?? "eSIM 比較" },
         { href: "/credit-cards", label: "クレカ比較" },
-        { href: "/insurance", label: "海外旅行保険" },
-        { href: "/articles/miles-booking-guide", label: "マイル予約ガイド" },
-        { href: "/articles/sale-prediction-2027", label: "2027 セール予測" },
-        { href: "/articles/rankings/couples", label: "カップル向けホテル TOP 10" },
-        { href: "/articles/rankings/family", label: "ファミリー向けホテル TOP 10" },
-        { href: "/articles/rankings/solo", label: "一人旅向けホテル TOP 10" },
-        { href: "/seasons/year-end", label: "年末年始" },
-        { href: "/seasons/golden-week", label: "GW" },
-        { href: "/seasons/summer", label: "夏休み" },
-        { href: "/articles/seasonal/autumn-2026", label: "2026 秋の旅行計画" },
-        { href: "/articles/seasonal/winter-2026", label: "2026 冬の旅行計画" },
       ],
     },
     guides: {
@@ -80,11 +70,8 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
         { href: "/articles/guides/best-booking-timing", label: "航空券の最安タイミング" },
         { href: "/articles/guides/first-overseas-checklist", label: "初海外 準備チェックリスト" },
         { href: "/articles/guides/miles-complete-guide", label: "マイル 完全ガイド" },
-        { href: "/articles/guides/baggage-rules", label: "手荷物の完全ルール" },
-        { href: "/articles/guides/transit-guide", label: "乗り継ぎ・トランジット" },
-        { href: "/articles/guides/esim-setup-guide", label: "eSIM 設定ガイド" },
-        { href: "/articles/guides/family-travel-tips", label: "子連れ旅行のコツ" },
         { href: "/glossary", label: "旅行用語集" },
+        { href: "/articles", label: "すべてのガイド・記事" },
       ],
     },
     airlines: {

@@ -18,7 +18,8 @@ type LimiterKey =
   | "subscriptions"
   | "alerts"
   | "clicks"
-  | "chat";
+  | "chat"
+  | "2fa";
 
 const limiters = new Map<LimiterKey, Ratelimit | null>();
 
@@ -47,6 +48,8 @@ function getLimiter(name: LimiterKey): Ratelimit | null {
     // AI チャット (Anthropic API)。1 req = 有料 token 消費なので低く抑える。
     // 通常の対話頻度を超える 20 req/min で abuse をブロック。
     chat: { tokens: 20, window: "1 m" },
+    // 管理者 TOTP 検証。brute force (6 桁 = 100 万通り) を実質不可能にする。
+    "2fa": { tokens: 5, window: "10 m" },
   };
 
   const c = config[name];
@@ -124,7 +127,10 @@ export function isHoneypotTripped(body: Record<string, unknown>): boolean {
 }
 
 // 自サイトからの fetch のみ許可するホスト allowlist。
-// 環境ごとに dev/preview を許容しつつ、本番ドメインは固定。
+// 本番ドメイン + ローカル開発のみ固定で許可する。
+// `*.vercel.app` のワイルドカード許可は「攻撃者が任意の evil.vercel.app を
+// デプロイして CSRF できる」ため廃止。preview デプロイで必要な場合は
+// env ALLOWED_PREVIEW_HOST にホスト名を **完全一致** で設定する。
 const ALLOWED_ORIGIN_HOSTS = new Set<string>([
   "beatrip.jp",
   "www.beatrip.jp",
@@ -144,9 +150,10 @@ export function isSameOriginRequest(request: NextRequest): boolean {
   if (!candidate) return false;
   try {
     const { hostname } = new URL(candidate);
-    // Vercel preview デプロイ (*.vercel.app) も許容
-    if (hostname.endsWith(".vercel.app")) return true;
-    return ALLOWED_ORIGIN_HOSTS.has(hostname);
+    if (ALLOWED_ORIGIN_HOSTS.has(hostname)) return true;
+    // Vercel preview 用: env で指定された単一ホストのみ完全一致で許可
+    const previewHost = process.env.ALLOWED_PREVIEW_HOST;
+    return Boolean(previewHost) && hostname === previewHost;
   } catch {
     return false;
   }

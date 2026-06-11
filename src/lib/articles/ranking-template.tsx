@@ -26,6 +26,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { HotelBookingButtons } from "@/components/affiliate/hotel-booking-buttons";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { PrNotice } from "@/components/compliance/pr-notice";
 import { CURATED_HOTELS, type CuratedHotel } from "@/data/hotel-curated";
 import {
   HOTEL_DESTINATIONS,
@@ -156,16 +157,6 @@ export function RankingPage({ seg, lang }: Props) {
     },
     mainEntityOfPage: `https://beatrip.jp/articles/rankings/${seg.path}`,
   };
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: seg.faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -181,10 +172,6 @@ export function RankingPage({ seg, lang }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <script
         type="application/ld+json"
@@ -219,6 +206,9 @@ export function RankingPage({ seg, lang }: Props) {
       </section>
 
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+        {/* 景表法: PR 表記 (Hero 直下) */}
+        <PrNotice className="mb-6" />
+
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* ランキングリスト */}

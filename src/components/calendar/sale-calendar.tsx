@@ -15,13 +15,13 @@ function ProbabilityMeter({ value }: { value: number }) {
 
   return (
     <div className="flex items-center gap-2">
-      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-zinc-100">
+      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
         <div
           className={`h-full rounded-full animate-grow-w ${color}`}
           style={{ width: `${value}%` }}
         />
       </div>
-      <span className="text-xs font-mono font-bold text-zinc-700">
+      <span className="text-xs font-mono font-bold text-zinc-700 dark:text-zinc-300">
         {value}%
       </span>
     </div>
@@ -62,14 +62,14 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
   return (
     <section className="mt-16">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
           <CalendarDays className="h-4.5 w-4.5" />
         </div>
         <div>
-          <h2 className="font-heading text-xl font-bold tracking-tight text-zinc-900">
+          <h2 className="font-heading text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             セール予測カレンダー
           </h2>
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             過去のセールパターンからAIが次回開催を予測
           </p>
         </div>
@@ -92,8 +92,8 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
               href={`/airlines/${airlineCode}/sales`}
               className={`block min-w-[75vw] snap-start rounded-xl border p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 sm:min-w-[260px] sm:p-5 lg:min-w-0 ${
                 isImminent
-                  ? "border-amber-200 bg-amber-50/50"
-                  : "border-zinc-100 bg-white"
+                  ? "border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/20"
+                  : "border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900"
               }`}
             >
               <div className="flex items-start justify-between mb-3">
@@ -101,12 +101,12 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
                   <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
                     {event.airline}
                   </span>
-                  <h3 className="text-sm font-bold text-zinc-900 mt-0.5 leading-tight">
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 mt-0.5 leading-tight">
                     {event.saleName}
                   </h3>
                 </div>
                 {isImminent && (
-                  <div className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                  <div className="flex items-center gap-1 rounded-full bg-amber-100 dark:bg-amber-900/40 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-300">
                     <Zap className="h-3 w-3" />
                     間近
                   </div>
@@ -115,7 +115,7 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
 
               <div className="mb-3">
                 <span className="text-xs text-zinc-400">予測開催日</span>
-                <div className="text-lg font-bold font-mono text-zinc-900">
+                <div className="text-lg font-bold font-mono text-zinc-900 dark:text-zinc-100">
                   {new Date(event.predictedDate).toLocaleDateString("ja-JP", {
                     month: "long",
                     day: "numeric",
@@ -143,7 +143,7 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
                   {event.historicalDates.map((d) => (
                     <span
                       key={d}
-                      className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-mono text-zinc-500"
+                      className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-zinc-500 dark:text-zinc-400"
                     >
                       {formatDate(d)}
                     </span>
@@ -151,12 +151,12 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between border-t border-zinc-100 pt-3">
+              <div className="flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800 pt-3">
                 <div className="flex flex-wrap gap-1">
                   {event.routes.slice(0, 2).map((r) => (
                     <span
                       key={r}
-                      className="text-[10px] text-zinc-500 font-mono"
+                      className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono"
                     >
                       {r}
                     </span>
@@ -167,7 +167,7 @@ export function SaleCalendar({ events }: { events: SaleEvent[] }) {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-1 text-emerald-600">
+                <div className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
                   <TrendingUp className="h-3 w-3" />
                   <span className="text-xs font-bold">
                     -{event.avgDiscount}%

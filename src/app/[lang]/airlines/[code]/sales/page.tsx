@@ -26,10 +26,12 @@ type Props = { params: Promise<{ code: string; lang: string;}> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
-  const airline = getAirlineByCode(code);
+  // URL は小文字 (/airlines/ana/sales) でも届くため、データ照合は大文字コードで行う
+  const airlineCode = code.toUpperCase();
+  const airline = getAirlineByCode(airlineCode);
   if (!airline) return { title: "Not Found" };
 
-  const stats = getAirlineSaleStats(code);
+  const stats = getAirlineSaleStats(airlineCode);
   // GSCで「{社名} セール 次回/過去/いつ/時期」が主流入クエリ。
   // タイトル/メタはその検索意図にドンピシャで合わせCTRを取りに行く。
   const title = stats
@@ -85,11 +87,13 @@ function formatDateRange(start: string, end: string) {
 
 export default async function AirlineSaleHistoryPage({ params }: Props) {
   const { code, lang} = await params;
-  const airline = getAirlineByCode(code);
+  // URL は小文字 (/airlines/ana/sales) でも届くため、データ照合は大文字コードで行う
+  const airlineCode = code.toUpperCase();
+  const airline = getAirlineByCode(airlineCode);
   if (!airline) notFound();
 
-  const stats = getAirlineSaleStats(code);
-  const records = getSaleHistoryByAirline(code);
+  const stats = getAirlineSaleStats(airlineCode);
+  const records = getSaleHistoryByAirline(airlineCode);
   // Server Component なので Date.now() を一度だけリクエスト時に評価して使用。
   // React Compiler の purity 警告はクライアントコンポーネント向けで、ここでは
   // 意図的に許可する（リクエストごとに固定の "today" を得るのが目的）。
@@ -256,7 +260,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-zinc-900 sm:text-2xl">
+              <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 sm:text-2xl">
                 {airline.name} セール時期・実績まとめ
               </h1>
               <p className="text-xs text-zinc-400 sm:text-sm">
@@ -270,15 +274,15 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
           <>
             {/* Stats overview */}
             <div className="grid grid-cols-2 gap-3 mb-8 sm:grid-cols-4">
-              <div className="rounded-xl border border-zinc-100 bg-white p-4 text-center">
-                <div className="text-2xl font-bold text-zinc-900">
+              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center">
+                <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                   {stats.totalSales}
                 </div>
                 <div className="text-[11px] text-zinc-400 mt-1">
                   過去のセール回数
                 </div>
               </div>
-              <div className="rounded-xl border border-zinc-100 bg-white p-4 text-center">
+              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center">
                 <div className="text-2xl font-bold text-emerald-600">
                   {stats.avgDiscount}%
                 </div>
@@ -286,7 +290,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   平均割引率
                 </div>
               </div>
-              <div className="rounded-xl border border-zinc-100 bg-white p-4 text-center">
+              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center">
                 <div className="text-2xl font-bold text-rose-500">
                   {stats.bestDiscount}%
                 </div>
@@ -294,8 +298,8 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   最大割引率
                 </div>
               </div>
-              <div className="rounded-xl border border-zinc-100 bg-white p-4 text-center">
-                <div className="text-2xl font-bold text-zinc-900">
+              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center">
+                <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                   ¥{formatPrice(stats.lowestPrice)}
                 </div>
                 <div className="text-[11px] text-zinc-400 mt-1">
@@ -305,10 +309,10 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
             </div>
 
             {/* Monthly distribution */}
-            <div className="rounded-xl border border-zinc-100 bg-white p-4 mb-6 sm:p-6">
+            <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 mb-6 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
                 <BarChart3 className="h-4 w-4 text-zinc-400" />
-                <h2 className="font-bold text-zinc-900 text-sm sm:text-base">
+                <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
                   月別セール開催傾向
                 </h2>
               </div>
@@ -327,20 +331,20 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                       className="flex-1 flex flex-col items-center gap-1"
                     >
                       {count > 0 && (
-                        <span className="text-[9px] font-bold text-zinc-500">
+                        <span className="text-[9px] font-bold text-zinc-500 dark:text-zinc-400">
                           {count}
                         </span>
                       )}
                       <div
                         className={`w-full rounded-t transition-all ${
-                          isPeak ? "bg-emerald-500" : count > 0 ? "bg-zinc-300" : "bg-zinc-100"
+                          isPeak ? "bg-emerald-500" : count > 0 ? "bg-zinc-300 dark:bg-zinc-600" : "bg-zinc-100 dark:bg-zinc-800"
                         }`}
                         style={{ height: `${Math.max(h, 4)}%` }}
                       />
                       <span
                         className={`text-[9px] sm:text-[10px] ${
                           isPeak
-                            ? "font-bold text-emerald-600"
+                            ? "font-bold text-emerald-600 dark:text-emerald-400"
                             : "text-zinc-400"
                         }`}
                       >
@@ -356,25 +360,25 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   開催が多い月
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="h-2 w-2 rounded-sm bg-zinc-300" />
+                  <div className="h-2 w-2 rounded-sm bg-zinc-300 dark:bg-zinc-600" />
                   過去に開催あり
                 </div>
               </div>
             </div>
 
             {/* Key insights */}
-            <div className="rounded-xl border border-zinc-100 bg-white p-4 mb-6 sm:p-6">
-              <h2 className="font-bold text-zinc-900 text-sm mb-3 sm:text-base">
+            <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 mb-6 sm:p-6">
+              <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-3 sm:text-base">
                 セール傾向サマリー
               </h2>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <Calendar className="h-4 w-4 text-emerald-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <div className="text-sm font-medium text-zinc-700">
+                    <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                       開催が多い時期
                     </div>
-                    <div className="text-xs text-zinc-500">
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400">
                       {stats.peakMonths.map((m) => monthNames[m]).join("・")}
                       に開催される傾向
                     </div>
@@ -384,10 +388,10 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   <div className="flex items-start gap-3">
                     <Repeat className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
                     <div>
-                      <div className="text-sm font-medium text-zinc-700">
+                      <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                         開催頻度
                       </div>
-                      <div className="text-xs text-zinc-500">
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
                         平均約{stats.avgInterval}日間隔で開催（年
                         {Math.round(365 / stats.avgInterval)}回ペース）
                       </div>
@@ -397,10 +401,10 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 <div className="flex items-start gap-3">
                   <TrendingDown className="h-4 w-4 text-rose-500 mt-0.5 flex-shrink-0" />
                   <div>
-                    <div className="text-sm font-medium text-zinc-700">
+                    <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
                       主なセール名
                     </div>
-                    <div className="text-xs text-zinc-500">
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400">
                       {stats.saleNames.join("、")}
                     </div>
                   </div>
@@ -410,18 +414,18 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
 
             {/* Next sale prediction */}
             {predictions.length > 0 && (
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 mb-6 sm:p-6">
-                <h2 className="font-bold text-emerald-800 text-sm mb-3 sm:text-base">
+              <div className="rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/30 p-4 mb-6 sm:p-6">
+                <h2 className="font-bold text-emerald-800 dark:text-emerald-300 text-sm mb-3 sm:text-base">
                   次回セール予測
                 </h2>
                 <div className="space-y-3">
                   {predictions.map((p) => (
                     <div
                       key={p.id}
-                      className="flex items-center justify-between rounded-lg bg-white px-3 py-2.5 border border-emerald-100"
+                      className="flex items-center justify-between rounded-lg bg-white dark:bg-zinc-900 px-3 py-2.5 border border-emerald-100 dark:border-emerald-900"
                     >
                       <div>
-                        <div className="text-sm font-medium text-zinc-800">
+                        <div className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
                           {p.saleName}
                         </div>
                         <div className="text-xs text-zinc-400">
@@ -458,7 +462,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <BarChart3 className="h-4 w-4 text-zinc-400" />
-              <h2 className="font-bold text-zinc-900 text-sm sm:text-base">
+              <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
                 よくある質問
               </h2>
             </div>
@@ -482,13 +486,15 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 return (
                   <div
                     key={record.id}
-                    className={`rounded-xl border bg-white p-4 ${
-                      isRecent ? "border-emerald-200" : "border-zinc-100"
+                    className={`rounded-xl border bg-white dark:bg-zinc-900 p-4 ${
+                      isRecent
+                        ? "border-emerald-200 dark:border-emerald-900"
+                        : "border-zinc-100 dark:border-zinc-800"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div>
-                        <div className="text-sm font-bold text-zinc-800">
+                        <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
                           {record.saleName}
                         </div>
                         <div className="text-xs text-zinc-400 mt-0.5">
@@ -511,13 +517,13 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                         {record.routes.map((r) => (
                           <span
                             key={r}
-                            className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-mono text-zinc-500"
+                            className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-zinc-500 dark:text-zinc-400"
                           >
                             {r}
                           </span>
                         ))}
                       </div>
-                      <div className="text-xs text-zinc-500 flex-shrink-0 ml-2">
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400 flex-shrink-0 ml-2">
                         最安¥{formatPrice(record.minPrice)} · {record.cabin}
                       </div>
                     </div>
@@ -539,11 +545,11 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
         </div>
 
         {/* SEO structured content */}
-        <div className="rounded-xl border border-zinc-100 bg-white p-4 sm:p-6">
-          <h2 className="font-bold text-zinc-900 text-sm mb-3 sm:text-base">
+        <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-6">
+          <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-3 sm:text-base">
             {airline.name}のセール情報について
           </h2>
-          <div className="text-xs text-zinc-500 leading-relaxed space-y-2">
+          <div className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed space-y-2">
             <p>
               {airline.name}（{airline.nameEn}）は
               {airline.type === "LCC"
@@ -574,7 +580,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
         <div className="mt-6 text-center">
           <Link
             href={`/airlines/${code}`}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
           >
             {airline.name}の現在のセール情報を見る →
           </Link>

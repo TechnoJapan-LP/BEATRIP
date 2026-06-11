@@ -124,13 +124,22 @@ export function MobileStickyCta({
     }
 
     // sendBeacon — navigation を妨げずに確実に届ける
+    // /api/clicks の要求スキーマ (booking-button.tsx と同型):
+    //   { deal_id (必須・/^[a-zA-Z0-9_-]{1,64}$/), affiliate_provider, affiliate_url (必須・URL), placement }
+    // hotel kind は deal_id が存在しないため、destinationCode から合成 ID
+    // `hotel_{code}` を採番する (isValidDealId を通る形式に sanitize)。
     try {
+      const syntheticHotelId = `hotel_${(trackingContext?.destinationCode ?? "unknown")
+        .toLowerCase()
+        .replace(/[^a-zA-Z0-9_-]/g, "")}`.slice(0, 64);
+      const dealId =
+        trackingContext?.dealId && /^[a-zA-Z0-9_-]{1,64}$/.test(trackingContext.dealId)
+          ? trackingContext.dealId
+          : syntheticHotelId;
       const payload = JSON.stringify({
-        kind: trackingKind,
-        href: primaryHref,
-        destination_code: trackingContext?.destinationCode ?? "",
-        deal_id: trackingContext?.dealId ?? "",
-        provider: trackingContext?.provider ?? "",
+        deal_id: dealId,
+        affiliate_provider: trackingContext?.provider ?? "unknown",
+        affiliate_url: primaryHref,
         placement: "sticky",
         turnstile_token: consumeTurnstileToken(),
       });

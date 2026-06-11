@@ -246,9 +246,9 @@ export default async function Home({
 
         <section id="deals">
           <div className="mb-8">
-            <h1 className="font-heading text-3xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-4xl lg:text-5xl">
+            <h2 className="font-heading text-3xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-4xl lg:text-5xl">
               {t.flashDealsTitle}
-            </h1>
+            </h2>
             <p className="mt-1 text-sm text-zinc-500">
               {t.flashDealsSubtitle}
             </p>

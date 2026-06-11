@@ -7,7 +7,7 @@
  *  - Hero (タイトル + リード文 + パンくず)
  *  - 本文 (h2 セクション 4-6、各セクションに段落とリスト)
  *  - FAQ (FAQAccordion)
- *  - Article + FAQPage JSON-LD
+ *  - Article JSON-LD (FAQPage schema は出さない — リッチリザルト対象外 + テンプレ乱用回避)
  *  - 関連 ASP CTA (JapanesePartnersPanel)
  *  - 関連リンク
  *
@@ -25,6 +25,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { PrNotice } from "@/components/compliance/pr-notice";
 import { localizeHref, type Locale } from "@/lib/i18n/locale";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
 
@@ -108,25 +109,11 @@ export function GuidePage({ content: c, lang }: { content: GuideContent; lang: s
     author: { "@type": "Organization", name: "BEATRIP" },
     publisher: { "@type": "Organization", name: "BEATRIP", url: BASE },
   };
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: c.faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Header />
 
@@ -144,6 +131,7 @@ export function GuidePage({ content: c, lang }: { content: GuideContent; lang: s
           <h1 className="mt-4 font-heading text-2xl sm:text-3xl lg:text-4xl tracking-wide text-zinc-900 dark:text-zinc-100 leading-tight">
             {c.title}
           </h1>
+          <PrNotice className="mt-2" />
           <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
             {c.lede}
           </p>

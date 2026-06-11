@@ -179,7 +179,7 @@ export default async function AirlineAirportPage({ params }: Props) {
     },
   ];
 
-  // JSON-LD: Airline + FAQPage + Breadcrumb
+  // JSON-LD: Airline + Article + Breadcrumb (FAQPage は出さない — リッチリザルト対象外 + テンプレ乱用回避)
   const airlineJsonLd = {
     "@context": "https://schema.org",
     "@type": "Airline",
@@ -194,23 +194,14 @@ export default async function AirlineAirportPage({ params }: Props) {
       : undefined,
   };
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: `${airline.name} ${airport.fullNameJa} 発着セール・路線ガイド`,
     description: `${airline.name}（${airline.nameEn}）の${airport.fullNameJa}発着便、人気路線、セール情報をまとめた最新ガイド。`,
+    // datePublished は固定 (毎ビルドで更新すると「新規公開」偽装になるため)
     dateModified: new Date().toISOString().split("T")[0],
-    datePublished: new Date().toISOString().split("T")[0],
+    datePublished: "2026-06-01",
     author: {
       "@type": "Organization",
       name: "BEATRIP 編集部",
@@ -272,10 +263,6 @@ export default async function AirlineAirportPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <script
         type="application/ld+json"

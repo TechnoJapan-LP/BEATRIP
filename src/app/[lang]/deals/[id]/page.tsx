@@ -39,9 +39,8 @@ import { FavoriteButton } from "@/components/deals/favorite-button";
 import { CountdownTimer } from "@/components/deals/countdown-timer";
 import { CountdownBadge } from "@/components/deals/countdown-badge";
 import { SocialProofBadge } from "@/components/deals/social-proof-badge";
-import { ViewCounter } from "@/components/deals/view-counter";
-import { RecentActivity } from "@/components/deals/recent-activity";
-import { getActiveDeals, getDealById as getDealByIdFromService, getHistoricalPrices } from "@/lib/deals/deal-service";
+import { PrNotice } from "@/components/compliance/pr-notice";
+import { getActiveDeals, getDealById as getDealByIdFromService, getHistoricalPrices, isMockDeal } from "@/lib/deals/deal-service";
 import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
 import { buildCompareLinksFromDeal } from "@/lib/affiliate/url-builder";
 import { SiteFooter } from "@/components/site-footer";
@@ -163,6 +162,10 @@ export default async function DealDetailPage({ params }: Props) {
     .sort((a, b) => b.discount_percent - a.discount_percent)
     .slice(0, 8);
 
+  // mock 由来の deal は架空価格のため Product schema (事実の表明) を出力しない。
+  // 本番では mock は配信されないが、開発/プレビュー環境での誤出力も防ぐ。
+  const isMock = isMockDeal(deal);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -213,10 +216,12 @@ export default async function DealDetailPage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {!isMock && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
       <RecentlyViewedTracker
         item={{
           type: "deal",
@@ -300,6 +305,9 @@ export default async function DealDetailPage({ params }: Props) {
       </div>
 
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
+        {/* 景表法: PR 表記 (hero 直下) */}
+        <PrNotice className="mb-4" />
+
         {/* セール終了カウントダウン (即効性 CTA) */}
         <div className="mb-6 flex items-center gap-2">
           <CountdownBadge deadline={deal.booking_deadline} />
@@ -496,11 +504,6 @@ export default async function DealDetailPage({ params }: Props) {
                   </span>
                 </div>
               </div>
-            </div>
-
-            <div className="flex flex-col gap-2 px-1">
-              <ViewCounter dealId={deal.id} />
-              <RecentActivity dealId={deal.id} />
             </div>
 
             <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5">

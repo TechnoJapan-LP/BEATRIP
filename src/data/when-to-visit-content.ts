@@ -997,15 +997,30 @@ const RAW: Record<string, Raw> = {
   },
 };
 
+// データ未整備都市用のプレースホルダ。
+// 「気候は安定しており通年可能」のような汎用文はプラハ等で事実誤りになるため、
+// 断定を避けた「準備中」表示に留める。該当ページは noindex (best-season/page.tsx)
+// かつ sitemap 非掲載 (sitemap.ts) として扱う。
 const FALLBACK: Raw = {
   ratings: "OOOOOOOOOOOO",
-  notes: Array.from({ length: 12 }, () => "気候は安定しており、観光は通年可能です"),
-  bestMonthsLabel: "通年（季節により見どころが変わります）",
-  cheapMonthsLabel: "祝日・大型連休を避けた平日",
+  notes: Array.from(
+    { length: 12 },
+    () => "この月の詳細情報は準備中です。都市ページの最新情報をご覧ください"
+  ),
+  bestMonthsLabel: "準備中（都市ページのベストシーズン欄をご覧ください）",
+  cheapMonthsLabel: "準備中",
   avoidMonthsLabel: "",
-  packingTips: ["現地の気候に合わせた服装", "天候に応じた雨具・防寒"],
-  yearlyHighlights: ["年間を通じて多様な観光体験が可能"],
+  packingTips: ["詳細な服装・持ち物ガイドは準備中です"],
+  yearlyHighlights: ["年間イベント情報は準備中です"],
 };
+
+/**
+ * その都市の when-to-visit 詳細データが整備済みかどうか。
+ * false の都市は best-season ページを noindex + sitemap 非掲載にする。
+ */
+export function hasWhenToVisitContent(slug: string): boolean {
+  return slug in RAW;
+}
 
 export function getWhenToVisitContent(slug: string): WhenToVisitContent {
   const r = RAW[slug] ?? FALLBACK;

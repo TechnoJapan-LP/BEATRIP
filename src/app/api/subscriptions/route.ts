@@ -31,9 +31,32 @@ function isValidWebhookUrl(url: string): boolean {
   }
 }
 
-export async function GET() {
+// GET は webhook URL を含む購読データを返すため一般公開不可。ADMIN_API_KEY 必須。
+function isAdmin(request: NextRequest): boolean {
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (!adminKey) return false;
+  const auth = request.headers.get("authorization");
+  return auth === `Bearer ${adminKey}`;
+}
+
+// webhookUrl はトークン等を含み得るためレスポンスではホストのみ残してマスクする。
+// 例: https://api.line.me/v2/xxx → https://api.line.me/***
+function maskWebhookUrl(url: string): string {
+  try {
+    return `${new URL(url).origin}/***`;
+  } catch {
+    return "***";
+  }
+}
+
+export async function GET(request: NextRequest) {
+  if (!isAdmin(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const subs = await loadSubscriptions();
-  return NextResponse.json(subs);
+  return NextResponse.json(
+    subs.map((s) => ({ ...s, webhookUrl: maskWebhookUrl(s.webhookUrl) }))
+  );
 }
 
 export async function POST(request: NextRequest) {

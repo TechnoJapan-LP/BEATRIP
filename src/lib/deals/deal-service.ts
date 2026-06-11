@@ -74,6 +74,32 @@ function estimateTaxes(
   return 3500; // 国際線：出国税 + 施設使用料概算
 }
 
+// ── mock データの取扱い ──
+// mock-deals は架空の価格・残席を含むデモデータのため、本番 (Vercel production)
+// では絶対にユーザーへ表示しない。開発環境でのみ DX のためフォールバックする。
+const IS_PRODUCTION =
+  process.env.NODE_ENV === "production" && process.env.VERCEL === "1";
+
+const MOCK_DEAL_IDS = new Set(mockDeals.map((d) => d.id));
+
+/**
+ * deal が mock-deals 由来 (架空データ) かどうか。
+ * Product JSON-LD など「事実の表明」になる出力を抑止する判定に使う。
+ */
+export function isMockDeal(deal: Pick<DealSchema, "id">): boolean {
+  return MOCK_DEAL_IDS.has(deal.id);
+}
+
+/** 開発環境のみ mock にフォールバック。本番では空配列を返す。 */
+function mockFallback(reason: string): DealSchema[] {
+  if (IS_PRODUCTION) {
+    console.log(`[DealService] ${reason} — production: returning empty list`);
+    return [];
+  }
+  console.log(`[DealService] ${reason}, using mock data (dev only)`);
+  return withDestinationImages(withReliableAffiliate(mockDeals));
+}
+
 /**
  * AirlineSale + SaleRoute → DealSchema に変換
  */
@@ -190,8 +216,7 @@ export async function getActiveDeals(): Promise<DealSchema[]> {
     const airlineCodes = Object.keys(allSales);
 
     if (airlineCodes.length === 0) {
-      console.log("[DealService] Store is empty, using mock data");
-      return withDestinationImages(withReliableAffiliate(mockDeals));
+      return mockFallback("Store is empty");
     }
 
     const now = new Date();
@@ -213,15 +238,14 @@ export async function getActiveDeals(): Promise<DealSchema[]> {
     }
 
     if (deals.length === 0) {
-      console.log("[DealService] No active deals in store, using mock data");
-      return withDestinationImages(withReliableAffiliate(mockDeals));
+      return mockFallback("No active deals in store");
     }
 
     console.log(`[DealService] Loaded ${deals.length} deals from store`);
     return withDestinationImages(deals);
   } catch (error) {
-    console.error("[DealService] Error loading from store, using mock data:", error);
-    return withDestinationImages(withReliableAffiliate(mockDeals));
+    console.error("[DealService] Error loading from store:", error);
+    return mockFallback("Store load error");
   }
 }
 

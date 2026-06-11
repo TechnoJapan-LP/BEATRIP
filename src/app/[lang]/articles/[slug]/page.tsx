@@ -91,7 +91,7 @@ function renderMarkdown(body: string) {
       return (
         <h3
           key={i}
-          className="text-base font-bold text-zinc-900 mt-6 mb-2"
+          className="text-base font-bold text-zinc-900 dark:text-zinc-100 mt-6 mb-2"
         >
           {line.slice(4)}
         </h3>
@@ -101,7 +101,7 @@ function renderMarkdown(body: string) {
       return (
         <h2
           key={i}
-          className="font-heading text-xl tracking-wide text-zinc-900 uppercase mt-8 mb-3"
+          className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mt-8 mb-3"
         >
           {line.slice(3)}
         </h2>
@@ -111,8 +111,8 @@ function renderMarkdown(body: string) {
       const match = line.match(/^- \*\*(.+?)\*\*:?\s*(.*)$/);
       if (match) {
         return (
-          <li key={i} className="text-sm text-zinc-600 ml-4 mb-1">
-            <span className="font-bold text-zinc-800">{match[1]}</span>
+          <li key={i} className="text-sm text-zinc-600 dark:text-zinc-300 ml-4 mb-1">
+            <span className="font-bold text-zinc-800 dark:text-zinc-200">{match[1]}</span>
             {match[2] ? `: ${match[2]}` : ""}
           </li>
         );
@@ -120,7 +120,7 @@ function renderMarkdown(body: string) {
     }
     if (line.startsWith("- ")) {
       return (
-        <li key={i} className="text-sm text-zinc-600 ml-4 mb-1">
+        <li key={i} className="text-sm text-zinc-600 dark:text-zinc-300 ml-4 mb-1">
           {line.slice(2)}
         </li>
       );
@@ -134,12 +134,12 @@ function renderMarkdown(body: string) {
       return (
         <div
           key={i}
-          className="grid grid-cols-3 gap-2 text-sm py-1.5 border-b border-zinc-100"
+          className="grid grid-cols-3 gap-2 text-sm py-1.5 border-b border-zinc-100 dark:border-zinc-800"
         >
           {cells.map((cell, j) => (
             <span
               key={j}
-              className={j === 0 ? "text-zinc-800 font-medium" : "text-zinc-600"}
+              className={j === 0 ? "text-zinc-800 dark:text-zinc-200 font-medium" : "text-zinc-600 dark:text-zinc-300"}
             >
               {cell}
             </span>
@@ -152,19 +152,19 @@ function renderMarkdown(body: string) {
     }
     if (line.match(/^\d+\. /)) {
       return (
-        <li key={i} className="text-sm text-zinc-600 ml-4 mb-1 list-decimal">
+        <li key={i} className="text-sm text-zinc-600 dark:text-zinc-300 ml-4 mb-1 list-decimal">
           {line.replace(/^\d+\.\s*/, "")}
         </li>
       );
     }
     const formatted = line.replace(
       /\*\*(.+?)\*\*/g,
-      '<strong class="font-bold text-zinc-800">$1</strong>'
+      '<strong class="font-bold text-zinc-800 dark:text-zinc-200">$1</strong>'
     );
     return (
       <p
         key={i}
-        className="text-sm text-zinc-600 leading-relaxed"
+        className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed"
         dangerouslySetInnerHTML={{ __html: formatted }}
       />
     );
@@ -284,7 +284,7 @@ export default async function ArticleDetailPage({ params }: Props) {
       <main id="main-content" className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
           <article className="lg:col-span-2">
-            <div className="rounded-xl border border-zinc-100 bg-white p-4 sm:p-6 lg:p-8">
+            <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-6 lg:p-8">
               {renderMarkdown(article.body)}
             </div>
             {/* 記事末尾CTA: 読了直後＝最もエンゲージメントが高い瞬間 */}
@@ -292,7 +292,7 @@ export default async function ArticleDetailPage({ params }: Props) {
           </article>
 
           <aside className="space-y-6">
-            <div className="rounded-xl border border-zinc-100 bg-white p-5">
+            <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
               <ShareButtons
                 url={`https://beatrip.jp/articles/${article.slug}`}
                 title={article.title}
@@ -301,8 +301,8 @@ export default async function ArticleDetailPage({ params }: Props) {
             </div>
 
             {linkedDeals.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white p-5">
-                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
+              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
                   関連ディール
                 </h3>
                 <div className="space-y-2">
@@ -310,10 +310,10 @@ export default async function ArticleDetailPage({ params }: Props) {
                     <Link
                       key={deal.id}
                       href={`/deals/${deal.id}`}
-                      className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2.5 transition-colors hover:bg-zinc-100"
+                      className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
                     >
                       <div className="min-w-0">
-                        <div className="text-sm font-bold text-zinc-800 truncate">
+                        <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">
                           {deal.origin}
                           <span className="mx-1 font-normal text-zinc-400">→</span>
                           {deal.destination}
@@ -323,7 +323,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm font-bold text-zinc-800">
+                        <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200">
                           ¥{formatPrice(deal.sale_price)}
                         </div>
                         <span className="text-[10px] text-rose-500 font-medium">
@@ -337,8 +337,8 @@ export default async function ArticleDetailPage({ params }: Props) {
             )}
 
             {linkedRoutes.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white p-5">
-                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
+              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
                   関連路線
                 </h3>
                 <ul className="space-y-1">
@@ -346,7 +346,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                     <li key={r}>
                       <Link
                         href={`/routes/${r}`}
-                        className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors group"
+                        className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group"
                       >
                         <span className="font-mono">{r.replace("-", " → ")}</span>
                         <ArrowRight className="h-3 w-3 text-zinc-300 transition-transform group-hover:translate-x-0.5" />
@@ -358,8 +358,8 @@ export default async function ArticleDetailPage({ params }: Props) {
             )}
 
             {linkedHotelSlugs.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white p-5">
-                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
+              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
                   目的地のホテル
                 </h3>
                 <ul className="space-y-1">
@@ -370,7 +370,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                       <li key={slug}>
                         <Link
                           href={`/hotels/${slug}`}
-                          className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-zinc-600 hover:bg-zinc-50 transition-colors group"
+                          className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group"
                         >
                           <span>{hd.nameJa}のホテル</span>
                           <ArrowRight className="h-3 w-3 text-zinc-300 transition-transform group-hover:translate-x-0.5" />
@@ -383,8 +383,8 @@ export default async function ArticleDetailPage({ params }: Props) {
             )}
 
             {linkedAirlines.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white p-5">
-                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
+              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
                   航空会社情報
                 </h3>
                 <div className="space-y-2">
@@ -392,7 +392,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                     <Link
                       key={a.code}
                       href={`/airlines/${a.code}`}
-                      className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2.5 transition-colors hover:bg-zinc-100"
+                      className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
                     >
                       <div className="flex items-center gap-2.5">
                         <span
@@ -403,7 +403,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                           <img src={a.logo} alt="" className="h-5 w-5 object-contain" />
                         </span>
                         <div>
-                          <div className="text-xs font-medium text-zinc-800">
+                          <div className="text-xs font-medium text-zinc-800 dark:text-zinc-200">
                             {a.name}
                           </div>
                           <div className="text-[10px] text-zinc-400">
@@ -422,7 +422,7 @@ export default async function ArticleDetailPage({ params }: Props) {
 
         {related.length > 0 && (
           <div className="mt-12">
-            <h2 className="font-heading text-xl tracking-wide text-zinc-900 uppercase mb-4">
+            <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
               Related Articles
             </h2>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

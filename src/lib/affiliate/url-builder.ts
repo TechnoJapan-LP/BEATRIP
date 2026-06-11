@@ -16,6 +16,7 @@
 
 import type { AirlineSale, SaleRoute } from "@/lib/scrapers/types";
 import type { DealSchema } from "@/data/deal-schema";
+import { getTravelPayoutsMarker } from "./partners";
 
 export type AffiliateProvider =
   | "skyscanner"
@@ -191,18 +192,20 @@ function buildTripComUrl(route: SaleRoute, sale: AirlineSale): string {
 }
 
 // ── TravelPayouts (aggregator) ──
-function buildTravelPayoutsUrl(route: SaleRoute, sale: AirlineSale): string {
-  const marker = process.env.TRAVELPAYOUTS_MARKER;
-  if (!marker) {
-    // Marker未設定時は Aviasales 直接リンク
-    return `https://www.aviasales.com/search/${route.originCode}${formatDateForAviasales(sale.travelPeriodStart)}${route.destinationCode}1`;
-  }
+// marker は env 優先 + 共通フォールバック (partners.ts の getTravelPayoutsMarker)。
+// subId は {pageType}_{placement} 形式。呼び出し元が渡さない場合は flight_cta。
+function buildTravelPayoutsUrl(
+  route: SaleRoute,
+  sale: AirlineSale,
+  subId: string = "flight_cta"
+): string {
+  const marker = getTravelPayoutsMarker();
 
   // tp.media リダイレクター経由（収益発生）
   const searchUrl = encodeURIComponent(
     `https://www.aviasales.com/search/${route.originCode}${formatDateForAviasales(sale.travelPeriodStart)}${route.destinationCode}1`
   );
-  return `https://tp.media/r?marker=${marker}&trs=&p=4114&u=${searchUrl}`;
+  return `https://tp.media/r?marker=${marker}&trs=&p=4114&sub_id=${encodeURIComponent(subId)}&u=${searchUrl}`;
 }
 
 /**
@@ -216,23 +219,27 @@ function buildTravelPayoutsUrl(route: SaleRoute, sale: AirlineSale): string {
  * @param cityNameEn 英語都市名（例: "Bangkok"）。Hotellook が確実に解決する。
  * @param checkIn    YYYY-MM-DD（任意・無効なら省略）
  * @param checkOut   YYYY-MM-DD（任意・無効なら省略）
+ * @param subId      アトリビューション用 sub_id（{pageType}_{placement} 形式）。
+ *                   呼び出し元が渡さない場合は hotel_link が付く。
  */
 export function buildHotelLink(
   cityNameEn: string,
   checkIn?: string,
-  checkOut?: string
+  checkOut?: string,
+  subId: string = "hotel_link"
 ): string {
-  const marker = process.env.TRAVELPAYOUTS_MARKER;
+  const marker = getTravelPayoutsMarker();
   const params = new URLSearchParams({
     destination: cityNameEn,
     adults: "2",
     locale: "ja",
     currency: "jpy",
+    marker,
+    sub_id: subId,
   });
   const isoDate = /^\d{4}-\d{2}-\d{2}$/;
   if (checkIn && isoDate.test(checkIn)) params.set("checkIn", checkIn);
   if (checkOut && isoDate.test(checkOut)) params.set("checkOut", checkOut);
-  if (marker) params.set("marker", marker);
   return `https://search.hotellook.com/?${params.toString()}`;
 }
 
@@ -253,7 +260,11 @@ export function buildHotelLink(
 export function buildAffiliateLink(
   route: SaleRoute,
   sale: AirlineSale,
-  options: { preferProvider?: AffiliateProvider } = {}
+  options: {
+    preferProvider?: AffiliateProvider;
+    /** tp.media 経由リンクの sub_id（{pageType}_{placement} 形式）。省略時 flight_cta */
+    subId?: string;
+  } = {}
 ): AffiliateLink {
   // プロバイダー明示指定がある場合はそれに従う
   if (options.preferProvider === "trip") {
@@ -265,7 +276,7 @@ export function buildAffiliateLink(
   }
   if (options.preferProvider === "travelpayouts") {
     return {
-      url: buildTravelPayoutsUrl(route, sale),
+      url: buildTravelPayoutsUrl(route, sale, options.subId),
       provider: "Aviasales",
       strategy: "travelpayouts",
     };

@@ -15,9 +15,14 @@ export function proxy(request: NextRequest) {
     pathname === "/en" || pathname.startsWith("/en/");
   if (isEn) return NextResponse.next();
 
-  // 既に /ja が付いている場合は無限ループ防止でそのまま
+  // 外部から /ja/... で直接アクセスされた場合は無印 URL へ 301 で正規化。
+  // (/ja/hotels/tokyo と /hotels/tokyo の両方が 200 を返す duplicate content を防ぐ。
+  //  内部 rewrite は proxy を再通過しないためループしない)
   if (pathname === "/ja" || pathname.startsWith("/ja/")) {
-    return NextResponse.next();
+    const url = request.nextUrl.clone();
+    const stripped = pathname.slice(3); // "/ja" を除去
+    url.pathname = stripped === "" ? "/" : stripped;
+    return NextResponse.redirect(url, 301);
   }
 
   // それ以外（無印）= 日本語。内部リライトで [lang]=ja に流す（URLは不変）

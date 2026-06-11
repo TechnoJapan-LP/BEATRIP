@@ -67,14 +67,17 @@ const nextConfig: NextConfig = {
   // 許可している外部接続先:
   //   - GA4: https://www.googletagmanager.com / https://www.google-analytics.com
   //   - Vercel Analytics / Speed Insights: https://va.vercel-scripts.com / https://vitals.vercel-insights.com
+  //   - TravelPayouts Drive 計測: https://emrld.ltd (layout.tsx で script 読込 + 計測 beacon)
+  //   - Cloudflare Turnstile: https://challenges.cloudflare.com (script + iframe challenge)
   async headers() {
     const csp = [
       "default-src 'self'",
       "img-src 'self' data: https:",
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://va.vercel-scripts.com",
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://va.vercel-scripts.com https://emrld.ltd https://challenges.cloudflare.com",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",
-      "connect-src 'self' https://www.google-analytics.com https://va.vercel-scripts.com https://vitals.vercel-insights.com",
+      "connect-src 'self' https://www.google-analytics.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://emrld.ltd",
+      "frame-src 'self' https://challenges.cloudflare.com",
       "frame-ancestors 'self'",
       // Flash / プラグイン経由のコード実行を完全に禁止
       "object-src 'none'",

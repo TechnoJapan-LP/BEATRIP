@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
 import { ArticleList } from "@/components/articles/article-list";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
+import {
+  STATIC_ARTICLE_CATEGORY_LABEL,
+  getStaticArticlesByCategory,
+  type StaticArticleCategory,
+} from "@/lib/articles/static-articles";
 import { SiteFooter } from "@/components/site-footer";
+import { localizeHref, type Locale } from "@/lib/i18n/locale";
 
 // ISR: 3600秒キャッシュ (1時間)
 export const revalidate = 3600;
@@ -36,8 +44,28 @@ export async function generateMetadata({
   };
 }
 
+// 静的記事 (編集部の定番コンテンツ) の表示順とハブリンク
+const STATIC_SECTIONS: {
+  category: StaticArticleCategory;
+  hub?: { href: string; label: string };
+}[] = [
+  { category: "guide" },
+  {
+    category: "ota-compare",
+    hub: { href: "/articles/ota-compare", label: "OTA 比較ハブで見る" },
+  },
+  { category: "ranking" },
+  {
+    category: "seasonal",
+    hub: { href: "/seasons", label: "シーズン特集一覧で見る" },
+  },
+  { category: "feature" },
+];
+
 export default async function ArticlesPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
+  const locale: Locale = lang === "en" ? "en" : "ja";
+  const lh = (href: string) => localizeHref(href, locale);
   const articles = await getAllArticles();
 
   // CollectionPage + ItemList — 記事ハブの構造を検索エンジンに明示
@@ -77,6 +105,71 @@ export default async function ArticlesPage({ params }: { params: Promise<{ lang:
           </p>
         </div>
 
+        {/* 編集部の定番コンテンツ (静的記事レジストリ) */}
+        <section aria-labelledby="static-articles-heading" className="mb-12">
+          <h2
+            id="static-articles-heading"
+            className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase"
+          >
+            定番ガイド・特集
+          </h2>
+          <p className="mt-1 mb-5 text-xs text-zinc-500">
+            時期を問わず役立つ、編集部の常設コンテンツ
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {STATIC_SECTIONS.map(({ category, hub }) => {
+              const items = getStaticArticlesByCategory(category);
+              if (items.length === 0) return null;
+              return (
+                <section
+                  key={category}
+                  className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
+                >
+                  <h3 className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-zinc-400">
+                    {STATIC_ARTICLE_CATEGORY_LABEL[category]}
+                    <span className="font-normal normal-case">
+                      {items.length} 本
+                    </span>
+                  </h3>
+                  <ul className="mt-3 space-y-2">
+                    {items.map((a) => (
+                      <li key={a.slug}>
+                        <Link
+                          href={lh(a.href)}
+                          className="group flex items-baseline justify-between gap-2 text-sm text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100"
+                        >
+                          <span className="font-medium group-hover:underline">
+                            {a.title}
+                          </span>
+                          <ArrowRight
+                            className="h-3 w-3 flex-shrink-0 translate-y-0.5 text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-500"
+                            aria-hidden="true"
+                          />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  {hub && (
+                    <Link
+                      href={lh(hub.href)}
+                      className="group mt-3 inline-flex items-center gap-1 text-xs font-bold text-sky-700 dark:text-sky-300 hover:underline"
+                    >
+                      {hub.label}
+                      <ArrowRight
+                        className="h-3 w-3 transition-transform group-hover:translate-x-0.5"
+                        aria-hidden="true"
+                      />
+                    </Link>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+        </section>
+
+        <h2 className="mb-4 font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase">
+          最新記事
+        </h2>
         <ArticleList articles={articles} />
       </main>
       <SiteFooter lang={lang} />

@@ -12,15 +12,23 @@
  * 設定が無い provider は従来通り検索 URL に fallback。
  */
 
-const MARKER_ENV = "TRAVELPAYOUTS_MARKER";
-/** TravelPayouts 既定 marker (環境変数未設定時の fallback)。Hotellook 用 */
-const FALLBACK_MARKER = "729387";
+import { getTravelPayoutsMarker } from "./partners";
 
-function wrapWithTpMedia(programEnv: string, destinationUrl: string): string {
-  const marker = process.env[MARKER_ENV];
+/**
+ * tp.media wrap（marker は env 優先 + 共通フォールバック）。
+ *
+ * @param subId アトリビューション用 sub_id（{pageType}_{placement} 形式）。
+ *              呼び出し元が渡さない場合は hotel_search が付く。
+ */
+function wrapWithTpMedia(
+  programEnv: string,
+  destinationUrl: string,
+  subId: string = "hotel_search"
+): string {
+  const marker = getTravelPayoutsMarker();
   const programId = process.env[programEnv];
-  if (!marker || !programId) return destinationUrl;
-  return `https://tp.media/r?marker=${marker}&p=${programId}&u=${encodeURIComponent(destinationUrl)}`;
+  if (!programId) return destinationUrl;
+  return `https://tp.media/r?marker=${marker}&p=${programId}&sub_id=${encodeURIComponent(subId)}&u=${encodeURIComponent(destinationUrl)}`;
 }
 
 export type HotelSearchOpts = {
@@ -146,7 +154,7 @@ const HOTELLOOK: HotelSearchProvider = {
   label: "Hotellook で比較",
   accent: "violet",
   url: (hotelName, cityNameEn, opts) => {
-    const marker = process.env[MARKER_ENV] ?? FALLBACK_MARKER;
+    const marker = getTravelPayoutsMarker();
     const params = new URLSearchParams({
       destination: cityNameEn,
       adults: "2",
@@ -156,10 +164,14 @@ const HOTELLOOK: HotelSearchProvider = {
     });
     if (hotelName) {
       // hotelName フィルタで該当ホテル単体表示に近づける
+      // sub_id は {pageType}_{placement} 形式に揃える
+      params.set(
+        "sub_id",
+        `hotel_search_h_${hotelName.replace(/\W+/g, "_").slice(0, 40)}`
+      );
       params.set("hotelName", hotelName);
-      params.set("sub_id", `h_${hotelName.replace(/\W+/g, "_").slice(0, 40)}`);
     } else {
-      params.set("sub_id", "city");
+      params.set("sub_id", "hotel_search_city");
     }
     if (opts?.checkIn) params.set("checkIn", opts.checkIn);
     if (opts?.checkOut) params.set("checkOut", opts.checkOut);

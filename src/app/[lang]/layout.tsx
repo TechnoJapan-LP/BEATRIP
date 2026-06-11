@@ -46,16 +46,17 @@ export function generateStaticParams() {
   return LOCALES.map((lang) => ({ lang }));
 }
 
+// title / description は「航空券 セール」「安い時期」等の実検索クエリを含める
 const META = {
   ja: {
-    title: "BEATRIP — フライトディール ポータル",
+    title: "航空券セール速報・安い時期予測 | BEATRIP",
     description:
-      "最安値のフライトディールを見逃さない。セール予測AIが次のチャンスをお知らせ。",
+      "ANA・JAL・LCCの航空券セール情報を毎日自動収集。国内線・国際線の格安航空券の安い時期をAIが予測し、次のセールのチャンスをお知らせします。",
   },
   en: {
-    title: "BEATRIP — Flight Deal Portal",
+    title: "Flight Sale Alerts & Cheap Fare Timing | BEATRIP",
     description:
-      "Never miss the lowest flight deals. Our sale-forecast AI tells you when the next chance is coming.",
+      "Daily-updated flight sale deals from Japan. Our AI predicts the cheapest time to buy airline tickets and alerts you before the next sale.",
   },
 } as const;
 

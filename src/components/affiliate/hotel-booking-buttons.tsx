@@ -67,7 +67,7 @@ export function HotelBookingButtons({
         <span>
           {HOTEL_SEARCH_PROVIDERS.length} サイトで価格比較
           <span className="ml-1.5 font-medium text-emerald-600 dark:text-emerald-300">
-            — 最安値が見つかります
+            — 最安値を比較できます
           </span>
         </span>
       </div>

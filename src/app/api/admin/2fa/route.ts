@@ -1,6 +1,8 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyTotp, signSessionToken } from "@/lib/auth/totp";
 import { writeAuditLog } from "@/lib/audit/audit-log";
+import { checkRateLimit, clientId } from "@/lib/rate-limit";
 
 /**
  * /api/admin/2fa — TOTP コード検証 + 2FA セッション cookie 発行
@@ -16,6 +18,16 @@ import { writeAuditLog } from "@/lib/audit/audit-log";
 const COOKIE_NAME = "beatrip_admin_2fa";
 const TTL_MS = 10 * 60 * 1000; // 10 分
 
+/**
+ * timing-safe な文字列比較。長さ差で timingSafeEqual が throw しないよう
+ * SHA-256 ダイジェスト同士を比較する (長さ情報も漏れない)。
+ */
+function safeEqual(a: string, b: string): boolean {
+  const ha = createHash("sha256").update(a).digest();
+  const hb = createHash("sha256").update(b).digest();
+  return timingSafeEqual(ha, hb);
+}
+
 export async function POST(req: NextRequest) {
   const adminKey = process.env.ADMIN_API_KEY;
   const totpSecret = process.env.ADMIN_TOTP_SECRET;
@@ -27,6 +39,28 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // TOTP brute force 対策: IP 単位で 5 req / 10 min に制限
+  const id = clientId(req);
+  const limit = await checkRateLimit("2fa", id);
+  if (!limit.allowed) {
+    await writeAuditLog(req, {
+      action: "admin.2fa.fail",
+      target: "/api/admin/2fa",
+      metadata: { reason: "rate_limited" },
+    });
+    return NextResponse.json(
+      { error: "too many requests" },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(
+            Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000))
+          ),
+        },
+      }
+    );
+  }
+
   let body: { token?: unknown; code?: unknown };
   try {
     body = await req.json();
@@ -34,7 +68,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "invalid json" }, { status: 400 });
   }
 
-  if (body.token !== adminKey) {
+  if (typeof body.token !== "string" || !safeEqual(body.token, adminKey)) {
     await writeAuditLog(req, {
       action: "admin.2fa.fail",
       target: "/api/admin/2fa",

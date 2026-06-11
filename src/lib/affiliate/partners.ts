@@ -53,22 +53,42 @@ export type Partner = {
 
 const MARKER_ENV = "TRAVELPAYOUTS_MARKER";
 
-/** marker と program ID が揃って初めて有効。tp.media で wrap した最終URLを返す。 */
-export function buildPartnerUrl(p: Partner, ctx: PartnerContext): string | null {
-  const marker = process.env[MARKER_ENV];
+/**
+ * TravelPayouts 既定 marker（環境変数未設定時の共通フォールバック）。
+ * url-builder.ts / hotel-search.ts / partners.ts の 3 ファイルで共用する。
+ */
+export const TRAVELPAYOUTS_FALLBACK_MARKER = "729387";
+
+/** marker は env 優先 + 共通フォールバック。tp.media 系 URL 生成の唯一の取得経路。 */
+export function getTravelPayoutsMarker(): string {
+  return process.env[MARKER_ENV] || TRAVELPAYOUTS_FALLBACK_MARKER;
+}
+
+/**
+ * program ID が揃って初めて有効。tp.media で wrap した最終URLを返す。
+ *
+ * @param subId アトリビューション用 sub_id（{pageType}_{placement} 形式）。
+ *              呼び出し元が渡さない場合は partner_cta が付く。
+ */
+export function buildPartnerUrl(
+  p: Partner,
+  ctx: PartnerContext,
+  subId: string = "partner_cta"
+): string | null {
+  const marker = getTravelPayoutsMarker();
   const programId = process.env[p.programEnvVar];
   const dest = p.destinationUrl(ctx);
   if (!dest) return null;
-  if (!marker || !programId) {
+  if (!programId) {
     // 開発時など: tp.media wrapを使わずに直接の遷移先URLを返す
     return dest;
   }
-  return `https://tp.media/r?marker=${marker}&p=${programId}&u=${encodeURIComponent(dest)}`;
+  return `https://tp.media/r?marker=${marker}&p=${programId}&sub_id=${encodeURIComponent(subId)}&u=${encodeURIComponent(dest)}`;
 }
 
-/** その env が本番で有効か */
+/** その env が本番で有効か（marker はフォールバックがあるため program ID のみ見る） */
 export function isPartnerEnabled(p: Partner): boolean {
-  return Boolean(process.env[MARKER_ENV] && process.env[p.programEnvVar]);
+  return Boolean(process.env[p.programEnvVar]);
 }
 
 /**

@@ -11,13 +11,28 @@ import {
   TrendingDown,
   Globe2,
   Clock,
+  BookOpen,
+  BookA,
+  Sparkles,
 } from "lucide-react";
 import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { AIRPORTS, type AirportRegion } from "@/data/airports";
 import { airlines } from "@/data/airlines";
+import {
+  STATIC_ARTICLES,
+  STATIC_ARTICLE_CATEGORY_LABEL,
+} from "@/lib/articles/static-articles";
 import { useLocalizedHref } from "@/components/i18n/locale-provider";
 
-type EntryType = "city" | "airport" | "airline" | "deal" | "region";
+type EntryType =
+  | "city"
+  | "airport"
+  | "airline"
+  | "deal"
+  | "region"
+  | "article"
+  | "feature"
+  | "term";
 
 type Entry = {
   label: string;
@@ -34,6 +49,9 @@ const TYPE_LABEL: Record<EntryType, string> = {
   airline: "航空会社",
   deal: "ディール",
   region: "エリア",
+  article: "記事",
+  feature: "特集",
+  term: "用語",
 };
 
 const TYPE_ICON: Record<EntryType, typeof Plane> = {
@@ -42,6 +60,9 @@ const TYPE_ICON: Record<EntryType, typeof Plane> = {
   airline: Plane,
   deal: TrendingDown,
   region: Globe2,
+  article: BookOpen,
+  feature: Sparkles,
+  term: BookA,
 };
 
 // region 名 → /local-flights/{slug} マッピング (page.tsx と整合)
@@ -92,12 +113,31 @@ function buildIndex(): Entry[] {
     });
   }
 
-  // 空港 (AIRPORTS)
+  // 「{都市}行きの航空券セール」 — 行き先意図に応答 (ホームのディール一覧を都市名で絞り込み)
+  for (const h of HOTEL_DESTINATIONS) {
+    out.push({
+      label: `${h.nameJa}行きの航空券セール`,
+      sublabel: `${h.nameJa} (${h.nameEn}) 行きのセールを一覧で確認`,
+      href: `/?q=${encodeURIComponent(h.nameJa)}#deals`,
+      type: "deal",
+      haystack: [
+        h.nameJa,
+        h.nameEn,
+        h.slug,
+        ...h.iataCodes,
+        "行き 航空券 セール 格安 フライト",
+      ]
+        .join(" ")
+        .toLowerCase(),
+    });
+  }
+
+  // 空港 (AIRPORTS) — href は canonical に合わせ大文字 IATA で統一
   for (const a of AIRPORTS) {
     out.push({
       label: `${a.fullNameJa} (${a.iata})`,
       sublabel: `${a.nameEn} · ${a.region} · ${a.prefecture}`,
-      href: `/airports/${a.iata.toLowerCase()}`,
+      href: `/airports/${a.iata}`,
       type: "airport",
       haystack: [
         a.iata,
@@ -112,14 +152,34 @@ function buildIndex(): Entry[] {
     });
   }
 
-  // 航空会社
+  // 航空会社 — getAirlineByCode は大文字コード完全一致のため
+  // 必ず al.code そのまま (大文字) で生成する (小文字だと 404)
   for (const al of airlines) {
     out.push({
       label: al.name,
       sublabel: `${al.nameEn} · ${al.type} · ${al.code}`,
-      href: `/airlines/${al.code.toLowerCase()}`,
+      href: `/airlines/${al.code}`,
       type: "airline",
       haystack: [al.code, al.name, al.nameEn, al.type].join(" ").toLowerCase(),
+    });
+  }
+
+  // 静的記事レジストリ (ガイド / OTA 比較 / ランキング / シーズン / 特集)
+  for (const sa of STATIC_ARTICLES) {
+    out.push({
+      label: sa.title,
+      sublabel: `${STATIC_ARTICLE_CATEGORY_LABEL[sa.category]} · ${sa.description}`,
+      href: sa.href,
+      type: "article",
+      haystack: [
+        sa.title,
+        sa.description,
+        sa.slug,
+        STATIC_ARTICLE_CATEGORY_LABEL[sa.category],
+        ...(sa.keywords ?? []),
+      ]
+        .join(" ")
+        .toLowerCase(),
     });
   }
 
@@ -171,6 +231,107 @@ function buildIndex(): Entry[] {
       haystack: "ota booking trip rakuten jalan 比較 ホテル予約",
     }
   );
+
+  // 特集 LP・ハブページ
+  out.push(
+    {
+      label: "都市別 OTA 比較 (13 都市)",
+      sublabel: "Booking / Agoda / Trip.com / Hotellook を都市別に比較",
+      href: "/articles/ota-compare",
+      type: "feature",
+      haystack:
+        "ota 比較 ホテル 予約サイト booking agoda trip hotellook 都市別 最安 ハブ",
+    },
+    {
+      label: "シーズン特集一覧",
+      sublabel: "年末年始・GW・夏休み・季節特集のまとめ",
+      href: "/seasons",
+      type: "feature",
+      haystack:
+        "シーズン 季節 連休 年末年始 ゴールデンウィーク gw 夏休み お盆 秋 冬 特集",
+    },
+    {
+      label: "ハワイ特集",
+      sublabel: "オアフ・マウイ・ハワイ島の旅行ガイド",
+      href: "/hawaii",
+      type: "feature",
+      haystack: "ハワイ hawaii ホノルル オアフ マウイ ワイキキ リゾート",
+    },
+    {
+      label: "沖縄特集",
+      sublabel: "本島・離島・ベストシーズン",
+      href: "/okinawa",
+      type: "feature",
+      haystack: "沖縄 okinawa 那覇 石垣 宮古 離島 リゾート",
+    },
+    {
+      label: "クルーズ特集",
+      sublabel: "国内・海外発着の船旅",
+      href: "/cruise",
+      type: "feature",
+      haystack: "クルーズ cruise 船旅 客船",
+    },
+    {
+      label: "パッケージツアー比較",
+      sublabel: "JTB / NEWT 等を比較",
+      href: "/package-tour",
+      type: "feature",
+      haystack: "パッケージツアー package tour jtb newt ツアー 比較",
+    },
+    {
+      label: "クレジットカード比較",
+      sublabel: "マイル・付帯保険・ラウンジで選ぶ",
+      href: "/credit-cards",
+      type: "feature",
+      haystack:
+        "クレジットカード クレカ credit card マイル 保険 ラウンジ 比較",
+    },
+    {
+      label: "海外旅行保険 比較",
+      sublabel: "クレカ付帯 vs ネット保険",
+      href: "/insurance",
+      type: "feature",
+      haystack: "海外旅行保険 保険 insurance クレカ付帯 比較",
+    },
+    {
+      label: "eSIM 比較",
+      sublabel: "海外通信を最安にするガイド",
+      href: "/esim",
+      type: "feature",
+      haystack: "esim sim 海外通信 ローミング wifi 比較",
+    },
+    {
+      label: "旅行用語集",
+      sublabel: "航空・ホテル・予約の用語解説",
+      href: "/glossary",
+      type: "feature",
+      haystack: "用語集 用語 glossary 意味 とは 解説",
+    }
+  );
+
+  // 用語集の主要用語 — /glossary へ誘導
+  // (用語別アンカーは glossary 側に id が付与され次第 #anchor に切替予定)
+  const glossaryTerms: { term: string; sub: string; kw: string }[] = [
+    { term: "LCC", sub: "格安航空会社 (Low Cost Carrier)", kw: "格安航空 ローコスト peach jetstar" },
+    { term: "FSC", sub: "フルサービスキャリア", kw: "フルサービス ana jal" },
+    { term: "OTA", sub: "オンライン旅行会社 (予約サイト)", kw: "online travel agency 予約サイト booking" },
+    { term: "マイレージ", sub: "航空会社のポイントプログラム", kw: "マイル mileage ポイント" },
+    { term: "特典航空券", sub: "マイルで交換する航空券", kw: "マイル 無料 award" },
+    { term: "トランジット", sub: "乗り継ぎ・経由", kw: "乗り継ぎ 経由 transit レイオーバー" },
+    { term: "オープンジョー", sub: "往路と復路で発着地が異なる旅程", kw: "open jaw 周遊" },
+    { term: "ストップオーバー", sub: "24 時間以上の途中滞在", kw: "stopover 途中降機" },
+    { term: "無料キャンセル", sub: "ホテル予約のキャンセル無料プラン", kw: "キャンセル free cancellation 返金" },
+    { term: "ベストレート", sub: "公式サイト最安値保証", kw: "best rate 最安値保証 公式" },
+  ];
+  for (const g of glossaryTerms) {
+    out.push({
+      label: g.term,
+      sublabel: `${g.sub} — 旅行用語集`,
+      href: "/glossary",
+      type: "term",
+      haystack: [g.term, g.sub, g.kw, "用語 とは 意味"].join(" ").toLowerCase(),
+    });
+  }
 
   return out;
 }

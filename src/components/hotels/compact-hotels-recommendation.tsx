@@ -127,7 +127,8 @@ export function CompactHotelsRecommendation({
       )}
       <div className={containerCls}>
         {picks.map(({ hotel: h, citySlug, cityNameJa }) => {
-          const reviewScore = h.reviewScore ?? 8.5;
+          // 実データのあるホテルのみスコアを表示 (捏造フォールバック禁止)
+          const reviewScore = h.reviewScore ?? null;
           const hotelImageUrl = getHotelImageUrl(citySlug, h);
           return (
             <Link
@@ -167,14 +168,18 @@ export function CompactHotelsRecommendation({
                   {h.name}
                 </h3>
                 <div className="mt-1 flex items-center gap-2 text-[11px] text-zinc-500 dark:text-zinc-400">
-                  <span className="inline-flex items-center gap-0.5 text-emerald-700 dark:text-emerald-300">
-                    <Star
-                      className="h-3 w-3 fill-emerald-500 text-emerald-500"
-                      aria-hidden="true"
-                    />
-                    <span className="font-bold">{reviewScore.toFixed(1)}</span>
-                  </span>
-                  <span aria-hidden="true" className="text-zinc-300">·</span>
+                  {reviewScore !== null && (
+                    <>
+                      <span className="inline-flex items-center gap-0.5 text-emerald-700 dark:text-emerald-300">
+                        <Star
+                          className="h-3 w-3 fill-emerald-500 text-emerald-500"
+                          aria-hidden="true"
+                        />
+                        <span className="font-bold">{reviewScore.toFixed(1)}</span>
+                      </span>
+                      <span aria-hidden="true" className="text-zinc-300">·</span>
+                    </>
+                  )}
                   <span className="truncate">{h.area}</span>
                 </div>
                 <div className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">

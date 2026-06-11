@@ -12,6 +12,7 @@ import {
   type AspPartner,
 } from "@/lib/affiliate/asp-partners";
 import { TrackedPartnerLink } from "@/components/affiliate/tracked-partner-link";
+import { PrNotice } from "@/components/compliance/pr-notice";
 
 /**
  * 日本系 ASP (A8.net) 経由 partner の集約パネル。
@@ -108,8 +109,9 @@ export function JapanesePartnersPanel({
     return (
       <aside className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
         <header className="border-b border-zinc-100 dark:border-zinc-800 px-5 py-3">
-          <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+          <h3 className="flex items-center gap-1.5 text-sm font-bold text-zinc-900 dark:text-zinc-100">
             {title}
+            <PrNotice variant="badge" />
           </h3>
           <p className="text-[11px] text-zinc-500 mt-0.5">{subtitle}</p>
         </header>
@@ -136,8 +138,9 @@ export function JapanesePartnersPanel({
   return (
     <aside className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
       <header className="border-b border-zinc-100 dark:border-zinc-800 px-5 py-3">
-        <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+        <h3 className="flex items-center gap-1.5 text-sm font-bold text-zinc-900 dark:text-zinc-100">
           {title}
+          <PrNotice variant="badge" />
         </h3>
         <p className="text-[11px] text-zinc-500 mt-0.5">{subtitle}</p>
       </header>

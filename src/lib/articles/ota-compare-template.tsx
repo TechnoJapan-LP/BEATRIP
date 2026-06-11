@@ -32,6 +32,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { HotelBookingButtons } from "@/components/affiliate/hotel-booking-buttons";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { PrNotice } from "@/components/compliance/pr-notice";
 import {
   getHotelDestinationBySlug,
   type HotelDestination,
@@ -276,25 +277,11 @@ export function OtaCompareCityPage({ slug, lang, profile }: Props) {
     },
     image: d.image ? [d.image] : undefined,
   };
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Header />
 
@@ -314,6 +301,7 @@ export function OtaCompareCityPage({ slug, lang, profile }: Props) {
             <br className="sm:hidden" />
             <span className="text-zinc-500 dark:text-zinc-400"> Booking vs Agoda vs Trip.com vs Hotellook 徹底比較</span>
           </h1>
+          <PrNotice className="mt-2" />
           <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-300 leading-relaxed">
             {profile.lede}
           </p>

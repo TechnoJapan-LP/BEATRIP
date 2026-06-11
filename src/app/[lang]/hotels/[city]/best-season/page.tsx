@@ -29,6 +29,7 @@ import {
 import { getCityGuide } from "@/data/hotel-city-guides";
 import {
   getWhenToVisitContent,
+  hasWhenToVisitContent,
   MONTH_LABELS_JA,
   RATING_LABEL_JA,
   type MonthRating,
@@ -52,9 +53,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `${d.nameJa}（${d.nameEn}）旅行のベストシーズンを月別に解説。おすすめは${w.bestMonthsLabel}。安く行ける時期は${w.cheapMonthsLabel}。気候・服装・年間イベント・FAQまで網羅。`;
   const path = isEn ? `/en/hotels/${d.slug}/best-season` : `/hotels/${d.slug}/best-season`;
 
+  // when-to-visit データ未整備の都市は汎用プレースホルダしか出せないため
+  // noindex (検索流入させない)。sitemap.ts 側でも非掲載にしている。
+  const hasContent = hasWhenToVisitContent(d.slug);
+
   return {
     title,
     description,
+    ...(hasContent ? {} : { robots: { index: false, follow: true } }),
     keywords: isEn
       ? [
           `${d.nameEn} best time to visit`,
@@ -86,7 +92,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export function generateStaticParams() {
-  return HOTEL_DESTINATIONS.map((d) => ({ city: d.slug }));
+  // when-to-visit データのある都市のみ事前生成。
+  // データ無し都市はオンデマンド描画 + noindex (上記 generateMetadata)。
+  return HOTEL_DESTINATIONS.filter((d) => hasWhenToVisitContent(d.slug)).map(
+    (d) => ({ city: d.slug })
+  );
 }
 
 const RATING_CHIP: Record<

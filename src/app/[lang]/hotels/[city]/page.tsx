@@ -37,6 +37,7 @@ import { CityPrevNextNav } from "@/components/hotels/city-prev-next-nav";
 import { ComparisonCheckbox } from "@/components/hotels/comparison-checkbox";
 import { buildHotelSlug } from "@/lib/comparison/hotel-slug";
 import { getHotelImageUrl, isProxyPhotoUrl } from "@/lib/hotels/hotel-image-url";
+import { PrNotice } from "@/components/compliance/pr-notice";
 
 /**
  * tier ベースの 1 泊価格目安レンジ (¥)。実 OTA 価格が未取得でも
@@ -199,16 +200,6 @@ export default async function HotelCityPage({ params }: Props) {
     },
   ];
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
-
   const pageJsonLd = {
     "@context": "https://schema.org",
     "@type": "TouristDestination",
@@ -219,8 +210,9 @@ export default async function HotelCityPage({ params }: Props) {
     image: d.image,
   };
 
-  // Hotel ItemList JSON-LD — 各 curated hotel の aggregateRating + 価格レンジで
-  // SERP の⭐レビュー / 価格表示を狙う。bestRating は 10 (Booking 系スコア準拠)。
+  // Hotel ItemList JSON-LD — 各 curated hotel の基本情報 (住所 / 価格レンジ / 星) のみ。
+  // aggregateRating は出力しない: 自サイトで実収集したレビューではなく第三者 OTA
+  // スコアの転記であり、Google の review snippet ガイドライン違反になるため。
   const hotelsItemListJsonLd =
     curatedHotels.length > 0
       ? {
@@ -229,8 +221,6 @@ export default async function HotelCityPage({ params }: Props) {
           name: `${d.nameJa}の代表的なホテル`,
           itemListElement: curatedHotels.map((h, idx) => {
             const priceRange = tierPriceRange(h.tier);
-            const reviewScore = h.reviewScore ?? 8.5;
-            const reviewCount = h.reviewCount ?? 1500;
             const hotelEntry: Record<string, unknown> = {
               "@type": "Hotel",
               name: h.name,
@@ -240,13 +230,6 @@ export default async function HotelCityPage({ params }: Props) {
                 addressCountry: d.region === "国内" ? "JP" : undefined,
               },
               priceRange: `¥${priceRange.low.toLocaleString("en-US")}-¥${priceRange.high.toLocaleString("en-US")}`,
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: reviewScore.toFixed(1),
-                reviewCount: String(reviewCount),
-                bestRating: "10",
-                worstRating: "1",
-              },
             };
             const _hImg = getHotelImageUrl(d.slug, h);
             if (_hImg) hotelEntry.image = _hImg;
@@ -270,10 +253,6 @@ export default async function HotelCityPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       {hotelsItemListJsonLd && (
         <script
@@ -329,6 +308,9 @@ export default async function HotelCityPage({ params }: Props) {
       </section>
 
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+        {/* 景表法: PR 表記 (h1 直下) */}
+        <PrNotice className="mb-4" />
+
         {/* Pack B: この都市への航空券セールへの逆方向リンク — 主CTA より控えめ。
             ホテルから来た訪問者の航空券需要も拾う（双方向の internal link で
             cluster 内ナビゲーションと PageRank 流通を強化） */}
@@ -502,10 +484,8 @@ export default async function HotelCityPage({ params }: Props) {
                           : h.tier === "ミドル"
                             ? "from-emerald-400 to-teal-600"
                             : "from-zinc-400 to-zinc-600";
-                    // Pack D: 価格レンジ / レビュー highlight 用の fallback 値
+                    // Pack D: 価格レンジ (tier ベースの目安)
                     const priceRange = tierPriceRange(h.tier);
-                    const reviewScore = h.reviewScore ?? 8.5;
-                    const reviewCount = h.reviewCount ?? 1500;
                     const isLuxury = h.tier === "ラグジュアリー";
                     const hotelImageUrl = getHotelImageUrl(d.slug, h);
                     return (
@@ -546,24 +526,30 @@ export default async function HotelCityPage({ params }: Props) {
                                 />
                               </span>
                             </div>
-                            {/* Pack D: レビュー強調 (カード冒頭) — ホテル名直下に大きく */}
-                            <div className="mt-2 flex items-center gap-2">
-                              <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-1 ring-1 ring-emerald-100 dark:bg-emerald-900/30 dark:ring-emerald-800">
-                                <Star
-                                  className="h-3.5 w-3.5 fill-emerald-500 text-emerald-500"
-                                  aria-hidden="true"
-                                />
-                                <span className="text-base font-bold leading-none text-emerald-700 dark:text-emerald-200">
-                                  {reviewScore.toFixed(1)}
+                            {/* 編集部評価 — 実データ (h.reviewScore) があるホテルのみ表示。
+                                自サイト収集レビューではないため「編集部評価 / 参考スコア」と明示 */}
+                            {h.reviewScore !== undefined && (
+                              <div className="mt-2 flex items-center gap-2">
+                                <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-50 px-2 py-1 ring-1 ring-emerald-100 dark:bg-emerald-900/30 dark:ring-emerald-800">
+                                  <Star
+                                    className="h-3.5 w-3.5 fill-emerald-500 text-emerald-500"
+                                    aria-hidden="true"
+                                  />
+                                  <span className="text-[10px] font-medium text-emerald-600/80 dark:text-emerald-300/80">
+                                    編集部評価
+                                  </span>
+                                  <span className="text-base font-bold leading-none text-emerald-700 dark:text-emerald-200">
+                                    {h.reviewScore.toFixed(1)}
+                                  </span>
+                                  <span className="text-[10px] font-medium text-emerald-600/80 dark:text-emerald-300/80">
+                                    /10
+                                  </span>
                                 </span>
-                                <span className="text-[10px] font-medium text-emerald-600/80 dark:text-emerald-300/80">
-                                  /10
+                                <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                                  参考スコア
                                 </span>
-                              </span>
-                              <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                                {reviewCount.toLocaleString()} 件のレビュー
-                              </span>
-                            </div>
+                              </div>
+                            )}
                             <div className="mt-1.5 flex items-center gap-2 flex-wrap text-[11px] text-zinc-500 dark:text-zinc-400">
                               <span>エリア: {h.area}</span>
                               <span aria-hidden="true" className="text-zinc-300">

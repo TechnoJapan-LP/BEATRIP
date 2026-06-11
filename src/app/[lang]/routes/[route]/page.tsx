@@ -18,7 +18,12 @@ import {
   getHotelSlugByIata,
   getHotelDestinationBySlug,
 } from "@/data/hotel-destinations";
-import { cityNameEn, cityNameJa } from "@/lib/airport-names";
+import {
+  cityNameEn,
+  cityNameJa,
+  CITY_NAMES_JA,
+  CITY_NAMES_EN,
+} from "@/lib/airport-names";
 import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { AIRPORTS, getAirportByCode, type AirportRegion } from "@/data/airports";
@@ -40,11 +45,28 @@ type Props = { params: Promise<{ route: string; lang: string }> };
 // ISR: 1800秒キャッシュ (30分)
 export const revalidate = 1800;
 
+// 既知の空港コード allowlist。AIRPORTS (国内) + airport-names.ts が知っている
+// 国際コードのみ。未知コード (例: QQQ-ZZZ) を許すと 17,576^2 通りの doorway
+// ページが生成可能になり SEO スパム判定リスクが致命的なため、必ず 404 にする。
+const KNOWN_IATA_CODES = new Set<string>([
+  ...AIRPORTS.map((ap) => ap.iata),
+  ...Object.keys(CITY_NAMES_JA),
+  ...Object.keys(CITY_NAMES_EN),
+]);
+
+function isKnownCode(code: string): boolean {
+  return KNOWN_IATA_CODES.has(code);
+}
+
 function parseRoute(slug: string) {
   const decoded = decodeURIComponent(slug);
   const match = decoded.match(/^([A-Z]{3})-([A-Z]{3})$/);
   if (!match) return null;
-  return { origin: match[1], destination: match[2] };
+  const origin = match[1];
+  const destination = match[2];
+  // 両端が既知コードでなければ無効ルート扱い (doorway 封鎖)
+  if (!isKnownCode(origin) || !isKnownCode(destination)) return null;
+  return { origin, destination };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -126,13 +148,15 @@ export async function generateStaticParams() {
   const deals = await getActiveDeals();
   const routes = new Set<string>();
   for (const d of deals) {
-    routes.add(`${d.origin_code}-${d.destination_code}`);
+    if (isKnownCode(d.origin_code) && isKnownCode(d.destination_code)) {
+      routes.add(`${d.origin_code}-${d.destination_code}`);
+    }
   }
   // AIRPORTS の popularRoutes から全 O→D ペアを追加 (deal 不在路線の SSG)
   // popularRoutes に airline 名等が混じるケースがあるので IATA 3 文字のみ受け付ける
   for (const ap of AIRPORTS) {
     for (const dst of ap.popularRoutes ?? []) {
-      if (/^[A-Z]{3}$/.test(dst) && dst !== ap.iata) {
+      if (/^[A-Z]{3}$/.test(dst) && dst !== ap.iata && isKnownCode(dst)) {
         routes.add(`${ap.iata}-${dst}`);
       }
     }
@@ -322,15 +346,9 @@ export default async function RoutePage({ params }: Props) {
     a: `BEATRIPの無料ニュースレターに登録すると、${origin}→${dest}を含む各路線の新着セールを週次でお届けします。特定価格以下になったら通知してほしい場合は、各ディール詳細ページの「価格アラート」もご利用いただけます。`,
   });
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
+  // 注: FAQPage JSON-LD は出さない。全路線で同型のテンプレ FAQ schema を
+  // 量産すると Google のスパムポリシー (構造化データ乱用) に抵触し得るため、
+  // FAQ 本文 (FAQAccordion) のみ表示する。
 
   // ItemList 構造化データ（路線のセール一覧） — deal がある時のみ出す
   const jsonLd = hasDeals
@@ -369,10 +387,6 @@ export default async function RoutePage({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
       <Header />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
