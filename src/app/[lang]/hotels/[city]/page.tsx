@@ -292,6 +292,7 @@ export default async function HotelCityPage({ params }: Props) {
         <div className="relative mx-auto max-w-7xl h-full flex flex-col justify-end px-4 sm:px-6 pb-6">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? `/en/hotels/${d.slug}` : `/hotels/${d.slug}`}
             items={[
               { label: "Home", href: "/" },
               { label: "ホテル", href: "/hotels" },

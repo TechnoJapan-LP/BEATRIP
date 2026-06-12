@@ -234,6 +234,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6">
           <Breadcrumbs
+            currentPath={lang === "en" ? `/en/airlines/${code}/sales` : `/airlines/${code}/sales`}
             items={[
               { label: "Home", href: "/" },
               { label: "Airlines", href: "/airlines" },

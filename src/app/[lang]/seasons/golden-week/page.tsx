@@ -170,6 +170,7 @@ export default async function GoldenWeekSeasonPage({ params }: { params: Promise
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/seasons/golden-week" : "/seasons/golden-week"}
             items={[
               { label: "Home", href: "/" },
               { label: "季節特集", href: "/seasons/golden-week" },

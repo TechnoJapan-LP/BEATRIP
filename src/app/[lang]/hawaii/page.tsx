@@ -170,6 +170,7 @@ export default async function HawaiiPage({ params }: { params: Promise<{ lang: s
         <div className="relative mx-auto max-w-7xl h-full flex flex-col justify-end px-4 sm:px-6 pb-8">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/hawaii" : "/hawaii"}
             items={[
               { label: "Home", href: "/" },
               { label: "ハワイ" },

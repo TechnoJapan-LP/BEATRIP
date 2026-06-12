@@ -280,6 +280,11 @@ export default async function AirlineAirportPage({ params }: Props) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-10">
           <Breadcrumbs
             variant="dark"
+            currentPath={
+              lang === "en"
+                ? `/en/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`
+                : `/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "Airlines", href: "/airlines" },

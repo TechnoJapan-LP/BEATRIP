@@ -62,6 +62,7 @@ export default async function FAQPage({
       <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
           <Breadcrumbs
+            currentPath={localizeHref("/faq", locale)}
             items={[
               { label: dict.common.home, href: localizeHref("/", locale) },
               { label: t.breadcrumb },

@@ -293,6 +293,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
         <div className="relative mx-auto max-w-7xl h-full flex flex-col justify-end px-4 sm:px-6 pb-8">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? `/en/local-flights/${slug}` : `/local-flights/${slug}`}
             items={[
               { label: "Home", href: "/" },
               { label: "地方発の格安航空券", href: "/local-flights" },

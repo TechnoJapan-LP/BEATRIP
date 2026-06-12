@@ -205,6 +205,7 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/articles/sale-prediction-2027" : "/articles/sale-prediction-2027"}
             items={[
               { label: "Home", href: "/" },
               { label: "Articles", href: "/articles" },

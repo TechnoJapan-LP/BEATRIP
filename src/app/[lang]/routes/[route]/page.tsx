@@ -176,7 +176,7 @@ function formatDate(dateStr: string) {
 }
 
 export default async function RoutePage({ params }: Props) {
-  const { route } = await params;
+  const { route, lang } = await params;
   const parsed = parseRoute(route);
   if (!parsed) notFound();
 
@@ -391,6 +391,7 @@ export default async function RoutePage({ params }: Props) {
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
           <Breadcrumbs
+            currentPath={lang === "en" ? `/en/routes/${route}` : `/routes/${route}`}
             items={[
               { label: "Home", href: "/" },
               { label: `${origin}→${dest}` },

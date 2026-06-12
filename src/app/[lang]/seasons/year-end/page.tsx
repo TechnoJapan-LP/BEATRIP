@@ -169,6 +169,7 @@ export default async function YearEndSeasonPage({ params }: { params: Promise<{ 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/seasons/year-end" : "/seasons/year-end"}
             items={[
               { label: "Home", href: "/" },
               { label: "季節特集", href: "/seasons/year-end" },

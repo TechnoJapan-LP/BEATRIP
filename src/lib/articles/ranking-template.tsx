@@ -183,6 +183,7 @@ export function RankingPage({ seg, lang }: Props) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? `/en/articles/rankings/${seg.path}` : `/articles/rankings/${seg.path}`}
             items={[
               { label: "Home", href: "/" },
               { label: "Articles", href: "/articles" },

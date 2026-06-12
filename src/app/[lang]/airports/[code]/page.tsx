@@ -225,6 +225,7 @@ export default async function AirportPage({ params }: Props) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-10">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? `/en/airports/${airport.iata}` : `/airports/${airport.iata}`}
             items={[
               { label: "Home", href: "/" },
               { label: "空港", href: "/airports" },

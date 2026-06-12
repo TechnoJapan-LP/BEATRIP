@@ -298,6 +298,7 @@ export default async function CreditCardsPage({ params }: { params: Promise<{ la
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/credit-cards" : "/credit-cards"}
             items={[
               { label: "Home", href: "/" },
               { label: "クレジットカード比較" },

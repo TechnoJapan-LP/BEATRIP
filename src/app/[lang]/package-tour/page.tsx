@@ -215,6 +215,7 @@ export default async function PackageTourPage({ params }: { params: Promise<{ la
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/package-tour" : "/package-tour"}
             items={[
               { label: "Home", href: "/" },
               { label: "パッケージツアー" },

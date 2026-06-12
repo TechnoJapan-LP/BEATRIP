@@ -245,6 +245,7 @@ export default async function InsurancePage({ params }: { params: Promise<{ lang
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/insurance" : "/insurance"}
             items={[
               { label: "Home", href: "/" },
               { label: "海外旅行保険比較" },

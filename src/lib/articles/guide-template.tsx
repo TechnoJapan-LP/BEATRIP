@@ -122,6 +122,7 @@ export function GuidePage({ content: c, lang }: { content: GuideContent; lang: s
       <section className="border-b border-zinc-100 dark:border-zinc-800 bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-950">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-10">
           <Breadcrumbs
+            currentPath={lh(path)}
             items={[
               { label: "Home", href: lh("/") },
               { label: "Articles", href: lh("/articles") },

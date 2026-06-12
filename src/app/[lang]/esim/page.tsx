@@ -174,6 +174,7 @@ export default async function EsimPage({ params }: { params: Promise<{ lang: str
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/esim" : "/esim"}
             items={[
               { label: "Home", href: "/" },
               { label: "eSIM" },

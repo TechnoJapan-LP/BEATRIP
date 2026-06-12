@@ -82,6 +82,7 @@ export default async function DealsIndexPage({
       >
         <div className="mb-6">
           <Breadcrumbs
+            currentPath={isEn ? "/en/deals" : "/deals"}
             items={[
               { label: "Home", href: "/" },
               { label: isEn ? "Deals" : "ディール一覧" },

@@ -198,6 +198,7 @@ export default async function OkinawaPage({ params }: { params: Promise<{ lang: 
         <div className="relative mx-auto max-w-7xl h-full flex flex-col justify-end px-4 sm:px-6 pb-8">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/okinawa" : "/okinawa"}
             items={[
               { label: "Home", href: "/" },
               { label: "沖縄" },

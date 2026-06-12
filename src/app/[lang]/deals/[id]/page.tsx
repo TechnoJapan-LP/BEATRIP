@@ -242,6 +242,7 @@ export default async function DealDetailPage({ params }: Props) {
             <div className="mb-4">
               <Breadcrumbs
                 variant="dark"
+                currentPath={lang === "en" ? `/en/deals/${id}` : `/deals/${id}`}
                 items={[
                   { label: "Home", href: "/" },
                   { label: "Flash Deals", href: "/" },

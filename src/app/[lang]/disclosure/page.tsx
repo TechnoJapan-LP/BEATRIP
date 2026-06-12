@@ -50,6 +50,7 @@ export default async function DisclosurePage({
       >
         <div className="mb-6">
           <Breadcrumbs
+            currentPath={localizeHref("/disclosure", locale)}
             items={[
               { label: dict.common.home, href: localizeHref("/", locale) },
               { label: t.breadcrumb },

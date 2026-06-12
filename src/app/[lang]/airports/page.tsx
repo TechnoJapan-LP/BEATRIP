@@ -93,6 +93,7 @@ export default async function AirportsIndexPage({ params }: { params: Promise<{ 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-10">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/airports" : "/airports"}
             items={[
               { label: "Home", href: "/" },
               { label: "空港" },

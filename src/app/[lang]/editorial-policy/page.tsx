@@ -54,6 +54,7 @@ export default async function EditorialPolicyPage({
       >
         <div className="mb-6">
           <Breadcrumbs
+            currentPath={localizeHref("/editorial-policy", locale)}
             items={[
               { label: dict.common.home, href: localizeHref("/", locale) },
               { label: t.breadcrumb },

@@ -197,6 +197,7 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/articles/miles-booking-guide" : "/articles/miles-booking-guide"}
             items={[
               { label: "Home", href: "/" },
               { label: "Articles", href: "/articles" },

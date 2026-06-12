@@ -412,6 +412,7 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/ota-sales" : "/ota-sales"}
             items={[
               { label: "Home", href: "/" },
               { label: "OTA セールガイド" },

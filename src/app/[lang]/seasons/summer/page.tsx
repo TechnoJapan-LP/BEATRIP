@@ -169,6 +169,7 @@ export default async function SummerSeasonPage({ params }: { params: Promise<{ l
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
+            currentPath={lang === "en" ? "/en/seasons/summer" : "/seasons/summer"}
             items={[
               { label: "Home", href: "/" },
               { label: "季節特集", href: "/seasons/summer" },

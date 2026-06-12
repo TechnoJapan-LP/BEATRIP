@@ -75,6 +75,7 @@ export default async function HotelsIndexPage({ params }: { params: Promise<{ la
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
           <Breadcrumbs
+            currentPath={lang === "en" ? "/en/hotels" : "/hotels"}
             items={[{ label: "Home", href: "/" }, { label: "ホテル" }]}
           />
         </div>
