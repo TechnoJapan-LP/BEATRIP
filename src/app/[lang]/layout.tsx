@@ -101,12 +101,23 @@ export async function generateMetadata({
     },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
+      // 英語ページは本文未翻訳 (日本語のまま) のため noindex 中。
+      // hreflang に en を含めると noindex 対象を指してしまうので ja / x-default のみ。
+      // 本文を英訳して /en を indexable に戻す際に en alternate を復活させること。
       languages: {
         ja: "https://beatrip.jp",
-        en: "https://beatrip.jp/en",
         "x-default": "https://beatrip.jp",
       },
     },
+    // /en は「英語メタ + 日本語本文」の中途半端な重複ページ群 (約740P) で、
+    // クロール予算の浪費とサイト全体の品質評価低下を招くため noindex,follow。
+    // follow は残し、リンク評価は日本語ページへ流す。子ページが robots を
+    // 明示しない限りこの設定が継承される (Next.js metadata は field 単位でマージ)。
+    // 本文を英訳できたら locale==="en" の noindex を解除する。
+    robots:
+      locale === "en"
+        ? { index: false, follow: true }
+        : { index: true, follow: true },
     verification: {
       google: "s6hnkAAFeWkjZuSP1daeBLRLSeapRvFROY7ge_7wrdU",
     },

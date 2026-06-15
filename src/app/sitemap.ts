@@ -31,30 +31,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getActiveDeals(),
   ]);
 
-  // 日英両対応のページ（UI＋静的ページ）。hreflangで関連付ける。
+  // かつて日英両対応で /en も掲載していたが、英語ページは本文未翻訳のため
+  // 現在 noindex 中。noindex の URL を sitemap に載せると矛盾シグナルになるので
+  // ja のみ掲載し、hreflang の en alternate も出さない。
+  // 本文を英訳して /en を indexable に戻したら en URL + hreflang を復活させること。
   const bilingual = (
     path: string,
     changeFrequency: "daily" | "weekly" | "monthly" | "yearly",
     priority: number
-  ): MetadataRoute.Sitemap => {
-    const jaUrl = `${BASE_URL}${path}`;
-    const enUrl = `${BASE_URL}/en${path}`;
-    const languages = { ja: jaUrl, en: enUrl };
-    return [
-      {
-        url: jaUrl,
-        changeFrequency,
-        priority,
-        alternates: { languages },
-      },
-      {
-        url: enUrl,
-        changeFrequency,
-        priority: Math.round(priority * 90) / 100,
-        alternates: { languages },
-      },
-    ];
-  };
+  ): MetadataRoute.Sitemap => [
+    {
+      url: `${BASE_URL}${path}`,
+      changeFrequency,
+      priority,
+    },
+  ];
 
   const staticPages: MetadataRoute.Sitemap = [
     ...bilingual("", "daily", 1),
