@@ -60,10 +60,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/hotels/${d.slug}/activities`,
-        en: `https://beatrip.jp/en/hotels/${d.slug}/activities`,
         "x-default": `https://beatrip.jp/hotels/${d.slug}/activities`,
       },
     },
+    // データ連動 index 制御: 観光スポット (city guide の attractions) を持つ
+    // 都市のみ固有コンテンツがあるため index。guide 無し都市は定型文+アフィリ
+    // パネルだけの薄いページなので noindex,follow。guide 整備で自動復帰。
+    ...(getCityGuide(d.slug)?.attractions.length
+      ? {}
+      : { robots: { index: false, follow: true } }),
   };
 }
 
@@ -152,25 +157,14 @@ export default async function CityActivitiesPage({ params }: Props) {
     mainEntityOfPage: `https://beatrip.jp/hotels/${d.slug}/activities`,
   };
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
+  // FAQ は都市横断でほぼ同一文面のため FAQPage JSON-LD は出さない
+  // (テンプレFAQ量産はスパム扱いのリスク。FAQ 表示は本文に残す)。
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Header />
 

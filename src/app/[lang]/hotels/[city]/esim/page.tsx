@@ -65,10 +65,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/hotels/${d.slug}/esim`,
-        en: `https://beatrip.jp/en/hotels/${d.slug}/esim`,
         "x-default": `https://beatrip.jp/hotels/${d.slug}/esim`,
       },
     },
+    // 都市別 eSIM ページは選び方・比較が全都市ほぼ共通文 (都市固有は1〜2文のみ)
+    // で重複扱いになるため noindex,follow。汎用の /esim ランディングに集約し、
+    // 都市ページからは内部リンクとして残す。海外通信の検索意図は /esim で受ける。
+    robots: { index: false, follow: true },
   };
 }
 
@@ -131,25 +134,14 @@ export default async function CityEsimPage({ params }: Props) {
     mainEntityOfPage: `https://beatrip.jp/hotels/${d.slug}/esim`,
   };
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
+  // FAQ は全都市ほぼ同一文面のため FAQPage JSON-LD は出さない
+  // (テンプレFAQ量産はスパム扱いのリスク。本ページは noindex でもあるため不要)。
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <Header />
 

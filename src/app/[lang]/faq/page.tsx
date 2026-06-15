@@ -22,7 +22,6 @@ export async function generateMetadata({
       canonical: locale === "en" ? "https://beatrip.jp/en/faq" : "https://beatrip.jp/faq",
       languages: {
         ja: "https://beatrip.jp/faq",
-        en: "https://beatrip.jp/en/faq",
         "x-default": "https://beatrip.jp/faq",
       },
     },

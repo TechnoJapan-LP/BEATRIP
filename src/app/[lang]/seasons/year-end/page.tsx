@@ -37,7 +37,6 @@ export async function generateMetadata({
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/seasons/year-end",
-        en: "https://beatrip.jp/en/seasons/year-end",
         "x-default": "https://beatrip.jp/seasons/year-end",
       },
     },

@@ -65,8 +65,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `${airline.name}（${airline.nameEn}）が${airport.fullNameJa}（${airport.iata}）で運航する航空券の最新セール情報・人気路線・予約サイト比較。${airport.tagline ?? ""}`;
 
   const canonicalJa = `https://beatrip.jp/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`;
-  const canonicalEn = `https://beatrip.jp/en/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`;
-  const canonical = isEn ? canonicalEn : canonicalJa;
+  const canonical = isEn
+    ? `https://beatrip.jp/en/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`
+    : canonicalJa;
+
+  // データ連動 index 制御: 当該空港発着の実セールがある組合せのみ index。
+  // セール0件の組合せ (大多数) は固有名詞差し替えだけの薄い量産ページなので
+  // noindex,follow にしてインデックス母集団から除外。セールが付けば自動復帰。
+  const allDeals = await getActiveDeals();
+  const hasDeals = allDeals.some(
+    (d) =>
+      d.airline_id === airline.code &&
+      (d.origin_code === airport.iata || d.destination_code === airport.iata)
+  );
 
   return {
     title,
@@ -91,10 +102,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical,
       languages: {
         ja: canonicalJa,
-        en: canonicalEn,
         "x-default": canonicalJa,
       },
     },
+    ...(hasDeals ? {} : { robots: { index: false, follow: true } }),
   };
 }
 

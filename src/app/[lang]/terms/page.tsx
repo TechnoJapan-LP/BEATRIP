@@ -20,7 +20,6 @@ export async function generateMetadata({
       canonical: locale === "en" ? "https://beatrip.jp/en/terms" : "https://beatrip.jp/terms",
       languages: {
         ja: "https://beatrip.jp/terms",
-        en: "https://beatrip.jp/en/terms",
         "x-default": "https://beatrip.jp/terms",
       },
     },

@@ -52,7 +52,6 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: "https://beatrip.jp/articles/seasonal/winter-2026",
       languages: {
         ja: "https://beatrip.jp/articles/seasonal/winter-2026",
-        en: "https://beatrip.jp/en/articles/seasonal/winter-2026",
         "x-default": "https://beatrip.jp/articles/seasonal/winter-2026",
       },
     },

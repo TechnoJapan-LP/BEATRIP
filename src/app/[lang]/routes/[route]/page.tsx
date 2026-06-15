@@ -84,6 +84,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? Math.min(...routeDeals.map((d) => d.sale_price))
     : null;
 
+  // データ連動 index 制御: セールも価格履歴も無い路線は本文が空テンプレに
+  // なるため noindex,follow (薄い量産ページをインデックス母集団から除外し、
+  // サイト全体の品質評価を守る)。セール or 履歴が付いたら自動で index 復帰。
+  const routeKey = `${parsed.origin}-${parsed.destination}`;
+  const historical = await getHistoricalPrices(routeKey);
+  const hasContent = routeDeals.length > 0 || historical.length > 0;
+
   const isEn = lang === "en";
   const originJa = routeDeals[0]?.origin ?? cityNameJa(parsed.origin);
   const destJa = routeDeals[0]?.destination ?? cityNameJa(parsed.destination);
@@ -137,10 +144,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/routes/${route}`,
-        en: `https://beatrip.jp/en/routes/${route}`,
         "x-default": `https://beatrip.jp/routes/${route}`,
       },
     },
+    ...(hasContent ? {} : { robots: { index: false, follow: true } }),
   };
 }
 

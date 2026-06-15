@@ -47,7 +47,6 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: "https://beatrip.jp/articles/sale-prediction-2027",
       languages: {
         ja: "https://beatrip.jp/articles/sale-prediction-2027",
-        en: "https://beatrip.jp/en/articles/sale-prediction-2027",
         "x-default": "https://beatrip.jp/articles/sale-prediction-2027",
       },
     },

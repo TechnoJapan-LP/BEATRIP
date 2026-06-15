@@ -34,7 +34,6 @@ export async function generateMetadata({
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/airports",
-        en: "https://beatrip.jp/en/airports",
         "x-default": "https://beatrip.jp/airports",
       },
     },

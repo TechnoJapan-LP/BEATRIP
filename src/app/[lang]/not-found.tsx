@@ -19,7 +19,6 @@ export const metadata: Metadata = {
     canonical: "https://beatrip.jp/404",
     languages: {
       ja: "https://beatrip.jp/404",
-      en: "https://beatrip.jp/en/404",
       "x-default": "https://beatrip.jp/404",
     },
   },

@@ -39,7 +39,6 @@ export async function generateMetadata({
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/hawaii",
-        en: "https://beatrip.jp/en/hawaii",
         "x-default": "https://beatrip.jp/hawaii",
       },
     },

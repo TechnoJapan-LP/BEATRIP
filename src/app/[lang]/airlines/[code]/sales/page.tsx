@@ -49,7 +49,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `https://beatrip.jp/airlines/${code}/sales`,
       languages: {
         ja: `https://beatrip.jp/airlines/${code}/sales`,
-        en: `https://beatrip.jp/en/airlines/${code}/sales`,
         "x-default": `https://beatrip.jp/airlines/${code}/sales`,
       },
     },

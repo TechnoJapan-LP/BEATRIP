@@ -99,7 +99,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/hotels/${d.slug}`,
-        en: `https://beatrip.jp/en/hotels/${d.slug}`,
         "x-default": `https://beatrip.jp/hotels/${d.slug}`,
       },
     },

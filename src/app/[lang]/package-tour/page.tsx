@@ -37,7 +37,6 @@ export async function generateMetadata({
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/package-tour",
-        en: "https://beatrip.jp/en/package-tour",
         "x-default": "https://beatrip.jp/package-tour",
       },
     },

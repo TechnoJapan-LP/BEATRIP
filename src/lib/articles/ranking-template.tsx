@@ -124,7 +124,6 @@ export function buildRankingMetadata(seg: RankingSegment): Metadata {
       canonical: `https://beatrip.jp/articles/rankings/${seg.path}`,
       languages: {
         ja: `https://beatrip.jp/articles/rankings/${seg.path}`,
-        en: `https://beatrip.jp/en/articles/rankings/${seg.path}`,
         "x-default": `https://beatrip.jp/articles/rankings/${seg.path}`,
       },
     },

@@ -37,7 +37,6 @@ export async function generateMetadata({
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/esim",
-        en: "https://beatrip.jp/en/esim",
         "x-default": "https://beatrip.jp/esim",
       },
     },

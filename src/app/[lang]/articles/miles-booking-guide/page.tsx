@@ -49,7 +49,6 @@ export async function generateMetadata(): Promise<Metadata> {
       canonical: "https://beatrip.jp/articles/miles-booking-guide",
       languages: {
         ja: "https://beatrip.jp/articles/miles-booking-guide",
-        en: "https://beatrip.jp/en/articles/miles-booking-guide",
         "x-default": "https://beatrip.jp/articles/miles-booking-guide",
       },
     },

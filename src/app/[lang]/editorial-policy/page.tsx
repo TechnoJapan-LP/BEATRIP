@@ -28,7 +28,6 @@ export async function generateMetadata({
           : "https://beatrip.jp/editorial-policy",
       languages: {
         ja: "https://beatrip.jp/editorial-policy",
-        en: "https://beatrip.jp/en/editorial-policy",
         "x-default": "https://beatrip.jp/editorial-policy",
       },
     },

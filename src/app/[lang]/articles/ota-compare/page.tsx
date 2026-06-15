@@ -40,7 +40,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/articles/ota-compare",
-        en: "https://beatrip.jp/en/articles/ota-compare",
         "x-default": "https://beatrip.jp/articles/ota-compare",
       },
     },

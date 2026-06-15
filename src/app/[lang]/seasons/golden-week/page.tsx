@@ -37,7 +37,6 @@ export async function generateMetadata({
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/seasons/golden-week",
-        en: "https://beatrip.jp/en/seasons/golden-week",
         "x-default": "https://beatrip.jp/seasons/golden-week",
       },
     },

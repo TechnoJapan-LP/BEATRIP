@@ -208,7 +208,6 @@ export function buildOtaCompareMetadata(slug: string, lang: string = "ja"): Meta
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: `https://beatrip.jp/articles/ota-compare/${slug}`,
-        en: `https://beatrip.jp/en/articles/ota-compare/${slug}`,
         "x-default": `https://beatrip.jp/articles/ota-compare/${slug}`,
       },
     },

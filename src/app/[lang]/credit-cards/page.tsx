@@ -48,7 +48,6 @@ export async function generateMetadata({
       canonical: `https://beatrip.jp${path}`,
       languages: {
         ja: "https://beatrip.jp/credit-cards",
-        en: "https://beatrip.jp/en/credit-cards",
         "x-default": "https://beatrip.jp/credit-cards",
       },
     },

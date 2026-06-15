@@ -24,7 +24,6 @@ export async function generateMetadata({
           : "https://beatrip.jp/disclosure",
       languages: {
         ja: "https://beatrip.jp/disclosure",
-        en: "https://beatrip.jp/en/disclosure",
         "x-default": "https://beatrip.jp/disclosure",
       },
     },

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { getActiveDeals } from "@/lib/deals/deal-service";
+import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
+import { getCityGuide } from "@/data/hotel-city-guides";
 import { airlines } from "@/data/airlines";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
 import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
@@ -159,9 +160,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
     }
   }
-  const routePages: MetadataRoute.Sitemap = Array.from(routeKeys).flatMap(
-    (route) => jaOnly(`/routes/${route}`, "daily", 0.8)
+  // 路線ページの index 制御 (page.tsx と同基準): セール or 価格履歴のある
+  // 路線のみ掲載。データ無し路線は noindex なので sitemap からも除外する
+  // (noindex URL を sitemap に載せると矛盾シグナルになる)。
+  const dealRouteKeys = new Set(
+    deals.map((d) => `${d.origin_code}-${d.destination_code}`)
   );
+  const routeEntries = await Promise.all(
+    Array.from(routeKeys).map(async (route) => {
+      if (dealRouteKeys.has(route)) return route;
+      const hist = await getHistoricalPrices(route);
+      return hist.length > 0 ? route : null;
+    })
+  );
+  const routePages: MetadataRoute.Sitemap = routeEntries
+    .filter((r): r is string => r !== null)
+    .flatMap((route) => jaOnly(`/routes/${route}`, "daily", 0.8));
 
   const airlinePages: MetadataRoute.Sitemap = airlines.flatMap((airline) => [
     ...jaOnly(`/airlines/${airline.code}`, "weekly", 0.6),
@@ -185,14 +199,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...HOTEL_DESTINATIONS.filter((d) => hasWhenToVisitContent(d.slug)).flatMap(
       (d) => jaOnly(`/hotels/${d.slug}/best-season`, "monthly", 0.6)
     ),
-    // 都市別アクティビティ — 「{都市} ツアー」「{都市} 観光」等
-    ...HOTEL_DESTINATIONS.flatMap((d) =>
-      jaOnly(`/hotels/${d.slug}/activities`, "monthly", 0.6)
-    ),
-    // 都市別 eSIM (海外のみ) — 「{都市} eSIM」「{都市} Wi-Fi」等
-    ...HOTEL_DESTINATIONS.filter((d) => d.region !== "国内").flatMap((d) =>
-      jaOnly(`/hotels/${d.slug}/esim`, "monthly", 0.55)
-    ),
+    // 都市別アクティビティ — 観光スポット (city guide) のある都市のみ掲載
+    // (固有コンテンツを持つ都市だけ index。それ以外は page.tsx 側で noindex)
+    ...HOTEL_DESTINATIONS.filter(
+      (d) => getCityGuide(d.slug)?.attractions.length
+    ).flatMap((d) => jaOnly(`/hotels/${d.slug}/activities`, "monthly", 0.6)),
+    // 都市別 eSIM は全都市ほぼ共通文で noindex 化したため sitemap から除外。
+    // 海外通信の検索意図は汎用の /esim ランディングで受ける。
     // 地方便 region 別深掘り
     ...["hokkaido", "tohoku", "kanto", "chubu", "kinki", "chugoku", "shikoku", "kyushu", "okinawa"].flatMap(
       (region) => jaOnly(`/local-flights/${region}`, "weekly", 0.65)
@@ -205,10 +218,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         a.size === "major" ? 0.7 : a.size === "regional" ? 0.6 : 0.5
       )
     ),
-    // 航空会社 × 空港 — 「{航空会社} {空港} セール」のプログラマティック SEO
-    // 実際に就航している組合せのみ
+    // 航空会社 × 空港 — 実セールのある組合せのみ掲載 (page.tsx と同基準)。
+    // セール0件の組合せは薄い量産ページとして noindex 化したため sitemap から除外。
     ...airlines.flatMap((airline) =>
-      AIRPORTS.filter((a) => a.airlines.includes(airline.code)).flatMap((a) =>
+      AIRPORTS.filter(
+        (a) =>
+          a.airlines.includes(airline.code) &&
+          deals.some(
+            (d) =>
+              d.airline_id === airline.code &&
+              (d.origin_code === a.iata || d.destination_code === a.iata)
+          )
+      ).flatMap((a) =>
         jaOnly(
           `/airlines/${airline.code.toLowerCase()}/airports/${a.iata}`,
           "weekly",
