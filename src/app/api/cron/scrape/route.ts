@@ -23,6 +23,7 @@ import {
   type AlertMatch,
 } from "@/lib/price-alerts/email";
 import { postSalesToBluesky } from "@/lib/social/bluesky";
+import { postSalesToX } from "@/lib/social/x";
 import { getPostedIds, markPosted } from "@/lib/social/posted-store";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
@@ -188,6 +189,24 @@ export async function GET(request: NextRequest) {
       console.error("[CRON] Bluesky 投稿に失敗:", e);
     }
 
+    // X (旧Twitter) 自動投稿: Bluesky と同様、新着のうち未投稿を最大5件
+    // X 用の投稿台帳 (platform "x") で独立に dedup するため、Bluesky と
+    // 同じセールでも X 側に未投稿なら投稿される。
+    let xPosted = 0;
+    try {
+      const posted = await getPostedIds("x");
+      const fresh = allNewSales.filter((s) => !posted.has(s.id));
+      if (fresh.length > 0) {
+        const sent = await postSalesToX(fresh, 5);
+        if (sent.length > 0) {
+          await markPosted("x", sent);
+          xPosted = sent.length;
+        }
+      }
+    } catch (e) {
+      console.error("[CRON] X 投稿に失敗:", e);
+    }
+
     const elapsed = Date.now() - startTime;
 
     const summary = {
@@ -208,6 +227,7 @@ export async function GET(request: NextRequest) {
       },
       priceAlertsSent,
       blueskyPosted,
+      xPosted,
       generatedArticles,
       weeklyRoundup,
       details: changes.map((c) => {

@@ -1,0 +1,176 @@
+import crypto from "crypto";
+import type { AirlineSale } from "@/lib/scrapers/types";
+import { cityNameJa } from "@/lib/airport-names";
+
+/**
+ * X (旧Twitter) 自動投稿クライアント
+ *
+ * X API v2 POST /2/tweets を OAuth 1.0a User Context で叩く。
+ * SDK 不使用 (Node crypto で署名) のため追加依存なし。
+ *
+ * env (X Developer Portal の「Keys and tokens」で取得):
+ *   X_API_KEY         Consumer Key (API Key)
+ *   X_API_SECRET      Consumer Secret (API Key Secret)
+ *   X_ACCESS_TOKEN    Access Token (アプリ権限は Read and Write)
+ *   X_ACCESS_SECRET   Access Token Secret
+ *
+ * いずれか未設定なら no-op (戻り値 [])。
+ * 投稿権限には X Developer の Free プラン以上が必要 (月の書き込み上限に注意)。
+ */
+
+const TWEET_ENDPOINT = "https://api.twitter.com/2/tweets";
+
+type XCreds = {
+  apiKey: string;
+  apiSecret: string;
+  accessToken: string;
+  accessSecret: string;
+};
+
+function getCreds(): XCreds | null {
+  const apiKey = process.env.X_API_KEY;
+  const apiSecret = process.env.X_API_SECRET;
+  const accessToken = process.env.X_ACCESS_TOKEN;
+  const accessSecret = process.env.X_ACCESS_SECRET;
+  if (!apiKey || !apiSecret || !accessToken || !accessSecret) return null;
+  return { apiKey, apiSecret, accessToken, accessSecret };
+}
+
+/** RFC3986 準拠の percent-encode (OAuth1 が要求) */
+function pctEncode(v: string): string {
+  return encodeURIComponent(v).replace(
+    /[!*'()]/g,
+    (c) => "%" + c.charCodeAt(0).toString(16).toUpperCase()
+  );
+}
+
+/**
+ * OAuth 1.0a の Authorization ヘッダを生成。
+ * POST /2/tweets の本文は JSON のため署名ベース文字列には含めない
+ * (OAuth1 は application/x-www-form-urlencoded のボディのみ署名対象)。
+ */
+function buildAuthHeader(creds: XCreds): string {
+  const oauth: Record<string, string> = {
+    oauth_consumer_key: creds.apiKey,
+    oauth_nonce: crypto.randomBytes(16).toString("hex"),
+    oauth_signature_method: "HMAC-SHA1",
+    oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+    oauth_token: creds.accessToken,
+    oauth_version: "1.0",
+  };
+
+  const paramString = Object.keys(oauth)
+    .sort()
+    .map((k) => `${pctEncode(k)}=${pctEncode(oauth[k])}`)
+    .join("&");
+
+  const baseString = [
+    "POST",
+    pctEncode(TWEET_ENDPOINT),
+    pctEncode(paramString),
+  ].join("&");
+
+  const signingKey = `${pctEncode(creds.apiSecret)}&${pctEncode(
+    creds.accessSecret
+  )}`;
+
+  const signature = crypto
+    .createHmac("sha1", signingKey)
+    .update(baseString)
+    .digest("base64");
+
+  const header: Record<string, string> = {
+    ...oauth,
+    oauth_signature: signature,
+  };
+  return (
+    "OAuth " +
+    Object.keys(header)
+      .sort()
+      .map((k) => `${pctEncode(k)}="${pctEncode(header[k])}"`)
+      .join(", ")
+  );
+}
+
+function pickCheapestRoute(sale: AirlineSale) {
+  if (sale.routes.length === 0) return null;
+  return [...sale.routes].sort((a, b) => a.price - b.price)[0];
+}
+
+/**
+ * 1セールを1ツイートに整形。X は日本語1文字=2 換算で上限280なので、
+ * URL(23換算) + ハッシュタグ + 路線/価格を残せるよう航空会社+セール名を短めに。
+ */
+export function buildXText(sale: AirlineSale): string | null {
+  const r = pickCheapestRoute(sale);
+  if (!r) return null;
+  const yen = new Intl.NumberFormat("ja-JP").format(r.price);
+  const route = `${cityNameJa(r.originCode)}→${cityNameJa(r.destinationCode)}`;
+  const discount = r.discount ? ` (-${r.discount}%)` : "";
+  const url = `https://beatrip.jp/routes/${r.originCode}-${r.destinationCode}`;
+  // 航空会社 + セール名は 30 文字程度に抑える (日本語 2 換算で安全側)
+  let head = `${sale.airlineName} ${sale.saleName}`;
+  if (head.length > 30) head = head.slice(0, 29) + "…";
+  return `✈️ ${head}\n${route} ¥${yen}〜${discount}\n${url}\n#格安航空券 #航空券セール`;
+}
+
+async function postTweet(text: string, creds: XCreds): Promise<boolean> {
+  try {
+    const res = await fetch(TWEET_ENDPOINT, {
+      method: "POST",
+      headers: {
+        Authorization: buildAuthHeader(creds),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      console.error(`[x] tweet failed ${res.status}:`, body.slice(0, 300));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error("[x] tweet request error:", e);
+    return false;
+  }
+}
+
+/**
+ * 認証＆投稿のスモークテスト。X_* env が正しいか確認用に1ツイートする。
+ * クレデンシャル未設定なら success:false を返す。
+ */
+export async function postTestTweet(): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const creds = getCreds();
+  if (!creds) return { success: false, error: "X_* env が未設定" };
+  const text = `BEATRIP の自動投稿テストです ✈️\n航空券セール情報を毎日お届けします。\nhttps://beatrip.jp\n#BEATRIP #格安航空券`;
+  const ok = await postTweet(text, creds);
+  return ok ? { success: true } : { success: false, error: "Post failed" };
+}
+
+/**
+ * 新着セールを X に投稿する。
+ * - クレデンシャル未設定なら no-op (戻り値 [])
+ * - 1セール1ツイート、レート保護のため 2 秒間隔
+ * - 呼び出し側で dedup 済みのセールだけ渡すこと
+ */
+export async function postSalesToX(
+  sales: AirlineSale[],
+  maxPosts = 5
+): Promise<string[]> {
+  const creds = getCreds();
+  if (!creds) return [];
+
+  const posted: string[] = [];
+  for (const sale of sales.slice(0, maxPosts)) {
+    const text = buildXText(sale);
+    if (!text) continue;
+    const ok = await postTweet(text, creds);
+    if (ok) posted.push(sale.id);
+    await new Promise((r) => setTimeout(r, 2000));
+  }
+  return posted;
+}
