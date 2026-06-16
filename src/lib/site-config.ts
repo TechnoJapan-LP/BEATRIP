@@ -19,8 +19,12 @@ export const SITE_OPERATOR = {
   en: "BEATRIP Editorial Team",
 } as const;
 
-/** お問い合わせメールアドレス。未設定 ("") の間は「準備中」表示 + schema 非出力 */
-export const CONTACT_EMAIL = "";
+/**
+ * お問い合わせメールアドレス。未設定 ("") の間は「準備中」表示 + schema 非出力。
+ * ※ このアドレスは実際に受信できる状態 (転送設定等) にしておくこと。
+ *   info@beatrip.jp は Cloudflare Email Routing 等で個人メールへ転送する想定。
+ */
+export const CONTACT_EMAIL = "info@beatrip.jp";
 
 /** 運営開始年 (Organization schema の foundingDate にも使用) */
 export const ESTABLISHED = "2026";
