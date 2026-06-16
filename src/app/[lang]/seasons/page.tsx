@@ -198,7 +198,7 @@ export default async function SeasonsIndexPage({ params }: Props) {
           </p>
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
             <Link
-              href={lh("/#calendar")}
+              href={lh("/sale-calendar")}
               className="group inline-flex items-center gap-1 text-xs font-bold text-sky-700 dark:text-sky-300 hover:underline"
             >
               セールカレンダー

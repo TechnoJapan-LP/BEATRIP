@@ -235,7 +235,7 @@ function buildIndex(): Entry[] {
     {
       label: "セールカレンダー",
       sublabel: "次回セール時期の予測",
-      href: "/#calendar",
+      href: "/sale-calendar",
       type: "deal",
       haystack: "calendar カレンダー セール 予測 schedule",
     },

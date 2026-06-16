@@ -80,7 +80,7 @@ export function Header() {
         {
           label: nav.salesCalendar,
           items: [
-            { href: "/#calendar", label: nav.salesCalendar, desc: "次回セール時期予測", Icon: Calendar },
+            { href: "/sale-calendar", label: nav.salesCalendar, desc: "各社の次回セール時期・予測", Icon: Calendar },
           ],
         },
         {

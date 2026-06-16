@@ -37,7 +37,7 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
         { href: "/airlines", label: t.airlineSales },
         { href: "/local-flights", label: t.localFlights ?? "地方便" },
         { href: "/airports", label: t.airports ?? "空港一覧" },
-        { href: "/#calendar", label: t.saleCalendar },
+        { href: "/sale-calendar", label: t.saleCalendar },
         { href: "/articles", label: t.articles },
       ],
     },
