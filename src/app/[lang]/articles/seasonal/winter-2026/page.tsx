@@ -29,7 +29,7 @@ const PUBLISHED = "2026-06-01";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title =
-    "2026 冬の旅行計画 完全ガイド — 12月・1月・2月の雪国・温泉・冬グルメ | BEATRIP";
+    "2026 冬の旅行計画 完全ガイド — 12月・1月・2月の雪国・温泉・冬グルメ";
   const description =
     "2026 年冬 (12-2 月) の国内・海外旅行アイデア。年末年始を避けた狙い目時期の雪国・温泉・冬グルメ・予約タイミングを月別に整理した完全シーズンガイド。";
   return {

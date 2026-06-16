@@ -68,8 +68,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const isEn = lang === "en";
   const title = isEn
-    ? `Hotels in ${d.nameEn} — compare best rates by neighborhood | BEATRIP`
-    : `${d.nameJa}のホテル予約・最安値検索｜エリア別の特徴と相場 | BEATRIP`;
+    ? `Hotels in ${d.nameEn} — compare best rates by neighborhood`
+    : `${d.nameJa}のホテル予約・最安値検索｜エリア別の特徴と相場`;
   const description = isEn
     ? `Find best-priced hotels in ${d.nameEn}. ${d.tagline}${d.priceFromJpy ? ` From around JPY ${d.priceFromJpy.toLocaleString()} per night.` : ""} Neighborhood guides, the best time to visit, and current flight deals into the city.`
     : `${d.nameJa}（${d.nameEn}）のホテルを最安値で検索。${d.tagline}。${d.priceFromJpy ? `1泊¥${d.priceFromJpy.toLocaleString()}〜の目安。` : ""}主要エリアの特徴、ベストシーズン、関連フライトディールも掲載。`;

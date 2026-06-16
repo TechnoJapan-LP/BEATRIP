@@ -78,7 +78,7 @@ export function buildGuideMetadata(c: GuideContent, lang: string): Metadata {
   const isEn = lang === "en";
   const path = `/articles/guides/${c.slug}`;
   return {
-    title: `${c.metaTitle} | BEATRIP`,
+    title: `${c.metaTitle}`,
     description: c.metaDescription,
     keywords: c.keywords,
     openGraph: { title: c.metaTitle, description: c.metaDescription, type: "article" },

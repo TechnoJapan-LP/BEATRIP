@@ -25,7 +25,7 @@ const PUBLISHED = "2026-06-01";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title =
-    "2027 航空券セール スケジュール予測 — JAL/ANA/Peach/Jetstar 完全網羅 | BEATRIP";
+    "2027 航空券セール スケジュール予測 — JAL/ANA/Peach/Jetstar 完全網羅";
   const description =
     "2027 年の航空券セール時期を主要キャリア (JAL / ANA / Peach / Jetstar / ZIPAIR / Skymark) 別に予測。過去 5 年分の傾向から月別セール開催確率と狙い目時期を整理した完全予測ガイド。";
   return {

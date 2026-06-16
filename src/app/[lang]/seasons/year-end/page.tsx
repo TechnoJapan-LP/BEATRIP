@@ -20,8 +20,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Japan year-end & New Year travel — best booking windows for Dec–Jan | BEATRIP"
-    : "年末年始の航空券・ホテル予約完全ガイド｜12月〜1月の最安タイミング | BEATRIP";
+    ? "Japan year-end & New Year travel — best booking windows for Dec–Jan"
+    : "年末年始の航空券・ホテル予約完全ガイド｜12月〜1月の最安タイミング";
   const description = isEn
     ? "Plan your year-end and New Year trip from Japan (late December through early January). When fares peak, when they bottom out, early-bird discounts, and our picks for top domestic and overseas destinations during the holidays."
     : "年末年始 (12月後半〜1月初旬) の航空券・ホテル予約を最安で取るタイミング、人気目的地、予約のコツを完全網羅。ピークと底値時期、早期予約割引、おすすめ国内・海外目的地まで。";

@@ -24,7 +24,7 @@ type SeasonCopy = {
 const SEASON_COPY: Record<Season, SeasonCopy> = {
   summer: {
     keyword: "SUMMER",
-    title: "夏の旅行を、最安で。",
+    title: "夏の航空券を、最安値で。",
     subtitle:
       "ANA・JAL・Peach・Jetstar の夏セールを毎日自動収集。お盆も離島も、最安タイミングで予約。",
     gradient:
@@ -33,7 +33,7 @@ const SEASON_COPY: Record<Season, SeasonCopy> = {
   },
   autumn: {
     keyword: "AUTUMN",
-    title: "秋の絶景旅へ。",
+    title: "秋の航空券を、最安値で。",
     subtitle:
       "紅葉・温泉・グルメ。航空券セールと宿の最安値で、秋の連休をもっと自由に。",
     gradient:
@@ -42,7 +42,7 @@ const SEASON_COPY: Record<Season, SeasonCopy> = {
   },
   winter: {
     keyword: "WINTER",
-    title: "冬の温泉・スキーへ。",
+    title: "冬の航空券を、最安値で。",
     subtitle:
       "雪国・温泉地・南国リゾート。冬限定セールを横断して、最安値で予約準備を。",
     gradient:
@@ -51,7 +51,7 @@ const SEASON_COPY: Record<Season, SeasonCopy> = {
   },
   spring: {
     keyword: "SPRING",
-    title: "春の花見・GW 旅へ。",
+    title: "春の航空券を、最安値で。",
     subtitle:
       "桜前線とゴールデンウィーク。早割と航空会社セールを毎日チェックして、最安で予約。",
     gradient:

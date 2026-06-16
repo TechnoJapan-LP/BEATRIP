@@ -20,8 +20,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Package tours from Japan — domestic and overseas, how to book smart | BEATRIP"
-    : "パッケージツアー比較・予約ガイド｜国内・海外の選び方とお得に取るコツ | BEATRIP";
+    ? "Package tours from Japan — domestic and overseas, how to book smart"
+    : "パッケージツアー比較・予約ガイド｜国内・海外の選び方とお得に取るコツ";
   const description = isEn
     ? "Compare and book domestic and overseas package tours from Japan. Package tour vs. DIY booking (cost, effort, freedom), how to choose by departure city / budget / theme / trip length, plus tips on early-bird and last-minute discounts and dynamic packages. Search through BEATRIP's curated partners — JTB, NEWT, Nippon Travel, J-TRIP and more."
     : "国内・海外パッケージツアーを比較・予約。個人手配との費用・手間・自由度の違い、出発地/予算/テーマ/期間別の選び方、早期割引・直前割引・動的パッケージ（エアトリプラス等）のお得活用術まで網羅。JTB・NEWT・日本旅行・J-TRIP などBEATRIP厳選のツアー予約サイトから検索できます。";

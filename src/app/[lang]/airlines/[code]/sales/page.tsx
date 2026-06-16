@@ -35,8 +35,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // GSCで「{社名} セール 次回/過去/いつ/時期」が主流入クエリ。
   // タイトル/メタはその検索意図にドンピシャで合わせCTRを取りに行く。
   const title = stats
-    ? `${airline.name} 次回セールはいつ？ 過去${stats.totalSales}回の開催実績と予測 | BEATRIP`
-    : `${airline.name} セール 次回はいつ？ 過去の開催実績と予測 | BEATRIP`;
+    ? `${airline.name} 次回セールはいつ？ 過去${stats.totalSales}回の開催実績と予測`
+    : `${airline.name} セール 次回はいつ？ 過去の開催実績と予測`;
   const description = stats
     ? `${airline.name}の過去${stats.totalSales}回のセール開催実績を完全分析。次回タイムセールはいつ？開催月のパターン・平均割引率${stats.avgDiscount}%・過去最安¥${stats.lowestPrice.toLocaleString()}まで。今すぐ買える現セール情報も掲載。`
     : `${airline.name}の過去セール実績と次回開催時期の予測。タイムセール・メガセール等の開催月パターンを分析。`;

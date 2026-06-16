@@ -31,8 +31,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Travel credit cards in Japan — no-fee, lounge access, and premium | BEATRIP"
-    : "旅行に強いクレジットカード比較｜年会費無料・空港ラウンジ・プレミアム | BEATRIP";
+    ? "Travel credit cards in Japan — no-fee, lounge access, and premium"
+    : "旅行に強いクレジットカード比較｜年会費無料・空港ラウンジ・プレミアム";
   const description = isEn
     ? "Compare travel-friendly credit cards available in Japan, sorted by use case. Best value / no annual fee (Rakuten, JCB CARD W, Recruit, Life, AEON), travel-focused with airport lounge access (d Card GOLD, SMBC NL, EPOS, Saison), and premium / status (Amex, Diners, JAL, ANA). We break down annual fees, points rates, insurance limits, and lounge eligibility."
     : "旅行用クレジットカードを目的別に比較。コスパ重視・年会費無料（楽天 / JCB CARD W / リクルート / ライフ / イオン）、旅行特化・空港ラウンジ（dカード GOLD / 三井住友 NL / エポス / セゾン）、プレミアム・ステータス（アメックス / ダイナース / JAL / ANA）の 3 セグメントで、年会費・還元率・補償額・ラウンジ条件を整理。BEATRIP 編集部が解説します。";

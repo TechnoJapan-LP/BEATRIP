@@ -20,8 +20,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Hotels in Tokyo, Osaka, Bangkok, Seoul, Honolulu and more | BEATRIP"
-    : "ホテル予約・最安値検索｜目的地別の宿泊情報 | BEATRIP";
+    ? "Hotels in Tokyo, Osaka, Bangkok, Seoul, Honolulu and more"
+    : "ホテル予約・最安値検索｜目的地別の宿泊情報";
   const description = isEn
     ? "Compare best-priced hotels in Tokyo, Osaka, Bangkok, Seoul, Honolulu and other top destinations. Neighborhood guides, typical nightly rates, and the best time to visit — paired with current flight deals to the same city."
     : "東京・大阪・バンコク・ソウル・ホノルル等、人気目的地のホテルを最安値で検索。エリア別の特徴・相場・ベストシーズンも掲載。フライトとあわせて予約準備に。";

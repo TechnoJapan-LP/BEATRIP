@@ -67,9 +67,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const path = isEn ? `/en/deals/${id}` : `/deals/${id}`;
 
   return {
+    // タイトルは日本語キーワード (都市名・航空券・航空会社・セール) を含める。
+    // 旧実装はコードのみ (NRT→BKK ¥38,000) で SERP に意味が伝わらず CTR が出ず、
+    // 数百ページが同型に酷似していた。template が末尾に「 | BEATRIP」を1回付与。
     title: isEn
-      ? `${deal.origin_code} → ${deal.destination_code} from JPY ${deal.sale_price.toLocaleString()}`
-      : `${deal.origin_code}→${deal.destination_code} ¥${deal.sale_price.toLocaleString()}`,
+      ? `${originEn} to ${destEn} flights from JPY ${deal.sale_price.toLocaleString()} — ${deal.airline_name} sale`
+      : `${deal.origin}→${deal.destination} 航空券 ¥${deal.sale_price.toLocaleString()}〜｜${deal.airline_name}セール`,
     description: isEn
       ? `${deal.airline_name} ${deal.sale_name} — ${originEn} to ${destEn} from JPY ${deal.sale_price.toLocaleString()} (${deal.discount_percent}% off).`
       : `${deal.airline_name} ${deal.sale_name} — ${deal.origin}から${deal.destination}まで¥${deal.sale_price.toLocaleString()}。${deal.discount_percent}%OFF。`,

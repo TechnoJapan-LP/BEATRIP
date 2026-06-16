@@ -29,7 +29,7 @@ const PUBLISHED = "2026-06-01";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title =
-    "2026 秋の旅行計画 完全ガイド — 9月・10月・11月の紅葉・温泉・グルメ | BEATRIP";
+    "2026 秋の旅行計画 完全ガイド — 9月・10月・11月の紅葉・温泉・グルメ";
   const description =
     "2026 年秋 (9-11月) の国内・海外旅行アイデアを月別に整理。紅葉名所・温泉旅館・秋グルメ・予約タイミング・人気エリア別おすすめホテルを網羅したシーズンガイド。";
   return {

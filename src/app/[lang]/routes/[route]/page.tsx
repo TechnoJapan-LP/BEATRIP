@@ -98,8 +98,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const destEn = cityNameEn(parsed.destination);
 
   const title = isEn
-    ? `${originEn} to ${destEn} — cheap flights and current sales${cheapest ? ` (from JPY ${cheapest.toLocaleString()})` : ""} | BEATRIP`
-    : `${originJa}→${destJa} 格安航空券・飛行機セール${cheapest ? `（最安¥${cheapest.toLocaleString()}〜）` : ""} | BEATRIP`;
+    ? `${originEn} to ${destEn} — cheap flights and current sales${cheapest ? ` (from JPY ${cheapest.toLocaleString()})` : ""}`
+    : `${originJa}→${destJa} 格安航空券・飛行機セール${cheapest ? `（最安¥${cheapest.toLocaleString()}〜）` : ""}`;
   const description = isEn
     ? `Latest flight sales from ${originEn} to ${destEn}. ${cheapest ? `Fares from JPY ${cheapest.toLocaleString()}, ` : ""}price comparisons across multiple airlines, next-sale forecasts, and historical lows.`
     : `${originJa}から${destJa}への格安フライトセール最新情報。${cheapest ? `最安¥${cheapest.toLocaleString()}〜、` : ""}複数航空会社の価格比較・次回セール時期の予測・過去最安値まで。`;

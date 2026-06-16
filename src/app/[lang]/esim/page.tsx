@@ -20,8 +20,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Travel eSIM comparison — pick the right plan for your trip | BEATRIP"
-    : "海外eSIM比較ガイド｜旅行用おすすめeSIMの選び方 | BEATRIP";
+    ? "Travel eSIM comparison — pick the right plan for your trip"
+    : "海外eSIM比較ガイド｜旅行用おすすめeSIMの選び方";
   const description = isEn
     ? "Compare travel eSIM providers and learn how to pick the right one. eSIM vs. pocket Wi-Fi vs. physical SIM, supported devices (iPhone XS and later, Pixel 3 and later, Galaxy S20 and later), and how to choose by data, days, and country. Compare across 5 traveler-friendly eSIM brands curated by BEATRIP."
     : "海外旅行用 eSIM を比較・選び方ガイド。Wi-Fi レンタル・物理 SIM との違い、対応端末（iPhone XS 以降 / Pixel 3 以降 / Galaxy S20 以降）、データ量・期間・国別の選び方を解説。BEATRIP厳選の日本語対応 eSIM 5 サービスから比較できます。";

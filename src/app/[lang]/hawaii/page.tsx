@@ -22,8 +22,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Hawaii travel guide — Oahu, Maui, Big Island deals from Japan | BEATRIP"
-    : "ハワイ旅行ガイド｜オアフ・マウイ・ハワイ島の予約・比較 | BEATRIP";
+    ? "Hawaii travel guide — Oahu, Maui, Big Island deals from Japan"
+    : "ハワイ旅行ガイド｜オアフ・マウイ・ハワイ島の予約・比較";
   const description = isEn
     ? "Book Hawaii at the lowest fare. From Waikiki on Oahu to the outer islands of Maui, the Big Island, and Kauai — with the best time to visit, what to pack, eSIM tips, and local activities. Compare across BEATRIP's curated Hawaii booking partners."
     : "ハワイ旅行を最安値で予約。オアフ島ワイキキの王道から、マウイ・ハワイ島・カウアイの離島まで、ベストシーズン・必須持ち物・eSIM・現地アクティビティのガイドつき。BEATRIP厳選のハワイ専門予約サイトから比較できます。";

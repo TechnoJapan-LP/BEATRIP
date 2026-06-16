@@ -38,8 +38,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const isEn = lang === "en";
   const title = isEn
-    ? `${airport.nameEn} Airport (${airport.iata}) — flight sales and cheap fares | BEATRIP`
-    : `${airport.nameJa} (${airport.iata}) 発着セール・航空券 | BEATRIP`;
+    ? `${airport.nameEn} Airport (${airport.iata}) — flight sales and cheap fares`
+    : `${airport.nameJa} (${airport.iata}) 発着セール・航空券`;
   const description = isEn
     ? `Latest flight sales out of ${airport.nameEn} Airport (${airport.iata}) in ${airport.prefecture}. ${airport.tagline ?? ""} Carriers serving the airport: ${airport.airlines.join(", ")}. Find popular routes and the cheapest fares on BEATRIP.`
     : `${airport.fullNameJa}（${airport.nameEn} ${airport.iata}）発着の航空券セール情報を最新で集約。${airport.tagline ?? ""}就航航空会社: ${airport.airlines.join(", ")}。人気路線・最安セールをBEATRIPでチェック。`;

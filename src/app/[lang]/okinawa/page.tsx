@@ -22,8 +22,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Okinawa travel guide — main island, Miyako, Ishigaki and beyond | BEATRIP"
-    : "沖縄旅行ガイド｜本島・宮古・石垣の予約・比較 | BEATRIP";
+    ? "Okinawa travel guide — main island, Miyako, Ishigaki and beyond"
+    : "沖縄旅行ガイド｜本島・宮古・石垣の予約・比較";
   const description = isEn
     ? "Book Okinawa at the lowest fare. From the main island's resort coast to the outer islands of Miyako, Ishigaki, Iriomote and Kume — with the best time to visit, what to pack, rental car tips, and Naha airport access. Compare across BEATRIP's curated Okinawa booking partners."
     : "沖縄旅行を最安値で予約。本島の王道リゾートから、宮古島・石垣島・西表島・久米島の離島まで、ベストシーズン・必需品・レンタカー・那覇空港アクセスのガイドつき。BEATRIP厳選の沖縄専門予約サイトから比較できます。";

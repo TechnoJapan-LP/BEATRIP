@@ -46,8 +46,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const w = getWhenToVisitContent(d.slug);
   const isEn = lang === "en";
   const title = isEn
-    ? `Best time to visit ${d.nameEn} — month-by-month guide and what to pack | BEATRIP`
-    : `${d.nameJa}のベストシーズンはいつ？月別カレンダーと服装ガイド | BEATRIP`;
+    ? `Best time to visit ${d.nameEn} — month-by-month guide and what to pack`
+    : `${d.nameJa}のベストシーズンはいつ？月別カレンダーと服装ガイド`;
   const description = isEn
     ? `When to visit ${d.nameEn}, month by month. Best months: ${w.bestMonthsLabel}. Cheapest months: ${w.cheapMonthsLabel}. Climate, packing tips, yearly events, and FAQs.`
     : `${d.nameJa}（${d.nameEn}）旅行のベストシーズンを月別に解説。おすすめは${w.bestMonthsLabel}。安く行ける時期は${w.cheapMonthsLabel}。気候・服装・年間イベント・FAQまで網羅。`;

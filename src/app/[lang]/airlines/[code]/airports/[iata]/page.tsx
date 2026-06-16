@@ -58,8 +58,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const airlineName = isEn ? (airline.nameEn || airline.name) : airline.name;
   const airportName = isEn ? `${airport.nameEn} Airport` : airport.fullNameJa;
   const title = isEn
-    ? `${airlineName} flights from ${airportName} — current sales and fares | BEATRIP`
-    : `${airline.name}の${airport.fullNameJa}発着セール・航空券情報 | BEATRIP`;
+    ? `${airlineName} flights from ${airportName} — current sales and fares`
+    : `${airline.name}の${airport.fullNameJa}発着セール・航空券情報`;
   const description = isEn
     ? `Latest sales on ${airlineName} flights out of ${airportName} (${airport.iata}). Popular routes, fare comparisons across booking sites. ${airport.tagline ?? ""}`
     : `${airline.name}（${airline.nameEn}）が${airport.fullNameJa}（${airport.iata}）で運航する航空券の最新セール情報・人気路線・予約サイト比較。${airport.tagline ?? ""}`;

@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isEn = lang === "en";
   const count = OTA_COMPARE_ARTICLES.length;
   const title = isEn
-    ? `Hotel booking site comparisons by city (${count} cities) — Booking vs Agoda vs Trip.com | BEATRIP`
-    : `都市別 OTA 比較 (全 ${count} 都市) — Booking/Agoda/Trip.com どれが安い? | BEATRIP`;
+    ? `Hotel booking site comparisons by city (${count} cities) — Booking vs Agoda vs Trip.com`
+    : `都市別 OTA 比較 (全 ${count} 都市) — Booking/Agoda/Trip.com どれが安い?`;
   const description = isEn
     ? `City-by-city comparisons of the four major hotel OTAs (Booking.com, Agoda, Trip.com, Hotellook). Pick your destination — Tokyo, Osaka, Honolulu, Seoul, Bangkok and more — and see which site tends to be cheapest.`
     : `東京・大阪・ホノルル・ソウル・バンコクなど全 ${count} 都市の「ホテル予約サイトはどれが安い?」を都市別に比較。Booking.com / Agoda / Trip.com / Hotellook の在庫・価格傾向・キャンセル条件を編集部が整理。`;

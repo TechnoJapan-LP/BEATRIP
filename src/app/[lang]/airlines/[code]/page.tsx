@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isEn = lang === "en";
   const airlineName = isEn ? (airline.nameEn || airline.name) : airline.name;
   const title = isEn
-    ? `${airlineName} sales — latest flash sales and promo campaigns | BEATRIP`
-    : `${airlineName} セール最新情報・タイムセール開催状況 | BEATRIP`;
+    ? `${airlineName} sales — latest flash sales and promo campaigns`
+    : `${airlineName} セール最新情報・タイムセール開催状況`;
   const description = isEn
     ? `Track every current sale, flash sale, and campaign from ${airlineName} (${airline.type === "LCC" ? "low-cost carrier" : "full-service carrier"}). See live sales, past sale history, and our forecast for when the next one is likely.`
     : `${airlineName}の最新フライトセール・タイムセール・キャンペーン一覧。${airline.type === "LCC" ? "格安LCC" : "フルサービスキャリア"}の現在開催中セール、過去の開催実績、次回予測まで一目で。`;

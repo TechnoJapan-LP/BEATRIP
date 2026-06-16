@@ -174,8 +174,8 @@ export function buildOtaCompareMetadata(slug: string, lang: string = "ja"): Meta
   if (!d) return { title: "Not Found" };
   const isEn = lang === "en";
   const title = isEn
-    ? `${d.nameEn} hotels — Booking vs. Agoda vs. Trip.com (which is cheapest?) | BEATRIP`
-    : `${d.nameJa}のホテル Booking/Agoda/Trip.com 徹底比較 — 最安サイトはどれ? | BEATRIP`;
+    ? `${d.nameEn} hotels — Booking vs. Agoda vs. Trip.com (which is cheapest?)`
+    : `${d.nameJa}のホテル Booking/Agoda/Trip.com 徹底比較 — 最安サイトはどれ?`;
   const description = isEn
     ? `Where to book ${d.nameEn} hotels at the lowest price. Our editors compare the four major OTAs (Booking.com, Agoda, Trip.com, Hotellook) with real price trends, cancellation rules, and per-site strengths.`
     : `${d.nameJa}のホテルを最安で予約するなら? 4 大 OTA (Booking.com / Agoda / Trip.com / Hotellook) を編集部が比較・推奨を解説。実際の価格傾向・キャンセル条件・特徴を一覧で。`;

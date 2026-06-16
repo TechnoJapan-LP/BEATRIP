@@ -116,7 +116,7 @@ export function pickRanking(filterKey: BestFor, max = 10): Ranked[] {
 
 export function buildRankingMetadata(seg: RankingSegment): Metadata {
   return {
-    title: `${seg.title} | BEATRIP`,
+    title: `${seg.title}`,
     description: seg.description,
     keywords: seg.keywords,
     openGraph: { title: seg.title, description: seg.description, type: "article" },

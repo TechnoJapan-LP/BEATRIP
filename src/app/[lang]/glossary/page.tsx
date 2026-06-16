@@ -24,7 +24,7 @@ const BASE = "https://beatrip.jp";
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params;
   const isEn = lang === "en";
-  const title = "旅行用語集 — 航空券・ホテル・予約の用語をやさしく解説 | BEATRIP";
+  const title = "旅行用語集 — 航空券・ホテル・予約の用語をやさしく解説";
   const description =
     "航空券・ホテル・予約まわりの用語を 35 語以上、五十音・アルファベット順にやさしく解説。LCC・コードシェア・オープンジョー・OTA・ノーショー・オーバーブッキングなど、旅行前に押さえたい言葉を網羅した用語集です。";
   return {

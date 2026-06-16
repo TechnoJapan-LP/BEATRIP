@@ -29,8 +29,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Cheap flights from regional Japan — Hokkaido, Tohoku, Kyushu, Shikoku | BEATRIP"
-    : "地方発の格安航空券特集｜北海道・東北・九州・四国から | BEATRIP";
+    ? "Cheap flights from regional Japan — Hokkaido, Tohoku, Kyushu, Shikoku"
+    : "地方発の格安航空券特集｜北海道・東北・九州・四国から";
   const description = isEn
     ? "Cheap flights from regional airports outside Tokyo and Osaka. The latest sales from 45 airports — Sendai, Sapporo, Fukuoka, Naha, Matsuyama, Asahikawa and more — organized by region."
     : "東京・大阪以外、地方空港発の格安航空券を一覧。仙台・札幌・福岡・那覇・松山・旭川など 45 空港の最新セールを region 別に集約。";

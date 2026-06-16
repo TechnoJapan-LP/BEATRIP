@@ -17,8 +17,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Every airport in Japan — flight sales from Haneda, Narita, Kansai and 42 more | BEATRIP"
-    : "日本国内の全空港一覧 | 主要空港〜地方空港の航空券セール | BEATRIP";
+    ? "Every airport in Japan — flight sales from Haneda, Narita, Kansai and 42 more"
+    : "日本国内の全空港一覧 | 主要空港〜地方空港の航空券セール";
   const description = isEn
     ? "Browse flight sales from all 45 airports across Japan — from the major hubs (HND, NRT, KIX) to regional and island airports like Matsuyama, Asahikawa, and Ishigaki. Find the cheapest fare from the airport closest to you."
     : "羽田・成田・関空などの主要空港から、松山・旭川・石垣などの地方・離島空港まで、日本国内45空港の発着セール情報を集約。お住まいのエリアから最安便を探せます。";

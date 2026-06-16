@@ -29,8 +29,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const isEn = lang === "en";
   const title = isEn
-    ? `Tours and activities in ${d.nameEn} — book the best things to do | BEATRIP`
-    : `${d.nameJa}の現地ツアー・アクティビティ予約｜日本語ガイド対応 | BEATRIP`;
+    ? `Tours and activities in ${d.nameEn} — book the best things to do`
+    : `${d.nameJa}の現地ツアー・アクティビティ予約｜日本語ガイド対応`;
   const description = isEn
     ? `Compare and book tours and activities in ${d.nameEn}. Popular sightseeing tours, day trips, and experiences — plus what to do during ${d.bestSeason}.`
     : `${d.nameJa}（${d.nameEn}）の現地ツアー・観光アクティビティを比較・予約。日本語ガイド対応のツアーや、人気のオプショナルツアーが探せます。${d.bestSeason}の最新ツアー情報も掲載。`;

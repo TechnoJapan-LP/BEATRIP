@@ -20,8 +20,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Golden Week travel from Japan — 2026 booking guide for the lowest fares | BEATRIP"
-    : "GW (ゴールデンウィーク) の航空券・ホテル予約完全ガイド｜2026 最安タイミング | BEATRIP";
+    ? "Golden Week travel from Japan — 2026 booking guide for the lowest fares"
+    : "GW (ゴールデンウィーク) の航空券・ホテル予約完全ガイド｜2026 最安タイミング";
   const description = isEn
     ? "How to book Golden Week (late April–early May) flights and hotels at the lowest price. Peak vs. shoulder dates, early-bird discounts, top destinations, and separate strategies for domestic and overseas trips."
     : "GW (4月末〜5月初旬) の航空券・ホテルを最安で取るコツ、人気目的地、ピークと底値、早期予約割引まで。国内・海外それぞれの戦略を網羅。";

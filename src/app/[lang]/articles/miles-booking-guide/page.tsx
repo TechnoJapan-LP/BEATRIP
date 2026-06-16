@@ -26,7 +26,7 @@ const PUBLISHED = "2026-06-01";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title =
-    "JAL/ANA マイルで予約 完全ガイド — 特典航空券の取り方・必要マイル・コツ | BEATRIP";
+    "JAL/ANA マイルで予約 完全ガイド — 特典航空券の取り方・必要マイル・コツ";
   const description =
     "JAL/ANA マイルで航空券を予約する完全ガイド。必要マイル数の目安、特典航空券の取り方、希望日確保のコツ、マイル効率を最大化するクレカ選びまでを網羅した実践マニュアル。";
   return {

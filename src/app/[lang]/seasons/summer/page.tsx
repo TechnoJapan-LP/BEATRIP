@@ -20,8 +20,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Summer & Obon travel from Japan — July–August booking guide | BEATRIP"
-    : "夏休み・お盆の航空券・ホテル予約完全ガイド｜7月〜8月の最安タイミング | BEATRIP";
+    ? "Summer & Obon travel from Japan — July–August booking guide"
+    : "夏休み・お盆の航空券・ホテル予約完全ガイド｜7月〜8月の最安タイミング";
   const description = isEn
     ? "How to book summer-vacation and Obon flights and hotels at the lowest price. Top beach and resort destinations, how to avoid the peak, plus picks for family trips and couples getaways."
     : "夏休み・お盆の航空券・ホテルを最安で取る方法、人気ビーチ・リゾート目的地、ピーク回避テクニック、家族・カップル別おすすめを網羅。";

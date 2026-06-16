@@ -34,8 +34,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const isEn = lang === "en";
   const title = isEn
-    ? `Best eSIM for ${d.nameEn} — stay connected on your trip | BEATRIP`
-    : `${d.nameJa}の eSIM 比較・おすすめ｜現地で快適に使える通信ガイド | BEATRIP`;
+    ? `Best eSIM for ${d.nameEn} — stay connected on your trip`
+    : `${d.nameJa}の eSIM 比較・おすすめ｜現地で快適に使える通信ガイド`;
   const description = isEn
     ? `Compare travel eSIMs for ${d.nameEn}. Plans, supported devices, local network quality, and setup steps — plus how an eSIM stacks up against pocket Wi-Fi.`
     : `${d.nameJa}（${d.nameEn}）旅行で使える eSIM を比較。各社の料金プラン、対応端末、現地通信品質、設定方法まで網羅。Wi-Fi レンタルとの比較も掲載。`;

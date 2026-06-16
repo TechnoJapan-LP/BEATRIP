@@ -126,8 +126,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const regionEn = REGION_EN[region];
 
   const title = isEn
-    ? `Cheap flights from ${regionEn}, Japan — guide to airports and popular routes | BEATRIP`
-    : `${region}発の格安航空券セール｜主要空港・人気路線完全ガイド | BEATRIP`;
+    ? `Cheap flights from ${regionEn}, Japan — guide to airports and popular routes`
+    : `${region}発の格安航空券セール｜主要空港・人気路線完全ガイド`;
   const description = isEn
     ? `Latest flight sales from airports in ${regionEn}, Japan (${repNamesEn}) — carriers serving the region, popular routes, and the best time to travel. Don't miss cheap fares out of regional Japan.`
     : `${region} (${repNamesJa}) 発着の最新セール情報、就航航空会社、人気路線、ベストシーズンを集約。地方発の格安便を見逃さない。`;

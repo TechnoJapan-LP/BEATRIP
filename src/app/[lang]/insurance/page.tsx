@@ -39,8 +39,8 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "How to choose travel insurance — credit-card cover vs. standalone plans | BEATRIP"
-    : "海外旅行保険の選び方｜クレカ付帯 vs 別途加入 完全比較 | BEATRIP";
+    ? "How to choose travel insurance — credit-card cover vs. standalone plans"
+    : "海外旅行保険の選び方｜クレカ付帯 vs 別途加入 完全比較";
   const description = isEn
     ? "Pick the right travel insurance with BEATRIP's editorial guide. We compare credit-card travel cover (limits on payout, duration, illness) with online plans from AIG, Chubb, Sompo Japan, and Rakuten Sonpo. Plus how to choose by trip length (7/14/30/90 days) and tips for seniors, pre-existing conditions, pregnancy, and adventure sports."
     : "海外旅行保険の選び方を整理。クレジットカード付帯保険の限界（補償額・期間・疾病）、ネット保険（AIG・Chubb・損保ジャパン・楽天損保）の比較、期間別（7／14／30／90 日）の選び方、シニア・持病・妊婦・アクティビティ系の特殊ケースまで BEATRIP 編集部が解説します。";

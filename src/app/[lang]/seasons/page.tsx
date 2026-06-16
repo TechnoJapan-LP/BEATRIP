@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang } = await params;
   const isEn = lang === "en";
   const title = isEn
-    ? "Seasonal travel guides — year-end, Golden Week, summer and more | BEATRIP"
-    : "シーズン特集一覧｜年末年始・GW・夏休みの最安予約ガイド | BEATRIP";
+    ? "Seasonal travel guides — year-end, Golden Week, summer and more"
+    : "シーズン特集一覧｜年末年始・GW・夏休みの最安予約ガイド";
   const description = isEn
     ? "All of BEATRIP's seasonal travel guides in one place: evergreen booking playbooks for Japan's big holiday periods (year-end, Golden Week, summer/Obon) plus dated seasonal features with destination ideas for the current year."
     : "年末年始・ゴールデンウィーク・夏休みなど連休シーズンの航空券・ホテル最安予約ガイドと、年号付きの季節特集 (秋・冬の旅行計画) をまとめたインデックス。旅行時期からガイドを探せます。";
