@@ -385,7 +385,9 @@ export class TraicyScraper extends AirlineScraper {
     const suffixTokens = "(?:線|便|路線|空港|国際線|国内線|発)?";
     // 接続: 空白・「が」「は」「を」「、」「：」など。任意（"ホノルル往復総額"のようにすぐ価格修飾子が来る場合に対応）
     const connector = "(?:[\\s\\u3000がはを：:、]|片道|往復|総額|約|など)*";
-    const priceCapture = "[\\s¥￥]?([0-9,]+)\\s*円";
+    // 価格は「38,000円」だけでなく「16.2万円」「16万円」も拾う (FSC は万円表記が多い)。
+    // group1=数値, group2=「万」有無。万があれば ×10000 で換算。
+    const priceCapture = "[\\s¥￥]?([0-9,]+(?:\\.[0-9]+)?)\\s*(万)?\\s*円";
     const routePriceRegex = new RegExp(
       `${cityGroup}${separator}${cityGroup}${suffixTokens}${connector}${priceCapture}`,
       "g"
@@ -405,7 +407,12 @@ export class TraicyScraper extends AirlineScraper {
         if (seen.has(key)) continue;
         seen.add(key);
 
-        const price = parseInt(m[3].replace(/,/g, ""), 10);
+        // m[3]=数値, m[4]="万" 有無。万表記は ×10000 で円に換算。
+        const rawNum = m[3].replace(/,/g, "");
+        const price =
+          m[4] === "万"
+            ? Math.round(parseFloat(rawNum) * 10000)
+            : parseInt(rawNum, 10);
         // 航空券として現実的な範囲のみ（1,000円未満は誤検出、50万円超は外れ値）
         if (isNaN(price) || price < 1000 || price > 500000) continue;
 
