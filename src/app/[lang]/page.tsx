@@ -232,18 +232,6 @@ export default async function Home({
         {/* 人気路線 TOP 10 — discount % 上位の route カード */}
         <PopularRoutesSection deals={deals} lh={lh} />
 
-        {/* 高単価 ASP の上位露出: ホーム ファーストビュー直下 */}
-        <section className="mb-12">
-          <JapanesePartnersPanel
-            title="旅行をもっとお得に"
-            subtitle="BEATRIP 厳選の旅行関連パートナー"
-            categories={["insurance", "credit-card", "cruise", "esim-wifi"]}
-            compact
-            maxChips={6}
-            source="home_top_premium"
-          />
-        </section>
-
         <section id="deals">
           <div className="mb-6">
             <SectionHeading size="lg" subtitle={t.flashDealsSubtitle}>
@@ -251,6 +239,23 @@ export default async function Home({
             </SectionHeading>
           </div>
           <DealGrid deals={deals} upcomingSales={mockSaleEvents} />
+        </section>
+
+        {/* 次回セール予測カレンダー — BEATRIP 独自資産。ディール直下に昇格して主役化 */}
+        <section className="mt-12" id="calendar">
+          <div className="mb-6 flex items-center justify-between">
+            <SectionHeading subtitle="各社の開催パターンから次回セール時期を予測">
+              セール予測カレンダー
+            </SectionHeading>
+            <Link
+              href={lh("/sale-calendar")}
+              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              各社の予測を見る
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <SaleCalendar events={mockSaleEvents} />
         </section>
 
         {/* Popular Hotels — 高料率の収益面、フライト/ホテル両軸の流量に */}
@@ -423,10 +428,6 @@ export default async function Home({
           </div>
           <AirlineCarousel airlines={airlines} />
         </section>
-
-        <div id="calendar">
-          <SaleCalendar events={mockSaleEvents} />
-        </div>
       </main>
 
       <SiteFooter lang={lang} />
