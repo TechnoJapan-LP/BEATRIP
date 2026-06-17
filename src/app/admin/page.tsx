@@ -27,6 +27,7 @@ import { getTravelGoodsEnvStatus } from "@/data/travel-goods";
 import { isKVEnabled } from "@/lib/store/kv";
 import { NewsletterDigestButton } from "@/components/admin/newsletter-digest-button";
 import { HotelPhotosRefreshButton } from "@/components/admin/hotel-photos-refresh-button";
+import { ScrapeButton } from "@/components/admin/scrape-button";
 import { TotpInput } from "@/components/admin/totp-input";
 import { verifySessionToken } from "@/lib/auth/totp";
 import { listRecentAuditLogs } from "@/lib/audit/audit-log";
@@ -257,6 +258,7 @@ export default async function AdminPage({
           <h2 className="font-heading mb-3 text-xl uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
             航空会社別 scrape 状況
           </h2>
+          {expected && <ScrapeButton token={expected} />}
           <div className="sm:hidden divide-y divide-zinc-100 dark:divide-zinc-800 rounded-xl border border-zinc-200 dark:border-zinc-800">
             {airlineRows.map((r) => (
               <div key={r.code} className="p-3">
