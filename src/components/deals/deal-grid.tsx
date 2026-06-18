@@ -153,6 +153,10 @@ export function DealGrid({
 
   // パーソナライズ: 初回マウント時に保存済みフィルタを復元。
   // URL クエリがある場合はクエリ優先 (共有リンクを壊さない)。
+  // ページング: 初期24件 + 「もっと見る」で +24 ずつ。83件超の一括描画を避け LCP 改善。
+  const PAGE_SIZE = 24;
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
   // hydration mismatch 防止のため useEffect 内 (クライアント側のみ) で復元する。
   const [prefsRestored, setPrefsRestored] = useState(false);
   useEffect(() => {
@@ -332,6 +336,14 @@ export function DealGrid({
     });
   }, [filteredDeals, sort]);
 
+  // フィルタ/ソートで結果が変わったら表示件数を初期化 (先頭から見せ直す)
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [displayDeals]);
+
+  const pagedDeals = displayDeals.slice(0, visibleCount);
+  const hasMore = displayDeals.length > visibleCount;
+
   const visibleUpcoming = useMemo(() => {
     const cols = 4;
     const remainder = displayDeals.length % cols;
@@ -422,7 +434,7 @@ export function DealGrid({
         key={`${flightType}-${showNew}-${showEnding}-${showNiche}-${showHiddenGem}-${searchQuery}-${priceRange}-${area}-${discount}-${airlineFilter}-${badge}-${sort}`}
         className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4 animate-fade-in"
       >
-          {displayDeals.map(({ deal, variantOriginCodes }, i) => (
+          {pagedDeals.map(({ deal, variantOriginCodes }, i) => (
             <DealCard
               key={deal.id}
               deal={deal}
@@ -430,14 +442,28 @@ export function DealGrid({
               variantOriginCodes={variantOriginCodes}
             />
           ))}
-          {visibleUpcoming.map((event, i) => (
-            <UpcomingDealCard
-              key={event.id}
-              event={event}
-              index={displayDeals.length + i}
-            />
-          ))}
+          {/* 残りがある間は upcoming を出さない (全件表示時のみ末尾の余白を埋める) */}
+          {!hasMore &&
+            visibleUpcoming.map((event, i) => (
+              <UpcomingDealCard
+                key={event.id}
+                event={event}
+                index={pagedDeals.length + i}
+              />
+            ))}
       </div>
+
+      {hasMore && (
+        <div className="mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+            className="rounded-full border border-zinc-300 px-6 py-3 text-sm font-bold text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-200 dark:hover:bg-zinc-800"
+          >
+            もっと見る（残り {displayDeals.length - visibleCount} 件）
+          </button>
+        </div>
+      )}
 
       {displayDeals.length === 0 && (
         <div className="py-12 text-center">

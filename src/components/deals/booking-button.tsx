@@ -52,15 +52,14 @@ export function BookingButton({
     setTurnstileToken(token);
   }, []);
 
-  function trackAndOpen(url: string, provider: string) {
+  // 計測のみ (遷移は <a rel="sponsored"> が行う)。sendBeacon でクリックを記録。
+  function track(url: string, provider: string) {
     setClicked(true);
 
     // GA4 コンバージョンイベント (主要 CTA = ファーストビューの hero 導線)
     trackAffiliateClick({ dealId, provider, price, route, placement: "hero" });
 
-    // sticky-cta と同型: sendBeacon でナビゲーション直前のトラッキングを
-    // 確実に届けつつ、window.open を await でブロックしない (INP 改善 +
-    // ポップアップブロック回避)。
+    // sendBeacon でナビゲーション直前のトラッキングを確実に届ける。
     try {
       const payload = JSON.stringify({
         deal_id: dealId,
@@ -87,7 +86,6 @@ export function BookingButton({
     } catch {
       /* tracking 失敗は navigation を妨げない */
     }
-    window.open(url, "_blank", "noopener,noreferrer");
   }
 
   // 自分以外の比較リンク（同一URL・同一プロバイダー名は除外）
@@ -127,14 +125,17 @@ export function BookingButton({
           {urgency.text}
         </div>
       )}
-      <button
-        onClick={() => trackAndOpen(affiliateUrl, affiliateProvider)}
+      <a
+        href={affiliateUrl}
+        target="_blank"
+        rel="sponsored noopener noreferrer"
+        onClick={() => track(affiliateUrl, affiliateProvider)}
         className="w-full flex items-center justify-center gap-2 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-6 py-4 text-sm font-bold text-white dark:text-zinc-900 transition-all hover:bg-zinc-700 dark:hover:bg-zinc-300 active:scale-[0.98] shadow-lg hover:shadow-xl"
       >
         <Zap className="h-4 w-4" />
         {ctaLabel}
         <ExternalLink className="h-4 w-4" />
-      </button>
+      </a>
       <div className="flex items-center justify-center gap-2 text-[10px] text-zinc-400">
         <span>{affiliateProvider} で「{saleName}」を予約</span>
       </div>
@@ -148,14 +149,17 @@ export function BookingButton({
           </div>
           <div className="grid grid-cols-2 gap-1.5">
             {otherLinks.map((link) => (
-              <button
+              <a
                 key={link.url}
-                onClick={() => trackAndOpen(link.url, link.provider)}
+                href={link.url}
+                target="_blank"
+                rel="sponsored noopener noreferrer"
+                onClick={() => track(link.url, link.provider)}
                 className="flex items-center justify-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-all hover:border-zinc-300 dark:hover:border-zinc-600 hover:bg-zinc-50 dark:hover:bg-zinc-700 active:scale-[0.98]"
               >
                 {link.provider}
                 <ExternalLink className="h-3 w-3 opacity-50" />
-              </button>
+              </a>
             ))}
           </div>
         </div>

@@ -70,7 +70,7 @@ export function StickyCTA({
     } catch {
       /* tracking 失敗は navigation を妨げない */
     }
-    window.open(affiliateUrl, "_blank", "noopener,noreferrer");
+    // 遷移は <a rel="sponsored"> が行う (開示方針との整合)。ここは計測のみ。
   }
 
   return (
@@ -89,13 +89,16 @@ export function StickyCTA({
             -{discountPercent}%
           </span>
         </div>
-        <button
+        <a
+          href={affiliateUrl}
+          target="_blank"
+          rel="sponsored noopener noreferrer"
           onClick={handleClick}
           className="flex items-center gap-1.5 rounded-xl bg-zinc-900 dark:bg-zinc-100 px-5 py-3 text-sm font-bold text-white dark:text-zinc-900 transition-all hover:bg-zinc-700 dark:hover:bg-zinc-300 active:scale-[0.98] whitespace-nowrap flex-shrink-0"
         >
           {clicked ? "開きました" : "最安値で予約"}
           <ExternalLink className="h-4 w-4" />
-        </button>
+        </a>
       </div>
     </div>
   );
