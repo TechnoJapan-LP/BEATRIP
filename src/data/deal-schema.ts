@@ -37,6 +37,14 @@ export type DealSchema = {
    * Product JSON-LD 等「現在のオファーの事実表明」は出力しない。
    */
   is_sample?: boolean;
+  /**
+   * TravelPayouts 等のキャッシュ価格データ由来の「最安運賃の目安」フラグ。
+   * 確定価格・確定在庫ではないため:
+   *   - Product/Offer JSON-LD (現在オファーの事実表明) は出力しない
+   *   - 予約期限カウントダウン・出発/帰着日・支払総額など"確定情報風"の表示を抑制
+   *   - 「検索時点の目安」開示を出す
+   */
+  is_estimate?: boolean;
 };
 
 export type ClickEvent = {

@@ -182,6 +182,8 @@ function convertToDeal(
     updated_at: sale.scrapedAt,
     affiliate_url: affiliateUrl,
     affiliate_provider: affiliateProvider,
+    // TP「最安値ウォッチ」はキャッシュ価格の目安 → 確定情報風の表示/schema を抑制
+    is_estimate: isWatch,
   };
 }
 
@@ -273,13 +275,18 @@ export async function getDealById(id: string): Promise<DealSchema | undefined> {
  * 3. 空配列（route_baselines に未登録の路線）
  */
 export async function getHistoricalPrices(routeKey: string): Promise<DealHistoricalPrice[]> {
+  // キー正規化: route スラッグ ("NRT-BKK") と ROUTE_BASELINES/履歴 ("NRT→BKK") で
+  // セパレータが異なるため矢印に統一する。これを怠ると routes/[route] のメタ判定や
+  // sitemap がハイフンで照会して常に空になり、中身のある路線まで noindex になる。
+  const key = routeKey.includes("→") ? routeKey : routeKey.replace("-", "→");
+
   // 1. 静的データを優先
-  const staticData = mockHistoricalPrices.filter((p) => p.route_key === routeKey);
+  const staticData = mockHistoricalPrices.filter((p) => p.route_key === key);
   if (staticData.length > 0) return staticData;
 
   // 2. ベースラインから自動生成
-  if (ROUTE_BASELINES[routeKey]) {
-    return generateHistoricalPrices(routeKey);
+  if (ROUTE_BASELINES[key]) {
+    return generateHistoricalPrices(key);
   }
 
   // 3. データなし

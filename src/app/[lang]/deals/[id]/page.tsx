@@ -156,7 +156,9 @@ export default async function DealDetailPage({ params }: Props) {
 
   // mock 由来の deal は架空価格のため Product schema (事実の表明) を出力しない。
   // 本番では mock は配信されないが、開発/プレビュー環境での誤出力も防ぐ。
+  // is_estimate (TP最安値ウォッチ) も確定価格/在庫でないため Offer schema を出さない。
   const isMock = isMockDeal(deal);
+  const suppressOfferSchema = isMock || deal.is_estimate === true;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -208,7 +210,7 @@ export default async function DealDetailPage({ params }: Props) {
 
   return (
     <>
-      {!isMock && (
+      {!suppressOfferSchema && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -311,8 +313,18 @@ export default async function DealDetailPage({ params }: Props) {
           </div>
         )}
 
-        {/* セール終了カウントダウン (即効性 CTA) — 参考事例では出さない */}
-        {!isMock && (
+        {/* 最安値の目安の明示 — TP 由来は確定価格・確定在庫ではない (景表法) */}
+        {deal.is_estimate && (
+          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-300">
+            <span className="mr-2 rounded-full bg-amber-600 px-2 py-0.5 text-[10px] font-bold text-white">
+              最安値の目安
+            </span>
+            この価格は検索時点で見つかった最安運賃の目安です。確定価格・空席・予約期限は予約サイトで必ずご確認ください。実際の価格は変動します。
+          </div>
+        )}
+
+        {/* セール終了カウントダウン (即効性 CTA) — 参考事例/目安では出さない */}
+        {!isMock && !deal.is_estimate && (
           <div className="mb-6 flex items-center gap-2">
             <CountdownBadge deadline={deal.booking_deadline} />
           </div>
@@ -334,12 +346,15 @@ export default async function DealDetailPage({ params }: Props) {
                   <div className="empty:hidden">
                     <SocialProofBadge dealId={deal.id} />
                   </div>
-                  <div className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2">
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400">
-                      予約期限 {formatDate(deal.booking_deadline)}
-                    </span>
-                    <CountdownTimer deadline={deal.booking_deadline} />
-                  </div>
+                  {/* 予約期限・カウントダウンは確定情報のため、目安データでは出さない */}
+                  {!deal.is_estimate && (
+                    <div className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2">
+                      <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                        予約期限 {formatDate(deal.booking_deadline)}
+                      </span>
+                      <CountdownTimer deadline={deal.booking_deadline} />
+                    </div>
+                  )}
                   <BookingButton
                     dealId={deal.id}
                     affiliateUrl={deal.affiliate_url}

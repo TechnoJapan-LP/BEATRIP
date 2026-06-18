@@ -146,7 +146,9 @@ export function DealGrid({
     parseEnum(searchParams.get("badge"), VALID_BADGE, "all")
   );
   const [sort, setSort] = useState<SortOption>(() =>
-    parseEnum(searchParams.get("sort"), VALID_SORT, "discount")
+    // デフォルトは「安い順」。TP最安値データは割引率0が多く、割引順だと無意味な
+    // 並びになるため、速報ユーザーの中核ニーズ(最安発見)に合わせて price をデフォルトに。
+    parseEnum(searchParams.get("sort"), VALID_SORT, "price")
   );
 
   // パーソナライズ: 初回マウント時に保存済みフィルタを復元。
@@ -212,7 +214,7 @@ export function DealGrid({
     if (discount !== "all") params.set("discount", discount);
     if (airlineFilter !== "all") params.set("airline", airlineFilter);
     if (badge !== "all") params.set("badge", badge);
-    if (sort !== "discount") params.set("sort", sort);
+    if (sort !== "price") params.set("sort", sort);
 
     const qs = params.toString();
     const url = qs ? `${pathname}?${qs}` : pathname;
@@ -460,7 +462,7 @@ export function DealGrid({
               {t.popularSuggestion}
             </p>
             <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-              {deals
+              {[...deals]
                 .sort((a, b) => b.discount_percent - a.discount_percent)
                 .slice(0, 4)
                 .map((deal, i) => (
