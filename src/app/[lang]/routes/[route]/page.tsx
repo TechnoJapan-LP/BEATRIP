@@ -458,6 +458,14 @@ export default async function RoutePage({ params }: Props) {
               <ArrowRight className="h-3 w-3" />
             </Link>
           )}
+          {/* セール速報の中核ハブへの動線 (deal→route→calendar の循環を閉じる) */}
+          <Link
+            href="/sale-calendar"
+            className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+          >
+            各社の次回セール時期・予測
+            <ArrowRight className="h-3 w-3" />
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">

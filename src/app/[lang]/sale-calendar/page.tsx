@@ -342,6 +342,34 @@ export default async function SaleCalendarPage({
           </p>
         </section>
 
+        {/* 人気路線の最安値 — route ページへのハブ動線 (deal→route→calendar の循環を閉じる) */}
+        <section className="mb-12">
+          <SectionHeading subtitle="主要路線の最新の最安値・価格推移をチェック">
+            人気路線の最安値
+          </SectionHeading>
+          <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {[
+              { slug: "NRT-BKK", label: "東京 → バンコク" },
+              { slug: "HND-CTS", label: "東京 → 札幌" },
+              { slug: "NRT-TPE", label: "東京 → 台北" },
+              { slug: "KIX-ICN", label: "大阪 → ソウル" },
+              { slug: "HND-OKA", label: "東京 → 沖縄" },
+              { slug: "NRT-SIN", label: "東京 → シンガポール" },
+              { slug: "NRT-HNL", label: "東京 → ホノルル" },
+              { slug: "HND-FUK", label: "東京 → 福岡" },
+            ].map((r) => (
+              <Link
+                key={r.slug}
+                href={`/routes/${r.slug}`}
+                className="group flex items-center justify-between rounded-xl border border-zinc-100 bg-white px-4 py-3 text-sm font-bold text-zinc-800 transition-colors hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-zinc-600"
+              >
+                <span>{r.label}</span>
+                <ArrowRight className="h-3.5 w-3.5 flex-shrink-0 text-zinc-400 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* セールの狙い方 (独自エディトリアル) */}
         <section className="mb-12">
           <SectionHeading subtitle="履歴データから見える、お得に買うためのコツ">

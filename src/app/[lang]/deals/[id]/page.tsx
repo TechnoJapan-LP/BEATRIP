@@ -451,6 +451,13 @@ export default async function DealDetailPage({ params }: Props) {
                         ¥{formatPrice(deal.total_cost)}
                       </span>
                     </div>
+                    <p className="pt-1 text-[10px] leading-relaxed text-zinc-400 dark:text-zinc-500">
+                      ※ 燃油サーチャージ・諸税は距離帯からの概算です。
+                      {deal.is_estimate
+                        ? "航空券価格も検索時点の最安運賃の目安のため、"
+                        : ""}
+                      確定金額は予約サイトでご確認ください。
+                    </p>
                   </div>
                 </div>
 
