@@ -3,6 +3,7 @@ import { MockScraper } from "./mock-scraper";
 import { TraicyScraper, AviationWireAllScraper } from "./traicy-scraper";
 import { AirlinePageScraper } from "./airline-page-scraper";
 import { PeachOfficialScraper } from "./peach-official-scraper";
+import { scrapeTravelPayoutsPrices } from "@/lib/flights/travelpayouts-prices";
 import type { ScrapeResult, AirlineSale } from "./types";
 import type { AirlineScraper } from "./scraper-base";
 
@@ -113,12 +114,14 @@ export async function scrapeAllAirlines(): Promise<ScrapeResult[]> {
 
   // hybridモードでは 複数RSS + 各社ページを並列実行
   if (mode === "hybrid") {
-    const [traicyResults, aviationWireResults, ...airlineResults] =
+    const [traicyResults, aviationWireResults, tpResults, ...airlineResults] =
       await Promise.allSettled([
         // Traicy RSS — 主力ソース、最大15秒
         withTimeout(scrapeViaTraicy(), 15000, [] as ScrapeResult[]),
         // Aviation Wire RSS — 補助ソース、最大15秒
         withTimeout(scrapeViaAviationWire(), 15000, [] as ScrapeResult[]),
+        // TravelPayouts 価格データAPI — 構造化された最安運賃 (主力データ源)、最大20秒
+        withTimeout(scrapeTravelPayoutsPrices(), 20000, [] as ScrapeResult[]),
         // 各航空会社の公式ページも並列スクレイプ（各社10秒で打ち切り済み）
         ...airlines.map((a) => scrapeAirline(a.code)),
       ]);
@@ -130,6 +133,9 @@ export async function scrapeAllAirlines(): Promise<ScrapeResult[]> {
     }
     if (aviationWireResults.status === "fulfilled") {
       results.push(...aviationWireResults.value);
+    }
+    if (tpResults.status === "fulfilled") {
+      results.push(...tpResults.value);
     }
 
     // 各社ページの結果をマージ（重複はIDで排除）
