@@ -78,10 +78,13 @@ export function DealCard({
           )}
 
           <div className="absolute top-2 right-2 flex flex-col items-end gap-1 sm:top-3 sm:right-3">
-            <div className="flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 backdrop-blur-sm sm:gap-1 sm:px-2.5 sm:py-1 sm:text-xs">
-              <TrendingDown className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-              -{deal.discount_percent}%
-            </div>
+            {/* 割引率は相場比がある時だけ表示 (0%の「-0%」表示を防ぐ) */}
+            {deal.discount_percent > 0 && (
+              <div className="flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-rose-600 backdrop-blur-sm sm:gap-1 sm:px-2.5 sm:py-1 sm:text-xs">
+                <TrendingDown className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                -{deal.discount_percent}%
+              </div>
+            )}
             <CountdownBadge deadline={deal.booking_deadline} />
           </div>
 
@@ -105,9 +108,12 @@ export function DealCard({
                 </h3>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-white/50 text-[9px] line-through font-mono sm:text-[11px]">
-                  ¥{formatPrice(deal.original_price)}
-                </div>
+                {/* 取り消し線の原価は相場比がある時だけ (同額の取り消し線を防ぐ) */}
+                {deal.discount_percent > 0 && (
+                  <div className="text-white/50 text-[9px] line-through font-mono sm:text-[11px]">
+                    ¥{formatPrice(deal.original_price)}
+                  </div>
+                )}
                 <div className="text-[16px] font-heading leading-none text-white tracking-wide sm:text-[26px]">
                   ¥{formatPrice(deal.sale_price)}
                 </div>

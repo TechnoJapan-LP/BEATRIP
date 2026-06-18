@@ -129,7 +129,12 @@ function convertToDeal(
   const daysFromStart = (now - saleStart) / (1000 * 60 * 60 * 24);
   const daysUntilDeadline = (bookingDeadline - now) / (1000 * 60 * 60 * 24);
 
-  if (daysFromStart <= 2) {
+  // TP「最安値ウォッチ」は常時更新の目安データなので、毎日 startDate=now で
+  // 全件 NEW/ENDING_SOON になるのは誤認を招く。相場比50%超のときだけ LOWEST を出す。
+  const isWatch = sale.airlineCode === "TP";
+  if (isWatch) {
+    badge = route.discount >= 50 ? "LOWEST_IN_2_YEARS" : null;
+  } else if (daysFromStart <= 2) {
     badge = "NEW";
   } else if (daysUntilDeadline <= 3 && daysUntilDeadline > 0) {
     badge = "ENDING_SOON";

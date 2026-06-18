@@ -1,6 +1,12 @@
 import type { AirlineSale, SaleRoute, ScrapeResult } from "@/lib/scrapers/types";
 import { ROUTE_BASELINES } from "@/data/route-baselines";
 import { cityNameJa } from "@/lib/airport-names";
+import { getAirportByCode } from "@/data/airports";
+
+/** 空港マスタ優先で日本語名を解決 (地方空港 TOY/KMQ/ASJ 等は cityNameJa に無い)。 */
+function resolveCityJa(code: string): string {
+  return getAirportByCode(code)?.nameJa ?? cityNameJa(code);
+}
 
 /**
  * TravelPayouts (Aviasales) フライト価格データAPI 連携
@@ -104,9 +110,9 @@ function toRoute(item: LatestPriceItem): SaleRoute | null {
       : 0;
 
   return {
-    origin: cityNameJa(originCode),
+    origin: resolveCityJa(originCode),
     originCode,
-    destination: cityNameJa(destCode),
+    destination: resolveCityJa(destCode),
     destinationCode: destCode,
     price,
     originalPrice,
@@ -150,7 +156,7 @@ export async function scrapeTravelPayoutsPrices(): Promise<ScrapeResult[]> {
       );
       if (routes.length === 0) return null;
 
-      const originJa = cityNameJa(origin);
+      const originJa = resolveCityJa(origin);
       return {
         id: `tp-latest-${origin}`,
         airlineCode: "TP",
