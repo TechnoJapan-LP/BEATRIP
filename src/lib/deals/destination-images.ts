@@ -77,9 +77,37 @@ const DESTINATION_IMAGES: Record<string, string> = {
   HND: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Skyscrapers_of_Shinjuku_2009_January.jpg/1280px-Skyscrapers_of_Shinjuku_2009_January.jpg",
 };
 
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&q=80";
+/**
+ * 未登録の行き先コード用フォールバック画像プール。
+ *
+ * 特定都市を詐称しない「空・機窓・雲・地図」等の装飾的な汎用画像のみ
+ * (景表法配慮: 「これは○○市の写真」と誤認させない)。コードごとに決定的に
+ * 1枚を割り当てるので、登録外の多数の行き先でも "全部同じ画像" にならず
+ * グリッドが自然に見える。
+ */
+const FALLBACK_POOL: string[] = [
+  "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&q=80", // 道と山
+  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80", // 機窓・翼
+  "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800&q=80", // 雲海
+  "https://images.unsplash.com/photo-1503221043305-f7498f8b7888?w=800&q=80", // 空港・出発
+  "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=800&q=80", // 世界地図とカメラ
+  "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?w=800&q=80", // 飛行機と夕焼け
+  "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", // 山並みと光
+  "https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&q=80", // ロードトリップ
+];
+
+/** コード文字列の決定的ハッシュ (同じコードは常に同じ画像)。 */
+function hashCode(code: string): number {
+  let h = 0;
+  for (let i = 0; i < code.length; i++) {
+    h = (h * 31 + code.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
 
 export function getDestinationImage(code: string): string {
-  return DESTINATION_IMAGES[code] ?? FALLBACK_IMAGE;
+  const mapped = DESTINATION_IMAGES[code];
+  if (mapped) return mapped;
+  // 登録外: コードごとに固定の汎用画像を割り当て (全部同じを防ぐ)
+  return FALLBACK_POOL[hashCode(code) % FALLBACK_POOL.length];
 }
