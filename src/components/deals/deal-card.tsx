@@ -69,6 +69,11 @@ export function DealCard({
             <span className="absolute top-2 left-2 rounded-full bg-zinc-700/90 px-2 py-0.5 text-[9px] font-bold text-zinc-100 backdrop-blur-sm sm:top-3 sm:left-3 sm:text-[10px]">
               参考事例
             </span>
+          ) : deal.is_estimate ? (
+            // TravelPayouts「最安値ウォッチ」由来。確定セールではない目安であることを明示。
+            <span className="absolute top-2 left-2 rounded-full bg-sky-600/90 px-2 py-0.5 text-[9px] font-bold text-white backdrop-blur-sm sm:top-3 sm:left-3 sm:text-[10px]">
+              最安目安
+            </span>
           ) : (
             badge && (
               <Badge className={`absolute top-2 left-2 text-[8px] font-bold tracking-[0.1em] uppercase sm:top-3 sm:left-3 sm:text-[10px] sm:tracking-[0.15em] ${badge.className}`}>
@@ -124,13 +129,19 @@ export function DealCard({
 
         <div className="mt-auto px-2.5 py-2 flex items-center justify-between sm:px-4 sm:py-2.5">
           <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-            {airlineLogo && (
+            {airlineLogo ? (
               // 隣の span が airline 名を読み上げるため装飾扱い
               <img
                 src={airlineLogo}
                 alt=""
                 className="h-4 w-4 flex-shrink-0 rounded-[3px] object-contain sm:h-[18px] sm:w-[18px]"
                 loading="lazy"
+              />
+            ) : (
+              // ロゴ未登録 (例: TravelPayouts "TP") はアイコンで代替し行が崩れないようにする
+              <Plane
+                aria-hidden
+                className="h-4 w-4 flex-shrink-0 rotate-45 text-zinc-400 dark:text-zinc-500 sm:h-[18px] sm:w-[18px]"
               />
             )}
             <span className="text-[11px] font-bold text-zinc-800 dark:text-zinc-100 truncate tracking-tight sm:text-xs">{deal.airline_name}</span>

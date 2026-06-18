@@ -32,6 +32,7 @@ import {
   getHotelSlugByIata,
 } from "@/data/hotel-destinations";
 import { cityNameEn } from "@/lib/airport-names";
+import { getAirlineByCode } from "@/data/airlines";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
 import { DealCarousel } from "@/components/deals/deal-carousel";
@@ -160,12 +161,23 @@ export default async function DealDetailPage({ params }: Props) {
   const isMock = isMockDeal(deal);
   const suppressOfferSchema = isMock || deal.is_estimate === true;
 
+  // airlines マスタに登録のあるキャリアのみ航空会社リンク/ロゴを描画 (TP は undefined → 404防止)
+  const airline = getAirlineByCode(deal.airline_id);
+
+  // 最安値の取得時点 (鮮度表示) — YYYY/MM/DD
+  const updatedAtLabel = new Date(deal.updated_at).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: `${deal.origin_code}→${deal.destination_code} ${deal.airline_name} ${deal.sale_name}`,
     description: `${deal.airline_name} ${deal.sale_name} — ${deal.origin}から${deal.destination}まで¥${deal.sale_price.toLocaleString()}。${deal.discount_percent}%OFF。`,
     image: deal.image_url,
+    dateModified: deal.updated_at,
     brand: {
       "@type": "Organization",
       name: deal.airline_name,
@@ -447,24 +459,29 @@ export default async function DealDetailPage({ params }: Props) {
                     Details
                   </h3>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-zinc-400">出発日</span>
-                      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        {formatDate(deal.departure_date)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-zinc-400">帰着日</span>
-                      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        {formatDate(deal.return_date)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-zinc-400">予約期限</span>
-                      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                        {formatDate(deal.booking_deadline)}
-                      </span>
-                    </div>
+                    {/* 出発日・帰着日は確定旅程のため、目安データ (TP) では出さない */}
+                    {!deal.is_estimate && (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-zinc-400">出発日</span>
+                          <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            {formatDate(deal.departure_date)}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-zinc-400">帰着日</span>
+                          <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            {formatDate(deal.return_date)}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-zinc-400">予約期限</span>
+                          <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                            {formatDate(deal.booking_deadline)}
+                          </span>
+                        </div>
+                      </>
+                    )}
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-zinc-400">キャビン</span>
                       <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
@@ -482,26 +499,8 @@ export default async function DealDetailPage({ params }: Props) {
                         </div>
                       </div>
                     )}
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-zinc-400">信頼度</span>
-                      <div className="flex items-center gap-1.5">
-                        <div className="h-1.5 w-16 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              deal.confidence_score >= 80
-                                ? "bg-emerald-500"
-                                : deal.confidence_score >= 60
-                                  ? "bg-amber-500"
-                                  : "bg-zinc-400"
-                            }`}
-                            style={{ width: `${deal.confidence_score}%` }}
-                          />
-                        </div>
-                        <span className="text-xs font-mono font-bold text-zinc-600">
-                          {deal.confidence_score}
-                        </span>
-                      </div>
-                    </div>
+                    {/* 「信頼度」ゲージは全件 confidence_score=80 のハードコードで
+                        実体のない指標だったため撤去 (誠実表示)。 */}
                   </div>
                 </div>
               </div>
@@ -670,32 +669,37 @@ export default async function DealDetailPage({ params }: Props) {
             )}
 
             <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5 space-y-3">
-              <Link
-                href={`/airlines/${deal.airline_id}`}
-                className="flex items-center justify-between transition-colors hover:opacity-70"
-              >
-                <div>
-                  <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
-                    航空会社
-                  </span>
-                  <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                    {deal.airline_name}
-                  </div>
-                </div>
-                <ExternalLink className="h-4 w-4 text-zinc-300" />
-              </Link>
-              <Link
-                href={`/airlines/${deal.airline_id}/sales`}
-                className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
-              >
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-3.5 w-3.5 text-zinc-400" />
-                  <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
-                    {deal.airline_name}のセール時期・実績
-                  </span>
-                </div>
-                <ExternalLink className="h-3 w-3 text-zinc-300" />
-              </Link>
+              {/* 航空会社リンクは airlines マスタ登録の実在キャリアのみ (TP は 404 防止で非表示) */}
+              {airline && (
+                <>
+                  <Link
+                    href={`/airlines/${deal.airline_id}`}
+                    className="flex items-center justify-between transition-colors hover:opacity-70"
+                  >
+                    <div>
+                      <span className="text-[10px] text-zinc-400 uppercase tracking-wider">
+                        航空会社
+                      </span>
+                      <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                        {deal.airline_name}
+                      </div>
+                    </div>
+                    <ExternalLink className="h-4 w-4 text-zinc-300" />
+                  </Link>
+                  <Link
+                    href={`/airlines/${deal.airline_id}/sales`}
+                    className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-3.5 w-3.5 text-zinc-400" />
+                      <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
+                        {deal.airline_name}のセール時期・実績
+                      </span>
+                    </div>
+                    <ExternalLink className="h-3 w-3 text-zinc-300" />
+                  </Link>
+                </>
+              )}
               <Link
                 href={`/routes/${deal.origin_code}-${deal.destination_code}`}
                 className="flex items-center justify-between rounded-lg bg-zinc-50 dark:bg-zinc-800 px-3 py-2.5 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-700"
