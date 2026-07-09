@@ -142,6 +142,10 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${bebasNeue.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-zinc-50 dark:bg-zinc-950 pb-[calc(56px+env(safe-area-inset-bottom,0px))] sm:pb-0">
+        {/* 画像 CDN への事前接続 — images.unoptimized 化で Unsplash/Wikimedia から
+            直接画像を取得するため、DNS/TLS を先行確立して LCP を短縮する */}
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="preconnect" href="https://upload.wikimedia.org" />
         {/* Organization / WebSite 構造化データ — 全ページ共通 */}
         <script
           type="application/ld+json"
