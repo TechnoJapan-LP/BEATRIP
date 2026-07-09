@@ -47,12 +47,24 @@ export async function GET() {
   const kvEnabled = isKVEnabled();
   const ready = scraperMode === "hybrid" && kvEnabled;
 
+  // SNS 自動投稿の設定状況 (値は出さず boolean のみ)。新着セール発生時に投稿される。
+  const xConfigured = Boolean(
+    process.env.X_API_KEY &&
+      process.env.X_API_SECRET &&
+      process.env.X_ACCESS_TOKEN &&
+      process.env.X_ACCESS_SECRET
+  );
+  const blueskyConfigured = Boolean(
+    process.env.BLUESKY_HANDLE && process.env.BLUESKY_APP_PASSWORD
+  );
+
   return NextResponse.json({
     ready,
     scraperMode,
     kvEnabled,
     storeSalesCount,
     latestScrapedAt,
+    social: { xConfigured, blueskyConfigured },
     hint: ready
       ? "A 設定OK。latestScrapedAt が直近なら cron も稼働中。"
       : "本番稼働には SCRAPER_MODE=hybrid と KV 接続 (kvEnabled=true) が必要。",
