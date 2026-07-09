@@ -38,9 +38,19 @@ const nextConfig: NextConfig = {
     ],
   },
   images: {
+    // ── Vercel 画像最適化を無効化 (元 URL を直接配信) ──
+    // Hobby プランの画像最適化枠を超過すると /_next/image が HTTP 402 を返し、
+    // 未キャッシュの画像 (Unsplash/Wikimedia) が全て壊れて表示される事故が発生。
+    // 1,500ページ超・画像多数の本サイトでは最適化枠が構造的に不足するため、
+    // unoptimized で元 URL を直接配信し 402 を回避する (Unsplash URL は ?w=800、
+    // Wikimedia は thumb 幅指定済みで、そもそも過大サイズではない)。
+    // 有料プランに上げたら false に戻すと最適化 (AVIF/WebP・リサイズ) が復活する。
+    unoptimized: true,
     // 配信元を許可（Unsplash の都市背景 / Wikimedia の代表画像 = ホテル建物実写）。
     // Google Places の写真は /api/hotel-photo proxy 経由 (内部パス) で配信するため
     // remotePatterns は不要 — API key をクライアントに露出させないための proxy 設計。
+    // ※ unoptimized 時 remotePatterns/formats/deviceSizes は無視されるが、将来
+    //   最適化を戻す時のために残す。
     remotePatterns: [
       {
         protocol: "https",
