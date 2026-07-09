@@ -21,6 +21,9 @@ import {
 } from "@/data/sale-history";
 import { mockSaleEvents } from "@/data/mock-deals";
 import { SiteFooter } from "@/components/site-footer";
+import { getActiveDeals } from "@/lib/deals/deal-service";
+import { DealCard } from "@/components/deals/deal-card";
+import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
 
 type Props = { params: Promise<{ code: string; lang: string;}> };
 
@@ -93,6 +96,13 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
 
   const stats = getAirlineSaleStats(airlineCode);
   const records = getSaleHistoryByAirline(airlineCode);
+
+  // 収益導線: この社の「いま開催中」のセール。「次回はいつ？」で来た訪問者に
+  // 現物を最初に見せるのが最も自然なコンバージョン (詳細ページ→予約アフィリ)。
+  const activeDeals = (await getActiveDeals())
+    .filter((d) => d.airline_id === airlineCode && !d.is_sample)
+    .sort((a, b) => a.sale_price - b.sale_price)
+    .slice(0, 4);
   // Server Component なので Date.now() を一度だけリクエスト時に評価して使用。
   // React Compiler の purity 警告はクライアントコンポーネント向けで、ここでは
   // 意図的に許可する（リクエストごとに固定の "today" を得るのが目的）。
@@ -308,6 +318,34 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               </div>
             </div>
 
+            {/* 開催中のセール — 「次回いつ?」の訪問者に現物を提示 (主要収益導線) */}
+            {activeDeals.length > 0 && (
+              <div className="mb-8">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2.5 w-2.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                    </span>
+                    <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
+                      いま掲載中の{airline.name}のセール・最安値
+                    </h2>
+                  </div>
+                  <Link
+                    href={`/deals?airline=${airlineCode}`}
+                    className="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  >
+                    すべて見る →
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+                  {activeDeals.map((deal, i) => (
+                    <DealCard key={deal.id} deal={deal} index={i} />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Monthly distribution */}
             <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 mb-6 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
@@ -364,6 +402,19 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   過去に開催あり
                 </div>
               </div>
+            </div>
+
+            {/* メール捕捉 — 「次回いつ?」の訪問者を読者化する最重要導線。
+                タイムセールは数時間で終わるため通知の価値提案が刺さる文脈 */}
+            <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/30 sm:p-5">
+              <p className="mb-3 text-sm font-bold text-emerald-900 dark:text-emerald-200">
+                {airline.name}の次回セールを見逃さない
+              </p>
+              <p className="mb-3 text-xs leading-relaxed text-emerald-800/80 dark:text-emerald-300/80">
+                タイムセールは数時間〜数日で終了することがあります。新着セールを
+                週次まとめでメールにお届けします (無料・いつでも解除可)。
+              </p>
+              <NewsletterCTASlim source="airline_sales" />
             </div>
 
             {/* Key insights */}
