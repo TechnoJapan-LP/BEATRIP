@@ -359,31 +359,80 @@ export default async function RoutePage({ params }: Props) {
 
   // ItemList 構造化データ（路線のセール一覧） — deal がある時のみ出す
   const jsonLd = hasDeals
-    ? {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        name: `${origin}→${dest} 格安航空券セール一覧`,
-        description: `${origin}から${dest}への航空券セール ${routeDeals.length}件。最安¥${cheapest.toLocaleString()}〜`,
-        numberOfItems: routeDeals.length,
-        itemListElement: routeDeals
-          .sort((a, b) => a.sale_price - b.sale_price)
-          .map((deal, i) => ({
-            "@type": "ListItem",
-            position: i + 1,
-            item: {
-              "@type": "Product",
-              name: `${deal.airline_name} ${origin}→${dest}`,
-              url: `https://beatrip.jp/deals/${deal.id}`,
-              image: deal.image_url,
-              offers: {
-                "@type": "Offer",
-                priceCurrency: "JPY",
-                price: deal.sale_price,
-                availability: "https://schema.org/InStock",
+    ? (() => {
+        // 確定セール (非 estimate) と目安 (TP 最安値ウォッチ) を区別する。
+        // 目安データに InStock/確定価格の Offer を出すと事実表明になるため、
+        // Offer/AggregateOffer は確定セールのみから構成する (deals/[id] と同方針)。
+        const firmDeals = routeDeals.filter((d) => d.is_estimate !== true);
+        const firmPrices = firmDeals.map((d) => d.sale_price);
+        const latestUpdated = routeDeals.reduce(
+          (max, d) => (d.updated_at > max ? d.updated_at : max),
+          routeDeals[0].updated_at
+        );
+        return {
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: `${origin}→${dest} 格安航空券セール一覧`,
+          description: `${origin}から${dest}への航空券セール ${routeDeals.length}件。最安¥${cheapest.toLocaleString()}〜`,
+          numberOfItems: routeDeals.length,
+          dateModified: latestUpdated,
+          // 価格レンジ (確定セールが複数ある路線のみ)。「{路線} 最安値」意図に応える
+          ...(firmPrices.length >= 2
+            ? {
+                aggregateOffer: {
+                  "@type": "AggregateOffer",
+                  priceCurrency: "JPY",
+                  lowPrice: Math.min(...firmPrices),
+                  highPrice: Math.max(...firmPrices),
+                  offerCount: firmPrices.length,
+                },
+              }
+            : {}),
+          itemListElement: [...routeDeals]
+            .sort((a, b) => a.sale_price - b.sale_price)
+            .map((deal, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              item: {
+                "@type": "Product",
+                name: `${deal.airline_name} ${origin}→${dest}`,
+                url: `https://beatrip.jp/deals/${deal.id}`,
+                image: deal.image_url,
+                // 目安 (estimate) は確定オファーの事実表明をしない
+                ...(deal.is_estimate !== true
+                  ? {
+                      offers: {
+                        "@type": "Offer",
+                        priceCurrency: "JPY",
+                        price: deal.sale_price,
+                        ...(deal.booking_deadline
+                          ? {
+                              priceValidUntil:
+                                deal.booking_deadline.slice(0, 10),
+                            }
+                          : {}),
+                        availability: "https://schema.org/InStock",
+                      },
+                    }
+                  : {}),
               },
-            },
-          })),
-      }
+            })),
+        };
+      })()
+    : null;
+
+  // 鮮度表示: 掲載価格の最終取得日 (最安値情報は鮮度が信頼の核)
+  const latestUpdatedLabel = hasDeals
+    ? new Date(
+        routeDeals.reduce(
+          (max, d) => (d.updated_at > max ? d.updated_at : max),
+          routeDeals[0].updated_at
+        )
+      ).toLocaleDateString("ja-JP", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
     : null;
 
   return (
@@ -423,13 +472,20 @@ export default async function RoutePage({ params }: Props) {
               {parsed.destination}
             </span>
           </div>
+          {/* h1 に主要検索意図 (格安航空券) を含める — GSC で路線×格安クエリが
+              200表示/0クリックのため、見出し一致で順位/CTR を取りにいく */}
           <h1 className="font-heading text-4xl tracking-wide text-zinc-900 uppercase sm:text-5xl">
-            {origin}→{dest}
+            {origin}→{dest} 格安航空券
           </h1>
           <p className="mt-1 text-sm text-zinc-500">
             {hasDeals
-              ? `この路線の格安フライトセール ${routeDeals.length}件`
+              ? `この路線の格安フライトセール ${routeDeals.length}件・最安値と安い時期の目安`
               : "現在この路線のセールは掲載されていません"}
+            {latestUpdatedLabel && (
+              <span className="ml-2 text-xs text-zinc-400">
+                価格更新日: {latestUpdatedLabel}
+              </span>
+            )}
           </p>
         </div>
 

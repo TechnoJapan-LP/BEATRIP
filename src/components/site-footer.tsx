@@ -81,7 +81,8 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
         { href: "/airlines/JAL", label: "JAL" },
         { href: "/airlines/PCH", label: "Peach" },
         { href: "/airlines/JJP", label: "Jetstar Japan" },
-        { href: "/airlines/SKY", label: "Skymark" },
+        { href: "/airlines/BC", label: "Skymark" },
+        { href: "/airlines/ZG", label: "ZIPAIR" },
       ],
     },
     about: {

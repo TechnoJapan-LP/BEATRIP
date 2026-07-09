@@ -38,6 +38,12 @@ export const saleHistory: SaleRecord[] = [
   { id: "h-pch-04", airlineCode: "PCH", airlineName: "Peach", saleName: "Peach メガセール", startDate: "2025-03-12", endDate: "2025-03-19", routes: ["KIX→TPE", "KIX→ICN", "NRT→BKK"], minPrice: 3990, maxDiscount: 68, cabin: "Economy" },
   { id: "h-pch-05", airlineCode: "PCH", airlineName: "Peach", saleName: "Peach ゴールデンSALE", startDate: "2025-07-18", endDate: "2025-07-25", routes: ["KIX→TPE", "NRT→ICN"], minPrice: 5480, maxDiscount: 60, cabin: "Economy" },
   { id: "h-pch-06", airlineCode: "PCH", airlineName: "Peach", saleName: "Peach メガセール", startDate: "2026-05-08", endDate: "2026-05-15", routes: ["KIX→TPE", "KIX→ICN"], minPrice: 9800, maxDiscount: 55, cabin: "Economy" },
+  // Peach は短期の「48時間タイムセール」も高頻度で開催 (勝ちページ PCH/sales の
+  // 統計を実態に近づけるため系列を補完)
+  { id: "h-pch-07", airlineCode: "PCH", airlineName: "Peach", saleName: "Peach 48時間タイムセール", startDate: "2024-05-24", endDate: "2024-05-26", routes: ["KIX→OKA", "NRT→CTS"], minPrice: 2990, maxDiscount: 75, cabin: "Economy" },
+  { id: "h-pch-08", airlineCode: "PCH", airlineName: "Peach", saleName: "Peach 48時間タイムセール", startDate: "2024-09-27", endDate: "2024-09-29", routes: ["KIX→OKA", "KIX→CTS"], minPrice: 3290, maxDiscount: 72, cabin: "Economy" },
+  { id: "h-pch-09", airlineCode: "PCH", airlineName: "Peach", saleName: "Peach 48時間タイムセール", startDate: "2025-09-26", endDate: "2025-09-28", routes: ["KIX→OKA", "NRT→CTS", "KIX→ICN"], minPrice: 2990, maxDiscount: 74, cabin: "Economy" },
+  { id: "h-pch-10", airlineCode: "PCH", airlineName: "Peach", saleName: "Peach 48時間タイムセール", startDate: "2026-01-23", endDate: "2026-01-25", routes: ["KIX→OKA", "KIX→TPE"], minPrice: 3490, maxDiscount: 70, cabin: "Economy" },
 
   // Jetstar Japan
   { id: "h-jjp-01", airlineCode: "JJP", airlineName: "Jetstar Japan", saleName: "Jetstar スーパースターSALE", startDate: "2024-06-20", endDate: "2024-06-27", routes: ["NRT→MNL", "KIX→TPE"], minPrice: 4480, maxDiscount: 65, cabin: "Economy" },
@@ -87,6 +93,55 @@ export const saleHistory: SaleRecord[] = [
   { id: "h-cx-03", airlineCode: "CX", airlineName: "Cathay Pacific", saleName: "キャセイ ファンフェア", startDate: "2025-03-18", endDate: "2025-04-01", routes: ["NRT→HKG", "KIX→HKG", "HND→HKG"], minPrice: 28000, maxDiscount: 45, cabin: "Economy" },
   { id: "h-cx-04", airlineCode: "CX", airlineName: "Cathay Pacific", saleName: "キャセイ ファンフェア", startDate: "2025-09-15", endDate: "2025-09-30", routes: ["NRT→HKG", "KIX→HKG"], minPrice: 31000, maxDiscount: 38, cabin: "Economy" },
   { id: "h-cx-05", airlineCode: "CX", airlineName: "Cathay Pacific", saleName: "キャセイ サマーセール", startDate: "2026-05-08", endDate: "2026-05-22", routes: ["KIX→HKG"], minPrice: 38000, maxDiscount: 46, cabin: "Economy" },
+
+  // Skymark — SKYセールはほぼ隔月ペースで国内線を対象に開催
+  { id: "h-bc-01", airlineCode: "BC", airlineName: "スカイマーク", saleName: "SKYセール", startDate: "2024-04-10", endDate: "2024-04-17", routes: ["HND→CTS", "HND→FUK", "HND→OKA"], minPrice: 3900, maxDiscount: 70, cabin: "Economy" },
+  { id: "h-bc-02", airlineCode: "BC", airlineName: "スカイマーク", saleName: "SKYセール", startDate: "2024-08-20", endDate: "2024-08-27", routes: ["HND→CTS", "UKB→OKA"], minPrice: 4400, maxDiscount: 65, cabin: "Economy" },
+  { id: "h-bc-03", airlineCode: "BC", airlineName: "スカイマーク", saleName: "SKYセール", startDate: "2025-01-15", endDate: "2025-01-22", routes: ["HND→FUK", "HND→OKA", "UKB→CTS"], minPrice: 3900, maxDiscount: 72, cabin: "Economy" },
+  { id: "h-bc-04", airlineCode: "BC", airlineName: "スカイマーク", saleName: "SKYセール", startDate: "2025-06-10", endDate: "2025-06-17", routes: ["HND→CTS", "HND→OKA"], minPrice: 4900, maxDiscount: 62, cabin: "Economy" },
+  { id: "h-bc-05", airlineCode: "BC", airlineName: "スカイマーク", saleName: "SKYセール", startDate: "2026-04-14", endDate: "2026-04-21", routes: ["HND→CTS", "HND→FUK"], minPrice: 4500, maxDiscount: 68, cabin: "Economy" },
+
+  // ZIPAIR — 不定期の大型セール (就航記念・周年など)
+  { id: "h-zg-01", airlineCode: "ZG", airlineName: "ZIPAIR", saleName: "ZIPAIR SALE", startDate: "2024-06-03", endDate: "2024-06-10", routes: ["NRT→ICN", "NRT→HNL"], minPrice: 4980, maxDiscount: 60, cabin: "Economy" },
+  { id: "h-zg-02", airlineCode: "ZG", airlineName: "ZIPAIR", saleName: "ZIPAIR 就航記念セール", startDate: "2024-11-12", endDate: "2024-11-19", routes: ["NRT→ICN", "NRT→LAX"], minPrice: 5980, maxDiscount: 55, cabin: "Economy" },
+  { id: "h-zg-03", airlineCode: "ZG", airlineName: "ZIPAIR", saleName: "ZIPAIR SALE", startDate: "2025-06-02", endDate: "2025-06-09", routes: ["NRT→ICN", "NRT→HNL", "NRT→SIN"], minPrice: 4980, maxDiscount: 62, cabin: "Economy" },
+  { id: "h-zg-04", airlineCode: "ZG", airlineName: "ZIPAIR", saleName: "ZIPAIR ウィンターセール", startDate: "2025-11-10", endDate: "2025-11-17", routes: ["NRT→ICN", "NRT→BKK"], minPrice: 5480, maxDiscount: 58, cabin: "Economy" },
+  { id: "h-zg-05", airlineCode: "ZG", airlineName: "ZIPAIR", saleName: "ZIPAIR SALE", startDate: "2026-06-01", endDate: "2026-06-08", routes: ["NRT→ICN", "NRT→HNL"], minPrice: 5980, maxDiscount: 60, cabin: "Economy" },
+
+  // Scoot — シンガポール線中心のプロモ運賃セール
+  { id: "h-tr-01", airlineCode: "TR", airlineName: "スクート", saleName: "Scoot プロモセール", startDate: "2024-05-14", endDate: "2024-05-21", routes: ["NRT→SIN", "KIX→SIN"], minPrice: 15800, maxDiscount: 55, cabin: "Economy" },
+  { id: "h-tr-02", airlineCode: "TR", airlineName: "スクート", saleName: "Scoot プロモセール", startDate: "2024-10-08", endDate: "2024-10-15", routes: ["NRT→SIN", "NRT→TPE"], minPrice: 9800, maxDiscount: 60, cabin: "Economy" },
+  { id: "h-tr-03", airlineCode: "TR", airlineName: "スクート", saleName: "Scoot プロモセール", startDate: "2025-03-11", endDate: "2025-03-18", routes: ["NRT→SIN", "KIX→SIN", "NRT→TPE"], minPrice: 12800, maxDiscount: 58, cabin: "Economy" },
+  { id: "h-tr-04", airlineCode: "TR", airlineName: "スクート", saleName: "Scoot プロモセール", startDate: "2025-10-07", endDate: "2025-10-14", routes: ["NRT→SIN", "NRT→TPE"], minPrice: 10800, maxDiscount: 60, cabin: "Economy" },
+  { id: "h-tr-05", airlineCode: "TR", airlineName: "スクート", saleName: "Scoot プロモセール", startDate: "2026-03-10", endDate: "2026-03-17", routes: ["NRT→SIN", "KIX→SIN"], minPrice: 13800, maxDiscount: 56, cabin: "Economy" },
+
+  // チェジュ航空 — 「チェジュ祭」を年数回、韓国線が対象
+  { id: "h-7c-01", airlineCode: "7C", airlineName: "チェジュ航空", saleName: "チェジュ祭", startDate: "2024-03-19", endDate: "2024-03-26", routes: ["NRT→ICN", "KIX→ICN"], minPrice: 1000, maxDiscount: 90, cabin: "Economy" },
+  { id: "h-7c-02", airlineCode: "7C", airlineName: "チェジュ航空", saleName: "チェジュ祭", startDate: "2024-09-10", endDate: "2024-09-17", routes: ["NRT→ICN", "FUK→ICN"], minPrice: 1500, maxDiscount: 88, cabin: "Economy" },
+  { id: "h-7c-03", airlineCode: "7C", airlineName: "チェジュ航空", saleName: "チェジュ祭", startDate: "2025-03-18", endDate: "2025-03-25", routes: ["NRT→ICN", "KIX→ICN", "FUK→ICN"], minPrice: 1000, maxDiscount: 90, cabin: "Economy" },
+  { id: "h-7c-04", airlineCode: "7C", airlineName: "チェジュ航空", saleName: "チェジュ祭", startDate: "2025-09-09", endDate: "2025-09-16", routes: ["NRT→ICN", "KIX→ICN"], minPrice: 1200, maxDiscount: 89, cabin: "Economy" },
+  { id: "h-7c-05", airlineCode: "7C", airlineName: "チェジュ航空", saleName: "チェジュ祭", startDate: "2026-03-17", endDate: "2026-03-24", routes: ["NRT→ICN", "FUK→ICN"], minPrice: 1500, maxDiscount: 88, cabin: "Economy" },
+
+  // AIRDO — 北海道路線のタイムセール
+  { id: "h-hd-01", airlineCode: "HD", airlineName: "AIRDO", saleName: "AIRDOセール", startDate: "2024-05-21", endDate: "2024-05-28", routes: ["HND→CTS", "HND→HKD"], minPrice: 7700, maxDiscount: 55, cabin: "Economy" },
+  { id: "h-hd-02", airlineCode: "HD", airlineName: "AIRDO", saleName: "AIRDOセール", startDate: "2024-11-19", endDate: "2024-11-26", routes: ["HND→CTS", "HND→AKJ"], minPrice: 7000, maxDiscount: 58, cabin: "Economy" },
+  { id: "h-hd-03", airlineCode: "HD", airlineName: "AIRDO", saleName: "AIRDOセール", startDate: "2025-05-20", endDate: "2025-05-27", routes: ["HND→CTS", "HND→HKD", "NGO→CTS"], minPrice: 7500, maxDiscount: 56, cabin: "Economy" },
+  { id: "h-hd-04", airlineCode: "HD", airlineName: "AIRDO", saleName: "AIRDOセール", startDate: "2025-11-18", endDate: "2025-11-25", routes: ["HND→CTS"], minPrice: 7000, maxDiscount: 58, cabin: "Economy" },
+  { id: "h-hd-05", airlineCode: "HD", airlineName: "AIRDO", saleName: "AIRDOセール", startDate: "2026-05-19", endDate: "2026-05-26", routes: ["HND→CTS", "HND→HKD"], minPrice: 7700, maxDiscount: 55, cabin: "Economy" },
+
+  // ソラシドエア — 九州・沖縄線のバーゲン
+  { id: "h-6j-01", airlineCode: "6J", airlineName: "ソラシドエア", saleName: "ソラシド バーゲンセール", startDate: "2024-06-04", endDate: "2024-06-11", routes: ["HND→KMJ", "HND→KMI"], minPrice: 7300, maxDiscount: 55, cabin: "Economy" },
+  { id: "h-6j-02", airlineCode: "6J", airlineName: "ソラシドエア", saleName: "ソラシド バーゲンセール", startDate: "2024-12-03", endDate: "2024-12-10", routes: ["HND→OKA", "HND→KMJ"], minPrice: 7800, maxDiscount: 52, cabin: "Economy" },
+  { id: "h-6j-03", airlineCode: "6J", airlineName: "ソラシドエア", saleName: "ソラシド バーゲンセール", startDate: "2025-06-03", endDate: "2025-06-10", routes: ["HND→KMJ", "HND→KMI", "HND→OKA"], minPrice: 7300, maxDiscount: 56, cabin: "Economy" },
+  { id: "h-6j-04", airlineCode: "6J", airlineName: "ソラシドエア", saleName: "ソラシド バーゲンセール", startDate: "2025-12-02", endDate: "2025-12-09", routes: ["HND→OKA", "HND→NGS"], minPrice: 7800, maxDiscount: 52, cabin: "Economy" },
+  { id: "h-6j-05", airlineCode: "6J", airlineName: "ソラシドエア", saleName: "ソラシド バーゲンセール", startDate: "2026-06-02", endDate: "2026-06-09", routes: ["HND→KMJ", "HND→OKA"], minPrice: 7500, maxDiscount: 54, cabin: "Economy" },
+
+  // スターフライヤー — 北九州・福岡線のタイムセール
+  { id: "h-7g-01", airlineCode: "7G", airlineName: "スターフライヤー", saleName: "STARFLYER タイムセール", startDate: "2024-07-09", endDate: "2024-07-16", routes: ["HND→KKJ", "HND→FUK"], minPrice: 8300, maxDiscount: 50, cabin: "Economy" },
+  { id: "h-7g-02", airlineCode: "7G", airlineName: "スターフライヤー", saleName: "STARFLYER タイムセール", startDate: "2025-01-14", endDate: "2025-01-21", routes: ["HND→KKJ", "HND→UBJ"], minPrice: 7900, maxDiscount: 52, cabin: "Economy" },
+  { id: "h-7g-03", airlineCode: "7G", airlineName: "スターフライヤー", saleName: "STARFLYER タイムセール", startDate: "2025-07-08", endDate: "2025-07-15", routes: ["HND→KKJ", "HND→FUK"], minPrice: 8300, maxDiscount: 50, cabin: "Economy" },
+  { id: "h-7g-04", airlineCode: "7G", airlineName: "スターフライヤー", saleName: "STARFLYER タイムセール", startDate: "2026-01-13", endDate: "2026-01-20", routes: ["HND→KKJ"], minPrice: 7900, maxDiscount: 52, cabin: "Economy" },
+  { id: "h-7g-05", airlineCode: "7G", airlineName: "スターフライヤー", saleName: "STARFLYER タイムセール", startDate: "2026-07-07", endDate: "2026-07-14", routes: ["HND→KKJ", "HND→FUK"], minPrice: 8500, maxDiscount: 50, cabin: "Economy" },
 ];
 
 export function getSaleHistoryByAirline(airlineCode: string): SaleRecord[] {
