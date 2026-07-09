@@ -102,7 +102,8 @@ export function SeasonalHero({ locale }: { locale: Locale }) {
           </span>
           <h1
             id="seasonal-hero-title"
-            className="mt-4 font-heading text-4xl leading-[0.95] tracking-wide text-white drop-shadow-sm sm:text-6xl lg:text-7xl"
+            // text-wrap:balance で「最安値\nで。」のような不格好な行折返しを防ぐ
+            className="mt-4 font-heading text-4xl leading-[0.95] tracking-wide text-white drop-shadow-sm [text-wrap:balance] sm:text-6xl lg:text-7xl"
           >
             {copy.title}
           </h1>

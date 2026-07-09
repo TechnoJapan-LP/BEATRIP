@@ -631,9 +631,9 @@ const COUNTRY_BY_SLUG: Record<string, { en: string; airalo?: string }> = {
  * 都市風景画像を上書きする。Wikimedia Commons の都市代表画像 (curl 200 確認済)。
  */
 const IMAGE_OVERRIDE_BY_SLUG: Record<string, string> = {
-  kyoto: "https://upload.wikimedia.org/wikipedia/commons/2/22/Kyoto_montage.jpg",
-  yokohama: "https://upload.wikimedia.org/wikipedia/commons/7/71/Minato_Mirai_21.jpg",
-  kanazawa: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Kanazawa_montage.jpg",
+  kyoto: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Kyoto_montage.jpg/960px-Kyoto_montage.jpg",
+  yokohama: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Minato_Mirai_21.jpg/960px-Minato_Mirai_21.jpg",
+  kanazawa: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Kanazawa_montage.jpg/960px-Kanazawa_montage.jpg",
 };
 
 export const HOTEL_DESTINATIONS: HotelDestination[] = RAW.map((d) => {

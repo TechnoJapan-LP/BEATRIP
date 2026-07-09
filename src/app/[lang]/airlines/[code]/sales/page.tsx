@@ -24,6 +24,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { DealCard } from "@/components/deals/deal-card";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
+import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 
 type Props = { params: Promise<{ code: string; lang: string;}> };
 
@@ -626,6 +627,52 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               セール開始の通知を受け取りたい方は、アラート機能をご利用ください。
             </p>
           </div>
+        </div>
+
+        {/* 他社のセール予測への内部リンク循環 — 勝ちページ (PCH等) の被リンクを
+            新規社ページへ分配し、17社群のインデックス/評価を底上げする */}
+        <div className="mt-8 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-6">
+          <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-1 sm:text-base">
+            他の航空会社のセール時期・予測
+          </h2>
+          <p className="text-xs text-zinc-400 mb-4">
+            「次のセールはどこが早い?」を各社の開催実績から比較できます
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {airlines
+              .filter(
+                (a) =>
+                  a.code !== airlineCode && getAirlineSaleStats(a.code) !== null
+              )
+              .map((a) => (
+                <Link
+                  key={a.code}
+                  href={`/airlines/${a.code}/sales`}
+                  className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
+                >
+                  {a.name}のセール予測
+                </Link>
+              ))}
+            <Link
+              href="/sale-calendar"
+              className="inline-flex items-center gap-1 rounded-full bg-zinc-900 px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+            >
+              全社のセールカレンダーを見る
+              <ArrowLeft className="h-3 w-3 rotate-180" />
+            </Link>
+          </div>
+        </div>
+
+        {/* 収益レール: 予約サイト比較 (env 設定済みパートナーのみ表示) */}
+        <div className="mt-8">
+          <JapanesePartnersPanel
+            title="セール航空券の予約に使えるサイト"
+            subtitle="セール発表後は公式が混み合うことも。比較予約サイトも併用するとスムーズです"
+            categories={["flight-domestic", "flight-overseas", "tour-package"]}
+            compact
+            maxChips={6}
+            source="airline_sales"
+          />
         </div>
 
         <div className="mt-6 text-center">
