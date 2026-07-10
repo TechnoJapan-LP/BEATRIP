@@ -114,7 +114,9 @@ export function buildXText(sale: AirlineSale): string | null {
   return `✈️ ${head}\n${route} ¥${yen}〜${discount}\n${url}\n#格安航空券 #航空券セール`;
 }
 
-async function postTweet(text: string, creds: XCreds): Promise<boolean> {
+type PostResult = { ok: boolean; status?: number; detail?: string };
+
+async function postTweet(text: string, creds: XCreds): Promise<PostResult> {
   try {
     const res = await fetch(TWEET_ENDPOINT, {
       method: "POST",
@@ -127,12 +129,14 @@ async function postTweet(text: string, creds: XCreds): Promise<boolean> {
     if (!res.ok) {
       const body = await res.text();
       console.error(`[x] tweet failed ${res.status}:`, body.slice(0, 300));
-      return false;
+      // X のエラー本文には自前の key/secret は含まれないため、切り詰めて返して
+      // 設定ミス (Read-only 権限 / 重複投稿 / レート制限) を切り分けられるようにする
+      return { ok: false, status: res.status, detail: body.slice(0, 200) };
     }
-    return true;
+    return { ok: true };
   } catch (e) {
     console.error("[x] tweet request error:", e);
-    return false;
+    return { ok: false, detail: e instanceof Error ? e.message : "request error" };
   }
 }
 
@@ -143,12 +147,24 @@ async function postTweet(text: string, creds: XCreds): Promise<boolean> {
 export async function postTestTweet(): Promise<{
   success: boolean;
   error?: string;
+  /** 失敗時のみ: X API の HTTP ステータス (403=権限不足 / 429=レート等) */
+  status?: number;
+  /** 失敗時のみ: X API のエラー本文 (先頭200字。keyは含まれない) */
+  detail?: string;
 }> {
   const creds = getCreds();
   if (!creds) return { success: false, error: "X_* env が未設定" };
-  const text = `BEATRIP の自動投稿テストです ✈️\n航空券セール情報を毎日お届けします。\nhttps://beatrip.jp\n#BEATRIP #格安航空券`;
-  const ok = await postTweet(text, creds);
-  return ok ? { success: true } : { success: false, error: "Post failed" };
+  // 同一本文の連投は X が duplicate として弾くため、末尾に時刻を入れて一意化する
+  const stamp = new Date().toISOString().slice(11, 19);
+  const text = `BEATRIP の自動投稿テストです ✈️\n航空券セール情報を毎日お届けします。\nhttps://beatrip.jp\n#BEATRIP #格安航空券 (${stamp})`;
+  const res = await postTweet(text, creds);
+  if (res.ok) return { success: true };
+  return {
+    success: false,
+    error: `Post failed${res.status ? ` (HTTP ${res.status})` : ""}`,
+    status: res.status,
+    detail: res.detail,
+  };
 }
 
 /**
@@ -168,8 +184,8 @@ export async function postSalesToX(
   for (const sale of sales.slice(0, maxPosts)) {
     const text = buildXText(sale);
     if (!text) continue;
-    const ok = await postTweet(text, creds);
-    if (ok) posted.push(sale.id);
+    const res = await postTweet(text, creds);
+    if (res.ok) posted.push(sale.id);
     await new Promise((r) => setTimeout(r, 2000));
   }
   return posted;

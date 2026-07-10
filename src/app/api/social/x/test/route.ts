@@ -20,8 +20,21 @@ export async function POST(request: NextRequest) {
 
   const result = await postTestTweet();
   if (!result.success) {
+    // status/detail を返して設定ミスを切り分けられるようにする
+    // (403=アプリ権限が Read-only、429=レート制限、401=キー不一致 など)
     return NextResponse.json(
-      { success: false, error: result.error ?? "failed" },
+      {
+        success: false,
+        error: result.error ?? "failed",
+        xStatus: result.status,
+        xDetail: result.detail,
+        hint:
+          result.status === 403
+            ? "アプリ権限が Read-only の可能性。Developer Portal で Read and Write に変更後、Access Token を再生成して env を更新してください。"
+            : result.status === 401
+              ? "X_API_KEY / X_API_SECRET / X_ACCESS_TOKEN / X_ACCESS_SECRET のいずれかが不正です。"
+              : undefined,
+      },
       { status: result.error === "X_* env が未設定" ? 400 : 500 }
     );
   }
