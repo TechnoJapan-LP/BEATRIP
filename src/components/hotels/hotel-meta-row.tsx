@@ -24,16 +24,6 @@ const AMENITY_META: Record<NonNullable<CuratedHotel["amenities"]>[number], { Ico
   business: { Icon: Briefcase, label: "ビジネス" },
 };
 
-const BEST_FOR_LABEL: Record<NonNullable<CuratedHotel["bestFor"]>[number], string> = {
-  couple: "カップル",
-  family: "ファミリー",
-  business: "ビジネス",
-  solo: "ひとり旅",
-  luxury: "ラグジュアリー",
-  budget: "コスパ重視",
-  "long-stay": "長期滞在",
-};
-
 export function HotelMetaRow({
   hotel,
   hideReviewScore = false,
@@ -81,10 +71,10 @@ export function HotelMetaRow({
         )}
       </div>
 
-      {/* アメニティアイコン群 */}
+      {/* アメニティアイコン群 — カードの情報過多を避けるため代表3つに絞る */}
       {hotel.amenities && hotel.amenities.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5">
-          {hotel.amenities.slice(0, 4).map((a) => {
+          {hotel.amenities.slice(0, 3).map((a) => {
             const meta = AMENITY_META[a];
             if (!meta) return null;
             return (
@@ -102,17 +92,9 @@ export function HotelMetaRow({
         </div>
       )}
 
-      {/* 推奨利用シーン */}
-      {hotel.bestFor && hotel.bestFor.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1 text-[11px] text-zinc-500">
-          <span className="font-bold">おすすめ:</span>
-          {hotel.bestFor.map((b) => (
-            <span key={b} className="rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5">
-              {BEST_FOR_LABEL[b]}
-            </span>
-          ))}
-        </div>
-      )}
+      {/* 「おすすめ: カップル/ビジネス…」の推奨シーン行は、カードの情報過多
+          (星+スコア+室数+アメニティ+価格比較で既に高密度) のため表示を廃止。
+          bestFor データ自体は比較ページ等での将来利用に備えて保持している。 */}
     </div>
   );
 }

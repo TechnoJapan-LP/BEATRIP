@@ -41,16 +41,36 @@ function clampWidth(raw: string | null): number {
   return Math.min(1600, Math.max(100, Math.round(n)));
 }
 
-export async function GET(req: NextRequest) {
-  const apiKey = getApiKey();
-  if (!apiKey) {
-    return new Response("photo backend not configured", { status: 404 });
-  }
+/**
+ * photo reference の期限切れ等で Google が 404 を返した場合のフォールバック。
+ * 404 をそのまま返すと <img> が壊れアイコン + alt テキスト表示になり
+ * カードの見た目が崩れるため、ニュートラルなグラデ SVG を 200 で返す
+ * (特定ホテルの写真と誤認させない無地表現 = 誠実なプレースホルダ)。
+ * 期限切れ reference が復活することはまず無いので 1 日キャッシュ。
+ */
+function fallbackSvg(): Response {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 5"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f3f46"/><stop offset="1" stop-color="#18181b"/></linearGradient></defs><rect width="8" height="5" fill="url(#g)"/></svg>`;
+  return new Response(svg, {
+    status: 200,
+    headers: {
+      "Content-Type": "image/svg+xml",
+      "Cache-Control":
+        "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
+    },
+  });
+}
 
+export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams;
   const ref = sp.get("ref");
   if (!ref || !PHOTO_NAME_RE.test(ref)) {
+    // 不正入力のみ 400 (自前コード以外からの呼び出し)。
     return new Response("invalid photo reference", { status: 400 });
+  }
+
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    return fallbackSvg();
   }
 
   const width = clampWidth(sp.get("w"));
@@ -66,17 +86,18 @@ export async function GET(req: NextRequest) {
       redirect: "follow",
     });
   } catch {
-    return new Response("upstream fetch failed", { status: 502 });
+    return fallbackSvg();
   }
 
   if (!res.ok || !res.body) {
-    return new Response("photo not found", { status: 404 });
+    // photo reference の期限切れ (Google 側 404) — 壊れアイコンを出さない
+    return fallbackSvg();
   }
 
   const contentType = res.headers.get("content-type") ?? "image/jpeg";
   if (!contentType.startsWith("image/")) {
     // 想定外 (HTML エラーページ等) は流さない。
-    return new Response("unexpected content type", { status: 502 });
+    return fallbackSvg();
   }
 
   return new Response(res.body, {

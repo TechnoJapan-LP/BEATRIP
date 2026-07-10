@@ -61,15 +61,10 @@ export function HotelBookingButtons({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      {/* 4 OTA 比較サマリー: CTA 群の心理的 anchor */}
-      <div className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-200 dark:ring-emerald-800">
+      {/* OTA 比較サマリー — カードの情報過多を避けるため一言に短縮 */}
+      <div className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 ring-1 ring-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-200 dark:ring-emerald-800">
         <TrendingDown className="h-3.5 w-3.5" />
-        <span>
-          {HOTEL_SEARCH_PROVIDERS.length} サイトで価格比較
-          <span className="ml-1.5 font-medium text-emerald-600 dark:text-emerald-300">
-            — 最安値を比較できます
-          </span>
-        </span>
+        <span>{HOTEL_SEARCH_PROVIDERS.length} サイトで最安値を比較</span>
       </div>
 
       <div className="flex flex-wrap gap-1.5">
