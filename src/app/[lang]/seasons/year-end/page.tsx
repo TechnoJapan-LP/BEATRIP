@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Snowflake, Calendar, Plane, Hotel, Clock, ArrowRight } from "lucide-react";
+import {
+  Snowflake,
+  Calendar,
+  Plane,
+  Hotel,
+  Clock,
+  ArrowRight,
+} from "lucide-react";
 import { Header } from "@/components/header";
 import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -8,6 +15,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -30,9 +38,31 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["Japan New Year travel", "year-end Japan flights", "Oshogatsu travel", "December flights Japan", "January travel Japan", "Japan holiday peak season"]
-      : ["年末年始 航空券", "年末年始 ホテル", "年末年始 旅行", "正月 旅行", "12月 航空券 安い", "1月 旅行 おすすめ", "年末年始 海外旅行", "年末年始 国内旅行", "年末年始 ピーク"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "Japan New Year travel",
+          "year-end Japan flights",
+          "Oshogatsu travel",
+          "December flights Japan",
+          "January travel Japan",
+          "Japan holiday peak season",
+        ]
+      : [
+          "年末年始 航空券",
+          "年末年始 ホテル",
+          "年末年始 旅行",
+          "正月 旅行",
+          "12月 航空券 安い",
+          "1月 旅行 おすすめ",
+          "年末年始 海外旅行",
+          "年末年始 国内旅行",
+          "年末年始 ピーク",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -43,12 +73,36 @@ export async function generateMetadata({
   };
 }
 
-const CALENDAR: { range: string; level: "peak" | "high" | "mid" | "low"; note: string }[] = [
-  { range: "12/22 〜 12/25", level: "mid", note: "クリスマス前後は意外と落ち着く狙い目期間。" },
-  { range: "12/26 〜 12/27", level: "high", note: "帰省・出発ラッシュ前夜。料金が急上昇し始める。" },
-  { range: "12/28 〜 1/3", level: "peak", note: "年末年始の最ピーク。航空券・ホテルとも年間最高値クラス。" },
-  { range: "1/4 〜 1/7", level: "high", note: "Uターンラッシュ。復路特に高値。" },
-  { range: "1/8 以降", level: "low", note: "通常料金へ急落。1月後半は年間でも底値圏。" },
+const CALENDAR: {
+  range: string;
+  level: "peak" | "high" | "mid" | "low";
+  note: string;
+}[] = [
+  {
+    range: "12/22 〜 12/25",
+    level: "mid",
+    note: "クリスマス前後は意外と落ち着く狙い目期間。",
+  },
+  {
+    range: "12/26 〜 12/27",
+    level: "high",
+    note: "帰省・出発ラッシュ前夜。料金が急上昇し始める。",
+  },
+  {
+    range: "12/28 〜 1/3",
+    level: "peak",
+    note: "年末年始の最ピーク。航空券・ホテルとも年間最高値クラス。",
+  },
+  {
+    range: "1/4 〜 1/7",
+    level: "high",
+    note: "Uターンラッシュ。復路特に高値。",
+  },
+  {
+    range: "1/8 以降",
+    level: "low",
+    note: "通常料金へ急落。1月後半は年間でも底値圏。",
+  },
 ];
 
 const TIPS: { icon: typeof Calendar; title: string; body: string }[] = [
@@ -74,13 +128,49 @@ const TIPS: { icon: typeof Calendar; title: string; body: string }[] = [
   },
 ];
 
-const DESTINATIONS: { area: string; type: "国内" | "海外"; emoji: string; highlight: string }[] = [
-  { area: "沖縄", type: "国内", emoji: "🌺", highlight: "冬でも20℃前後、リゾートホテルで初日の出。直行便多数。" },
-  { area: "北海道", type: "国内", emoji: "❄️", highlight: "雪見温泉・スキー・札幌雪まつり前夜祭。ANA/JAL の年末セール対象も多い。" },
-  { area: "京都", type: "国内", emoji: "⛩️", highlight: "初詣定番。新幹線+老舗旅館で正月らしい和の年越し。" },
-  { area: "ハワイ", type: "海外", emoji: "🏝️", highlight: "年末年始の鉄板リゾート。ピーク料金だが早期予約で大幅差。" },
-  { area: "グアム", type: "海外", emoji: "🌴", highlight: "4時間で南国。短期日程でも往復しやすく家族連れに人気。" },
-  { area: "台北", type: "海外", emoji: "🇹🇼", highlight: "近距離・低予算で海外気分。年越しの台北101花火が圧巻。" },
+const DESTINATIONS: {
+  area: string;
+  type: "国内" | "海外";
+  emoji: string;
+  highlight: string;
+}[] = [
+  {
+    area: "沖縄",
+    type: "国内",
+    emoji: "🌺",
+    highlight: "冬でも20℃前後、リゾートホテルで初日の出。直行便多数。",
+  },
+  {
+    area: "北海道",
+    type: "国内",
+    emoji: "❄️",
+    highlight:
+      "雪見温泉・スキー・札幌雪まつり前夜祭。ANA/JAL の年末セール対象も多い。",
+  },
+  {
+    area: "京都",
+    type: "国内",
+    emoji: "⛩️",
+    highlight: "初詣定番。新幹線+老舗旅館で正月らしい和の年越し。",
+  },
+  {
+    area: "ハワイ",
+    type: "海外",
+    emoji: "🏝️",
+    highlight: "年末年始の鉄板リゾート。ピーク料金だが早期予約で大幅差。",
+  },
+  {
+    area: "グアム",
+    type: "海外",
+    emoji: "🌴",
+    highlight: "4時間で南国。短期日程でも往復しやすく家族連れに人気。",
+  },
+  {
+    area: "台北",
+    type: "海外",
+    emoji: "🇹🇼",
+    highlight: "近距離・低予算で海外気分。年越しの台北101花火が圧巻。",
+  },
 ];
 
 const FAQS = [
@@ -106,18 +196,27 @@ const FAQS = [
   },
 ];
 
-export default async function YearEndSeasonPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function YearEndSeasonPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "年末年始の航空券・ホテル予約完全ガイド｜12月〜1月の最安タイミング",
+    headline:
+      "年末年始の航空券・ホテル予約完全ガイド｜12月〜1月の最安タイミング",
     description:
       "年末年始のピーク・底値カレンダー、予約のコツ、人気目的地、FAQ までを完全網羅した予約ガイド。",
     inLanguage: "ja-JP",
     datePublished: "2026-06-01",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -164,11 +263,15 @@ export default async function YearEndSeasonPage({ params }: { params: Promise<{ 
       <Header />
 
       {/* Hero */}
-      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.season} text-white`}>
+      <section
+        className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.season} text-white`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? "/en/seasons/year-end" : "/seasons/year-end"}
+            currentPath={
+              lang === "en" ? "/en/seasons/year-end" : "/seasons/year-end"
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "季節特集", href: "/seasons/year-end" },
@@ -191,7 +294,10 @@ export default async function YearEndSeasonPage({ params }: { params: Promise<{ 
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* ピーク時期カレンダー */}
@@ -349,7 +455,12 @@ export default async function YearEndSeasonPage({ params }: { params: Promise<{ 
             <JapanesePartnersPanel
               title="年末年始の予約・比較"
               subtitle="航空券・ホテル・ツアーをまとめて比較"
-              categories={["flight-domestic", "flight-overseas", "hotel-domestic", "tour-package"]}
+              categories={[
+                "flight-domestic",
+                "flight-overseas",
+                "hotel-domestic",
+                "tour-package",
+              ]}
               source="seasons-year-end"
             />
 

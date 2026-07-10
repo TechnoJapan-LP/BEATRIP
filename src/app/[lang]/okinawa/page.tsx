@@ -10,6 +10,7 @@ import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 import { getDestinationImage } from "@/lib/deals/destination-images";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -32,9 +33,34 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["Okinawa travel", "Okinawa from Tokyo", "Miyako Island", "Ishigaki", "Iriomote", "Naha", "Okinawa best season", "Okinawa rental car"]
-      : ["沖縄 旅行", "沖縄 ツアー", "沖縄 格安", "沖縄本島", "宮古島", "石垣島", "西表島", "久米島", "沖縄 ベストシーズン", "沖縄 レンタカー"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "Okinawa travel",
+          "Okinawa from Tokyo",
+          "Miyako Island",
+          "Ishigaki",
+          "Iriomote",
+          "Naha",
+          "Okinawa best season",
+          "Okinawa rental car",
+        ]
+      : [
+          "沖縄 旅行",
+          "沖縄 ツアー",
+          "沖縄 格安",
+          "沖縄本島",
+          "宮古島",
+          "石垣島",
+          "西表島",
+          "久米島",
+          "沖縄 ベストシーズン",
+          "沖縄 レンタカー",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -54,7 +80,13 @@ const ISLANDS: { name: string; tagline: string; spots: string[] }[] = [
   {
     name: "宮古島",
     tagline: "海の透明度No.1。ビーチ目当てなら迷わずここ",
-    spots: ["与那覇前浜ビーチ", "伊良部大橋", "砂山ビーチ", "下地島", "東平安名崎"],
+    spots: [
+      "与那覇前浜ビーチ",
+      "伊良部大橋",
+      "砂山ビーチ",
+      "下地島",
+      "東平安名崎",
+    ],
   },
   {
     name: "石垣島",
@@ -74,11 +106,31 @@ const ISLANDS: { name: string; tagline: string; spots: string[] }[] = [
 ];
 
 const SEASONS = [
-  { label: "ベストシーズン", months: "4-6月, 10-11月", note: "梅雨明け前後と秋口。海水温暖かく台風リスクも低めで料金も抑えめ" },
-  { label: "ハイシーズン", months: "7-8月", note: "夏休み・お盆で料金は最高値。海は最高だが台風直撃リスクあり" },
-  { label: "梅雨", months: "5月中旬-6月下旬", note: "本土より早く雨多め。ただし晴れ間も多く、料金面ではむしろ狙い目" },
-  { label: "台風シーズン", months: "8-10月", note: "進路次第で欠航リスクあり。航空券のフレキシブル運賃や早めの帰島を" },
-  { label: "オフシーズン", months: "12-2月", note: "海水浴は不向きだが、ホエールウォッチング・最安値旅行・桜（1月下旬-2月）" },
+  {
+    label: "ベストシーズン",
+    months: "4-6月, 10-11月",
+    note: "梅雨明け前後と秋口。海水温暖かく台風リスクも低めで料金も抑えめ",
+  },
+  {
+    label: "ハイシーズン",
+    months: "7-8月",
+    note: "夏休み・お盆で料金は最高値。海は最高だが台風直撃リスクあり",
+  },
+  {
+    label: "梅雨",
+    months: "5月中旬-6月下旬",
+    note: "本土より早く雨多め。ただし晴れ間も多く、料金面ではむしろ狙い目",
+  },
+  {
+    label: "台風シーズン",
+    months: "8-10月",
+    note: "進路次第で欠航リスクあり。航空券のフレキシブル運賃や早めの帰島を",
+  },
+  {
+    label: "オフシーズン",
+    months: "12-2月",
+    note: "海水浴は不向きだが、ホエールウォッチング・最安値旅行・桜（1月下旬-2月）",
+  },
 ];
 
 const ESSENTIALS: { icon: typeof Sun; title: string; body: string }[] = [
@@ -132,7 +184,11 @@ const FAQS = [
   },
 ];
 
-export default async function OkinawaPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function OkinawaPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -143,7 +199,11 @@ export default async function OkinawaPage({ params }: { params: Promise<{ lang: 
     inLanguage: "ja-JP",
     datePublished: "2026-06-01",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -198,10 +258,7 @@ export default async function OkinawaPage({ params }: { params: Promise<{ lang: 
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/okinawa" : "/okinawa"}
-            items={[
-              { label: "Home", href: "/" },
-              { label: "沖縄" },
-            ]}
+            items={[{ label: "Home", href: "/" }, { label: "沖縄" }]}
           />
           <div className="mt-4 flex items-center gap-3 mb-2">
             <Palmtree className="h-7 w-7 text-emerald-300" />
@@ -219,7 +276,10 @@ export default async function OkinawaPage({ params }: { params: Promise<{ lang: 
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 本島 vs 離島 */}
@@ -265,7 +325,10 @@ export default async function OkinawaPage({ params }: { params: Promise<{ lang: 
               <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
                 <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
                   {SEASONS.map((s) => (
-                    <div key={s.label} className="flex items-start gap-4 px-5 py-3">
+                    <div
+                      key={s.label}
+                      className="flex items-start gap-4 px-5 py-3"
+                    >
                       <div className="w-32 flex-shrink-0">
                         <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                           {s.label}
@@ -392,7 +455,11 @@ export default async function OkinawaPage({ params }: { params: Promise<{ lang: 
             <JapanesePartnersPanel
               title="現地で楽しむ・移動する"
               subtitle="航空券・レンタカー・現地アクティビティ"
-              categories={["flight-domestic", "rental-car", "activity-domestic"]}
+              categories={[
+                "flight-domestic",
+                "rental-car",
+                "activity-domestic",
+              ]}
               destinationCode="OKA"
               source="okinawa-landing"
             />

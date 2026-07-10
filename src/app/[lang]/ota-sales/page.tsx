@@ -17,6 +17,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600 秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -39,9 +40,33 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["OTA hotel sale", "Booking.com sale", "Agoda sale", "Trip.com sale", "Rakuten Travel super sale", "hotel sale comparison", "best time to book hotel", "lowest hotel price"]
-      : ["OTA セール", "OTA 比較", "ホテル予約サイト 比較", "Booking キャンペーン", "楽天トラベル スーパーセール", "Agoda セール", "じゃらん セール", "ホテル予約 安い時期", "ホテル 最安値"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "OTA hotel sale",
+          "Booking.com sale",
+          "Agoda sale",
+          "Trip.com sale",
+          "Rakuten Travel super sale",
+          "hotel sale comparison",
+          "best time to book hotel",
+          "lowest hotel price",
+        ]
+      : [
+          "OTA セール",
+          "OTA 比較",
+          "ホテル予約サイト 比較",
+          "Booking キャンペーン",
+          "楽天トラベル スーパーセール",
+          "Agoda セール",
+          "じゃらん セール",
+          "ホテル予約 安い時期",
+          "ホテル 最安値",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -325,15 +350,17 @@ const CITY_LINKS: { code: string; name: string }[] = [
 ];
 
 const COVERAGE_BADGE: Record<Coverage, string> = {
-  "海外中心":
-    "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200",
-  "国内中心":
-    "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200",
+  海外中心: "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-200",
+  国内中心: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200",
   "国内・海外":
     "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-200",
 };
 
-export default async function OtaSalesPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function OtaSalesPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const today = new Date().toISOString().split("T")[0];
 
@@ -407,7 +434,9 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
       <Header />
 
       {/* Hero */}
-      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.knowledge} text-white`}>
+      <section
+        className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.knowledge} text-white`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
@@ -427,14 +456,17 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
             OTA セール完全ガイド
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">
-            ホテル予約サイトの料金比較・セール時期一覧。
-            Booking / Trip.com / 楽天 / Agoda / じゃらん など主要 12 社の特徴を、
+            ホテル予約サイトの料金比較・セール時期一覧。 Booking / Trip.com /
+            楽天 / Agoda / じゃらん など主要 12 社の特徴を、
             月別キャンペーンカレンダーと併せて整理しました。
           </p>
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 1. 5 大 OTA 比較表 */}
@@ -446,7 +478,8 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
                 </h2>
               </div>
               <p className="text-sm text-zinc-500 mb-6">
-                Booking / Trip.com / 楽天 / Agoda / じゃらん など 12 社の強み・セール時期・ポイント還元
+                Booking / Trip.com / 楽天 / Agoda / じゃらん など 12
+                社の強み・セール時期・ポイント還元
               </p>
               {/* モバイル: 縦積みカードリスト */}
               <ul className="sm:hidden divide-y divide-zinc-100 dark:divide-zinc-800 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900">
@@ -462,16 +495,24 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
                         {o.name}
                         <ArrowUpRight className="h-3.5 w-3.5" />
                       </a>
-                      <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${COVERAGE_BADGE[o.coverage]}`}>
+                      <span
+                        className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${COVERAGE_BADGE[o.coverage]}`}
+                      >
                         {o.coverage}
                       </span>
                     </div>
-                    <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">{o.strength}</p>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                      {o.strength}
+                    </p>
                     <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-[11px]">
                       <dt className="text-zinc-400 font-bold">セール時期</dt>
-                      <dd className="text-zinc-700 dark:text-zinc-200">{o.sale}</dd>
+                      <dd className="text-zinc-700 dark:text-zinc-200">
+                        {o.sale}
+                      </dd>
                       <dt className="text-zinc-400 font-bold">ポイント</dt>
-                      <dd className="text-zinc-700 dark:text-zinc-200">{o.points}</dd>
+                      <dd className="text-zinc-700 dark:text-zinc-200">
+                        {o.points}
+                      </dd>
                     </dl>
                   </li>
                 ))}
@@ -482,11 +523,19 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
                 <table className="min-w-[820px] w-full text-xs sm:text-sm">
                   <thead className="bg-zinc-50 dark:bg-zinc-900/50 text-zinc-600 dark:text-zinc-300">
                     <tr>
-                      <th className="text-left font-bold px-4 py-3 whitespace-nowrap">サービス</th>
+                      <th className="text-left font-bold px-4 py-3 whitespace-nowrap">
+                        サービス
+                      </th>
                       <th className="text-left font-bold px-4 py-3">強み</th>
-                      <th className="text-left font-bold px-4 py-3 whitespace-nowrap">主要セール時期</th>
-                      <th className="text-left font-bold px-4 py-3 whitespace-nowrap">取扱範囲</th>
-                      <th className="text-left font-bold px-4 py-3 whitespace-nowrap">ポイント還元</th>
+                      <th className="text-left font-bold px-4 py-3 whitespace-nowrap">
+                        主要セール時期
+                      </th>
+                      <th className="text-left font-bold px-4 py-3 whitespace-nowrap">
+                        取扱範囲
+                      </th>
+                      <th className="text-left font-bold px-4 py-3 whitespace-nowrap">
+                        ポイント還元
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800 bg-white dark:bg-zinc-900">
@@ -503,21 +552,30 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
                             <ArrowUpRight className="h-3 w-3" />
                           </a>
                         </td>
-                        <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">{o.strength}</td>
-                        <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">{o.sale}</td>
+                        <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                          {o.strength}
+                        </td>
+                        <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                          {o.sale}
+                        </td>
                         <td className="px-4 py-3 whitespace-nowrap">
-                          <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${COVERAGE_BADGE[o.coverage]}`}>
+                          <span
+                            className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${COVERAGE_BADGE[o.coverage]}`}
+                          >
                             {o.coverage}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">{o.points}</td>
+                        <td className="px-4 py-3 text-zinc-600 dark:text-zinc-300">
+                          {o.points}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               <p className="text-[11px] text-zinc-400 mt-2">
-                ※ セール時期は各 OTA の例年実績ベース。最新の開催は各社公式サイトをご確認ください。
+                ※ セール時期は各 OTA
+                の例年実績ベース。最新の開催は各社公式サイトをご確認ください。
               </p>
             </section>
 
@@ -547,7 +605,9 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
                           key={i}
                           className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed flex gap-2"
                         >
-                          <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                          <span className="text-zinc-300 dark:text-zinc-600">
+                            •
+                          </span>
                           <span>{d}</span>
                         </li>
                       ))}
@@ -658,7 +718,12 @@ export default async function OtaSalesPage({ params }: { params: Promise<{ lang:
             <JapanesePartnersPanel
               title="ホテル予約サイトで比較"
               subtitle="国内・海外・高級・グランピングまで一括検索"
-              categories={["hotel-domestic", "hotel-luxury", "hotel-overseas", "hotel-glamping"]}
+              categories={[
+                "hotel-domestic",
+                "hotel-luxury",
+                "hotel-overseas",
+                "hotel-glamping",
+              ]}
               source="ota-sales-landing"
             />
 

@@ -16,8 +16,9 @@ import { getAllArticles } from "@/lib/articles/get-all-articles";
 import { mockSaleEvents } from "@/data/mock-deals";
 import { UpcomingDealCard } from "@/components/deals/upcoming-deal-card";
 import { SiteFooter } from "@/components/site-footer";
+import { OG_IMAGES } from "@/lib/seo/og";
 
-type Props = { params: Promise<{ code: string; lang: string;}> };
+type Props = { params: Promise<{ code: string; lang: string }> };
 
 // ISR: 3600秒キャッシュ (1時間)
 export const revalidate = 86400;
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!airline) return { title: "Not Found" };
 
   const isEn = lang === "en";
-  const airlineName = isEn ? (airline.nameEn || airline.name) : airline.name;
+  const airlineName = isEn ? airline.nameEn || airline.name : airline.name;
   const title = isEn
     ? `${airlineName} sales — latest flash sales and promo campaigns`
     : `${airlineName} セール最新情報・タイムセール開催状況`;
@@ -41,7 +42,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: { title, description },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -59,16 +64,24 @@ export function generateStaticParams() {
 async function getAirlineData(code: string) {
   const stored = await loadSales(code);
   if (stored.sales.length > 0) {
-    return { sales: stored.sales, history: stored.history, lastScraped: stored.lastScraped };
+    return {
+      sales: stored.sales,
+      history: stored.history,
+      lastScraped: stored.lastScraped,
+    };
   }
   const result = await scrapeAirline(code);
   const change = await saveSalesAndDetectChanges(result);
   const updated = await loadSales(code);
-  return { sales: updated.sales, history: updated.history, lastScraped: updated.lastScraped };
+  return {
+    sales: updated.sales,
+    history: updated.history,
+    lastScraped: updated.lastScraped,
+  };
 }
 
 export default async function AirlineDetailPage({ params }: Props) {
-  const { code, lang} = await params;
+  const { code, lang } = await params;
   // URL は小文字 (/airlines/ana) でも届くため、データ照合は大文字コードで行う
   const airlineCode = code.toUpperCase();
   const airline = getAirlineByCode(airlineCode);
@@ -82,13 +95,15 @@ export default async function AirlineDetailPage({ params }: Props) {
   const relatedArticles = allArticles
     .filter((a) =>
       a.airline_tags.some(
-        (t) => t === airline.name || t.toLowerCase() === airline.nameEn.toLowerCase()
-      )
+        (t) =>
+          t === airline.name ||
+          t.toLowerCase() === airline.nameEn.toLowerCase(),
+      ),
     )
     .slice(0, 3);
 
   const upcomingEvents = mockSaleEvents.filter(
-    (e) => e.airline === airline.nameEn || e.airline === airline.name
+    (e) => e.airline === airline.nameEn || e.airline === airline.name,
   );
 
   // Airline (Organization) JSON-LD — 航空会社エンティティとして検索エンジンに認識させる
@@ -145,7 +160,9 @@ export default async function AirlineDetailPage({ params }: Props) {
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-6">
           <Breadcrumbs
-            currentPath={lang === "en" ? `/en/airlines/${code}` : `/airlines/${code}`}
+            currentPath={
+              lang === "en" ? `/en/airlines/${code}` : `/airlines/${code}`
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "Airlines", href: "/airlines" },
@@ -161,7 +178,11 @@ export default async function AirlineDetailPage({ params }: Props) {
               style={{ backgroundColor: airline.color + "15" }}
             >
               {/* 隣の h1 が airline 名を読み上げるため装飾扱い */}
-              <img src={airline.logo} alt="" className="h-10 w-10 object-contain" />
+              <img
+                src={airline.logo}
+                alt=""
+                className="h-10 w-10 object-contain"
+              />
             </div>
             <div>
               <div className="flex items-center gap-2">

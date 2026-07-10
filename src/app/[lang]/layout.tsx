@@ -17,6 +17,7 @@ import {
   ORGANIZATION_SAME_AS,
 } from "@/lib/site-config";
 import "../globals.css";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -88,6 +89,7 @@ export async function generateMetadata({
       statusBarStyle: "black-translucent",
     },
     openGraph: {
+      images: OG_IMAGES,
       title: m.title,
       description: m.description,
       type: "website",
@@ -193,8 +195,7 @@ export default async function RootLayout({
                     "@type": "SearchAction",
                     target: {
                       "@type": "EntryPoint",
-                      urlTemplate:
-                        "https://beatrip.jp/?q={search_term_string}",
+                      urlTemplate: "https://beatrip.jp/?q={search_term_string}",
                     },
                     "query-input": "required name=search_term_string",
                   },

@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Anchor, Calendar, Globe2, Sparkles, MapPin, ArrowRight, ArrowUpRight } from "lucide-react";
+import {
+  Anchor,
+  Calendar,
+  Globe2,
+  Sparkles,
+  MapPin,
+  ArrowRight,
+  ArrowUpRight,
+} from "lucide-react";
 import { Header } from "@/components/header";
 import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -8,6 +16,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -30,9 +39,31 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["cruise from Japan", "Mediterranean cruise", "Caribbean cruise", "Alaska cruise", "Pacific cruise", "cruise comparison", "cruise booking"]
-      : ["クルーズ旅行", "クルーズ 比較", "船旅", "日本発着 クルーズ", "地中海クルーズ", "カリブ海クルーズ", "クルーズ 予約", "クルーズ 安い"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "cruise from Japan",
+          "Mediterranean cruise",
+          "Caribbean cruise",
+          "Alaska cruise",
+          "Pacific cruise",
+          "cruise comparison",
+          "cruise booking",
+        ]
+      : [
+          "クルーズ旅行",
+          "クルーズ 比較",
+          "船旅",
+          "日本発着 クルーズ",
+          "地中海クルーズ",
+          "カリブ海クルーズ",
+          "クルーズ 予約",
+          "クルーズ 安い",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -43,20 +74,71 @@ export async function generateMetadata({
   };
 }
 
-const ROUTES: { area: string; emoji: string; highlight: string; duration: string }[] = [
-  { area: "日本発着 太平洋", emoji: "🗾", highlight: "横浜・神戸発着で気軽に乗船、世界的客船の寄港も多数", duration: "3〜10日" },
-  { area: "地中海クルーズ", emoji: "🇮🇹", highlight: "イタリア・スペイン・ギリシャの古都を巡る", duration: "7〜14日" },
-  { area: "カリブ海クルーズ", emoji: "🏝️", highlight: "ビーチアイランドホッピング・年間通じて温暖", duration: "7〜10日" },
-  { area: "アラスカクルーズ", emoji: "🐋", highlight: "氷河・野生動物・大自然・夏季限定の絶景航路", duration: "7〜14日" },
-  { area: "北欧フィヨルド", emoji: "🇳🇴", highlight: "ノルウェーの世界遺産フィヨルド・白夜の絶景", duration: "7〜12日" },
-  { area: "アジア周遊", emoji: "🌏", highlight: "シンガポール・タイ・ベトナム・短期から長期まで多彩", duration: "5〜14日" },
+const ROUTES: {
+  area: string;
+  emoji: string;
+  highlight: string;
+  duration: string;
+}[] = [
+  {
+    area: "日本発着 太平洋",
+    emoji: "🗾",
+    highlight: "横浜・神戸発着で気軽に乗船、世界的客船の寄港も多数",
+    duration: "3〜10日",
+  },
+  {
+    area: "地中海クルーズ",
+    emoji: "🇮🇹",
+    highlight: "イタリア・スペイン・ギリシャの古都を巡る",
+    duration: "7〜14日",
+  },
+  {
+    area: "カリブ海クルーズ",
+    emoji: "🏝️",
+    highlight: "ビーチアイランドホッピング・年間通じて温暖",
+    duration: "7〜10日",
+  },
+  {
+    area: "アラスカクルーズ",
+    emoji: "🐋",
+    highlight: "氷河・野生動物・大自然・夏季限定の絶景航路",
+    duration: "7〜14日",
+  },
+  {
+    area: "北欧フィヨルド",
+    emoji: "🇳🇴",
+    highlight: "ノルウェーの世界遺産フィヨルド・白夜の絶景",
+    duration: "7〜12日",
+  },
+  {
+    area: "アジア周遊",
+    emoji: "🌏",
+    highlight: "シンガポール・タイ・ベトナム・短期から長期まで多彩",
+    duration: "5〜14日",
+  },
 ];
 
 const TIPS: { icon: typeof Anchor; title: string; body: string }[] = [
-  { icon: Calendar, title: "予約タイミング", body: "出発6〜12ヶ月前の早期予約割引が最もお得。出発1〜2ヶ月前の直前セールでも掘り出し物が出ます。" },
-  { icon: Globe2, title: "客船と航路の選び方", body: "短期初心者向けは日本発着3〜5日、本格派は地中海・カリブ海7日以上。客船規模で雰囲気が変わるためレビュー必読。" },
-  { icon: Sparkles, title: "船内料金の確認", body: "基本料金にチップ・寄港地観光・アルコールが含まれるかは要確認。全部込みの「オールインクルーシブ」プランが安心。" },
-  { icon: MapPin, title: "寄港地観光", body: "船会社主催ツアー vs 個人手配で大きく差が出る。事前にKKdayやBUYMA TRAVELで現地ツアーを予約しておくとお得。" },
+  {
+    icon: Calendar,
+    title: "予約タイミング",
+    body: "出発6〜12ヶ月前の早期予約割引が最もお得。出発1〜2ヶ月前の直前セールでも掘り出し物が出ます。",
+  },
+  {
+    icon: Globe2,
+    title: "客船と航路の選び方",
+    body: "短期初心者向けは日本発着3〜5日、本格派は地中海・カリブ海7日以上。客船規模で雰囲気が変わるためレビュー必読。",
+  },
+  {
+    icon: Sparkles,
+    title: "船内料金の確認",
+    body: "基本料金にチップ・寄港地観光・アルコールが含まれるかは要確認。全部込みの「オールインクルーシブ」プランが安心。",
+  },
+  {
+    icon: MapPin,
+    title: "寄港地観光",
+    body: "船会社主催ツアー vs 個人手配で大きく差が出る。事前にKKdayやBUYMA TRAVELで現地ツアーを予約しておくとお得。",
+  },
 ];
 
 const FAQS = [
@@ -82,7 +164,11 @@ const FAQS = [
   },
 ];
 
-export default async function CruisePage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function CruisePage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -134,15 +220,14 @@ export default async function CruisePage({ params }: { params: Promise<{ lang: s
       <Header />
 
       {/* Hero */}
-      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.destination} text-white`}>
+      <section
+        className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.destination} text-white`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/cruise" : "/cruise"}
-            items={[
-              { label: "Home", href: "/" },
-              { label: "クルーズ" },
-            ]}
+            items={[{ label: "Home", href: "/" }, { label: "クルーズ" }]}
           />
           <div className="mt-6 flex items-center gap-3 mb-4">
             <Anchor className="h-8 w-8" />
@@ -160,7 +245,10 @@ export default async function CruisePage({ params }: { params: Promise<{ lang: s
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 主要航路 */}
@@ -183,7 +271,9 @@ export default async function CruisePage({ params }: { params: Promise<{ lang: s
                         <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                           {r.area}
                         </h3>
-                        <p className="text-xs text-zinc-500 mt-0.5">所要 {r.duration}</p>
+                        <p className="text-xs text-zinc-500 mt-0.5">
+                          所要 {r.duration}
+                        </p>
                         <p className="text-xs text-zinc-600 dark:text-zinc-300 mt-1.5 leading-relaxed">
                           {r.highlight}
                         </p>

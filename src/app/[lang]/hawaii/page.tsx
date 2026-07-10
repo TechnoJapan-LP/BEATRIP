@@ -10,6 +10,7 @@ import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 import { getDestinationImage } from "@/lib/deals/destination-images";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -32,9 +33,33 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["Hawaii travel", "Hawaii from Japan", "Oahu", "Waikiki", "Maui", "Big Island", "Hawaii flights", "best time to visit Hawaii"]
-      : ["ハワイ 旅行", "ハワイ ツアー", "ハワイ 格安", "オアフ島", "ワイキキ", "マウイ島", "ハワイ島", "ハワイ 航空券", "ハワイ ベストシーズン"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "Hawaii travel",
+          "Hawaii from Japan",
+          "Oahu",
+          "Waikiki",
+          "Maui",
+          "Big Island",
+          "Hawaii flights",
+          "best time to visit Hawaii",
+        ]
+      : [
+          "ハワイ 旅行",
+          "ハワイ ツアー",
+          "ハワイ 格安",
+          "オアフ島",
+          "ワイキキ",
+          "マウイ島",
+          "ハワイ島",
+          "ハワイ 航空券",
+          "ハワイ ベストシーズン",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -49,17 +74,33 @@ const ISLANDS: { name: string; tagline: string; spots: string[] }[] = [
   {
     name: "オアフ島",
     tagline: "王道・初心者向け。ワイキキ・ダイヤモンドヘッド・パールハーバー",
-    spots: ["ワイキキビーチ", "ダイヤモンドヘッド", "ハナウマ湾", "パールハーバー", "ノースショア"],
+    spots: [
+      "ワイキキビーチ",
+      "ダイヤモンドヘッド",
+      "ハナウマ湾",
+      "パールハーバー",
+      "ノースショア",
+    ],
   },
   {
     name: "マウイ島",
     tagline: "自然派・リゾート派に。ハレアカラ山・ハナへの道",
-    spots: ["ハレアカラ国立公園", "ハナへの道", "カアナパリビーチ", "イアオ渓谷"],
+    spots: [
+      "ハレアカラ国立公園",
+      "ハナへの道",
+      "カアナパリビーチ",
+      "イアオ渓谷",
+    ],
   },
   {
     name: "ハワイ島（ビッグアイランド）",
     tagline: "ハワイ最大の島。活火山・スターゲイジング",
-    spots: ["ハワイ火山国立公園", "マウナケア山頂", "コナコーヒー農園", "プナルウ黒砂海岸"],
+    spots: [
+      "ハワイ火山国立公園",
+      "マウナケア山頂",
+      "コナコーヒー農園",
+      "プナルウ黒砂海岸",
+    ],
   },
   {
     name: "カウアイ島",
@@ -69,17 +110,49 @@ const ISLANDS: { name: string; tagline: string; spots: string[] }[] = [
 ];
 
 const SEASONS = [
-  { label: "ベストシーズン", months: "4-5月, 9-10月", note: "雨少なめ・観光客が落ち着く・料金も比較的安め" },
-  { label: "ハイシーズン", months: "6-8月, 12-1月", note: "夏休み・年末年始で料金は最高値。早期予約必須" },
-  { label: "サーフィン", months: "11-3月", note: "ノースショアに大波が訪れる・観戦旅行ならこの時期" },
-  { label: "ホエールウォッチング", months: "12-4月", note: "ザトウクジラが繁殖のため来訪・船ツアーが人気" },
+  {
+    label: "ベストシーズン",
+    months: "4-5月, 9-10月",
+    note: "雨少なめ・観光客が落ち着く・料金も比較的安め",
+  },
+  {
+    label: "ハイシーズン",
+    months: "6-8月, 12-1月",
+    note: "夏休み・年末年始で料金は最高値。早期予約必須",
+  },
+  {
+    label: "サーフィン",
+    months: "11-3月",
+    note: "ノースショアに大波が訪れる・観戦旅行ならこの時期",
+  },
+  {
+    label: "ホエールウォッチング",
+    months: "12-4月",
+    note: "ザトウクジラが繁殖のため来訪・船ツアーが人気",
+  },
 ];
 
 const ESSENTIALS: { icon: typeof Sun; title: string; body: string }[] = [
-  { icon: Sun, title: "日焼け対策", body: "SPF 50+ の日焼け止め必須。サンゴ礁に優しい reef-safe タイプを。サングラスとつば広帽子も忘れずに。" },
-  { icon: Waves, title: "水着・マリンウェア", body: "ラッシュガード（長袖）あれば日焼け軽減＆サンゴ保護にも。マリンシューズで足元保護。" },
-  { icon: Sparkles, title: "ESTA・パスポート", body: "ESTA (米国電子渡航認証) を出発72時間前までに取得。パスポート残存有効期間も確認。" },
-  { icon: Coffee, title: "現地通信", body: "Wi-Fi は無料スポットあるが不安定。eSIM か Wi-Fi レンタルでスマホは確実に使えるように。" },
+  {
+    icon: Sun,
+    title: "日焼け対策",
+    body: "SPF 50+ の日焼け止め必須。サンゴ礁に優しい reef-safe タイプを。サングラスとつば広帽子も忘れずに。",
+  },
+  {
+    icon: Waves,
+    title: "水着・マリンウェア",
+    body: "ラッシュガード（長袖）あれば日焼け軽減＆サンゴ保護にも。マリンシューズで足元保護。",
+  },
+  {
+    icon: Sparkles,
+    title: "ESTA・パスポート",
+    body: "ESTA (米国電子渡航認証) を出発72時間前までに取得。パスポート残存有効期間も確認。",
+  },
+  {
+    icon: Coffee,
+    title: "現地通信",
+    body: "Wi-Fi は無料スポットあるが不安定。eSIM か Wi-Fi レンタルでスマホは確実に使えるように。",
+  },
 ];
 
 const FAQS = [
@@ -105,7 +178,11 @@ const FAQS = [
   },
 ];
 
-export default async function HawaiiPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function HawaiiPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -116,7 +193,11 @@ export default async function HawaiiPage({ params }: { params: Promise<{ lang: s
     inLanguage: "ja-JP",
     datePublished: "2026-06-01",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -170,10 +251,7 @@ export default async function HawaiiPage({ params }: { params: Promise<{ lang: s
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/hawaii" : "/hawaii"}
-            items={[
-              { label: "Home", href: "/" },
-              { label: "ハワイ" },
-            ]}
+            items={[{ label: "Home", href: "/" }, { label: "ハワイ" }]}
           />
           <div className="mt-4 flex items-center gap-3 mb-2">
             <Sun className="h-7 w-7 text-amber-300" />
@@ -190,7 +268,10 @@ export default async function HawaiiPage({ params }: { params: Promise<{ lang: s
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 4島の特徴 */}
@@ -236,7 +317,10 @@ export default async function HawaiiPage({ params }: { params: Promise<{ lang: s
               <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
                 <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
                   {SEASONS.map((s) => (
-                    <div key={s.label} className="flex items-start gap-4 px-5 py-3">
+                    <div
+                      key={s.label}
+                      className="flex items-start gap-4 px-5 py-3"
+                    >
                       <div className="w-32 flex-shrink-0">
                         <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                           {s.label}
@@ -340,7 +424,12 @@ export default async function HawaiiPage({ params }: { params: Promise<{ lang: s
             <JapanesePartnersPanel
               title="ハワイ旅行の予約・比較"
               subtitle="ハワイ特化サイトから航空券・ホテルまで"
-              categories={["tour-hawaii", "tour-overseas", "flight-overseas", "hotel-overseas"]}
+              categories={[
+                "tour-hawaii",
+                "tour-overseas",
+                "flight-overseas",
+                "hotel-overseas",
+              ]}
               destinationCode="HNL"
               source="hawaii-landing"
             />

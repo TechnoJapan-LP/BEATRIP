@@ -18,6 +18,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 
@@ -42,7 +43,12 @@ export async function generateMetadata(): Promise<Metadata> {
       "航空券 セール いつ",
       "航空券 最安",
     ],
-    openGraph: { title, description, type: "article" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "article",
+    },
     alternates: {
       canonical: "https://beatrip.jp/articles/sale-prediction-2027",
       languages: {
@@ -92,11 +98,17 @@ const QUARTERLY: { quarter: string; expectations: string[]; tip: string }[] = [
   },
 ];
 
-const CARRIERS: { name: string; frequency: string; bestSales: string; tip: string }[] = [
+const CARRIERS: {
+  name: string;
+  frequency: string;
+  bestSales: string;
+  tip: string;
+}[] = [
   {
     name: "ANA",
     frequency: "月 2-3 回",
-    bestSales: "「ANA SUPER VALUE」(75/55/45 日前) と「タイムセール」(月初不定期)",
+    bestSales:
+      "「ANA SUPER VALUE」(75/55/45 日前) と「タイムセール」(月初不定期)",
     tip: "国内線は SUPER VALUE 75 日前が最安帯。国際線は会員限定タイムセールが見逃せない。",
   },
   {
@@ -158,18 +170,27 @@ const FAQS = [
   },
 ];
 
-export default async function SalePrediction2027Page({ params }: { params: Promise<{ lang: string }> }) {
+export default async function SalePrediction2027Page({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "2027 航空券セール スケジュール予測 — JAL/ANA/LCC 主要キャリア完全網羅",
+    headline:
+      "2027 航空券セール スケジュール予測 — JAL/ANA/LCC 主要キャリア完全網羅",
     description:
       "2027 年の主要キャリア別セール時期予測。四半期別カレンダーとキャリア別セール特性を網羅。",
     inLanguage: "ja-JP",
     datePublished: PUBLISHED,
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -204,7 +225,11 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? "/en/articles/sale-prediction-2027" : "/articles/sale-prediction-2027"}
+            currentPath={
+              lang === "en"
+                ? "/en/articles/sale-prediction-2027"
+                : "/articles/sale-prediction-2027"
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "Articles", href: "/articles" },
@@ -221,13 +246,17 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
             2027 航空券セール 予測カレンダー
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">
-            主要キャリア (JAL / ANA / Peach / Jetstar / ZIPAIR / Skymark) のセール時期を
-            過去 5 年分の傾向から四半期別に予測。年間で最も安い時期と狙い目を整理した予測ガイドです。
+            主要キャリア (JAL / ANA / Peach / Jetstar / ZIPAIR / Skymark)
+            のセール時期を 過去 5
+            年分の傾向から四半期別に予測。年間で最も安い時期と狙い目を整理した予測ガイドです。
           </p>
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 四半期予測 */}
@@ -236,7 +265,8 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
                 2027 四半期別セール予測
               </h2>
               <p className="text-sm text-zinc-500 mb-6">
-                過去 5 年分の傾向から導出した 2027 年セール時期の予測カレンダー。
+                過去 5 年分の傾向から導出した 2027
+                年セール時期の予測カレンダー。
               </p>
               <div className="space-y-4">
                 {QUARTERLY.map((q) => (
@@ -252,14 +282,20 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
                     </div>
                     <ul className="space-y-1.5 mb-3">
                       {q.expectations.map((e, i) => (
-                        <li key={i} className="text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2">
+                        <li
+                          key={i}
+                          className="text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2"
+                        >
                           <span className="text-emerald-500 mt-1">-</span>
                           <span>{e}</span>
                         </li>
                       ))}
                     </ul>
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed border-l-2 border-emerald-300 pl-3">
-                      <span className="font-bold text-zinc-700 dark:text-zinc-200">編集部メモ:</span> {q.tip}
+                      <span className="font-bold text-zinc-700 dark:text-zinc-200">
+                        編集部メモ:
+                      </span>{" "}
+                      {q.tip}
                     </p>
                   </div>
                 ))}
@@ -278,10 +314,18 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
-                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">キャリア</th>
-                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">頻度</th>
-                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200">代表セール</th>
-                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200">編集部メモ</th>
+                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">
+                        キャリア
+                      </th>
+                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">
+                        頻度
+                      </th>
+                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200">
+                        代表セール
+                      </th>
+                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200">
+                        編集部メモ
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -290,7 +334,9 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
                         <td className="px-3 py-3 whitespace-nowrap">
                           <div className="inline-flex items-center gap-1.5">
                             <Plane className="h-3.5 w-3.5 text-zinc-400" />
-                            <span className="font-bold text-zinc-900 dark:text-zinc-100">{c.name}</span>
+                            <span className="font-bold text-zinc-900 dark:text-zinc-100">
+                              {c.name}
+                            </span>
                           </div>
                         </td>
                         <td className="px-3 py-3 text-xs text-zinc-600 dark:text-zinc-300 whitespace-nowrap">
@@ -318,7 +364,8 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
                     予測の見方
                   </h2>
                   <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    本予測は過去 5 年分のセール開催パターンに基づく傾向予測であり、
+                    本予測は過去 5
+                    年分のセール開催パターンに基づく傾向予測であり、
                     確定スケジュールではありません。実際の開催時期・割引率は航空会社の判断・
                     需給状況・燃油サーチャージ等で変動します。最新情報は各キャリア公式と当サイトの
                     フラッシュディール・空港別ハブで随時確認してください。
@@ -351,7 +398,9 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
                     航空会社別セール一覧
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">ANA / JAL / Peach / Jetstar 等</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    ANA / JAL / Peach / Jetstar 等
+                  </p>
                   <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                     航空会社一覧へ <ArrowRight className="h-3 w-3" />
                   </div>
@@ -363,7 +412,9 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
                     マイルで予約 完全ガイド
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">JAL/ANA マイル特典航空券の取り方</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    JAL/ANA マイル特典航空券の取り方
+                  </p>
                   <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                     マイルガイドを見る <ArrowRight className="h-3 w-3" />
                   </div>
@@ -376,7 +427,11 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
             <JapanesePartnersPanel
               title="航空券 予約・比較"
               subtitle="国内・海外航空券をまとめて比較"
-              categories={["flight-domestic", "flight-overseas", "tour-package"]}
+              categories={[
+                "flight-domestic",
+                "flight-overseas",
+                "tour-package",
+              ]}
               source="sale-prediction-2027"
             />
             <div className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
@@ -387,7 +442,8 @@ export default async function SalePrediction2027Page({ params }: { params: Promi
                 </h3>
               </div>
               <p className="text-xs text-zinc-500 leading-relaxed">
-                セール価格 + マイル付帯で実質割引を最大化。年会費無料カードも比較。
+                セール価格 +
+                マイル付帯で実質割引を最大化。年会費無料カードも比較。
               </p>
               <Link
                 href="/credit-cards"

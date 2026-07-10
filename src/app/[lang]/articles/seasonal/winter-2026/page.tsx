@@ -22,6 +22,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 
@@ -47,7 +48,12 @@ export async function generateMetadata(): Promise<Metadata> {
       "冬 旅行 海外",
       "スキー 旅行",
     ],
-    openGraph: { title, description, type: "article" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "article",
+    },
     alternates: {
       canonical: "https://beatrip.jp/articles/seasonal/winter-2026",
       languages: {
@@ -58,7 +64,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const MONTHS: { month: string; theme: string; highlights: string[]; bestFor: string }[] = [
+const MONTHS: {
+  month: string;
+  theme: string;
+  highlights: string[];
+  bestFor: string;
+}[] = [
   {
     month: "12 月 (年末除く)",
     theme: "イルミネーション + 早冬の温泉",
@@ -77,7 +88,8 @@ const MONTHS: { month: string; theme: string; highlights: string[]; bestFor: str
       "ニセコ・白馬・志賀高原がスキーベスト期",
       "札幌・小樽の雪景色 (1 月後半が降雪量ピーク)",
     ],
-    bestFor: "1/8 以降は航空券・ホテル共に大幅安。スキー目的なら 1 月後半が雪質ベスト。",
+    bestFor:
+      "1/8 以降は航空券・ホテル共に大幅安。スキー目的なら 1 月後半が雪質ベスト。",
   },
   {
     month: "2 月",
@@ -92,19 +104,59 @@ const MONTHS: { month: string; theme: string; highlights: string[]; bestFor: str
 ];
 
 const DOMESTIC_DESTINATIONS = [
-  { area: "ニセコ", best: "1 月中旬〜2 月", note: "パウダースノーで世界的人気。1 ヶ月前予約推奨。" },
-  { area: "白馬", best: "1 月〜3 月上旬", note: "東京から新幹線 + バスで 3.5 時間。日帰り〜2 泊が定番。" },
-  { area: "札幌・小樽", best: "1 月後半〜2 月", note: "雪まつり前後は航空券・ホテル高め。前後 1 週間ずらしで節約。" },
-  { area: "草津温泉", best: "12 月〜2 月", note: "雪見露天が名物。冬期は道路凍結注意、バス利用推奨。" },
-  { area: "湯布院・別府", best: "12 月〜2 月", note: "九州の冬温泉は寒さも穏やか。福岡空港から 2 時間。" },
-  { area: "蔵王", best: "1 月後半〜2 月中旬", note: "樹氷ライトアップが圧巻。山形空港または仙台駅から。" },
+  {
+    area: "ニセコ",
+    best: "1 月中旬〜2 月",
+    note: "パウダースノーで世界的人気。1 ヶ月前予約推奨。",
+  },
+  {
+    area: "白馬",
+    best: "1 月〜3 月上旬",
+    note: "東京から新幹線 + バスで 3.5 時間。日帰り〜2 泊が定番。",
+  },
+  {
+    area: "札幌・小樽",
+    best: "1 月後半〜2 月",
+    note: "雪まつり前後は航空券・ホテル高め。前後 1 週間ずらしで節約。",
+  },
+  {
+    area: "草津温泉",
+    best: "12 月〜2 月",
+    note: "雪見露天が名物。冬期は道路凍結注意、バス利用推奨。",
+  },
+  {
+    area: "湯布院・別府",
+    best: "12 月〜2 月",
+    note: "九州の冬温泉は寒さも穏やか。福岡空港から 2 時間。",
+  },
+  {
+    area: "蔵王",
+    best: "1 月後半〜2 月中旬",
+    note: "樹氷ライトアップが圧巻。山形空港または仙台駅から。",
+  },
 ];
 
 const OVERSEAS_DESTINATIONS = [
-  { area: "バンコク", best: "12 月〜2 月", note: "乾季ピーク。気候ベストで日本の冬から避寒に最適。" },
-  { area: "ベトナム", best: "12 月〜2 月", note: "ハノイ・ホイアン・ホーチミン共に乾季で気候安定。" },
-  { area: "シンガポール", best: "通年安定 (1-2 月やや雨少なめ)", note: "1 泊単価高めだがマリーナベイは冬でも楽しめる。" },
-  { area: "オーストラリア", best: "12 月〜2 月", note: "南半球の夏。シドニー・メルボルン・ケアンズが快適。" },
+  {
+    area: "バンコク",
+    best: "12 月〜2 月",
+    note: "乾季ピーク。気候ベストで日本の冬から避寒に最適。",
+  },
+  {
+    area: "ベトナム",
+    best: "12 月〜2 月",
+    note: "ハノイ・ホイアン・ホーチミン共に乾季で気候安定。",
+  },
+  {
+    area: "シンガポール",
+    best: "通年安定 (1-2 月やや雨少なめ)",
+    note: "1 泊単価高めだがマリーナベイは冬でも楽しめる。",
+  },
+  {
+    area: "オーストラリア",
+    best: "12 月〜2 月",
+    note: "南半球の夏。シドニー・メルボルン・ケアンズが快適。",
+  },
 ];
 
 const FAQS = [
@@ -130,18 +182,27 @@ const FAQS = [
   },
 ];
 
-export default async function WinterSeasonalPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function WinterSeasonalPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "2026 冬の旅行計画 完全ガイド — 12月・1月・2月の雪国・温泉・冬グルメ",
+    headline:
+      "2026 冬の旅行計画 完全ガイド — 12月・1月・2月の雪国・温泉・冬グルメ",
     description:
       "2026 年冬の月別おすすめ目的地・雪国旅・冬温泉・避寒地・予約タイミングを完全網羅。",
     inLanguage: "ja-JP",
     datePublished: PUBLISHED,
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -176,7 +237,11 @@ export default async function WinterSeasonalPage({ params }: { params: Promise<{
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? "/en/articles/seasonal/winter-2026" : "/articles/seasonal/winter-2026"}
+            currentPath={
+              lang === "en"
+                ? "/en/articles/seasonal/winter-2026"
+                : "/articles/seasonal/winter-2026"
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "Articles", href: "/articles" },
@@ -194,13 +259,17 @@ export default async function WinterSeasonalPage({ params }: { params: Promise<{
             2026 冬の旅行計画
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">
-            12 月・1 月・2 月の雪国旅・温泉・避寒地アイデアを月別に整理。年末年始ピークを避けた
+            12 月・1 月・2
+            月の雪国旅・温泉・避寒地アイデアを月別に整理。年末年始ピークを避けた
             狙い目時期の活用法と予約タイミングまでを完全網羅した冬旅ガイドです。
           </p>
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 月別ガイド */}
@@ -209,7 +278,8 @@ export default async function WinterSeasonalPage({ params }: { params: Promise<{
                 月別 旅行カレンダー
               </h2>
               <p className="text-sm text-zinc-500 mb-6">
-                年末年始 (12/28-1/5) はピーク料金。それを避けた狙い目時期を整理。
+                年末年始 (12/28-1/5)
+                はピーク料金。それを避けた狙い目時期を整理。
               </p>
               <div className="space-y-4">
                 {MONTHS.map((m) => (
@@ -225,14 +295,20 @@ export default async function WinterSeasonalPage({ params }: { params: Promise<{
                     </div>
                     <ul className="space-y-1.5 mb-3">
                       {m.highlights.map((h, i) => (
-                        <li key={i} className="text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2">
+                        <li
+                          key={i}
+                          className="text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2"
+                        >
                           <span className="text-sky-500 mt-1">-</span>
                           <span>{h}</span>
                         </li>
                       ))}
                     </ul>
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed border-l-2 border-sky-300 pl-3">
-                      <span className="font-bold text-zinc-700 dark:text-zinc-200">編集部メモ:</span> {m.bestFor}
+                      <span className="font-bold text-zinc-700 dark:text-zinc-200">
+                        編集部メモ:
+                      </span>{" "}
+                      {m.bestFor}
                     </p>
                   </div>
                 ))}
@@ -334,7 +410,9 @@ export default async function WinterSeasonalPage({ params }: { params: Promise<{
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
                     年末年始の予約攻略
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">12-1 月のピーク予約タイミング</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    12-1 月のピーク予約タイミング
+                  </p>
                   <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                     年末年始ガイドを見る <ArrowRight className="h-3 w-3" />
                   </div>
@@ -346,7 +424,9 @@ export default async function WinterSeasonalPage({ params }: { params: Promise<{
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
                     2026 秋の旅行計画
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">紅葉・温泉・秋グルメ</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    紅葉・温泉・秋グルメ
+                  </p>
                   <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                     秋ガイドを見る <ArrowRight className="h-3 w-3" />
                   </div>
@@ -359,7 +439,12 @@ export default async function WinterSeasonalPage({ params }: { params: Promise<{
             <JapanesePartnersPanel
               title="冬の旅行 予約・比較"
               subtitle="航空券・ホテル・ツアーをまとめて比較"
-              categories={["flight-domestic", "flight-overseas", "hotel-domestic", "tour-package"]}
+              categories={[
+                "flight-domestic",
+                "flight-overseas",
+                "hotel-domestic",
+                "tour-package",
+              ]}
               source="seasonal-winter-2026"
             />
             <JapanesePartnersPanel
@@ -376,7 +461,8 @@ export default async function WinterSeasonalPage({ params }: { params: Promise<{
                 </h3>
               </div>
               <p className="text-xs text-zinc-500 leading-relaxed">
-                Booking / Agoda / Trip.com / Hotellook の使い分けで冬の人気エリアを最安予約。
+                Booking / Agoda / Trip.com / Hotellook
+                の使い分けで冬の人気エリアを最安予約。
               </p>
               <Link
                 href="/ota-sales"

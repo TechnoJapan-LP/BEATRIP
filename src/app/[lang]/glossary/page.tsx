@@ -14,6 +14,7 @@ import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { localizeHref, type Locale } from "@/lib/i18n/locale";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -42,7 +43,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       "オーバーブッキング",
       "旅行 用語集",
     ],
-    openGraph: { title, description, type: "website" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: isEn ? `${BASE}/en/glossary` : `${BASE}/glossary`,
       languages: {
@@ -79,7 +85,10 @@ const GROUPS: Group[] = [
         slug: "lcc",
         reading: "エルシーシー",
         def: "Low-Cost Carrier の略で、サービスを簡素化して運賃を抑えた格安航空会社のこと。手荷物や座席指定が別料金になりやすい。",
-        link: { href: "/articles/guides/lcc-tips", label: "LCC を最大活用する 10 のコツ" },
+        link: {
+          href: "/articles/guides/lcc-tips",
+          label: "LCC を最大活用する 10 のコツ",
+        },
       },
       {
         term: "FSC",
@@ -104,14 +113,20 @@ const GROUPS: Group[] = [
         slug: "stopover",
         reading: "すとっぷおーばー",
         def: "乗り継ぎ地で一定時間以上 (一般に 24 時間以上) 滞在すること。短時間の乗り継ぎはトランジットと呼ばれる。",
-        link: { href: "/articles/guides/transit-guide", label: "乗り継ぎ・トランジットの過ごし方" },
+        link: {
+          href: "/articles/guides/transit-guide",
+          label: "乗り継ぎ・トランジットの過ごし方",
+        },
       },
       {
         term: "トランジット",
         slug: "transit",
         reading: "とらんじっと",
         def: "目的地までの途中で航空機を乗り継ぐこと。経由地で入国せず短時間で次の便に乗り換えるケースを指すことが多い。",
-        link: { href: "/articles/guides/transit-guide", label: "乗り継ぎ・トランジットの過ごし方" },
+        link: {
+          href: "/articles/guides/transit-guide",
+          label: "乗り継ぎ・トランジットの過ごし方",
+        },
       },
       {
         term: "FIX / OPEN 航空券",
@@ -124,14 +139,20 @@ const GROUPS: Group[] = [
         slug: "mileage",
         reading: "まいれーじ",
         def: "搭乗や提携サービス利用で貯まるポイント (マイル) を、特典航空券などに交換できる航空会社のプログラム。",
-        link: { href: "/articles/guides/miles-complete-guide", label: "マイルの貯め方・使い方 完全ガイド" },
+        link: {
+          href: "/articles/guides/miles-complete-guide",
+          label: "マイルの貯め方・使い方 完全ガイド",
+        },
       },
       {
         term: "特典航空券",
         slug: "award-ticket",
         reading: "とくてんこうくうけん",
         def: "貯めたマイルと交換して受け取れる航空券。必要マイル数はシーズンや空席状況で変わることがある。",
-        link: { href: "/articles/miles-booking-guide", label: "マイル予約ガイド" },
+        link: {
+          href: "/articles/miles-booking-guide",
+          label: "マイル予約ガイド",
+        },
       },
       {
         term: "IATA / ICAO",
@@ -145,14 +166,20 @@ const GROUPS: Group[] = [
         slug: "checked-baggage",
         reading: "じゅたくてにもつ",
         def: "カウンターやセルフ機で預ける荷物のこと。重量・個数の上限があり、超過すると追加料金がかかることが多い。",
-        link: { href: "/articles/guides/baggage-rules", label: "機内持ち込み・預け荷物の完全ルール" },
+        link: {
+          href: "/articles/guides/baggage-rules",
+          label: "機内持ち込み・預け荷物の完全ルール",
+        },
       },
       {
         term: "機内持ち込み手荷物",
         slug: "carry-on-baggage",
         reading: "きないもちこみてにもつ",
         def: "座席に持ち込む荷物のこと。サイズ・重量・個数に上限があり、特に LCC では厳格な傾向がある。",
-        link: { href: "/articles/guides/baggage-rules", label: "機内持ち込み・預け荷物の完全ルール" },
+        link: {
+          href: "/articles/guides/baggage-rules",
+          label: "機内持ち込み・預け荷物の完全ルール",
+        },
       },
       {
         term: "オーバーブッキング",
@@ -165,7 +192,10 @@ const GROUPS: Group[] = [
         slug: "roaming",
         reading: "ろーみんぐ",
         def: "契約中の携帯回線を海外でそのまま使うこと。料金体系の確認を怠ると高額になることがある。",
-        link: { href: "/articles/guides/esim-setup-guide", label: "海外で使えるスマホ/eSIM 設定ガイド" },
+        link: {
+          href: "/articles/guides/esim-setup-guide",
+          label: "海外で使えるスマホ/eSIM 設定ガイド",
+        },
       },
       {
         term: "eSIM",
@@ -246,7 +276,10 @@ const GROUPS: Group[] = [
         slug: "connecting-room",
         reading: "こねくてぃんぐるーむ",
         def: "室内のドアで隣室とつながる客室。家族やグループで隣同士に泊まりたいときに便利。",
-        link: { href: "/articles/guides/family-travel-tips", label: "子連れ旅行を快適にするコツ" },
+        link: {
+          href: "/articles/guides/family-travel-tips",
+          label: "子連れ旅行を快適にするコツ",
+        },
       },
     ],
   },
@@ -258,7 +291,10 @@ const GROUPS: Group[] = [
         slug: "travel-authorization",
         reading: "でんしとこうにんしょう",
         def: "ビザ免除で渡航する際に、事前のオンライン申請が必要な制度の総称。渡航先により要否や名称が異なる。",
-        link: { href: "/articles/guides/first-overseas-checklist", label: "初めての海外旅行 準備チェックリスト" },
+        link: {
+          href: "/articles/guides/first-overseas-checklist",
+          label: "初めての海外旅行 準備チェックリスト",
+        },
       },
       {
         term: "パスポート残存期間",
@@ -277,7 +313,10 @@ const GROUPS: Group[] = [
         slug: "early-bird",
         reading: "はやわり",
         def: "早期に予約することで適用される割引運賃。予定が固まっているなら有効だが、変更・払戻に制限があることが多い。",
-        link: { href: "/articles/guides/best-booking-timing", label: "航空券を最安で買うベストタイミング" },
+        link: {
+          href: "/articles/guides/best-booking-timing",
+          label: "航空券を最安で買うベストタイミング",
+        },
       },
       {
         term: "ダイナミックプライシング",
@@ -317,7 +356,10 @@ const GROUPS: Group[] = [
         slug: "sale-prediction",
         reading: "せーるよそく",
         def: "過去のセール開催履歴から次回のセール時期を推測する考え方。あくまで参考情報で、開催を保証するものではない。",
-        link: { href: "/articles/sale-prediction-2027", label: "2027 セール予測" },
+        link: {
+          href: "/articles/sale-prediction-2027",
+          label: "2027 セール予測",
+        },
       },
     ],
   },
@@ -359,10 +401,7 @@ export default async function GlossaryPage({ params }: Props) {
         <div className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-10">
           <Breadcrumbs
             currentPath={lh("/glossary")}
-            items={[
-              { label: "Home", href: lh("/") },
-              { label: "用語集" },
-            ]}
+            items={[{ label: "Home", href: lh("/") }, { label: "用語集" }]}
           />
           <h1 className="mt-4 font-heading text-2xl sm:text-3xl lg:text-4xl tracking-wide text-zinc-900 dark:text-zinc-100 leading-tight">
             旅行用語集
@@ -371,8 +410,8 @@ export default async function GlossaryPage({ params }: Props) {
             航空券・ホテル・予約まわりでよく使われる用語を、ジャンルごとにやさしく解説します。気になる言葉から、関連する詳しいガイドへも移動できます。
           </p>
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-[11px] text-zinc-500 dark:text-zinc-400">
-            <BookA className="h-3.5 w-3.5" aria-hidden="true" />
-            全 {allTerms.length} 語
+            <BookA className="h-3.5 w-3.5" aria-hidden="true" />全{" "}
+            {allTerms.length} 語
           </p>
         </div>
       </section>

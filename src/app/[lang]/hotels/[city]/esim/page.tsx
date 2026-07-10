@@ -3,7 +3,13 @@ import Image from "next/image";
 import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Smartphone, Wifi, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  Smartphone,
+  Wifi,
+  ArrowRight,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
@@ -14,8 +20,9 @@ import {
 } from "@/data/hotel-destinations";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { getCityPracticalInfo } from "@/data/city-practical-info";
+import { OG_IMAGES } from "@/lib/seo/og";
 
-type Props = { params: Promise<{ city: string; lang: string;}> };
+type Props = { params: Promise<{ city: string; lang: string }> };
 
 // ISR: 21600 秒キャッシュ (6 時間)
 export const revalidate = 86400;
@@ -60,7 +67,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           `${d.nameJa} SIM`,
           `${d.nameEn} eSIM`,
         ],
-    openGraph: { title, description, type: "website" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -76,14 +88,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const WIFI_DESC: Record<string, string> = {
-  excellent: "公共 Wi-Fi が充実しており、カフェやホテル・観光地で安定して使えます。",
+  excellent:
+    "公共 Wi-Fi が充実しており、カフェやホテル・観光地で安定して使えます。",
   good: "ホテルやカフェなど主要施設で Wi-Fi は使えますが、屋外や移動中は不安定なことも。",
   spotty: "公共 Wi-Fi はまばらで、必要な時に繋がらないことが多い。",
-  limited: "公共 Wi-Fi は限定的。プライベートな通信手段を別途確保するのが現実的。",
+  limited:
+    "公共 Wi-Fi は限定的。プライベートな通信手段を別途確保するのが現実的。",
 };
 
 export default async function CityEsimPage({ params }: Props) {
-  const { city, lang} = await params;
+  const { city, lang } = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d || d.region === "国内") notFound();
 
@@ -163,7 +177,11 @@ export default async function CityEsimPage({ params }: Props) {
         <div className="relative mx-auto max-w-7xl h-full flex flex-col justify-end px-4 sm:px-6 pb-6">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? `/en/hotels/${d.slug}/esim` : `/hotels/${d.slug}/esim`}
+            currentPath={
+              lang === "en"
+                ? `/en/hotels/${d.slug}/esim`
+                : `/hotels/${d.slug}/esim`
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "ホテル", href: "/hotels" },
@@ -186,7 +204,10 @@ export default async function CityEsimPage({ params }: Props) {
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-8">
             {/* 通信事情 */}
@@ -239,7 +260,8 @@ export default async function CityEsimPage({ params }: Props) {
                       データ量
                     </div>
                     <p className="text-xs text-zinc-600 dark:text-zinc-300">
-                      観光メインなら 1 日 1GB / 動画やテザリング多用なら 1 日 2-3GB / 無制限プランも選択肢
+                      観光メインなら 1 日 1GB / 動画やテザリング多用なら 1 日
+                      2-3GB / 無制限プランも選択肢
                     </p>
                   </div>
                   <div className="flex items-start gap-3 px-5 py-3">
@@ -247,7 +269,8 @@ export default async function CityEsimPage({ params }: Props) {
                       期間
                     </div>
                     <p className="text-xs text-zinc-600 dark:text-zinc-300">
-                      短期(3-7 日) / 長期(1 ヶ月) でプラン選択。日数 + 余裕日を計算
+                      短期(3-7 日) / 長期(1 ヶ月) でプラン選択。日数 +
+                      余裕日を計算
                     </p>
                   </div>
                   <div className="flex items-start gap-3 px-5 py-3">
@@ -255,7 +278,8 @@ export default async function CityEsimPage({ params }: Props) {
                       対応端末
                     </div>
                     <p className="text-xs text-zinc-600 dark:text-zinc-300">
-                      iPhone XS 以降 / Pixel 3 以降 / Galaxy S20 以降が eSIM 対応。事前に設定 → モバイル通信で確認
+                      iPhone XS 以降 / Pixel 3 以降 / Galaxy S20 以降が eSIM
+                      対応。事前に設定 → モバイル通信で確認
                     </p>
                   </div>
                   <div className="flex items-start gap-3 px-5 py-3">
@@ -263,7 +287,8 @@ export default async function CityEsimPage({ params }: Props) {
                       アプリ完結
                     </div>
                     <p className="text-xs text-zinc-600 dark:text-zinc-300">
-                      トリファのようなアプリ完結型は QR コード不要・かんたん。初心者向け
+                      トリファのようなアプリ完結型は QR
+                      コード不要・かんたん。初心者向け
                     </p>
                   </div>
                 </div>

@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Smartphone, Globe2, Zap, ShieldCheck, Cpu, ArrowRight } from "lucide-react";
+import {
+  Smartphone,
+  Globe2,
+  Zap,
+  ShieldCheck,
+  Cpu,
+  ArrowRight,
+} from "lucide-react";
 import { Header } from "@/components/header";
 import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -8,6 +15,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -30,9 +38,32 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["travel eSIM", "eSIM comparison", "best eSIM for travel", "eSIM vs pocket WiFi", "international eSIM", "prepaid eSIM", "eSIM supported devices"]
-      : ["eSIM 海外", "eSIM 比較", "海外 eSIM おすすめ", "eSIM 設定", "Wi-Fi レンタル 比較", "海外 通信", "eSIM 対応端末", "eSIM 旅行", "プリペイド eSIM"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "travel eSIM",
+          "eSIM comparison",
+          "best eSIM for travel",
+          "eSIM vs pocket WiFi",
+          "international eSIM",
+          "prepaid eSIM",
+          "eSIM supported devices",
+        ]
+      : [
+          "eSIM 海外",
+          "eSIM 比較",
+          "海外 eSIM おすすめ",
+          "eSIM 設定",
+          "Wi-Fi レンタル 比較",
+          "海外 通信",
+          "eSIM 対応端末",
+          "eSIM 旅行",
+          "プリペイド eSIM",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -43,32 +74,33 @@ export async function generateMetadata({
   };
 }
 
-const COMPARISON: { item: string; esim: string; wifi: string; sim: string }[] = [
-  {
-    item: "受け取り・返却",
-    esim: "アプリ／QR で即時開通。受取・返却ゼロ",
-    wifi: "出発前に空港受取・帰国後に返却が必要",
-    sim: "事前購入 or 現地空港購入・差し替え作業あり",
-  },
-  {
-    item: "荷物・充電",
-    esim: "スマホ 1 台のみ。バッテリーも本体だけ",
-    wifi: "端末本体＋モバイルバッテリーが必要",
-    sim: "スマホのみだが、SIM ピン・元 SIM 保管が必要",
-  },
-  {
-    item: "通信速度・安定性",
-    esim: "現地キャリア直接接続で高速・安定",
-    wifi: "1 台複数人共有で速度が落ちやすい",
-    sim: "現地キャリア直接接続で安定",
-  },
-  {
-    item: "料金相場（1 週間）",
-    esim: "1GB ¥500 〜 / 5GB ¥1,500 〜",
-    wifi: "1 日 ¥800 〜 ¥1,500 (容量無制限プラン中心)",
-    sim: "¥1,500 〜 ¥3,000 (国・容量により大きく変動)",
-  },
-];
+const COMPARISON: { item: string; esim: string; wifi: string; sim: string }[] =
+  [
+    {
+      item: "受け取り・返却",
+      esim: "アプリ／QR で即時開通。受取・返却ゼロ",
+      wifi: "出発前に空港受取・帰国後に返却が必要",
+      sim: "事前購入 or 現地空港購入・差し替え作業あり",
+    },
+    {
+      item: "荷物・充電",
+      esim: "スマホ 1 台のみ。バッテリーも本体だけ",
+      wifi: "端末本体＋モバイルバッテリーが必要",
+      sim: "スマホのみだが、SIM ピン・元 SIM 保管が必要",
+    },
+    {
+      item: "通信速度・安定性",
+      esim: "現地キャリア直接接続で高速・安定",
+      wifi: "1 台複数人共有で速度が落ちやすい",
+      sim: "現地キャリア直接接続で安定",
+    },
+    {
+      item: "料金相場（1 週間）",
+      esim: "1GB ¥500 〜 / 5GB ¥1,500 〜",
+      wifi: "1 日 ¥800 〜 ¥1,500 (容量無制限プラン中心)",
+      sim: "¥1,500 〜 ¥3,000 (国・容量により大きく変動)",
+    },
+  ];
 
 const SELECTION: { icon: typeof Globe2; title: string; body: string }[] = [
   {
@@ -94,11 +126,31 @@ const SELECTION: { icon: typeof Globe2; title: string; body: string }[] = [
 ];
 
 const DEVICES: { brand: string; models: string }[] = [
-  { brand: "iPhone", models: "iPhone XS / XR 以降のすべてのモデル（XS, XR, 11, 12, 13, 14, 15, 16, SE 第2世代以降）" },
-  { brand: "Google Pixel", models: "Pixel 3 以降（一部国内版 Pixel 3／3a は非対応）。Pixel 4 以降は安定対応" },
-  { brand: "Samsung Galaxy", models: "Galaxy S20 シリーズ以降、Note 20 以降、Z Fold/Flip 全モデル、A54 など対応モデルあり" },
-  { brand: "iPad", models: "iPad Pro (11 インチ第1世代 / 12.9 インチ第3世代) 以降の Cellular モデル" },
-  { brand: "その他", models: "Huawei P40・Sony Xperia 10 IV 以降の一部、Motorola Razr 2019 以降。詳細は購入前に各 eSIM サービスの対応端末リストで確認" },
+  {
+    brand: "iPhone",
+    models:
+      "iPhone XS / XR 以降のすべてのモデル（XS, XR, 11, 12, 13, 14, 15, 16, SE 第2世代以降）",
+  },
+  {
+    brand: "Google Pixel",
+    models:
+      "Pixel 3 以降（一部国内版 Pixel 3／3a は非対応）。Pixel 4 以降は安定対応",
+  },
+  {
+    brand: "Samsung Galaxy",
+    models:
+      "Galaxy S20 シリーズ以降、Note 20 以降、Z Fold/Flip 全モデル、A54 など対応モデルあり",
+  },
+  {
+    brand: "iPad",
+    models:
+      "iPad Pro (11 インチ第1世代 / 12.9 インチ第3世代) 以降の Cellular モデル",
+  },
+  {
+    brand: "その他",
+    models:
+      "Huawei P40・Sony Xperia 10 IV 以降の一部、Motorola Razr 2019 以降。詳細は購入前に各 eSIM サービスの対応端末リストで確認",
+  },
 ];
 
 const FAQS = [
@@ -124,7 +176,11 @@ const FAQS = [
   },
 ];
 
-export default async function EsimPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function EsimPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -135,7 +191,11 @@ export default async function EsimPage({ params }: { params: Promise<{ lang: str
     inLanguage: "ja-JP",
     datePublished: "2026-06-01",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -169,15 +229,14 @@ export default async function EsimPage({ params }: { params: Promise<{ lang: str
       <Header />
 
       {/* Hero */}
-      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.telecom} text-white`}>
+      <section
+        className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.telecom} text-white`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/esim" : "/esim"}
-            items={[
-              { label: "Home", href: "/" },
-              { label: "eSIM" },
-            ]}
+            items={[{ label: "Home", href: "/" }, { label: "eSIM" }]}
           />
           <div className="mt-6 flex items-center gap-3 mb-4">
             <Smartphone className="h-8 w-8" />
@@ -195,7 +254,10 @@ export default async function EsimPage({ params }: { params: Promise<{ lang: str
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* なぜ eSIM？ */}
@@ -270,7 +332,10 @@ export default async function EsimPage({ params }: { params: Promise<{ lang: str
               <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
                 <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
                   {DEVICES.map((d) => (
-                    <div key={d.brand} className="flex items-start gap-4 px-5 py-3">
+                    <div
+                      key={d.brand}
+                      className="flex items-start gap-4 px-5 py-3"
+                    >
                       <div className="w-28 flex-shrink-0">
                         <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                           {d.brand}

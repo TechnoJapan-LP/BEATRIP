@@ -16,8 +16,9 @@ import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-
 import { getCityGuide } from "@/data/hotel-city-guides";
 import { getCityPracticalInfo } from "@/data/city-practical-info";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
+import { OG_IMAGES } from "@/lib/seo/og";
 
-type Props = { params: Promise<{ city: string; lang: string;}> };
+type Props = { params: Promise<{ city: string; lang: string }> };
 
 // ISR: 21600 秒キャッシュ (6 時間)
 export const revalidate = 86400;
@@ -34,7 +35,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = isEn
     ? `Compare and book tours and activities in ${d.nameEn}. Popular sightseeing tours, day trips, and experiences — plus what to do during ${d.bestSeason}.`
     : `${d.nameJa}（${d.nameEn}）の現地ツアー・観光アクティビティを比較・予約。日本語ガイド対応のツアーや、人気のオプショナルツアーが探せます。${d.bestSeason}の最新ツアー情報も掲載。`;
-  const path = isEn ? `/en/hotels/${d.slug}/activities` : `/hotels/${d.slug}/activities`;
+  const path = isEn
+    ? `/en/hotels/${d.slug}/activities`
+    : `/hotels/${d.slug}/activities`;
 
   return {
     title,
@@ -55,7 +58,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           `${d.nameJa} 現地ツアー`,
           `${d.nameEn} tours`,
         ],
-    openGraph: { title, description, type: "website" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -77,7 +85,7 @@ export function generateStaticParams() {
 }
 
 export default async function CityActivitiesPage({ params }: Props) {
-  const { city, lang} = await params;
+  const { city, lang } = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d) notFound();
 
@@ -100,12 +108,15 @@ export default async function CityActivitiesPage({ params }: Props) {
   const faqs = [
     {
       q: `${d.nameJa}でおすすめのアクティビティは？`,
-      a: guide && guide.attractions.length > 0
-        ? `${d.nameJa}の代表的な観光スポットは ${guide.attractions
-            .slice(0, 4)
-            .map((a) => `「${a}」`)
-            .join("、")} など。これらを巡る現地ツアーが多数あり、BEATRIPの提携サイトから比較・予約できます。`
-        : `${d.nameJa}には観光名所が多数あり、現地ツアーで効率良く回れます。本ページのツアー予約サイトから比較してください。`,
+      a:
+        guide && guide.attractions.length > 0
+          ? `${d.nameJa}の代表的な観光スポットは ${guide.attractions
+              .slice(0, 4)
+              .map((a) => `「${a}」`)
+              .join(
+                "、",
+              )} など。これらを巡る現地ツアーが多数あり、BEATRIPの提携サイトから比較・予約できます。`
+          : `${d.nameJa}には観光名所が多数あり、現地ツアーで効率良く回れます。本ページのツアー予約サイトから比較してください。`,
     },
     ...(isDomestic
       ? []
@@ -186,7 +197,11 @@ export default async function CityActivitiesPage({ params }: Props) {
         <div className="relative mx-auto max-w-7xl h-full flex flex-col justify-end px-4 sm:px-6 pb-6">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? `/en/hotels/${d.slug}/activities` : `/hotels/${d.slug}/activities`}
+            currentPath={
+              lang === "en"
+                ? `/en/hotels/${d.slug}/activities`
+                : `/hotels/${d.slug}/activities`
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "ホテル", href: "/hotels" },
@@ -209,7 +224,10 @@ export default async function CityActivitiesPage({ params }: Props) {
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 観光スポット */}

@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -30,9 +31,31 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["Golden Week Japan", "Golden Week travel 2026", "May flights Japan", "GW travel from Japan", "Japan May holidays", "Golden Week destinations"]
-      : ["GW 航空券", "ゴールデンウィーク 旅行", "GW ホテル", "GW 海外旅行", "GW 国内旅行", "5月 航空券 安い", "GW おすすめ 目的地", "GW 最安", "GW 早期予約"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "Golden Week Japan",
+          "Golden Week travel 2026",
+          "May flights Japan",
+          "GW travel from Japan",
+          "Japan May holidays",
+          "Golden Week destinations",
+        ]
+      : [
+          "GW 航空券",
+          "ゴールデンウィーク 旅行",
+          "GW ホテル",
+          "GW 海外旅行",
+          "GW 国内旅行",
+          "5月 航空券 安い",
+          "GW おすすめ 目的地",
+          "GW 最安",
+          "GW 早期予約",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -43,12 +66,36 @@ export async function generateMetadata({
   };
 }
 
-const CALENDAR: { range: string; level: "peak" | "high" | "mid" | "low"; note: string }[] = [
-  { range: "4/25 〜 4/28", level: "mid", note: "前半は平日も混在。月末平日狙いは比較的安め。" },
-  { range: "4/29 〜 4/30", level: "high", note: "GW突入直前で出発便が急上昇。" },
-  { range: "5/1 〜 5/5", level: "peak", note: "GW中核。航空券・ホテルとも年間最高値水準。" },
-  { range: "5/6 〜 5/7", level: "high", note: "Uターン集中、復路便の高値ピーク。" },
-  { range: "5/8 以降", level: "low", note: "通常料金に急落。前後ずらしで大幅節約可能。" },
+const CALENDAR: {
+  range: string;
+  level: "peak" | "high" | "mid" | "low";
+  note: string;
+}[] = [
+  {
+    range: "4/25 〜 4/28",
+    level: "mid",
+    note: "前半は平日も混在。月末平日狙いは比較的安め。",
+  },
+  {
+    range: "4/29 〜 4/30",
+    level: "high",
+    note: "GW突入直前で出発便が急上昇。",
+  },
+  {
+    range: "5/1 〜 5/5",
+    level: "peak",
+    note: "GW中核。航空券・ホテルとも年間最高値水準。",
+  },
+  {
+    range: "5/6 〜 5/7",
+    level: "high",
+    note: "Uターン集中、復路便の高値ピーク。",
+  },
+  {
+    range: "5/8 以降",
+    level: "low",
+    note: "通常料金に急落。前後ずらしで大幅節約可能。",
+  },
 ];
 
 const TIPS: { icon: typeof Calendar; title: string; body: string }[] = [
@@ -74,13 +121,48 @@ const TIPS: { icon: typeof Calendar; title: string; body: string }[] = [
   },
 ];
 
-const DESTINATIONS: { area: string; type: "国内" | "海外"; emoji: string; highlight: string }[] = [
-  { area: "沖縄", type: "国内", emoji: "🌺", highlight: "梅雨入り前の最高シーズン。海開きも進み GW 国内人気No.1。" },
-  { area: "北海道", type: "国内", emoji: "🌸", highlight: "本州より遅咲きの桜と新緑。GW でも比較的予約が取りやすい。" },
-  { area: "台湾", type: "海外", emoji: "🇹🇼", highlight: "近距離・短期日程に最適。GW でも往復5万円台が狙える。" },
-  { area: "ヨーロッパ", type: "海外", emoji: "🇪🇺", highlight: "GW＋有給で10日確保すれば現実的。気候も観光ベストシーズン。" },
-  { area: "韓国", type: "海外", emoji: "🇰🇷", highlight: "2泊3日で行ける近距離。LCC のセール対象も多い。" },
-  { area: "シンガポール", type: "海外", emoji: "🇸🇬", highlight: "通年安定気候・乗継便不要・GW でも家族向け定番。" },
+const DESTINATIONS: {
+  area: string;
+  type: "国内" | "海外";
+  emoji: string;
+  highlight: string;
+}[] = [
+  {
+    area: "沖縄",
+    type: "国内",
+    emoji: "🌺",
+    highlight: "梅雨入り前の最高シーズン。海開きも進み GW 国内人気No.1。",
+  },
+  {
+    area: "北海道",
+    type: "国内",
+    emoji: "🌸",
+    highlight: "本州より遅咲きの桜と新緑。GW でも比較的予約が取りやすい。",
+  },
+  {
+    area: "台湾",
+    type: "海外",
+    emoji: "🇹🇼",
+    highlight: "近距離・短期日程に最適。GW でも往復5万円台が狙える。",
+  },
+  {
+    area: "ヨーロッパ",
+    type: "海外",
+    emoji: "🇪🇺",
+    highlight: "GW＋有給で10日確保すれば現実的。気候も観光ベストシーズン。",
+  },
+  {
+    area: "韓国",
+    type: "海外",
+    emoji: "🇰🇷",
+    highlight: "2泊3日で行ける近距離。LCC のセール対象も多い。",
+  },
+  {
+    area: "シンガポール",
+    type: "海外",
+    emoji: "🇸🇬",
+    highlight: "通年安定気候・乗継便不要・GW でも家族向け定番。",
+  },
 ];
 
 const FAQS = [
@@ -106,7 +188,11 @@ const FAQS = [
   },
 ];
 
-export default async function GoldenWeekSeasonPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function GoldenWeekSeasonPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -118,7 +204,11 @@ export default async function GoldenWeekSeasonPage({ params }: { params: Promise
     inLanguage: "ja-JP",
     datePublished: "2026-06-01",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -165,11 +255,15 @@ export default async function GoldenWeekSeasonPage({ params }: { params: Promise
       <Header />
 
       {/* Hero */}
-      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.season} text-white`}>
+      <section
+        className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.season} text-white`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? "/en/seasons/golden-week" : "/seasons/golden-week"}
+            currentPath={
+              lang === "en" ? "/en/seasons/golden-week" : "/seasons/golden-week"
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "季節特集", href: "/seasons/golden-week" },
@@ -192,7 +286,10 @@ export default async function GoldenWeekSeasonPage({ params }: { params: Promise
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* ピーク時期カレンダー */}
@@ -350,7 +447,12 @@ export default async function GoldenWeekSeasonPage({ params }: { params: Promise
             <JapanesePartnersPanel
               title="GWの予約・比較"
               subtitle="航空券・ホテル・ツアーをまとめて比較"
-              categories={["flight-domestic", "flight-overseas", "hotel-domestic", "tour-package"]}
+              categories={[
+                "flight-domestic",
+                "flight-overseas",
+                "hotel-domestic",
+                "tour-package",
+              ]}
               source="seasons-golden-week"
             />
 

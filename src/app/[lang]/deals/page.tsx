@@ -6,6 +6,7 @@ import { PrNotice } from "@/components/compliance/pr-notice";
 import { DealGrid } from "@/components/deals/deal-grid";
 import { mockSaleEvents } from "@/data/mock-deals";
 import { getActiveDeals } from "@/lib/deals/deal-service";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間) — 他の deal 系ページと同じ
 export const revalidate = 21600;
@@ -28,7 +29,11 @@ export async function generateMetadata({
   return {
     title: { absolute: title },
     description,
-    openGraph: { title, description },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {

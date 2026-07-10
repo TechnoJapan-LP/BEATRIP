@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CalendarClock, TrendingDown, ArrowRight, Plane, Bell } from "lucide-react";
+import {
+  CalendarClock,
+  TrendingDown,
+  ArrowRight,
+  Plane,
+  Bell,
+} from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
@@ -8,6 +14,7 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { FAQAccordion, type FAQItem } from "@/components/ui/faq-accordion";
 import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { airlines } from "@/data/airlines";
+import { OG_IMAGES } from "@/lib/seo/og";
 import {
   saleHistory,
   getAirlineSaleStats,
@@ -18,8 +25,18 @@ import {
 export const revalidate = 86400;
 
 const MONTHS_JA = [
-  "1月", "2月", "3月", "4月", "5月", "6月",
-  "7月", "8月", "9月", "10月", "11月", "12月",
+  "1月",
+  "2月",
+  "3月",
+  "4月",
+  "5月",
+  "6月",
+  "7月",
+  "8月",
+  "9月",
+  "10月",
+  "11月",
+  "12月",
 ];
 
 export async function generateMetadata({
@@ -40,9 +57,26 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["flight sale calendar", "when are flight sales", "Japan airline sales", "ANA JAL sale dates"]
-      : ["航空券 セール 時期", "航空券 セール いつ", "格安航空券 セール", "ANA セール 時期", "JAL セール いつ", "航空券セールカレンダー"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "flight sale calendar",
+          "when are flight sales",
+          "Japan airline sales",
+          "ANA JAL sale dates",
+        ]
+      : [
+          "航空券 セール 時期",
+          "航空券 セール いつ",
+          "格安航空券 セール",
+          "ANA セール 時期",
+          "JAL セール いつ",
+          "航空券セールカレンダー",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -67,7 +101,10 @@ type AirlineCard = {
 };
 
 /** 直近開催日 + 平均間隔から、今日以降で最も近い次回開催見込み日を返す。 */
-function predictNext(lastStart: string, avgIntervalDays: number | null): Date | null {
+function predictNext(
+  lastStart: string,
+  avgIntervalDays: number | null,
+): Date | null {
   if (!avgIntervalDays || avgIntervalDays <= 0) return null;
   const step = avgIntervalDays * 86_400_000;
   let t = new Date(lastStart).getTime() + step;
@@ -139,7 +176,9 @@ export default async function SaleCalendarPage({
       q: "航空券のセールが最も多い時期はいつですか？",
       a: `BEATRIP が収集した各社の過去セール ${totalRecords} 件を分析すると、開催が集中するのは ${topAggMonths
         .map((m) => `${MONTHS_JA[m.month]}（${m.count}件）`)
-        .join("、")} です。航空会社の決算期（3月・9月）や大型連休前（GW前・夏休み前・年末年始前）にセールが集中する傾向があります。`,
+        .join(
+          "、",
+        )} です。航空会社の決算期（3月・9月）や大型連休前（GW前・夏休み前・年末年始前）にセールが集中する傾向があります。`,
     },
     {
       q: "次回のセール時期はどうやって予測していますか？",
@@ -217,7 +256,8 @@ export default async function SaleCalendarPage({
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/90 sm:text-base">
             「航空券のセールはいつ？」に答える、各社の実セール履歴
-            {totalRecords} 件の分析。開催が多い月・次回の見込み時期・平均割引率・
+            {totalRecords}{" "}
+            件の分析。開催が多い月・次回の見込み時期・平均割引率・
             過去最安値を一覧でチェックできます。
           </p>
         </div>
@@ -238,7 +278,10 @@ export default async function SaleCalendarPage({
                 const h = Math.round((count / maxAgg) * 100);
                 const isTop = topAggMonths.some((m) => m.month === i);
                 return (
-                  <div key={i} className="flex flex-1 flex-col items-center gap-1.5">
+                  <div
+                    key={i}
+                    className="flex flex-1 flex-col items-center gap-1.5"
+                  >
                     <div className="flex h-28 w-full items-end sm:h-36">
                       <div
                         className={`w-full rounded-t-md transition-all ${
@@ -300,7 +343,9 @@ export default async function SaleCalendarPage({
                     次回セール予測
                   </p>
                   <p className="mt-0.5 text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                    {c.nextPredicted ? fmtMonthYear(c.nextPredicted) : `${c.peakMonthLabel}頃`}
+                    {c.nextPredicted
+                      ? fmtMonthYear(c.nextPredicted)
+                      : `${c.peakMonthLabel}頃`}
                     <span className="ml-1 text-xs font-normal text-zinc-400">
                       ごろ見込み
                     </span>
@@ -337,7 +382,8 @@ export default async function SaleCalendarPage({
             ))}
           </div>
           <p className="mt-4 text-[11px] leading-relaxed text-zinc-400">
-            ※ 予測は過去のセール開催実績（平均間隔・最頻月）から算出した統計的な目安で、
+            ※
+            予測は過去のセール開催実績（平均間隔・最頻月）から算出した統計的な目安で、
             開催を保証するものではありません。確定情報は各航空会社の公式発表をご確認ください。
           </p>
         </section>

@@ -17,6 +17,7 @@ import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-
 import { AIRPORTS, type AirportRegion } from "@/data/airports";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import type { DealSchema } from "@/data/deal-schema";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -39,9 +40,38 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["regional flights Japan", "cheap flights Japan", "Sapporo flights", "Sendai flights", "Fukuoka flights", "Naha flights", "Peach", "Skymark", "AIRDO"]
-      : ["地方発", "格安航空券", "地方空港", "地方便", "LCC", "Peach", "Skymark", "AIRDO", "札幌発", "仙台発", "福岡発", "那覇発", "松山発"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "regional flights Japan",
+          "cheap flights Japan",
+          "Sapporo flights",
+          "Sendai flights",
+          "Fukuoka flights",
+          "Naha flights",
+          "Peach",
+          "Skymark",
+          "AIRDO",
+        ]
+      : [
+          "地方発",
+          "格安航空券",
+          "地方空港",
+          "地方便",
+          "LCC",
+          "Peach",
+          "Skymark",
+          "AIRDO",
+          "札幌発",
+          "仙台発",
+          "福岡発",
+          "那覇発",
+          "松山発",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -67,15 +97,15 @@ const REGION_ORDER: AirportRegion[] = [
 
 // region 名 → /local-flights/{slug} マッピング
 const REGION_SLUGS: Record<AirportRegion, string> = {
-  "北海道": "hokkaido",
-  "東北": "tohoku",
-  "関東": "kanto",
-  "中部": "chubu",
-  "近畿": "kinki",
-  "中国": "chugoku",
-  "四国": "shikoku",
-  "九州": "kyushu",
-  "沖縄": "okinawa",
+  北海道: "hokkaido",
+  東北: "tohoku",
+  関東: "kanto",
+  中部: "chubu",
+  近畿: "kinki",
+  中国: "chugoku",
+  四国: "shikoku",
+  九州: "kyushu",
+  沖縄: "okinawa",
 };
 
 // 関東・近畿は「地方発」テーマ的に主要ハブ (HND/NRT/KIX/ITM) を除外し、地方扱いの空港のみ
@@ -149,7 +179,7 @@ type RegionStats = {
 function buildRegionStats(deals: DealSchema[]): RegionStats[] {
   return REGION_ORDER.map((region) => {
     const airports = AIRPORTS.filter(
-      (a) => a.region === region && !EXCLUDE_IATA.has(a.iata)
+      (a) => a.region === region && !EXCLUDE_IATA.has(a.iata),
     );
     const codes = new Set(airports.map((a) => a.iata));
     const regionDeals = deals.filter((d) => codes.has(d.origin_code));
@@ -169,7 +199,11 @@ function formatJPY(n: number): string {
   return `¥${n.toLocaleString("ja-JP")}`;
 }
 
-export default async function LocalFlightsPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function LocalFlightsPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const deals = await getActiveDeals();
   const regionStats = buildRegionStats(deals);
@@ -183,7 +217,11 @@ export default async function LocalFlightsPage({ params }: { params: Promise<{ l
     inLanguage: "ja-JP",
     datePublished: "2026-06-07",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -240,12 +278,16 @@ export default async function LocalFlightsPage({ params }: { params: Promise<{ l
             地方発の格安航空券
           </h1>
           <p className="mt-2 text-sm sm:text-base text-white/90 max-w-2xl">
-            東京・大阪以外、お住まいの地域から最安便を探す。9 地方 45 空港のセール情報をまとめて比較。
+            東京・大阪以外、お住まいの地域から最安便を探す。9 地方 45
+            空港のセール情報をまとめて比較。
           </p>
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* region 別カード */}
@@ -257,78 +299,80 @@ export default async function LocalFlightsPage({ params }: { params: Promise<{ l
                 お住まいの地方を選んで、地元空港発の最新セールをチェック
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {regionStats.map(({ region, airports, dealCount, cheapest }) => (
-                  <div
-                    key={region}
-                    className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col"
-                  >
-                    <div className="flex items-baseline justify-between gap-2">
-                      <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
-                        {region}
-                      </h3>
-                      {dealCount > 0 ? (
-                        <Link
-                          href={`/local-flights/${REGION_SLUGS[region]}#deals`}
-                          className="text-[11px] font-mono text-emerald-600 dark:text-emerald-300 hover:underline"
-                        >
-                          {dealCount} 件のセール
-                        </Link>
-                      ) : (
-                        <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
-                          {dealCount} 件のセール
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-1 text-xs text-zinc-500 leading-relaxed">
-                      {REGION_TAGLINE[region]}
-                    </p>
-
-                    {cheapest && (
-                      <Link
-                        href={`/deals/${cheapest.id}`}
-                        className="mt-3 block rounded-lg bg-emerald-50 dark:bg-emerald-900/30 px-3 py-2 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
-                      >
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-200">
-                          最安セール
-                        </p>
-                        <p className="mt-0.5 text-xs text-zinc-700 dark:text-zinc-200">
-                          {cheapest.origin} → {cheapest.destination}
-                        </p>
-                        <p className="text-sm font-bold text-emerald-700 dark:text-emerald-200">
-                          {formatJPY(cheapest.total_cost)}
-                          <span className="ml-1 text-[10px] font-normal text-zinc-500">
-                            総額 / {cheapest.airline_name}
-                          </span>
-                        </p>
-                      </Link>
-                    )}
-
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {airports.slice(0, 6).map((a) => (
-                        <Link
-                          key={a.iata}
-                          href={`/airports/${a.iata}`}
-                          className="rounded-full bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 text-[10px] text-sky-700 dark:text-sky-200 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition-colors"
-                        >
-                          {a.nameJa}
-                        </Link>
-                      ))}
-                      {airports.length > 6 && (
-                        <span className="rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-500">
-                          +{airports.length - 6}
-                        </span>
-                      )}
-                    </div>
-
-                    <Link
-                      href={`/local-flights/${REGION_SLUGS[region]}`}
-                      className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 hover:underline"
+                {regionStats.map(
+                  ({ region, airports, dealCount, cheapest }) => (
+                    <div
+                      key={region}
+                      className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col"
                     >
-                      {region}発の詳細を見る
-                      <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                ))}
+                      <div className="flex items-baseline justify-between gap-2">
+                        <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+                          {region}
+                        </h3>
+                        {dealCount > 0 ? (
+                          <Link
+                            href={`/local-flights/${REGION_SLUGS[region]}#deals`}
+                            className="text-[11px] font-mono text-emerald-600 dark:text-emerald-300 hover:underline"
+                          >
+                            {dealCount} 件のセール
+                          </Link>
+                        ) : (
+                          <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
+                            {dealCount} 件のセール
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-xs text-zinc-500 leading-relaxed">
+                        {REGION_TAGLINE[region]}
+                      </p>
+
+                      {cheapest && (
+                        <Link
+                          href={`/deals/${cheapest.id}`}
+                          className="mt-3 block rounded-lg bg-emerald-50 dark:bg-emerald-900/30 px-3 py-2 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 transition-colors"
+                        >
+                          <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-200">
+                            最安セール
+                          </p>
+                          <p className="mt-0.5 text-xs text-zinc-700 dark:text-zinc-200">
+                            {cheapest.origin} → {cheapest.destination}
+                          </p>
+                          <p className="text-sm font-bold text-emerald-700 dark:text-emerald-200">
+                            {formatJPY(cheapest.total_cost)}
+                            <span className="ml-1 text-[10px] font-normal text-zinc-500">
+                              総額 / {cheapest.airline_name}
+                            </span>
+                          </p>
+                        </Link>
+                      )}
+
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {airports.slice(0, 6).map((a) => (
+                          <Link
+                            key={a.iata}
+                            href={`/airports/${a.iata}`}
+                            className="rounded-full bg-sky-50 dark:bg-sky-900/30 px-2 py-0.5 text-[10px] text-sky-700 dark:text-sky-200 hover:bg-sky-100 dark:hover:bg-sky-900/50 transition-colors"
+                          >
+                            {a.nameJa}
+                          </Link>
+                        ))}
+                        {airports.length > 6 && (
+                          <span className="rounded-full bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[10px] text-zinc-500">
+                            +{airports.length - 6}
+                          </span>
+                        )}
+                      </div>
+
+                      <Link
+                        href={`/local-flights/${REGION_SLUGS[region]}`}
+                        className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 hover:underline"
+                      >
+                        {region}発の詳細を見る
+                        <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    </div>
+                  ),
+                )}
               </div>
             </section>
 

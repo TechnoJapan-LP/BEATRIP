@@ -19,6 +19,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 
@@ -44,7 +45,12 @@ export async function generateMetadata(): Promise<Metadata> {
       "特典航空券 取り方",
       "マイル 予約 コツ",
     ],
-    openGraph: { title, description, type: "article" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "article",
+    },
     alternates: {
       canonical: "https://beatrip.jp/articles/miles-booking-guide",
       languages: {
@@ -55,50 +61,51 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const MILE_TABLE: { route: string; jal: string; ana: string; note: string }[] = [
-  {
-    route: "国内線 短距離 (羽田-大阪 等)",
-    jal: "片道 6,000-7,500",
-    ana: "片道 5,000-7,500",
-    note: "両社とも片道 7,500 マイル前後。シーズン (LOW/REG/HIGH) で変動。",
-  },
-  {
-    route: "国内線 中距離 (羽田-福岡 / 札幌)",
-    jal: "片道 7,500-9,000",
-    ana: "片道 7,500-9,000",
-    note: "ハイシーズン (年末年始・GW・お盆) は LOW から 30-50% UP。",
-  },
-  {
-    route: "国内線 沖縄路線",
-    jal: "片道 7,500-10,000",
-    ana: "片道 7,500-9,000",
-    note: "離島路線は本島より +500-1,000 マイル必要。",
-  },
-  {
-    route: "韓国 / 台湾 / 中国近郊",
-    jal: "往復 15,000-20,000",
-    ana: "往復 17,000-25,000",
-    note: "近場海外は最もコスパが良い。週末日帰り旅にも使える。",
-  },
-  {
-    route: "東南アジア (バンコク・シンガポール)",
-    jal: "往復 30,000-40,000",
-    ana: "往復 35,000-45,000",
-    note: "ビジネスクラスなら 60,000-80,000 で大幅お得感。",
-  },
-  {
-    route: "ハワイ",
-    jal: "往復 40,000-55,000",
-    ana: "往復 40,000-55,000",
-    note: "ピーク期は LOW の 1.5 倍程度。早期予約で LOW シーズン枠確保が鉄則。",
-  },
-  {
-    route: "ヨーロッパ",
-    jal: "往復 55,000-75,000",
-    ana: "往復 55,000-75,000",
-    note: "ビジネス 110,000-150,000、ファースト 165,000-220,000 でアップグレード効果絶大。",
-  },
-];
+const MILE_TABLE: { route: string; jal: string; ana: string; note: string }[] =
+  [
+    {
+      route: "国内線 短距離 (羽田-大阪 等)",
+      jal: "片道 6,000-7,500",
+      ana: "片道 5,000-7,500",
+      note: "両社とも片道 7,500 マイル前後。シーズン (LOW/REG/HIGH) で変動。",
+    },
+    {
+      route: "国内線 中距離 (羽田-福岡 / 札幌)",
+      jal: "片道 7,500-9,000",
+      ana: "片道 7,500-9,000",
+      note: "ハイシーズン (年末年始・GW・お盆) は LOW から 30-50% UP。",
+    },
+    {
+      route: "国内線 沖縄路線",
+      jal: "片道 7,500-10,000",
+      ana: "片道 7,500-9,000",
+      note: "離島路線は本島より +500-1,000 マイル必要。",
+    },
+    {
+      route: "韓国 / 台湾 / 中国近郊",
+      jal: "往復 15,000-20,000",
+      ana: "往復 17,000-25,000",
+      note: "近場海外は最もコスパが良い。週末日帰り旅にも使える。",
+    },
+    {
+      route: "東南アジア (バンコク・シンガポール)",
+      jal: "往復 30,000-40,000",
+      ana: "往復 35,000-45,000",
+      note: "ビジネスクラスなら 60,000-80,000 で大幅お得感。",
+    },
+    {
+      route: "ハワイ",
+      jal: "往復 40,000-55,000",
+      ana: "往復 40,000-55,000",
+      note: "ピーク期は LOW の 1.5 倍程度。早期予約で LOW シーズン枠確保が鉄則。",
+    },
+    {
+      route: "ヨーロッパ",
+      jal: "往復 55,000-75,000",
+      ana: "往復 55,000-75,000",
+      note: "ビジネス 110,000-150,000、ファースト 165,000-220,000 でアップグレード効果絶大。",
+    },
+  ];
 
 const TIPS: { icon: typeof Calendar; title: string; body: string }[] = [
   {
@@ -150,18 +157,27 @@ const FAQS = [
   },
 ];
 
-export default async function MilesBookingGuidePage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function MilesBookingGuidePage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "JAL/ANA マイルで予約 完全ガイド — 特典航空券の取り方・必要マイル・コツ",
+    headline:
+      "JAL/ANA マイルで予約 完全ガイド — 特典航空券の取り方・必要マイル・コツ",
     description:
       "マイル予約の基礎から実践テクニック、必要マイル数、希望日確保のコツまでを完全網羅。",
     inLanguage: "ja-JP",
     datePublished: PUBLISHED,
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -196,7 +212,11 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? "/en/articles/miles-booking-guide" : "/articles/miles-booking-guide"}
+            currentPath={
+              lang === "en"
+                ? "/en/articles/miles-booking-guide"
+                : "/articles/miles-booking-guide"
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "Articles", href: "/articles" },
@@ -213,13 +233,17 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
             マイルで予約 完全ガイド
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">
-            JAL / ANA マイルで特典航空券を予約する実践ガイド。必要マイル数の目安、
+            JAL / ANA
+            マイルで特典航空券を予約する実践ガイド。必要マイル数の目安、
             希望日確保のコツ、マイル効率を最大化するクレカ選びまでを網羅した完全マニュアルです。
           </p>
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 必要マイル表 */}
@@ -228,17 +252,26 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
                 路線別 必要マイル目安
               </h2>
               <p className="text-sm text-zinc-500 mb-6">
-                JAL / ANA 特典航空券のレギュラーシーズン (REG) のエコノミー必要マイル目安。
-                ハイ/ロー シーズンや上位クラスは別途参照。
+                JAL / ANA 特典航空券のレギュラーシーズン (REG)
+                のエコノミー必要マイル目安。 ハイ/ロー
+                シーズンや上位クラスは別途参照。
               </p>
               <div className="overflow-x-auto rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="text-left border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
-                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">路線</th>
-                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">JAL</th>
-                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">ANA</th>
-                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200">編集部メモ</th>
+                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">
+                        路線
+                      </th>
+                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">
+                        JAL
+                      </th>
+                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200 whitespace-nowrap">
+                        ANA
+                      </th>
+                      <th className="px-3 py-3 font-bold text-zinc-700 dark:text-zinc-200">
+                        編集部メモ
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -262,7 +295,8 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
                 </table>
               </div>
               <p className="mt-2 text-[11px] text-zinc-400 leading-relaxed">
-                上記マイル数は 2026 年 6 月時点の編集部調査による目安。改定の可能性があるため、
+                上記マイル数は 2026 年 6
+                月時点の編集部調査による目安。改定の可能性があるため、
                 予約前に各社公式の最新マイルチャートで必ずご確認ください。
               </p>
             </section>
@@ -301,15 +335,18 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
                     マイル積上げの最速ルートは「年会費有 + 入会ボーナス」
                   </h2>
                   <p className="mt-2 text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                    マイラー初心者なら ANA/JAL ゴールド系クレカの「入会 + 利用ボーナス」で
-                    最初の 1-2 万マイルを一気に獲得するのが最速。日常決済も集約すれば
-                    年間 3-5 万マイル積上は現実的。年会費 1-2 万円は実質「マイルへの投資」と考えると割安。
+                    マイラー初心者なら ANA/JAL ゴールド系クレカの「入会 +
+                    利用ボーナス」で 最初の 1-2
+                    万マイルを一気に獲得するのが最速。日常決済も集約すれば 年間
+                    3-5 万マイル積上は現実的。年会費 1-2
+                    万円は実質「マイルへの投資」と考えると割安。
                   </p>
                   <Link
                     href="/credit-cards"
                     className="mt-3 inline-flex items-center gap-1 rounded-lg bg-amber-600 text-white px-4 py-2 text-sm font-bold hover:bg-amber-700 transition-colors"
                   >
-                    マイル系クレカを比較する <ArrowRight className="h-3.5 w-3.5" />
+                    マイル系クレカを比較する{" "}
+                    <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               </div>
@@ -324,10 +361,11 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
                     本ガイドの位置付け
                   </h2>
                   <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    本ガイドは 2026 年 6 月時点の編集部調査に基づく一般的な目安です。
+                    本ガイドは 2026 年 6
+                    月時点の編集部調査に基づく一般的な目安です。
                     必要マイル数・特典航空券の運用ルール・燃油サーチャージは航空会社の判断で
-                    随時改定されます。実際の予約前に必ず JAL / ANA 公式の最新ルールを
-                    ご確認ください。
+                    随時改定されます。実際の予約前に必ず JAL / ANA
+                    公式の最新ルールを ご確認ください。
                   </p>
                   <p className="mt-2 text-[11px] text-zinc-400">
                     本記事のリンクの一部はアフィリエイト広告を含みます。
@@ -357,7 +395,9 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
                     旅行系クレカ比較
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">マイル付与率・年会費・特典で選ぶ</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    マイル付与率・年会費・特典で選ぶ
+                  </p>
                   <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                     クレカ比較を見る <ArrowRight className="h-3 w-3" />
                   </div>
@@ -369,7 +409,9 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
                     2027 セール予測
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">JAL/ANA/LCC 主要キャリア網羅</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    JAL/ANA/LCC 主要キャリア網羅
+                  </p>
                   <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                     セール予測を見る <ArrowRight className="h-3 w-3" />
                   </div>
@@ -382,7 +424,11 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
             <JapanesePartnersPanel
               title="航空券 予約・比較"
               subtitle="マイル不足時の現金予約に"
-              categories={["flight-domestic", "flight-overseas", "tour-package"]}
+              categories={[
+                "flight-domestic",
+                "flight-overseas",
+                "tour-package",
+              ]}
               source="miles-booking-guide"
             />
             <JapanesePartnersPanel
@@ -399,7 +445,8 @@ export default async function MilesBookingGuidePage({ params }: { params: Promis
                 </h3>
               </div>
               <p className="text-xs text-zinc-500 leading-relaxed">
-                マイル予約と並行して現金セールも要チェック。年 2-3 回の大型セールを逃さない。
+                マイル予約と並行して現金セールも要チェック。年 2-3
+                回の大型セールを逃さない。
               </p>
               <Link
                 href="/airlines"

@@ -22,8 +22,9 @@ import { AIRPORTS, type AirportRegion, type Airport } from "@/data/airports";
 import { cityNameJa } from "@/lib/airport-names";
 import { getAirlineByCode } from "@/data/airlines";
 import { getActiveDeals } from "@/lib/deals/deal-service";
+import { OG_IMAGES } from "@/lib/seo/og";
 
-type Props = { params: Promise<{ region: string; lang: string;}> };
+type Props = { params: Promise<{ region: string; lang: string }> };
 
 // ISR: 1800秒キャッシュ (30分)
 export const revalidate = 21600;
@@ -59,43 +60,27 @@ const REGION_GRADIENT: Record<AirportRegion, string> = {
 const REGION_OVERVIEW: Record<AirportRegion, string> = {
   北海道:
     "新千歳をハブに、函館・旭川・釧路・帯広・稚内・丘珠の計 6 空港。冬は降雪による欠航や季節運休便も多く、夏は新千歳発の国内線・国際線とも在庫が一気に増えます。道内航空 (HAC) の小型機が結ぶ離島・道東路線は地方発ならではの強みです。",
-  東北:
-    "仙台を最大ハブに、青森・秋田・山形・花巻・福島・庄内の 7 空港。仙台以外は便数が少なく、東京 (HND)・大阪 (ITM)・名古屋 (NGO) 経由の乗継便が多いのが特徴。FDA・IBEX が地方間路線で活躍し、雪まつり・桜・紅葉の繁忙期は早期予約が必須です。",
-  関東:
-    "首都圏 3 大空港のうち、地方発テーマでは茨城空港 (IBR) が中心。スカイマーク・Peach の格安便が新千歳・福岡・那覇・鹿児島へ就航し、東京駅から高速バス 100 分でアクセス可能。空港利用料 (PSFC) も他主要空港より安く設定されています。",
-  中部:
-    "セントレア (NGO) と県営名古屋 (NKM/小牧) に加え、新潟・小松・富山・静岡の地方空港。FDA が小牧を中部拠点に地方間路線を多数運航し、北陸新幹線開業後も小松・富山は東京・福岡・札幌・那覇への定期便を維持。富士山静岡からは台北・ソウル等の国際線もあります。",
-  近畿:
-    "関空 (KIX)・伊丹 (ITM) の 2 大ハブに、神戸空港 (UKB) が地方発の主役。神戸はスカイマーク・Peach・ANA が新千歳・那覇・鹿児島・石垣・茨城を結び、三宮駅からポートライナーで 18 分の好立地。発着枠拡大により今後も路線増の見込みです。",
-  中国:
-    "広島・岡山・米子・鳥取・出雲・山口宇部・岩国の 7 空港。新幹線が並行する区間でも、HIJ・OKJ の国際線 (台北・ソウル・上海) と離島・東京路線で需要を維持。出雲・米子は縁結び・水木しげる関連でテーマ性が強く、観光誘致 OK の地方便ブランドが定着しています。",
-  四国:
-    "松山・高松・高知・徳島の 4 県すべてに空港。松山と高松が地方拠点でジェットスター・Peach の LCC が東京・那覇・福岡へ就航。瀬戸大橋・しまなみ海道経由の鉄道アクセスより、航空便のほうが速く安いケースも多く、本州方面への需要は安定しています。",
-  九州:
-    "福岡を九州最大ハブに、北九州・佐賀・長崎・熊本・大分・宮崎・鹿児島・離島 (種子島/屋久島/奄美/与論) を含め充実。Peach・Jetstar・SFJ・SNA など九州拠点 LCC/MCC が多く、24 時間運用の北九州空港は深夜便も活用可能。離島路線は JAC が運航します。",
-  沖縄:
-    "那覇 (OKA) を起点に石垣 (ISG)・宮古 (MMY) の 3 空港。本土主要都市・台北・ソウル路線が中心で、Peach・JJP・SNA が LCC/MCC 価格帯を支えます。離島ホッピングは琉球エアコミューター (RAC) が運航。台風シーズン (8-10 月) は欠航リスクに注意。",
+  東北: "仙台を最大ハブに、青森・秋田・山形・花巻・福島・庄内の 7 空港。仙台以外は便数が少なく、東京 (HND)・大阪 (ITM)・名古屋 (NGO) 経由の乗継便が多いのが特徴。FDA・IBEX が地方間路線で活躍し、雪まつり・桜・紅葉の繁忙期は早期予約が必須です。",
+  関東: "首都圏 3 大空港のうち、地方発テーマでは茨城空港 (IBR) が中心。スカイマーク・Peach の格安便が新千歳・福岡・那覇・鹿児島へ就航し、東京駅から高速バス 100 分でアクセス可能。空港利用料 (PSFC) も他主要空港より安く設定されています。",
+  中部: "セントレア (NGO) と県営名古屋 (NKM/小牧) に加え、新潟・小松・富山・静岡の地方空港。FDA が小牧を中部拠点に地方間路線を多数運航し、北陸新幹線開業後も小松・富山は東京・福岡・札幌・那覇への定期便を維持。富士山静岡からは台北・ソウル等の国際線もあります。",
+  近畿: "関空 (KIX)・伊丹 (ITM) の 2 大ハブに、神戸空港 (UKB) が地方発の主役。神戸はスカイマーク・Peach・ANA が新千歳・那覇・鹿児島・石垣・茨城を結び、三宮駅からポートライナーで 18 分の好立地。発着枠拡大により今後も路線増の見込みです。",
+  中国: "広島・岡山・米子・鳥取・出雲・山口宇部・岩国の 7 空港。新幹線が並行する区間でも、HIJ・OKJ の国際線 (台北・ソウル・上海) と離島・東京路線で需要を維持。出雲・米子は縁結び・水木しげる関連でテーマ性が強く、観光誘致 OK の地方便ブランドが定着しています。",
+  四国: "松山・高松・高知・徳島の 4 県すべてに空港。松山と高松が地方拠点でジェットスター・Peach の LCC が東京・那覇・福岡へ就航。瀬戸大橋・しまなみ海道経由の鉄道アクセスより、航空便のほうが速く安いケースも多く、本州方面への需要は安定しています。",
+  九州: "福岡を九州最大ハブに、北九州・佐賀・長崎・熊本・大分・宮崎・鹿児島・離島 (種子島/屋久島/奄美/与論) を含め充実。Peach・Jetstar・SFJ・SNA など九州拠点 LCC/MCC が多く、24 時間運用の北九州空港は深夜便も活用可能。離島路線は JAC が運航します。",
+  沖縄: "那覇 (OKA) を起点に石垣 (ISG)・宮古 (MMY) の 3 空港。本土主要都市・台北・ソウル路線が中心で、Peach・JJP・SNA が LCC/MCC 価格帯を支えます。離島ホッピングは琉球エアコミューター (RAC) が運航。台風シーズン (8-10 月) は欠航リスクに注意。",
 };
 
 const REGION_SEASONS: Record<AirportRegion, string> = {
   北海道:
     "ベストシーズンは 6-9 月 (避暑・ラベンダー・知床)、12-2 月 (スノースポーツ・流氷)。航空券は 5 月・10-11 月のオフがおすすめ。",
-  東北:
-    "桜 (4 月)・夏祭り (8 月)・紅葉 (10-11 月)・蔵王樹氷 (1-2 月) が需要ピーク。狙い目は 6 月・9 月・1 月中旬以降の閑散期。",
-  関東:
-    "通年で需要が安定。地方発として茨城を使うなら、本土観光ベースのため特別なシーズン制約は少なめ。GW・お盆・年末年始だけ避ければ常に格安。",
-  中部:
-    "立山黒部 (4-5 月の雪の大谷)・北陸グルメ・富士登山 (7-8 月) が繁忙期。新潟は冬の雪国観光が人気。9-11 月・1-2 月の平日が狙い目。",
-  近畿:
-    "桜と紅葉の京都需要で 4 月・11 月が最繁忙。神戸発の地方便としては、5-6 月・9 月・1 月中旬が最も安く取れる時期です。",
-  中国:
-    "宮島・出雲大社・倉敷の通年観光に加え、瀬戸内国際芸術祭 (3 年に 1 度)・尾道桜の春・紅葉の秋がピーク。1-2 月と 6 月が比較的安い。",
-  四国:
-    "桜・道後温泉・四万十川は通年人気。お遍路シーズン (4-5 月、10-11 月) と祭り (8 月の阿波おどり) が繁忙。6 月梅雨時と 1-2 月が穴場。",
-  九州:
-    "桜の太宰府・湯布院温泉・桜島など通年需要。GW・お盆・正月以外は比較的安定価格。離島 (屋久島・奄美) は梅雨明け 7 月から繁忙期突入。",
-  沖縄:
-    "海開き (3 月下旬) から 9 月までが繁忙期で、特に夏休み・シルバーウィークがピーク。狙い目は 11-2 月のオフ (海なしでも観光は十分可能)。",
+  東北: "桜 (4 月)・夏祭り (8 月)・紅葉 (10-11 月)・蔵王樹氷 (1-2 月) が需要ピーク。狙い目は 6 月・9 月・1 月中旬以降の閑散期。",
+  関東: "通年で需要が安定。地方発として茨城を使うなら、本土観光ベースのため特別なシーズン制約は少なめ。GW・お盆・年末年始だけ避ければ常に格安。",
+  中部: "立山黒部 (4-5 月の雪の大谷)・北陸グルメ・富士登山 (7-8 月) が繁忙期。新潟は冬の雪国観光が人気。9-11 月・1-2 月の平日が狙い目。",
+  近畿: "桜と紅葉の京都需要で 4 月・11 月が最繁忙。神戸発の地方便としては、5-6 月・9 月・1 月中旬が最も安く取れる時期です。",
+  中国: "宮島・出雲大社・倉敷の通年観光に加え、瀬戸内国際芸術祭 (3 年に 1 度)・尾道桜の春・紅葉の秋がピーク。1-2 月と 6 月が比較的安い。",
+  四国: "桜・道後温泉・四万十川は通年人気。お遍路シーズン (4-5 月、10-11 月) と祭り (8 月の阿波おどり) が繁忙。6 月梅雨時と 1-2 月が穴場。",
+  九州: "桜の太宰府・湯布院温泉・桜島など通年需要。GW・お盆・正月以外は比較的安定価格。離島 (屋久島・奄美) は梅雨明け 7 月から繁忙期突入。",
+  沖縄: "海開き (3 月下旬) から 9 月までが繁忙期で、特に夏休み・シルバーウィークがピーク。狙い目は 11-2 月のオフ (海なしでも観光は十分可能)。",
 };
 
 export function generateStaticParams() {
@@ -121,8 +106,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const isEn = lang === "en";
   const airports = AIRPORTS.filter((a) => a.region === region);
-  const repNamesJa = airports.slice(0, 3).map((a) => a.fullNameJa).join("・");
-  const repNamesEn = airports.slice(0, 3).map((a) => a.nameEn).join(", ");
+  const repNamesJa = airports
+    .slice(0, 3)
+    .map((a) => a.fullNameJa)
+    .join("・");
+  const repNamesEn = airports
+    .slice(0, 3)
+    .map((a) => a.nameEn)
+    .join(", ");
   const regionEn = REGION_EN[region];
 
   const title = isEn
@@ -151,7 +142,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           `${region} 空港`,
           ...airports.slice(0, 6).map((a) => `${a.nameJa} セール`),
         ],
-    openGraph: { title, description, type: "website" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -163,9 +159,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const SIZE_BADGE: Record<Airport["size"], { label: string; cls: string }> = {
-  major: { label: "主要空港", cls: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200" },
-  regional: { label: "地方拠点", cls: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200" },
-  minor: { label: "地方/離島", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200" },
+  major: {
+    label: "主要空港",
+    cls: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200",
+  },
+  regional: {
+    label: "地方拠点",
+    cls: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200",
+  },
+  minor: {
+    label: "地方/離島",
+    cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200",
+  },
 };
 
 function formatJPY(n: number): string {
@@ -173,7 +178,7 @@ function formatJPY(n: number): string {
 }
 
 export default async function LocalFlightsRegionPage({ params }: Props) {
-  const { region: slug, lang} = await params;
+  const { region: slug, lang } = await params;
   const region = SLUG_TO_REGION[slug.toLowerCase()];
   if (!region) notFound();
 
@@ -183,9 +188,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
   const hotelCitySlugs = getHotelCitiesForRegion(slug);
 
   const airportCodes = new Set(airports.map((a) => a.iata));
-  const airlineCodes = Array.from(
-    new Set(airports.flatMap((a) => a.airlines)),
-  );
+  const airlineCodes = Array.from(new Set(airports.flatMap((a) => a.airlines)));
 
   // region 内空港 origin の deals (最大 8、安い順)
   const deals = await getActiveDeals();
@@ -195,7 +198,10 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
     .slice(0, 8);
 
   // 人気路線: region 内空港の popularRoutes を集約・重複排除・上位 8
-  const popularRoutesMap = new Map<string, { origin: Airport; destIata: string }>();
+  const popularRoutesMap = new Map<
+    string,
+    { origin: Airport; destIata: string }
+  >();
   for (const airport of airports) {
     for (const destIata of airport.popularRoutes) {
       const key = `${airport.iata}-${destIata}`;
@@ -212,33 +218,57 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
       a: `(1) ${airports
         .slice(0, 3)
         .map((a) => a.nameJa)
-        .join("・")} など主要空港の LCC/MCC 在庫を最初に確認、(2) 早朝・深夜便を狙う、(3) 火・水・土の出発便を選ぶ、(4) 出発 60-90 日前に予約、(5) Peach・Jetstar・Skymark などの定期セール開催時を狙う、の 5 点が基本。BEATRIP では ${region} の全 ${airports.length} 空港の最新セール価格を航空会社横断で比較できます。`,
+        .join(
+          "・",
+        )} など主要空港の LCC/MCC 在庫を最初に確認、(2) 早朝・深夜便を狙う、(3) 火・水・土の出発便を選ぶ、(4) 出発 60-90 日前に予約、(5) Peach・Jetstar・Skymark などの定期セール開催時を狙う、の 5 点が基本。BEATRIP では ${region} の全 ${airports.length} 空港の最新セール価格を航空会社横断で比較できます。`,
     },
     {
       q: `${region}から海外直行便はある？`,
-      a: airports.some((a) => a.popularRoutes.some((r) => /^(ICN|TPE|PVG|BKK|HKG|HNL|SIN|KUL|JFK|LAX|CDG|LHR|FRA|AMS)$/.test(r)))
+      a: airports.some((a) =>
+        a.popularRoutes.some((r) =>
+          /^(ICN|TPE|PVG|BKK|HKG|HNL|SIN|KUL|JFK|LAX|CDG|LHR|FRA|AMS)$/.test(r),
+        ),
+      )
         ? `${region} の主要空港からは台北 (TPE)・ソウル (ICN)・上海 (PVG) など東アジア路線を中心に国際直行便があります。中長距離は便数が限られるため、関空・成田・羽田・中部経由が一般的です。`
         : `${region} 発の国際直行便は限定的で、多くは羽田・成田・関空・中部経由になります。地方発の国際線セールも BEATRIP では集約しているので、まずは主要ハブまでの国内乗継便を含めた総額で比較するのがおすすめです。`,
     },
     {
       q: `${region}の LCC・MCC は何が使える？`,
-      a: `${region} の各空港に就航する主な LCC/MCC は ${airlineCodes
-        .filter((c) => ["APJ", "JJP", "SKY", "AIRDO", "SNA", "SFJ", "ZIP", "JAC", "FDA", "IBX"].includes(c))
-        .slice(0, 6)
-        .join("、") || "Peach・Jetstar・Skymark など"} です。各社の運賃体系・受託手荷物料金・セール頻度を比較したうえで、目的地・日程に合うキャリアを選びましょう。`,
+      a: `${region} の各空港に就航する主な LCC/MCC は ${
+        airlineCodes
+          .filter((c) =>
+            [
+              "APJ",
+              "JJP",
+              "SKY",
+              "AIRDO",
+              "SNA",
+              "SFJ",
+              "ZIP",
+              "JAC",
+              "FDA",
+              "IBX",
+            ].includes(c),
+          )
+          .slice(0, 6)
+          .join("、") || "Peach・Jetstar・Skymark など"
+      } です。各社の運賃体系・受託手荷物料金・セール頻度を比較したうえで、目的地・日程に合うキャリアを選びましょう。`,
     },
     {
       q: `${region}の主要空港アクセスは？`,
       a: `${region} 内の主要空港 (${airports
         .slice(0, 3)
         .map((a) => a.fullNameJa)
-        .join("・")}) は、いずれもリムジンバス・鉄道・タクシーで市街地から 30-60 分でアクセス可能。地方空港は駐車場代が安く、マイカー利用も現実的な選択肢です。空港公式サイトで最新ダイヤを確認してください。`,
+        .join(
+          "・",
+        )}) は、いずれもリムジンバス・鉄道・タクシーで市街地から 30-60 分でアクセス可能。地方空港は駐車場代が安く、マイカー利用も現実的な選択肢です。空港公式サイトで最新ダイヤを確認してください。`,
     },
     {
       q: `${region}内の地方→地方便はある？`,
-      a: airports.length >= 3
-        ? `${region} 内の空港同士を結ぶ直行便は限られますが、地方拠点空港 (${airports.find((a) => a.size === "major")?.nameJa ?? airports[0].nameJa}) を経由すれば全国アクセス可能。FDA・JAC などのコミューター航空が地方間需要を支えています。`
-        : `${region} は空港数が少ないため、地方間の直行便はほぼなく、東京・大阪・福岡・那覇等の主要ハブ経由が基本です。`,
+      a:
+        airports.length >= 3
+          ? `${region} 内の空港同士を結ぶ直行便は限られますが、地方拠点空港 (${airports.find((a) => a.size === "major")?.nameJa ?? airports[0].nameJa}) を経由すれば全国アクセス可能。FDA・JAC などのコミューター航空が地方間需要を支えています。`
+          : `${region} は空港数が少ないため、地方間の直行便はほぼなく、東京・大阪・福岡・那覇等の主要ハブ経由が基本です。`,
     },
   ];
 
@@ -250,7 +280,11 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
     inLanguage: "ja-JP",
     datePublished: "2026-06-08",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -292,7 +326,11 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
         <div className="relative mx-auto max-w-7xl h-full flex flex-col justify-end px-4 sm:px-6 pb-8">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? `/en/local-flights/${slug}` : `/local-flights/${slug}`}
+            currentPath={
+              lang === "en"
+                ? `/en/local-flights/${slug}`
+                : `/local-flights/${slug}`
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "地方発の格安航空券", href: "/local-flights" },
@@ -310,7 +348,8 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
             {region}発の格安航空券
           </h1>
           <p className="mt-2 text-sm sm:text-base text-white/90 max-w-2xl">
-            {region} の主要 {airlineCodes.length} 社 / {airports.length} 空港から最新セール
+            {region} の主要 {airlineCodes.length} 社 / {airports.length}{" "}
+            空港から最新セール
           </p>
         </div>
       </section>
@@ -428,7 +467,8 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
               ) : (
                 <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 text-center">
                   <p className="text-sm text-zinc-500">
-                    現在 {region} 発のアクティブセールはありません。BEATRIP では毎日新セールを収集しています。
+                    現在 {region} 発のアクティブセールはありません。BEATRIP
+                    では毎日新セールを収集しています。
                   </p>
                   <Link
                     href="/"
@@ -555,7 +595,8 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                       {a.fullNameJa} ({a.iata})
                     </h3>
                     <p className="text-xs text-zinc-500 mt-1">
-                      {a.tagline ?? `${a.prefecture} の代表空港。発着セール・人気路線を確認。`}
+                      {a.tagline ??
+                        `${a.prefecture} の代表空港。発着セール・人気路線を確認。`}
                     </p>
                     <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                       空港ページを見る

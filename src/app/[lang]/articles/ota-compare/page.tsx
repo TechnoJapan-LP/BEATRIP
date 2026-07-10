@@ -15,6 +15,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { OTA_COMPARE_ARTICLES } from "@/lib/articles/static-articles";
 import { getHotelDestinationBySlug } from "@/data/hotel-destinations";
 import { localizeHref, type Locale } from "@/lib/i18n/locale";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -35,7 +36,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: { title, description },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -94,8 +99,8 @@ export default async function OtaCompareHubPage({ params }: Props) {
             の在庫量・価格傾向・キャンセル条件を、編集部が同じ基準で整理しています。
           </p>
           <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-[11px] text-zinc-500 dark:text-zinc-400">
-            <BedDouble className="h-3.5 w-3.5" aria-hidden="true" />
-            全 {OTA_COMPARE_ARTICLES.length} 都市
+            <BedDouble className="h-3.5 w-3.5" aria-hidden="true" />全{" "}
+            {OTA_COMPARE_ARTICLES.length} 都市
           </p>
         </div>
       </section>
@@ -107,7 +112,10 @@ export default async function OtaCompareHubPage({ params }: Props) {
         {groups.map((group) => (
           <section key={group.key}>
             <h2 className="mb-4 flex items-center gap-2 font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase">
-              <group.Icon className="h-5 w-5 text-zinc-400" aria-hidden="true" />
+              <group.Icon
+                className="h-5 w-5 text-zinc-400"
+                aria-hidden="true"
+              />
               {group.label}
               <span className="text-sm font-normal normal-case text-zinc-400">
                 {group.items.length} 都市
@@ -144,8 +152,10 @@ export default async function OtaCompareHubPage({ params }: Props) {
             国内 OTA (楽天トラベル・じゃらん等) も含めて比べたい方へ
           </h2>
           <p className="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            本シリーズはグローバル 4 大 OTA に絞った都市別比較です。楽天トラベル・じゃらん・Yahoo!トラベルなど国内
-            OTA のセール時期も含めた横断比較は、OTA セール比較ページで扱っています。
+            本シリーズはグローバル 4 大 OTA
+            に絞った都市別比較です。楽天トラベル・じゃらん・Yahoo!トラベルなど国内
+            OTA のセール時期も含めた横断比較は、OTA
+            セール比較ページで扱っています。
           </p>
           <Link
             href={lh("/ota-sales")}

@@ -23,6 +23,7 @@ import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { localizeHref, type Locale } from "@/lib/i18n/locale";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -42,7 +43,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: { title, description },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {

@@ -35,8 +35,9 @@ import {
   type MonthRating,
 } from "@/data/when-to-visit-content";
 import { buildHotelLink } from "@/lib/affiliate/url-builder";
+import { OG_IMAGES } from "@/lib/seo/og";
 
-type Props = { params: Promise<{ city: string; lang: string;}> };
+type Props = { params: Promise<{ city: string; lang: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city, lang } = await params;
@@ -51,7 +52,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = isEn
     ? `When to visit ${d.nameEn}, month by month. Best months: ${w.bestMonthsLabel}. Cheapest months: ${w.cheapMonthsLabel}. Climate, packing tips, yearly events, and FAQs.`
     : `${d.nameJa}（${d.nameEn}）旅行のベストシーズンを月別に解説。おすすめは${w.bestMonthsLabel}。安く行ける時期は${w.cheapMonthsLabel}。気候・服装・年間イベント・FAQまで網羅。`;
-  const path = isEn ? `/en/hotels/${d.slug}/best-season` : `/hotels/${d.slug}/best-season`;
+  const path = isEn
+    ? `/en/hotels/${d.slug}/best-season`
+    : `/hotels/${d.slug}/best-season`;
 
   // when-to-visit データ未整備の都市は汎用プレースホルダしか出せないため
   // noindex (検索流入させない)。sitemap.ts 側でも非掲載にしている。
@@ -79,7 +82,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           `${d.nameJa} 安い時期`,
           `${d.nameEn} best time to visit`,
         ],
-    openGraph: { title, description, type: "article" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "article",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -94,7 +102,7 @@ export function generateStaticParams() {
   // when-to-visit データのある都市のみ事前生成。
   // データ無し都市はオンデマンド描画 + noindex (上記 generateMetadata)。
   return HOTEL_DESTINATIONS.filter((d) => hasWhenToVisitContent(d.slug)).map(
-    (d) => ({ city: d.slug })
+    (d) => ({ city: d.slug }),
   );
 }
 
@@ -125,7 +133,7 @@ const RATING_CHIP: Record<
 };
 
 export default async function BestSeasonPage({ params }: Props) {
-  const { city, lang} = await params;
+  const { city, lang } = await params;
   const d = getHotelDestinationBySlug(city);
   if (!d) notFound();
 
@@ -166,7 +174,11 @@ export default async function BestSeasonPage({ params }: Props) {
     headline: `${d.nameJa}のベストシーズン｜月別カレンダーと服装ガイド`,
     description: `${d.nameJa}旅行のベストシーズンを月別に解説。気候・服装・年間イベント・FAQまで網羅。`,
     inLanguage: "ja",
-    about: { "@type": "TouristDestination", name: d.nameJa, alternateName: d.nameEn },
+    about: {
+      "@type": "TouristDestination",
+      name: d.nameJa,
+      alternateName: d.nameEn,
+    },
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `https://beatrip.jp/hotels/${d.slug}/best-season`,
@@ -221,7 +233,11 @@ export default async function BestSeasonPage({ params }: Props) {
         <div className="relative mx-auto max-w-7xl h-full flex flex-col justify-end px-4 sm:px-6 pb-6">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? `/en/hotels/${d.slug}/best-season` : `/hotels/${d.slug}/best-season`}
+            currentPath={
+              lang === "en"
+                ? `/en/hotels/${d.slug}/best-season`
+                : `/hotels/${d.slug}/best-season`
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "ホテル", href: "/hotels" },
@@ -238,7 +254,10 @@ export default async function BestSeasonPage({ params }: Props) {
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6"
+      >
         {/* サマリー: ベスト / 安い / 避ける */}
         <section className="mb-10 grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-3">
           <div className="rounded-2xl border border-emerald-100 dark:border-emerald-900/40 bg-emerald-50/60 dark:bg-emerald-950/30 p-5">
@@ -448,27 +467,29 @@ export default async function BestSeasonPage({ params }: Props) {
                   カレンダーの見方
                 </h2>
                 <ul className="space-y-2 text-xs">
-                  {(["best", "good", "ok", "avoid"] as MonthRating[]).map((r) => {
-                    const chip = RATING_CHIP[r];
-                    return (
-                      <li key={r} className="flex items-center gap-2">
-                        <span
-                          className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ring-1 ${chip.bg} ${chip.text} ${chip.ring}`}
-                        >
-                          {RATING_LABEL_JA[r]}
-                        </span>
-                        <span className="text-zinc-600 dark:text-zinc-300">
-                          {r === "best"
-                            ? "気候・観光ともに最適"
-                            : r === "good"
-                              ? "観光向きの好条件"
-                              : r === "ok"
-                                ? "可もなく不可もなく"
-                                : "雨・猛暑・混雑などに注意"}
-                        </span>
-                      </li>
-                    );
-                  })}
+                  {(["best", "good", "ok", "avoid"] as MonthRating[]).map(
+                    (r) => {
+                      const chip = RATING_CHIP[r];
+                      return (
+                        <li key={r} className="flex items-center gap-2">
+                          <span
+                            className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full ring-1 ${chip.bg} ${chip.text} ${chip.ring}`}
+                          >
+                            {RATING_LABEL_JA[r]}
+                          </span>
+                          <span className="text-zinc-600 dark:text-zinc-300">
+                            {r === "best"
+                              ? "気候・観光ともに最適"
+                              : r === "good"
+                                ? "観光向きの好条件"
+                                : r === "ok"
+                                  ? "可もなく不可もなく"
+                                  : "雨・猛暑・混雑などに注意"}
+                          </span>
+                        </li>
+                      );
+                    },
+                  )}
                 </ul>
               </div>
             </section>

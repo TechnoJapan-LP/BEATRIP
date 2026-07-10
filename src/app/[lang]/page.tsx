@@ -25,12 +25,12 @@ import { SectionHeading } from "@/components/ui/section-heading";
 const NotificationPanel = dynamic(() =>
   import("@/components/notifications/notification-panel").then((m) => ({
     default: m.NotificationPanel,
-  }))
+  })),
 );
 const NewsletterCTA = dynamic(() =>
   import("@/components/newsletter/newsletter-cta").then((m) => ({
     default: m.NewsletterCTA,
-  }))
+  })),
 );
 import { DestinationSpotlight } from "@/components/home/destination-spotlight";
 import { SeasonalHero } from "@/components/home/seasonal-hero";
@@ -42,6 +42,7 @@ import { HOTEL_BY_SLUG, HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { getDictionary, hasLocale } from "./dictionaries";
 import { localizeHref } from "@/lib/i18n/locale";
 import type { Metadata } from "next";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 1800秒キャッシュ (30分: deal が頻繁に変わる top)
 export const revalidate = 21600;
@@ -66,6 +67,7 @@ export async function generateMetadata({
   return {
     description,
     openGraph: {
+      images: OG_IMAGES,
       description,
     },
     alternates: {
@@ -93,15 +95,15 @@ const REGION_ORDER: AirportRegion[] = [
 
 // region 名 → /local-flights/{slug} マッピング
 const REGION_SLUGS: Record<AirportRegion, string> = {
-  "北海道": "hokkaido",
-  "東北": "tohoku",
-  "関東": "kanto",
-  "中部": "chubu",
-  "近畿": "kinki",
-  "中国": "chugoku",
-  "四国": "shikoku",
-  "九州": "kyushu",
-  "沖縄": "okinawa",
+  北海道: "hokkaido",
+  東北: "tohoku",
+  関東: "kanto",
+  中部: "chubu",
+  近畿: "kinki",
+  中国: "chugoku",
+  四国: "shikoku",
+  九州: "kyushu",
+  沖縄: "okinawa",
 };
 
 // ホームに出す代表的なホテル都市（国内→アジア→欧米まんべんなく）
@@ -140,7 +142,7 @@ export default async function Home({
     .map((d) => {
       // destination_code から HotelDestination を逆引き
       const hd = HOTEL_DESTINATIONS.find((h) =>
-        h.iataCodes.includes(d.destination_code)
+        h.iataCodes.includes(d.destination_code),
       );
       return hd ? { slug: hd.slug, discount: d.discount_percent } : null;
     })
@@ -169,7 +171,7 @@ export default async function Home({
       acc[airport.region].push(...matches);
       return acc;
     },
-    {} as Record<AirportRegion, typeof deals>
+    {} as Record<AirportRegion, typeof deals>,
   );
 
   const jsonLd = {
@@ -198,7 +200,10 @@ export default async function Home({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Header />
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6"
+      >
         {/* シーズナル ビジュアル Hero — 第一印象向上 */}
         <SeasonalHero locale={locale} />
 
@@ -222,11 +227,7 @@ export default async function Home({
           className="mb-12 animate-fade-up"
           style={{ animationDelay: "0.1s" }}
         >
-          <DestinationSpotlight
-            deals={deals}
-            spotlights={spotlights}
-            lh={lh}
-          />
+          <DestinationSpotlight deals={deals} spotlights={spotlights} lh={lh} />
         </section>
 
         {/* 人気路線 TOP 10 — discount % 上位の route カード */}
@@ -316,7 +317,9 @@ export default async function Home({
         {/* 割引率の高いディール カルーセル */}
         <section className="mt-12">
           <DealCarousel
-            deals={[...deals].sort((a, b) => b.discount_percent - a.discount_percent).slice(0, 8)}
+            deals={[...deals]
+              .sort((a, b) => b.discount_percent - a.discount_percent)
+              .slice(0, 8)}
             title={t.popularTitle}
             subtitle={t.popularSubtitle}
           />
@@ -338,10 +341,10 @@ export default async function Home({
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
-              {REGION_ORDER.map((region) => {
+            {REGION_ORDER.map((region) => {
               const regionDeals = dealsByRegion[region] ?? [];
               const cheapest = [...regionDeals].sort(
-                (a, b) => a.sale_price - b.sale_price
+                (a, b) => a.sale_price - b.sale_price,
               )[0];
               if (!cheapest) return null;
               return (
@@ -357,7 +360,8 @@ export default async function Home({
                     最安 ¥{cheapest.sale_price.toLocaleString()}〜
                   </div>
                   <div className="text-[11px] text-zinc-500 mt-0.5">
-                    {cheapest.origin} → {cheapest.destination} ({cheapest.airline_name})
+                    {cheapest.origin} → {cheapest.destination} (
+                    {cheapest.airline_name})
                   </div>
                   <div className="text-[11px] text-zinc-400 mt-2">
                     このエリアから {regionDeals.length} 件のセール

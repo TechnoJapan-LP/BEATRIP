@@ -25,8 +25,9 @@ import { getActiveDeals } from "@/lib/deals/deal-service";
 import { DealCard } from "@/components/deals/deal-card";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { OG_IMAGES } from "@/lib/seo/og";
 
-type Props = { params: Promise<{ code: string; lang: string;}> };
+type Props = { params: Promise<{ code: string; lang: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
@@ -48,7 +49,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: { title, description },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+    },
     alternates: {
       canonical: `https://beatrip.jp/airlines/${code}/sales`,
       languages: {
@@ -89,7 +94,7 @@ function formatDateRange(start: string, end: string) {
 }
 
 export default async function AirlineSaleHistoryPage({ params }: Props) {
-  const { code, lang} = await params;
+  const { code, lang } = await params;
   // URL は小文字 (/airlines/ana/sales) でも届くため、データ照合は大文字コードで行う
   const airlineCode = code.toUpperCase();
   const airline = getAirlineByCode(airlineCode);
@@ -111,7 +116,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
   const recentThreshold = Date.now() - 90 * 24 * 60 * 60 * 1000;
 
   const predictions = mockSaleEvents.filter(
-    (e) => e.airline === airline.nameEn || e.airline === airline.name
+    (e) => e.airline === airline.nameEn || e.airline === airline.name,
   );
 
   const monthCounts = new Array(12).fill(0);
@@ -180,17 +185,18 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
     a: `BEATRIP の無料ニュースレターに登録すると、${airline.name}を含む各社の新着セールを週次でまとめてメールで受け取れます。特定路線の値下げ通知が欲しい場合は価格アラート機能をご利用ください。`,
   });
 
-  const faqJsonLd = faqs.length > 0
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: faqs.map((f) => ({
-          "@type": "Question",
-          name: f.q,
-          acceptedAnswer: { "@type": "Answer", text: f.a },
-        })),
-      }
-    : null;
+  const faqJsonLd =
+    faqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }
+      : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -244,7 +250,11 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6">
           <Breadcrumbs
-            currentPath={lang === "en" ? `/en/airlines/${code}/sales` : `/airlines/${code}/sales`}
+            currentPath={
+              lang === "en"
+                ? `/en/airlines/${code}/sales`
+                : `/airlines/${code}/sales`
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "Airlines", href: "/airlines" },
@@ -297,25 +307,19 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 <div className="text-2xl font-bold text-emerald-600">
                   {stats.avgDiscount}%
                 </div>
-                <div className="text-[11px] text-zinc-400 mt-1">
-                  平均割引率
-                </div>
+                <div className="text-[11px] text-zinc-400 mt-1">平均割引率</div>
               </div>
               <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center">
                 <div className="text-2xl font-bold text-rose-500">
                   {stats.bestDiscount}%
                 </div>
-                <div className="text-[11px] text-zinc-400 mt-1">
-                  最大割引率
-                </div>
+                <div className="text-[11px] text-zinc-400 mt-1">最大割引率</div>
               </div>
               <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center">
                 <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                   ¥{formatPrice(stats.lowestPrice)}
                 </div>
-                <div className="text-[11px] text-zinc-400 mt-1">
-                  過去最安値
-                </div>
+                <div className="text-[11px] text-zinc-400 mt-1">過去最安値</div>
               </div>
             </div>
 
@@ -359,11 +363,14 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 「{airline.name} セール 時期」で検索する方へ —
                 過去データに基づく開催月の傾向です
               </p>
-              <div className="flex items-end gap-1 sm:gap-2" style={{ height: 120 }}>
+              <div
+                className="flex items-end gap-1 sm:gap-2"
+                style={{ height: 120 }}
+              >
                 {monthCounts.map((count, i) => {
-                  const h = maxMonthCount > 0 ? (count / maxMonthCount) * 100 : 0;
-                  const isPeak =
-                    stats.peakMonths.includes(i) && count > 0;
+                  const h =
+                    maxMonthCount > 0 ? (count / maxMonthCount) * 100 : 0;
+                  const isPeak = stats.peakMonths.includes(i) && count > 0;
                   return (
                     <div
                       key={i}
@@ -376,7 +383,11 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                       )}
                       <div
                         className={`w-full rounded-t transition-all ${
-                          isPeak ? "bg-emerald-500" : count > 0 ? "bg-zinc-300 dark:bg-zinc-600" : "bg-zinc-100 dark:bg-zinc-800"
+                          isPeak
+                            ? "bg-emerald-500"
+                            : count > 0
+                              ? "bg-zinc-300 dark:bg-zinc-600"
+                              : "bg-zinc-100 dark:bg-zinc-800"
                         }`}
                         style={{ height: `${Math.max(h, 4)}%` }}
                       />
@@ -484,7 +495,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                           予測日:{" "}
                           {new Date(p.predictedDate).toLocaleDateString(
                             "ja-JP",
-                            { month: "long", day: "numeric" }
+                            { month: "long", day: "numeric" },
                           )}{" "}
                           · 平均-{p.avgDiscount}%
                         </div>
@@ -589,9 +600,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               title="セール履歴データがありません"
               description={`${airline.name}のセール実績は順次収集しています。最新のセール情報や他社の実績もあわせてご覧ください。`}
               action={{ label: "最新のセールを見る", href: "/" }}
-              secondaryActions={[
-                { label: "航空会社一覧", href: "/airlines" },
-              ]}
+              secondaryActions={[{ label: "航空会社一覧", href: "/airlines" }]}
             />
           )}
         </div>
@@ -642,7 +651,8 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
             {airlines
               .filter(
                 (a) =>
-                  a.code !== airlineCode && getAirlineSaleStats(a.code) !== null
+                  a.code !== airlineCode &&
+                  getAirlineSaleStats(a.code) !== null,
               )
               .map((a) => (
                 <Link

@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Package, Calendar, Wallet, Users, Sparkles, ArrowRight } from "lucide-react";
+import {
+  Package,
+  Calendar,
+  Wallet,
+  Users,
+  Sparkles,
+  ArrowRight,
+} from "lucide-react";
 import { Header } from "@/components/header";
 import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -8,6 +15,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -30,9 +38,32 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["package tour from Japan", "Japan package tour comparison", "JTB tour", "NEWT tour", "dynamic package Japan", "tour early bird discount", "cheap package tour"]
-      : ["パッケージツアー", "パッケージツアー 比較", "パッケージツアー 予約", "海外ツアー", "国内ツアー", "ダイナミックパッケージ", "エアトリプラス", "ツアー 早期割引", "ツアー 安い"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "package tour from Japan",
+          "Japan package tour comparison",
+          "JTB tour",
+          "NEWT tour",
+          "dynamic package Japan",
+          "tour early bird discount",
+          "cheap package tour",
+        ]
+      : [
+          "パッケージツアー",
+          "パッケージツアー 比較",
+          "パッケージツアー 予約",
+          "海外ツアー",
+          "国内ツアー",
+          "ダイナミックパッケージ",
+          "エアトリプラス",
+          "ツアー 早期割引",
+          "ツアー 安い",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -104,18 +135,68 @@ const CHOICE_AXES: { icon: typeof Calendar; title: string; body: string }[] = [
   },
 ];
 
-const DESTINATIONS: { area: string; tag: string; highlight: string; days: string }[] = [
+const DESTINATIONS: {
+  area: string;
+  tag: string;
+  highlight: string;
+  days: string;
+}[] = [
   // 国内
-  { area: "沖縄", tag: "国内", highlight: "ビーチ・離島・アクティビティ。家族・カップル定番", days: "3〜5日" },
-  { area: "北海道", tag: "国内", highlight: "夏は道東周遊、冬はスキー・流氷ツアーが人気", days: "3〜6日" },
-  { area: "京都", tag: "国内", highlight: "新幹線＋旅館のパッケージで底値感あり", days: "2〜3日" },
+  {
+    area: "沖縄",
+    tag: "国内",
+    highlight: "ビーチ・離島・アクティビティ。家族・カップル定番",
+    days: "3〜5日",
+  },
+  {
+    area: "北海道",
+    tag: "国内",
+    highlight: "夏は道東周遊、冬はスキー・流氷ツアーが人気",
+    days: "3〜6日",
+  },
+  {
+    area: "京都",
+    tag: "国内",
+    highlight: "新幹線＋旅館のパッケージで底値感あり",
+    days: "2〜3日",
+  },
   // 海外
-  { area: "ハワイ", tag: "海外", highlight: "オアフ島ワイキキ中心の定番。航空券＋ホテル＋送迎込み", days: "5〜7日" },
-  { area: "グアム", tag: "海外", highlight: "直行便3.5時間・週末＋αで行ける短期向け", days: "3〜5日" },
-  { area: "韓国（ソウル）", tag: "海外", highlight: "週末弾丸も可能。フリープラン型が主流", days: "2〜4日" },
-  { area: "台湾", tag: "海外", highlight: "台北・台中・高雄。グルメと夜市が魅力", days: "3〜5日" },
-  { area: "タイ（バンコク）", tag: "海外", highlight: "都市＋ビーチリゾート併泊が定番", days: "4〜7日" },
-  { area: "ヨーロッパ", tag: "海外", highlight: "周遊型は添乗員同行ツアーが安心", days: "7〜12日" },
+  {
+    area: "ハワイ",
+    tag: "海外",
+    highlight: "オアフ島ワイキキ中心の定番。航空券＋ホテル＋送迎込み",
+    days: "5〜7日",
+  },
+  {
+    area: "グアム",
+    tag: "海外",
+    highlight: "直行便3.5時間・週末＋αで行ける短期向け",
+    days: "3〜5日",
+  },
+  {
+    area: "韓国（ソウル）",
+    tag: "海外",
+    highlight: "週末弾丸も可能。フリープラン型が主流",
+    days: "2〜4日",
+  },
+  {
+    area: "台湾",
+    tag: "海外",
+    highlight: "台北・台中・高雄。グルメと夜市が魅力",
+    days: "3〜5日",
+  },
+  {
+    area: "タイ（バンコク）",
+    tag: "海外",
+    highlight: "都市＋ビーチリゾート併泊が定番",
+    days: "4〜7日",
+  },
+  {
+    area: "ヨーロッパ",
+    tag: "海外",
+    highlight: "周遊型は添乗員同行ツアーが安心",
+    days: "7〜12日",
+  },
 ];
 
 const TIPS: { icon: typeof Calendar; title: string; body: string }[] = [
@@ -164,7 +245,11 @@ const FAQS = [
   },
 ];
 
-export default async function PackageTourPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function PackageTourPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -176,7 +261,11 @@ export default async function PackageTourPage({ params }: { params: Promise<{ la
     inLanguage: "ja-JP",
     datePublished: "2026-06-01",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -210,7 +299,9 @@ export default async function PackageTourPage({ params }: { params: Promise<{ la
       <Header />
 
       {/* Hero */}
-      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.tour} text-white`}>
+      <section
+        className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.tour} text-white`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
@@ -236,7 +327,10 @@ export default async function PackageTourPage({ params }: { params: Promise<{ la
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* パッケージツアー vs 個人手配 */}
@@ -353,7 +447,9 @@ export default async function PackageTourPage({ params }: { params: Promise<{ la
                             {d.tag}
                           </span>
                         </div>
-                        <p className="text-xs text-zinc-500 mt-0.5">所要 {d.days}</p>
+                        <p className="text-xs text-zinc-500 mt-0.5">
+                          所要 {d.days}
+                        </p>
                         <p className="text-xs text-zinc-600 dark:text-zinc-300 mt-1.5 leading-relaxed">
                           {d.highlight}
                         </p>
@@ -488,7 +584,11 @@ export default async function PackageTourPage({ params }: { params: Promise<{ la
             <JapanesePartnersPanel
               title="ホテル単独 ＋ 航空券単独で組み合わせ"
               subtitle="動的パッケージ派・自由度重視の方向け"
-              categories={["hotel-overseas", "flight-overseas", "flight-domestic"]}
+              categories={[
+                "hotel-overseas",
+                "flight-overseas",
+                "flight-domestic",
+              ]}
               source="package-tour-landing"
             />
           </aside>

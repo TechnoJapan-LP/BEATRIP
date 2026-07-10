@@ -22,6 +22,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 
@@ -47,7 +48,12 @@ export async function generateMetadata(): Promise<Metadata> {
       "秋 旅行 海外",
       "紅葉 ホテル",
     ],
-    openGraph: { title, description, type: "article" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "article",
+    },
     alternates: {
       canonical: "https://beatrip.jp/articles/seasonal/autumn-2026",
       languages: {
@@ -58,7 +64,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const MONTHS: { month: string; theme: string; highlights: string[]; bestFor: string }[] = [
+const MONTHS: {
+  month: string;
+  theme: string;
+  highlights: string[];
+  bestFor: string;
+}[] = [
   {
     month: "9 月",
     theme: "残暑 + 初秋のグルメ",
@@ -92,19 +103,59 @@ const MONTHS: { month: string; theme: string; highlights: string[]; bestFor: str
 ];
 
 const DOMESTIC_DESTINATIONS = [
-  { area: "京都", best: "11 月中旬〜下旬", note: "嵐山・清水寺・東福寺の紅葉ピーク。早朝拝観で混雑回避。" },
-  { area: "日光", best: "10 月中旬〜11 月上旬", note: "いろは坂・中禅寺湖の紅葉。日帰り or 1 泊が定番。" },
-  { area: "箱根", best: "11 月中旬〜下旬", note: "強羅・芦ノ湖周辺の紅葉 + 温泉。週末は混雑必至。" },
-  { area: "北海道", best: "9 月下旬〜10 月中旬", note: "大雪山・知床の紅葉。10 月下旬で初雪のエリアも。" },
-  { area: "東北", best: "10 月中旬〜11 月上旬", note: "奥入瀬・八幡平・蔵王の紅葉ロードトリップ。" },
-  { area: "高山・白川郷", best: "11 月上旬〜中旬", note: "合掌造りと紅葉の組合せ。早朝が最も写真映え。" },
+  {
+    area: "京都",
+    best: "11 月中旬〜下旬",
+    note: "嵐山・清水寺・東福寺の紅葉ピーク。早朝拝観で混雑回避。",
+  },
+  {
+    area: "日光",
+    best: "10 月中旬〜11 月上旬",
+    note: "いろは坂・中禅寺湖の紅葉。日帰り or 1 泊が定番。",
+  },
+  {
+    area: "箱根",
+    best: "11 月中旬〜下旬",
+    note: "強羅・芦ノ湖周辺の紅葉 + 温泉。週末は混雑必至。",
+  },
+  {
+    area: "北海道",
+    best: "9 月下旬〜10 月中旬",
+    note: "大雪山・知床の紅葉。10 月下旬で初雪のエリアも。",
+  },
+  {
+    area: "東北",
+    best: "10 月中旬〜11 月上旬",
+    note: "奥入瀬・八幡平・蔵王の紅葉ロードトリップ。",
+  },
+  {
+    area: "高山・白川郷",
+    best: "11 月上旬〜中旬",
+    note: "合掌造りと紅葉の組合せ。早朝が最も写真映え。",
+  },
 ];
 
 const OVERSEAS_DESTINATIONS = [
-  { area: "ソウル", best: "10 月中旬〜11 月上旬", note: "南山・徳寿宮の紅葉 + コスメ・グルメ。LCC 4 時間圏。" },
-  { area: "台北", best: "10 月〜11 月", note: "雨季明けで気候安定。陽明山・烏来温泉。" },
-  { area: "バンコク", best: "11 月〜2 月", note: "乾季入りで気候ベスト。ホテルコスパも最強帯。" },
-  { area: "パリ", best: "9 月〜10 月", note: "夏のピーク後で観光地が落ち着く。気候も穏やか。" },
+  {
+    area: "ソウル",
+    best: "10 月中旬〜11 月上旬",
+    note: "南山・徳寿宮の紅葉 + コスメ・グルメ。LCC 4 時間圏。",
+  },
+  {
+    area: "台北",
+    best: "10 月〜11 月",
+    note: "雨季明けで気候安定。陽明山・烏来温泉。",
+  },
+  {
+    area: "バンコク",
+    best: "11 月〜2 月",
+    note: "乾季入りで気候ベスト。ホテルコスパも最強帯。",
+  },
+  {
+    area: "パリ",
+    best: "9 月〜10 月",
+    note: "夏のピーク後で観光地が落ち着く。気候も穏やか。",
+  },
 ];
 
 const FAQS = [
@@ -130,18 +181,27 @@ const FAQS = [
   },
 ];
 
-export default async function AutumnSeasonalPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function AutumnSeasonalPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "2026 秋の旅行計画 完全ガイド — 9月・10月・11月の紅葉・温泉・グルメ",
+    headline:
+      "2026 秋の旅行計画 完全ガイド — 9月・10月・11月の紅葉・温泉・グルメ",
     description:
       "2026 年秋の月別おすすめ目的地・紅葉スポット・温泉・秋グルメ・予約タイミングを完全網羅。",
     inLanguage: "ja-JP",
     datePublished: PUBLISHED,
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -176,7 +236,11 @@ export default async function AutumnSeasonalPage({ params }: { params: Promise<{
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? "/en/articles/seasonal/autumn-2026" : "/articles/seasonal/autumn-2026"}
+            currentPath={
+              lang === "en"
+                ? "/en/articles/seasonal/autumn-2026"
+                : "/articles/seasonal/autumn-2026"
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "Articles", href: "/articles" },
@@ -194,13 +258,17 @@ export default async function AutumnSeasonalPage({ params }: { params: Promise<{
             2026 秋の旅行計画
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">
-            9 月・10 月・11 月の月別おすすめ目的地、紅葉スポット、温泉、秋グルメ、
+            9 月・10 月・11
+            月の月別おすすめ目的地、紅葉スポット、温泉、秋グルメ、
             予約タイミングまでを完全網羅。気候が最も安定する秋を最大限活用するためのガイドです。
           </p>
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* 月別ガイド */}
@@ -225,14 +293,20 @@ export default async function AutumnSeasonalPage({ params }: { params: Promise<{
                     </div>
                     <ul className="space-y-1.5 mb-3">
                       {m.highlights.map((h, i) => (
-                        <li key={i} className="text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2">
+                        <li
+                          key={i}
+                          className="text-sm text-zinc-700 dark:text-zinc-300 flex items-start gap-2"
+                        >
                           <span className="text-rose-500 mt-1">-</span>
                           <span>{h}</span>
                         </li>
                       ))}
                     </ul>
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed border-l-2 border-rose-300 pl-3">
-                      <span className="font-bold text-zinc-700 dark:text-zinc-200">編集部メモ:</span> {m.bestFor}
+                      <span className="font-bold text-zinc-700 dark:text-zinc-200">
+                        編集部メモ:
+                      </span>{" "}
+                      {m.bestFor}
                     </p>
                   </div>
                 ))}
@@ -334,7 +408,9 @@ export default async function AutumnSeasonalPage({ params }: { params: Promise<{
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
                     2026 冬の旅行計画
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">雪国・温泉・冬グルメ</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    雪国・温泉・冬グルメ
+                  </p>
                   <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                     冬ガイドを見る <ArrowRight className="h-3 w-3" />
                   </div>
@@ -346,7 +422,9 @@ export default async function AutumnSeasonalPage({ params }: { params: Promise<{
                   <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
                     年末年始の予約攻略
                   </h3>
-                  <p className="text-xs text-zinc-500 mt-1">12-1 月のセール・予約タイミング</p>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    12-1 月のセール・予約タイミング
+                  </p>
                   <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
                     年末年始ガイドを見る <ArrowRight className="h-3 w-3" />
                   </div>
@@ -359,7 +437,12 @@ export default async function AutumnSeasonalPage({ params }: { params: Promise<{
             <JapanesePartnersPanel
               title="秋の旅行 予約・比較"
               subtitle="航空券・ホテル・ツアーをまとめて比較"
-              categories={["flight-domestic", "flight-overseas", "hotel-domestic", "tour-package"]}
+              categories={[
+                "flight-domestic",
+                "flight-overseas",
+                "hotel-domestic",
+                "tour-package",
+              ]}
               source="seasonal-autumn-2026"
             />
             <JapanesePartnersPanel
@@ -376,7 +459,8 @@ export default async function AutumnSeasonalPage({ params }: { params: Promise<{
                 </h3>
               </div>
               <p className="text-xs text-zinc-500 leading-relaxed">
-                Booking / Agoda / Trip.com / Hotellook の使い分けで秋の人気エリアを最安予約。
+                Booking / Agoda / Trip.com / Hotellook
+                の使い分けで秋の人気エリアを最安予約。
               </p>
               <Link
                 href="/ota-sales"

@@ -5,6 +5,7 @@ import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { AIRPORTS, type AirportRegion } from "@/data/airports";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒 (6時間)
 export const revalidate = 86400;
@@ -26,10 +27,28 @@ export async function generateMetadata({
   return {
     title,
     description,
-    openGraph: { title, description },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+    },
     keywords: isEn
-      ? ["Japan airports", "Haneda flights", "Narita flights", "Kansai flights", "regional airports Japan", "Japan domestic flights"]
-      : ["空港一覧", "国内空港", "地方空港", "空港 セール", "格安航空券 空港", "離島 空港"],
+      ? [
+          "Japan airports",
+          "Haneda flights",
+          "Narita flights",
+          "Kansai flights",
+          "regional airports Japan",
+          "Japan domestic flights",
+        ]
+      : [
+          "空港一覧",
+          "国内空港",
+          "地方空港",
+          "空港 セール",
+          "格安航空券 空港",
+          "離島 空港",
+        ],
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -53,12 +72,25 @@ const REGION_ORDER: AirportRegion[] = [
 ];
 
 const SIZE_BADGE: Record<string, { label: string; cls: string }> = {
-  major: { label: "主要", cls: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200" },
-  regional: { label: "地方拠点", cls: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200" },
-  minor: { label: "離島・地方", cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200" },
+  major: {
+    label: "主要",
+    cls: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-200",
+  },
+  regional: {
+    label: "地方拠点",
+    cls: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200",
+  },
+  minor: {
+    label: "離島・地方",
+    cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200",
+  },
 };
 
-export default async function AirportsIndexPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function AirportsIndexPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const grouped = REGION_ORDER.map((region) => ({
     region,
@@ -93,10 +125,7 @@ export default async function AirportsIndexPage({ params }: { params: Promise<{ 
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/airports" : "/airports"}
-            items={[
-              { label: "Home", href: "/" },
-              { label: "空港" },
-            ]}
+            items={[{ label: "Home", href: "/" }, { label: "空港" }]}
           />
           <div className="mt-6 flex items-center gap-3 mb-2">
             <Plane className="h-7 w-7" />
@@ -114,7 +143,10 @@ export default async function AirportsIndexPage({ params }: { params: Promise<{ 
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="space-y-10">
           {grouped.map(({ region, airports }) => (
             <section key={region}>
@@ -142,7 +174,9 @@ export default async function AirportsIndexPage({ params }: { params: Promise<{ 
                             {a.iata} · {a.prefecture}
                           </p>
                         </div>
-                        <span className={`flex-shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ${badge.cls}`}>
+                        <span
+                          className={`flex-shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ${badge.cls}`}
+                        >
                           {badge.label}
                         </span>
                       </div>

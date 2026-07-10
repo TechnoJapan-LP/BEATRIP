@@ -22,8 +22,9 @@ import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
 import { getHotelCitiesForAirport } from "@/lib/hotels/area-hotel-mapping";
 import type { AspCategory } from "@/lib/affiliate/asp-partners";
+import { OG_IMAGES } from "@/lib/seo/og";
 
-type Props = { params: Promise<{ code: string; iata: string; lang: string;}> };
+type Props = { params: Promise<{ code: string; iata: string; lang: string }> };
 
 // ISR: 3600秒キャッシュ (1時間)
 export const revalidate = 86400;
@@ -55,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!airline || !airport) return { title: "Not Found" };
 
   const isEn = lang === "en";
-  const airlineName = isEn ? (airline.nameEn || airline.name) : airline.name;
+  const airlineName = isEn ? airline.nameEn || airline.name : airline.name;
   const airportName = isEn ? `${airport.nameEn} Airport` : airport.fullNameJa;
   const title = isEn
     ? `${airlineName} flights from ${airportName} — current sales and fares`
@@ -76,7 +77,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const hasDeals = allDeals.some(
     (d) =>
       d.airline_id === airline.code &&
-      (d.origin_code === airport.iata || d.destination_code === airport.iata)
+      (d.origin_code === airport.iata || d.destination_code === airport.iata),
   );
 
   return {
@@ -97,7 +98,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           `${airport.nameJa} ${airline.name} セール`,
           `${airport.nameJa} ${airline.name} 格安`,
         ],
-    openGraph: { title, description, type: "website" },
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical,
       languages: {
@@ -110,7 +116,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function AirlineAirportPage({ params }: Props) {
-  const { code, iata, lang} = await params;
+  const { code, iata, lang } = await params;
   const airline = getAirlineByCode(code.toUpperCase());
   const airport = getAirportByCode(iata.toUpperCase());
 
@@ -126,8 +132,7 @@ export default async function AirlineAirportPage({ params }: Props) {
     .filter(
       (d) =>
         d.airline_id === airline.code &&
-        (d.origin_code === airport.iata ||
-          d.destination_code === airport.iata),
+        (d.origin_code === airport.iata || d.destination_code === airport.iata),
     )
     .sort((a, b) => b.discount_percent - a.discount_percent)
     .slice(0, 8);
@@ -181,7 +186,9 @@ export default async function AirlineAirportPage({ params }: Props) {
           ? `${airport.nameJa}発で利用が多いのは ${popularDisplay
               .slice(0, 4)
               .map((d) => d.name)
-              .join("、")} 行きです。${airline.name}はこれらの主要路線で複数便/日を運航することが多く、早割やセール対象になりやすい区間です。`
+              .join(
+                "、",
+              )} 行きです。${airline.name}はこれらの主要路線で複数便/日を運航することが多く、早割やセール対象になりやすい区間です。`
           : `${airport.nameJa}発の${airline.name}運航路線は時期によって変動します。最新のフライトスケジュールは公式予約サイトでご確認ください。`,
     },
     {
@@ -299,7 +306,10 @@ export default async function AirlineAirportPage({ params }: Props) {
             items={[
               { label: "Home", href: "/" },
               { label: "Airlines", href: "/airlines" },
-              { label: airline.name, href: `/airlines/${airline.code.toLowerCase()}` },
+              {
+                label: airline.name,
+                href: `/airlines/${airline.code.toLowerCase()}`,
+              },
               { label: airport.fullNameJa },
             ]}
           />
@@ -320,7 +330,8 @@ export default async function AirlineAirportPage({ params }: Props) {
                 {airport.prefecture} · {airport.region}
               </span>
               <span className="text-xs font-bold uppercase tracking-wider text-white/80">
-                {airline.type === "LCC" ? "LCC" : "Full Service"} · {airline.country}
+                {airline.type === "LCC" ? "LCC" : "Full Service"} ·{" "}
+                {airline.country}
               </span>
             </div>
           </div>
@@ -334,7 +345,8 @@ export default async function AirlineAirportPage({ params }: Props) {
             </span>
           </h1>
           <p className="mt-3 text-sm sm:text-base text-white/90 max-w-2xl">
-            {airline.nameEn} が {airport.fullNameJa} で運航する航空券のセール・人気路線・予約サイト比較を集約。
+            {airline.nameEn} が {airport.fullNameJa}{" "}
+            で運航する航空券のセール・人気路線・予約サイト比較を集約。
             {airport.tagline ? ` ${airport.tagline}` : ""}
           </p>
         </div>
@@ -386,8 +398,8 @@ export default async function AirlineAirportPage({ params }: Props) {
                             ¥{deal.sale_price.toLocaleString()}
                           </div>
                           <div className="flex items-center justify-end gap-0.5 text-rose-500 text-[10px] mt-0.5">
-                            <TrendingDown className="h-2.5 w-2.5" />
-                            -{deal.discount_percent}%
+                            <TrendingDown className="h-2.5 w-2.5" />-
+                            {deal.discount_percent}%
                           </div>
                         </div>
                       </div>
@@ -439,7 +451,8 @@ export default async function AirlineAirportPage({ params }: Props) {
                 </div>
                 {popularRoutesForAirline.length === 0 && (
                   <p className="mt-2 text-[11px] text-zinc-400">
-                    ※ 当該空港で需要が大きい主要路線を参考表示しています。{airline.name} の実際の運航路線は時期により変動します。
+                    ※ 当該空港で需要が大きい主要路線を参考表示しています。
+                    {airline.name} の実際の運航路線は時期により変動します。
                   </p>
                 )}
               </section>
@@ -452,7 +465,9 @@ export default async function AirlineAirportPage({ params }: Props) {
               </h2>
               <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 space-y-3 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
                 <p>
-                  <strong className="text-zinc-900 dark:text-zinc-100">{airline.name}</strong>
+                  <strong className="text-zinc-900 dark:text-zinc-100">
+                    {airline.name}
+                  </strong>
                   （{airline.nameEn}・{airline.country}）は
                   {airline.type === "LCC"
                     ? "シンプルな運賃体系と早期予約割引が特徴のLCC（格安航空会社）"
@@ -472,7 +487,8 @@ export default async function AirlineAirportPage({ params }: Props) {
                   {airline.type === "LCC"
                     ? "LCC のため早朝・深夜便、または曜日限定運航のことが多く、予約タイミングで運賃が大きく変わります。"
                     : "ピーク時には機材を大型化する運用も見られ、繁忙期の予約は早めが安心です。"}
-                  最新の運航計画は {airline.nameEn} 公式サイトと、本ページの最新セール情報を併せてご確認ください。
+                  最新の運航計画は {airline.nameEn}{" "}
+                  公式サイトと、本ページの最新セール情報を併せてご確認ください。
                 </p>
               </div>
             </section>
@@ -509,7 +525,9 @@ export default async function AirlineAirportPage({ params }: Props) {
                     <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
                       {airline.name} の全セール
                     </div>
-                    <div className="text-[11px] text-zinc-500">航空会社ハブ</div>
+                    <div className="text-[11px] text-zinc-500">
+                      航空会社ハブ
+                    </div>
                   </div>
                   <ArrowUpRight className="h-3.5 w-3.5 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
                 </Link>
@@ -522,7 +540,9 @@ export default async function AirlineAirportPage({ params }: Props) {
                     <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
                       {airline.name} セール時期まとめ
                     </div>
-                    <div className="text-[11px] text-zinc-500">過去実績・次回予測</div>
+                    <div className="text-[11px] text-zinc-500">
+                      過去実績・次回予測
+                    </div>
                   </div>
                   <ArrowUpRight className="h-3.5 w-3.5 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
                 </Link>
@@ -535,7 +555,9 @@ export default async function AirlineAirportPage({ params }: Props) {
                     <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
                       {airport.fullNameJa} 発着セール全社
                     </div>
-                    <div className="text-[11px] text-zinc-500">他キャリアも比較</div>
+                    <div className="text-[11px] text-zinc-500">
+                      他キャリアも比較
+                    </div>
                   </div>
                   <ArrowUpRight className="h-3.5 w-3.5 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
                 </Link>
@@ -549,7 +571,9 @@ export default async function AirlineAirportPage({ params }: Props) {
                       <div className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate">
                         {airport.nameJa} 周辺のホテル
                       </div>
-                      <div className="text-[11px] text-zinc-500">エリア別代表ホテル</div>
+                      <div className="text-[11px] text-zinc-500">
+                        エリア別代表ホテル
+                      </div>
                     </div>
                     <ArrowUpRight className="h-3.5 w-3.5 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
                   </Link>

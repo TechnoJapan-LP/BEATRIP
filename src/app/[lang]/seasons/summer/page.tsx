@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Umbrella, Calendar, Plane, Hotel, Clock, ArrowRight } from "lucide-react";
+import {
+  Umbrella,
+  Calendar,
+  Plane,
+  Hotel,
+  Clock,
+  ArrowRight,
+} from "lucide-react";
 import { Header } from "@/components/header";
 import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -8,6 +15,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { CompactHotelsRecommendation } from "@/components/hotels/compact-hotels-recommendation";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間)
 export const revalidate = 86400;
@@ -30,9 +38,31 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["Japan summer travel", "Obon travel", "August flights Japan", "summer beach Japan", "Japan summer destinations", "family travel Japan summer"]
-      : ["夏休み 航空券", "お盆 航空券", "夏休み 旅行", "お盆 旅行", "夏休み 海外", "夏休み ビーチ", "8月 航空券 安い", "夏休み 家族旅行", "お盆 最安"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "Japan summer travel",
+          "Obon travel",
+          "August flights Japan",
+          "summer beach Japan",
+          "Japan summer destinations",
+          "family travel Japan summer",
+        ]
+      : [
+          "夏休み 航空券",
+          "お盆 航空券",
+          "夏休み 旅行",
+          "お盆 旅行",
+          "夏休み 海外",
+          "夏休み ビーチ",
+          "8月 航空券 安い",
+          "夏休み 家族旅行",
+          "お盆 最安",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -43,12 +73,36 @@ export async function generateMetadata({
   };
 }
 
-const CALENDAR: { range: string; level: "peak" | "high" | "mid" | "low"; note: string }[] = [
-  { range: "7/1 〜 7/19", level: "low", note: "夏休み突入前の通年水準。狙い目シーズン。" },
-  { range: "7/20 〜 8/7", level: "mid", note: "夏休み前半。週末は高めだが平日は比較的安定。" },
-  { range: "8/8 〜 8/16", level: "peak", note: "お盆ピーク。航空券・ホテルとも年間最高値クラス。" },
-  { range: "8/17 〜 8/25", level: "high", note: "学生・家族の戻り需要で高値継続。" },
-  { range: "8/26 以降", level: "low", note: "新学期入りで急落。9月にかけて通年水準へ。" },
+const CALENDAR: {
+  range: string;
+  level: "peak" | "high" | "mid" | "low";
+  note: string;
+}[] = [
+  {
+    range: "7/1 〜 7/19",
+    level: "low",
+    note: "夏休み突入前の通年水準。狙い目シーズン。",
+  },
+  {
+    range: "7/20 〜 8/7",
+    level: "mid",
+    note: "夏休み前半。週末は高めだが平日は比較的安定。",
+  },
+  {
+    range: "8/8 〜 8/16",
+    level: "peak",
+    note: "お盆ピーク。航空券・ホテルとも年間最高値クラス。",
+  },
+  {
+    range: "8/17 〜 8/25",
+    level: "high",
+    note: "学生・家族の戻り需要で高値継続。",
+  },
+  {
+    range: "8/26 以降",
+    level: "low",
+    note: "新学期入りで急落。9月にかけて通年水準へ。",
+  },
 ];
 
 const TIPS: { icon: typeof Calendar; title: string; body: string }[] = [
@@ -74,13 +128,48 @@ const TIPS: { icon: typeof Calendar; title: string; body: string }[] = [
   },
 ];
 
-const DESTINATIONS: { area: string; type: "国内" | "海外"; emoji: string; highlight: string }[] = [
-  { area: "沖縄", type: "国内", emoji: "🏖️", highlight: "国内ビーチ最大の選択肢。離島も含めて夏休み定番。" },
-  { area: "ハワイ", type: "海外", emoji: "🌺", highlight: "夏休みの王道。乾季で天気安定・家族・カップル両対応。" },
-  { area: "グアム", type: "海外", emoji: "🌴", highlight: "短時間フライトで南国。ピーク料金でも5日以内なら現実的。" },
-  { area: "バリ", type: "海外", emoji: "🌅", highlight: "乾季ベストシーズン。ヴィラステイで非日常感を満喫。" },
-  { area: "シンガポール", type: "海外", emoji: "🇸🇬", highlight: "通年気候安定。家族・都市派・短期日程に最適。" },
-  { area: "プーケット", type: "海外", emoji: "🏝️", highlight: "雨季ながら短時間のスコールが多く実用上は問題小。コスパ高め。" },
+const DESTINATIONS: {
+  area: string;
+  type: "国内" | "海外";
+  emoji: string;
+  highlight: string;
+}[] = [
+  {
+    area: "沖縄",
+    type: "国内",
+    emoji: "🏖️",
+    highlight: "国内ビーチ最大の選択肢。離島も含めて夏休み定番。",
+  },
+  {
+    area: "ハワイ",
+    type: "海外",
+    emoji: "🌺",
+    highlight: "夏休みの王道。乾季で天気安定・家族・カップル両対応。",
+  },
+  {
+    area: "グアム",
+    type: "海外",
+    emoji: "🌴",
+    highlight: "短時間フライトで南国。ピーク料金でも5日以内なら現実的。",
+  },
+  {
+    area: "バリ",
+    type: "海外",
+    emoji: "🌅",
+    highlight: "乾季ベストシーズン。ヴィラステイで非日常感を満喫。",
+  },
+  {
+    area: "シンガポール",
+    type: "海外",
+    emoji: "🇸🇬",
+    highlight: "通年気候安定。家族・都市派・短期日程に最適。",
+  },
+  {
+    area: "プーケット",
+    type: "海外",
+    emoji: "🏝️",
+    highlight: "雨季ながら短時間のスコールが多く実用上は問題小。コスパ高め。",
+  },
 ];
 
 const FAQS = [
@@ -106,18 +195,27 @@ const FAQS = [
   },
 ];
 
-export default async function SummerSeasonPage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function SummerSeasonPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: "夏休み・お盆の航空券・ホテル予約完全ガイド｜7月〜8月の最安タイミング",
+    headline:
+      "夏休み・お盆の航空券・ホテル予約完全ガイド｜7月〜8月の最安タイミング",
     description:
       "夏休み・お盆のピーク・底値カレンダー、予約のコツ、人気ビーチ・リゾート目的地、FAQ までを完全網羅した予約ガイド。",
     inLanguage: "ja-JP",
     datePublished: "2026-06-01",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -164,11 +262,15 @@ export default async function SummerSeasonPage({ params }: { params: Promise<{ l
       <Header />
 
       {/* Hero */}
-      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.season} text-white`}>
+      <section
+        className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.season} text-white`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
-            currentPath={lang === "en" ? "/en/seasons/summer" : "/seasons/summer"}
+            currentPath={
+              lang === "en" ? "/en/seasons/summer" : "/seasons/summer"
+            }
             items={[
               { label: "Home", href: "/" },
               { label: "季節特集", href: "/seasons/summer" },
@@ -191,7 +293,10 @@ export default async function SummerSeasonPage({ params }: { params: Promise<{ l
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-10">
             {/* ピーク時期カレンダー */}
@@ -349,7 +454,12 @@ export default async function SummerSeasonPage({ params }: { params: Promise<{ l
             <JapanesePartnersPanel
               title="夏休みの予約・比較"
               subtitle="航空券・ホテル・ツアーをまとめて比較"
-              categories={["flight-domestic", "flight-overseas", "hotel-domestic", "tour-package"]}
+              categories={[
+                "flight-domestic",
+                "flight-overseas",
+                "hotel-domestic",
+                "tour-package",
+              ]}
               source="seasons-summer"
             />
 

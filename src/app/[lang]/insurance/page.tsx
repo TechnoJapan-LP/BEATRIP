@@ -14,11 +14,9 @@ import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { TableOfContents } from "@/components/ui/table-of-contents";
-import {
-  getAspPartner,
-  getAspPartnerUrl,
-} from "@/lib/affiliate/asp-partners";
+import { getAspPartner, getAspPartnerUrl } from "@/lib/affiliate/asp-partners";
 import { TrackedPartnerLink } from "@/components/affiliate/tracked-partner-link";
+import { OG_IMAGES } from "@/lib/seo/og";
 
 const TOC_ITEMS = [
   { id: "credit-limits", label: "クレカ付帯保険の限界" },
@@ -49,9 +47,34 @@ export async function generateMetadata({
     title,
     description,
     keywords: isEn
-      ? ["travel insurance Japan", "travel insurance comparison", "credit card travel insurance", "AIG travel insurance", "Chubb travel insurance", "Sompo travel insurance", "senior travel insurance", "pre-existing condition travel"]
-      : ["海外旅行保険", "海外旅行保険 比較", "クレカ 海外旅行保険", "AIG 海外旅行保険", "Chubb 海外旅行保険", "損保ジャパン off", "楽天損保 海外旅行保険", "海外旅行保険 選び方", "シニア 海外旅行保険", "海外旅行 持病"],
-    openGraph: { title, description, type: "website" },
+      ? [
+          "travel insurance Japan",
+          "travel insurance comparison",
+          "credit card travel insurance",
+          "AIG travel insurance",
+          "Chubb travel insurance",
+          "Sompo travel insurance",
+          "senior travel insurance",
+          "pre-existing condition travel",
+        ]
+      : [
+          "海外旅行保険",
+          "海外旅行保険 比較",
+          "クレカ 海外旅行保険",
+          "AIG 海外旅行保険",
+          "Chubb 海外旅行保険",
+          "損保ジャパン off",
+          "楽天損保 海外旅行保険",
+          "海外旅行保険 選び方",
+          "シニア 海外旅行保険",
+          "海外旅行 持病",
+        ],
+    openGraph: {
+      images: OG_IMAGES,
+      title,
+      description,
+      type: "website",
+    },
     alternates: {
       canonical: `https://beatrip.jp${path}`,
       languages: {
@@ -65,23 +88,28 @@ export async function generateMetadata({
 const CREDIT_LIMITS: { item: string; detail: string }[] = [
   {
     item: "補償期間",
-    detail: "多くのカードで「出発日から最長 90 日」までに限定。長期渡航・ワーホリ・留学では期間が不足します。",
+    detail:
+      "多くのカードで「出発日から最長 90 日」までに限定。長期渡航・ワーホリ・留学では期間が不足します。",
   },
   {
     item: "疾病治療費の補償額",
-    detail: "ゴールド帯で 200〜500 万円程度が一般的。米国・スイスなどは盲腸手術 1 件で 200 万円超のケースもあり不足し得ます。",
+    detail:
+      "ゴールド帯で 200〜500 万円程度が一般的。米国・スイスなどは盲腸手術 1 件で 200 万円超のケースもあり不足し得ます。",
   },
   {
     item: "自動付帯 vs 利用付帯",
-    detail: "近年のカードは「旅行代金をそのカードで決済しないと適用されない」利用付帯が増加。決済方法の確認が必須です。",
+    detail:
+      "近年のカードは「旅行代金をそのカードで決済しないと適用されない」利用付帯が増加。決済方法の確認が必須です。",
   },
   {
     item: "家族・同行者の補償",
-    detail: "本会員のみ対象で家族カードや同行者は対象外のケース多数。家族特約付きカードか別途家族プランへの加入が必要。",
+    detail:
+      "本会員のみ対象で家族カードや同行者は対象外のケース多数。家族特約付きカードか別途家族プランへの加入が必要。",
   },
   {
     item: "歯科・既往症・妊娠関連",
-    detail: "クレカ付帯では原則対象外。これらに備えるならネット保険のオプションを必ず確認しましょう。",
+    detail:
+      "クレカ付帯では原則対象外。これらに備えるならネット保険のオプションを必ず確認しましょう。",
   },
 ];
 
@@ -96,54 +124,67 @@ const NET_INSURANCE: {
   {
     name: "AIG 損保 海外旅行保険",
     partnerId: "aig-travel-insurance",
-    pitch: "ネット完結で出発当日まで申込可能。24 時間日本語アシスタンスサービスを完備し、キャッシュレス医療サービス提携病院が世界中に広がる。",
+    pitch:
+      "ネット完結で出発当日まで申込可能。24 時間日本語アシスタンスサービスを完備し、キャッシュレス医療サービス提携病院が世界中に広がる。",
     bestFor: "初めての海外旅行・サポート手厚さ重視",
   },
   {
     name: "Chubb 損保 海外旅行保険",
     partnerId: "chubb-travel-insurance",
-    pitch: "オンライン申込でプランをカスタマイズ。短期から長期渡航まで柔軟、世界規模の保険グループならではのネットワーク。",
+    pitch:
+      "オンライン申込でプランをカスタマイズ。短期から長期渡航まで柔軟、世界規模の保険グループならではのネットワーク。",
     bestFor: "プランを細かく組み立てたい人・出張多めの人",
   },
   {
     name: "損保ジャパン 新・海外旅行保険【off!】",
     partnerId: "sompo-travel-insurance",
-    pitch: "ネット専用商品で必要な補償だけ選べる組立式。同行家族のセット申込で割安。",
+    pitch:
+      "ネット専用商品で必要な補償だけ選べる組立式。同行家族のセット申込で割安。",
     bestFor: "費用を抑えたい人・家族旅行",
   },
   {
     name: "楽天損保 海外旅行保険",
     partnerId: "rakuten-travel-insurance",
-    pitch: "ネット申込割引＋楽天ポイント付与。楽天会員なら年間複数回の海外旅行で総コストを抑えやすい。",
+    pitch:
+      "ネット申込割引＋楽天ポイント付与。楽天会員なら年間複数回の海外旅行で総コストを抑えやすい。",
     bestFor: "楽天経済圏ユーザー・年複数回渡航する人",
   },
   {
     name: "tabiho（たびほ・ジェイアイ傷害火災）",
     partnerId: "tabiho-travel-insurance",
-    pitch: "出発当日まで申込可・e チケット完結でスマホで証券受取。短期渡航の駆け込み加入に強い。",
+    pitch:
+      "出発当日まで申込可・e チケット完結でスマホで証券受取。短期渡航の駆け込み加入に強い。",
     bestFor: "出発直前の駆け込み・スマホ完結派",
   },
 ];
 
-const PERIOD_GUIDE: { duration: string; recommendation: string; budgetHint: string }[] = [
+const PERIOD_GUIDE: {
+  duration: string;
+  recommendation: string;
+  budgetHint: string;
+}[] = [
   {
     duration: "1〜7 日（週末・短期出張）",
-    recommendation: "クレカ付帯（ゴールド以上）＋必要に応じてネット保険ミニマム。盲腸クラスの治療費だけ追加でカバー。",
+    recommendation:
+      "クレカ付帯（ゴールド以上）＋必要に応じてネット保険ミニマム。盲腸クラスの治療費だけ追加でカバー。",
     budgetHint: "ネット保険追加目安: 700〜1,500 円／件",
   },
   {
     duration: "8〜14 日（通常の海外旅行）",
-    recommendation: "ネット保険のフルプラン推奨。疾病・賠償・携行品・航空機遅延を一括カバー。",
+    recommendation:
+      "ネット保険のフルプラン推奨。疾病・賠償・携行品・航空機遅延を一括カバー。",
     budgetHint: "目安: 1,500〜3,500 円／件",
   },
   {
     duration: "15〜30 日（長期休暇・周遊）",
-    recommendation: "クレカ付帯が切れる目安。ネット保険の中長期プランを単独で。複数国周遊なら全期間補償を確認。",
+    recommendation:
+      "クレカ付帯が切れる目安。ネット保険の中長期プランを単独で。複数国周遊なら全期間補償を確認。",
     budgetHint: "目安: 5,000〜10,000 円／件",
   },
   {
     duration: "31〜90 日以上（ワーホリ・留学）",
-    recommendation: "留学・長期滞在向けの長期プラン専用商品を選択。クレカ付帯はほぼ全社で対象外。",
+    recommendation:
+      "留学・長期滞在向けの長期プラン専用商品を選択。クレカ付帯はほぼ全社で対象外。",
     budgetHint: "目安: 30,000〜100,000 円／件（期間・国・年齢で大幅変動）",
   },
 ];
@@ -194,7 +235,11 @@ const FAQS = [
   },
 ];
 
-export default async function InsurancePage({ params }: { params: Promise<{ lang: string }> }) {
+export default async function InsurancePage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
   const { lang } = await params;
 
   const articleJsonLd = {
@@ -206,7 +251,11 @@ export default async function InsurancePage({ params }: { params: Promise<{ lang
     inLanguage: "ja-JP",
     datePublished: "2026-06-09",
     dateModified: new Date().toISOString().split("T")[0],
-    author: { "@type": "Organization", name: "BEATRIP", url: "https://beatrip.jp" },
+    author: {
+      "@type": "Organization",
+      name: "BEATRIP",
+      url: "https://beatrip.jp",
+    },
     publisher: {
       "@type": "Organization",
       name: "BEATRIP",
@@ -240,7 +289,9 @@ export default async function InsurancePage({ params }: { params: Promise<{ lang
       <Header />
 
       {/* Hero */}
-      <section className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.insurance} text-white`}>
+      <section
+        className={`relative bg-gradient-to-br ${CATEGORY_GRADIENTS.insurance} text-white`}
+      >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 pb-12">
           <Breadcrumbs
             variant="dark"
@@ -260,13 +311,18 @@ export default async function InsurancePage({ params }: { params: Promise<{ lang
             海外旅行保険の選び方
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">
-            クレカ付帯 vs 別途加入を完全比較。期間・年齢・既往症・アクティビティの
-            条件別に「どこまでカバーすればよいか」を BEATRIP 編集部が整理します。
+            クレカ付帯 vs
+            別途加入を完全比較。期間・年齢・既往症・アクティビティの
+            条件別に「どこまでカバーすればよいか」を BEATRIP
+            編集部が整理します。
           </p>
         </div>
       </section>
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-12">
             {/* Block 1: クレカ付帯の限界 */}
