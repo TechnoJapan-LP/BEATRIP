@@ -49,7 +49,13 @@ export const viewport: Viewport = {
 };
 
 export function generateStaticParams() {
-  return LOCALES.map((lang) => ({ lang }));
+  // ビルド最適化: /en は「英語メタ + 日本語本文」の noindex ページ群で、
+  // 事前生成すると全ページ数が 2 倍 (約740→1480) になりビルド時間・デプロイ
+  // サイズを浪費する。ja のみ事前生成し、/en は dynamicParams (default true) で
+  // オンデマンド ISR 生成に倒す。noindex なので初回レンダリングが多少遅くても
+  // 実害はなく、リンク follow の挙動も維持される。
+  // 本文を英訳して /en を indexable に戻す際は LOCALES に戻すこと。
+  return [{ lang: "ja" }];
 }
 
 // title / description は「航空券 セール」「安い時期」等の実検索クエリを含める
