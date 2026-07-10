@@ -68,7 +68,14 @@ function currentSeason(): Season {
   return "spring";
 }
 
-export function SeasonalHero({ locale }: { locale: Locale }) {
+export function SeasonalHero({
+  locale,
+  /** いま掲載中のセール件数。渡すと信頼バッジ (社会的証明) を表示する */
+  dealCount,
+}: {
+  locale: Locale;
+  dealCount?: number;
+}) {
   const season = currentSeason();
   const copy = SEASON_COPY[season];
   const lh = (href: string) => localizeHref(href, locale);
@@ -110,6 +117,25 @@ export function SeasonalHero({ locale }: { locale: Locale }) {
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/90 sm:text-base">
             {copy.subtitle}
           </p>
+          {/* 社会的証明: ファーストビューで「稼働している/量がある」ことを数字で示し、
+              直帰を抑える。件数はライブ (getActiveDeals)。3件未満なら誇張を避け非表示。 */}
+          {typeof dealCount === "number" && dealCount >= 3 && (
+            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] font-medium text-white/95">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="text-lg font-extrabold tracking-tight text-white drop-shadow-sm">
+                  {dealCount.toLocaleString()}
+                </span>
+                件のセールを掲載中
+              </span>
+              <span aria-hidden className="hidden h-3 w-px bg-white/40 sm:block" />
+              <span className="inline-flex items-center gap-1.5">
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-300 animate-soft-pulse" />
+                毎日自動更新
+              </span>
+              <span aria-hidden className="hidden h-3 w-px bg-white/40 sm:block" />
+              <span>ANA・JAL・Peach ほか主要各社</span>
+            </div>
+          )}
           <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <a
               href="#beatrip-search"

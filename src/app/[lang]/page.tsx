@@ -204,8 +204,8 @@ export default async function Home({
         id="main-content"
         className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6"
       >
-        {/* シーズナル ビジュアル Hero — 第一印象向上 */}
-        <SeasonalHero locale={locale} />
+        {/* シーズナル ビジュアル Hero — 第一印象向上 (掲載件数で社会的証明) */}
+        <SeasonalHero locale={locale} dealCount={deals.length} />
 
         {/* ファーストビュー: 注目ディール（雑誌風の一面）— 即フック */}
         <section className="mb-6 animate-fade-up">
