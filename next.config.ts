@@ -83,10 +83,10 @@ const nextConfig: NextConfig = {
     const csp = [
       "default-src 'self'",
       "img-src 'self' data: https:",
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://va.vercel-scripts.com https://emrld.ltd https://challenges.cloudflare.com",
+      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://va.vercel-scripts.com https://emrld.ltd https://challenges.cloudflare.com https://www.clarity.ms https://c.clarity.ms",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",
-      "connect-src 'self' https://www.google-analytics.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://emrld.ltd",
+      "connect-src 'self' https://www.google-analytics.com https://va.vercel-scripts.com https://vitals.vercel-insights.com https://emrld.ltd https://www.clarity.ms https://c.clarity.ms https://*.clarity.ms",
       "frame-src 'self' https://challenges.cloudflare.com",
       "frame-ancestors 'self'",
       // Flash / プラグイン経由のコード実行を完全に禁止

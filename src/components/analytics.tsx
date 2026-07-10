@@ -10,18 +10,35 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
  * 1. Vercel Analytics  — PV / 訪問者数（Cookie不要・プライバシー重視）
  * 2. Vercel Speed Insights — Core Web Vitals 計測
  * 3. Google Analytics 4 — 詳細なイベント計測（環境変数 NEXT_PUBLIC_GA_ID 設定時のみ有効）
+ * 4. Microsoft Clarity — ヒートマップ / スクロールマップ / セッション録画
+ *    （離脱ポイントの可視化。環境変数 NEXT_PUBLIC_CLARITY_ID 設定時のみ有効）
  *
  * GA4 を有効化するには Vercel の環境変数に
  *   NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
- * を追加して再デプロイする。未設定時は GA4 部分はスキップされる。
+ * を、Clarity を有効化するには
+ *   NEXT_PUBLIC_CLARITY_ID=xxxxxxxxxx   (clarity.microsoft.com のプロジェクトID)
+ * を追加して再デプロイする。未設定時はそれぞれスキップされる。
  */
 export function Analytics() {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID;
 
   return (
     <>
       <VercelAnalytics />
       <SpeedInsights />
+
+      {clarityId && (
+        <Script id="ms-clarity" strategy="afterInteractive">
+          {`
+            (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "${clarityId}");
+          `}
+        </Script>
+      )}
 
       {gaId && (
         <>
