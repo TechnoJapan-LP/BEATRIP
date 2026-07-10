@@ -581,6 +581,7 @@ export default async function HotelCityPage({ params }: Props) {
                                 hotelName={h.name}
                                 cityNameEn={d.nameEn}
                                 destinationCode={d.iataCodes[0]}
+                                otaUrls={h.otaUrls}
                               />
                             </div>
                           </div>
