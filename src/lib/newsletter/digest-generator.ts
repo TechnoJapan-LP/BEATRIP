@@ -17,6 +17,8 @@
 
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
+import { airlines } from "@/data/airlines";
+import { getAirlineSaleStats } from "@/data/sale-history";
 import { CURATED_HOTELS } from "@/data/hotel-curated";
 import { HOTEL_BY_SLUG } from "@/data/hotel-destinations";
 import { unsubscribeUrl } from "./token";
@@ -134,6 +136,67 @@ function pickEditorialHotels(n: number): Array<{
   return out;
 }
 
+const MONTH_NAMES = [
+  "1月", "2月", "3月", "4月", "5月", "6月",
+  "7月", "8月", "9月", "10月", "11月", "12月",
+];
+
+type AirlinePrediction = {
+  code: string;
+  name: string;
+  avgDiscount: number;
+  peakMonths: number[];
+  avgInterval: number | null;
+  totalSales: number;
+};
+
+/**
+ * セール実績のある航空会社を週替わりでローテーションし、n 社の「セール傾向」を返す。
+ * 当サイトの看板コンテンツ (航空会社セール予測) をメールに載せ、勝ちページ
+ * (/airlines/{code}/sales) へ送客する。全て過去実績ベースで景表法上も安全。
+ */
+function pickAirlinePredictions(n: number): AirlinePrediction[] {
+  const withStats = airlines
+    .map((a) => ({ a, stats: getAirlineSaleStats(a.code) }))
+    .filter((x): x is { a: (typeof airlines)[number]; stats: NonNullable<ReturnType<typeof getAirlineSaleStats>> } => x.stats !== null);
+  if (withStats.length === 0) return [];
+  const week = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
+  const out: AirlinePrediction[] = [];
+  for (let i = 0; i < withStats.length && out.length < n; i++) {
+    const { a, stats } = withStats[(week + i) % withStats.length];
+    out.push({
+      code: a.code,
+      name: a.name,
+      avgDiscount: stats.avgDiscount,
+      peakMonths: stats.peakMonths,
+      avgInterval: stats.avgInterval,
+      totalSales: stats.totalSales,
+    });
+  }
+  return out;
+}
+
+function airlinePredictionRowHtml(p: AirlinePrediction, campaign: string): string {
+  const url = appendUtm(`${SITE}/airlines/${p.code}/sales`, campaign);
+  const peak =
+    p.peakMonths.length > 0
+      ? p.peakMonths.map((m) => MONTH_NAMES[m]).join("・")
+      : "不定期";
+  const interval = p.avgInterval ? `約${p.avgInterval}日間隔` : "不定期";
+  return `
+    <tr>
+      <td style="padding:12px 0;border-bottom:1px solid #f4f4f5">
+        <a href="${esc(url)}" style="font-size:14px;color:#18181b;font-weight:bold;text-decoration:none">
+          ${esc(p.name)}のセール予測 &rarr;
+        </a>
+        <p style="font-size:12px;color:#71717a;margin:4px 0 0;line-height:1.6">
+          過去${p.totalSales}回開催・平均<span style="color:#e11d48;font-weight:bold">${p.avgDiscount}%OFF</span>／${esc(interval)}<br>
+          セールが多い時期: <span style="color:#3f3f46;font-weight:bold">${esc(peak)}</span>
+        </p>
+      </td>
+    </tr>`;
+}
+
 function dealRowHtml(d: DealSchema, campaign: string): string {
   const url = appendUtm(d.affiliate_url ?? `${SITE}/deals/${d.id}`, campaign);
   const discount = d.discount_percent ?? 0;
@@ -205,6 +268,7 @@ export type DigestPayload = {
     deals: number;
     articles: number;
     hotels: number;
+    airlines: number;
     campaign: string;
   };
 };
@@ -237,6 +301,7 @@ export async function generateWeeklyDigest(
   const topDeals = pickTopDeals(allDeals, 5);
   const recentArticles = pickRecentArticles(allArticles, 7, 4);
   const hotels = pickEditorialHotels(3);
+  const predictions = pickAirlinePredictions(3);
 
   const dateLabel = `${now.getUTCFullYear()}/${now.getUTCMonth() + 1}/${now.getUTCDate()}`;
 
@@ -254,6 +319,18 @@ export async function generateWeeklyDigest(
         <p style="font-size:13px;color:#71717a;margin:0 0 8px">割引率順。最安値のタイミングを逃さずチェック。</p>
         <table role="presentation" style="width:100%;border-collapse:collapse">
           ${topDeals.map((d) => dealRowHtml(d, campaign)).join("")}
+        </table>`
+      : "";
+
+  const predictionsSection =
+    predictions.length > 0
+      ? `
+        <h2 style="font-size:16px;color:#18181b;margin:32px 0 8px;letter-spacing:.02em">
+          航空会社セール予測
+        </h2>
+        <p style="font-size:13px;color:#71717a;margin:0 0 8px">過去のセール実績から次の狙い目を予測。開催前に準備を。</p>
+        <table role="presentation" style="width:100%;border-collapse:collapse">
+          ${predictions.map((p) => airlinePredictionRowHtml(p, campaign)).join("")}
         </table>`
       : "";
 
@@ -296,6 +373,7 @@ export async function generateWeeklyDigest(
             最新のセール・記事・おすすめホテルをまとめてお届けします。気になるものはタップして詳細をご覧ください。
           </p>
           ${dealsSection}
+          ${predictionsSection}
           ${articlesSection}
           ${hotelsSection}
           <div style="text-align:center;margin:32px 0 8px">
@@ -336,6 +414,19 @@ export async function generateWeeklyDigest(
     }
     textLines.push("");
   }
+  if (predictions.length > 0) {
+    textLines.push("# 航空会社セール予測");
+    for (const p of predictions) {
+      const peak =
+        p.peakMonths.length > 0
+          ? p.peakMonths.map((m) => MONTH_NAMES[m]).join("・")
+          : "不定期";
+      textLines.push(
+        `- ${p.name}: 平均${p.avgDiscount}%OFF / セールが多い時期 ${peak}  ${SITE}/airlines/${p.code}/sales`
+      );
+    }
+    textLines.push("");
+  }
   if (recentArticles.length > 0) {
     textLines.push("# 今週の新着記事");
     for (const a of recentArticles) {
@@ -363,6 +454,7 @@ export async function generateWeeklyDigest(
       deals: topDeals.length,
       articles: recentArticles.length,
       hotels: hotels.length,
+      airlines: predictions.length,
       campaign,
     },
   };
