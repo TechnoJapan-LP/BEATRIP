@@ -11,9 +11,9 @@ import type { DealSchema } from "@/data/deal-schema";
 import { CountdownBadge } from "@/components/deals/countdown-badge";
 
 const badgeConfig = {
-  NEW: { label: "NEW", className: "bg-emerald-500 text-white hover:bg-emerald-600" },
-  ENDING_SOON: { label: "ENDING", className: "bg-amber-500 text-white hover:bg-amber-600" },
-  LOWEST_IN_2_YEARS: { label: "LOWEST", className: "bg-rose-500 text-white hover:bg-rose-600" },
+  NEW: { label: "新着", className: "bg-emerald-500 text-white hover:bg-emerald-600" },
+  ENDING_SOON: { label: "締切間近", className: "bg-amber-500 text-white hover:bg-amber-600" },
+  LOWEST_IN_2_YEARS: { label: "2年で最安", className: "bg-rose-500 text-white hover:bg-rose-600" },
 } as const;
 
 function formatPrice(price: number) {

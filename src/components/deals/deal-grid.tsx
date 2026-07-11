@@ -251,6 +251,22 @@ export function DealGrid({
     return Array.from(set).sort();
   }, [deals]);
 
+  // トグルごとの該当件数 (国内/国際タブ適用後の母数で計算)。
+  // 「新着 ON で 0 件 = 壊れてる」と誤認されないよう、押す前に件数を見せる。
+  const toggleCounts = useMemo(() => {
+    let base = deals;
+    if (flightType === "domestic") base = base.filter(isDomesticDeal);
+    if (flightType === "international") base = base.filter((d) => !isDomesticDeal(d));
+    let newCount = 0, ending = 0, niche = 0, gem = 0;
+    for (const d of base) {
+      if (d.badge === "NEW") newCount++;
+      if (d.badge === "ENDING_SOON") ending++;
+      if (d.is_niche_lcc) niche++;
+      if (d.is_hidden_gem) gem++;
+    }
+    return { new: newCount, ending, niche, hiddenGem: gem };
+  }, [deals, flightType]);
+
   const filteredDeals = useMemo(() => {
     let result = deals;
     if (flightType === "domestic") result = result.filter(isDomesticDeal);
@@ -400,6 +416,7 @@ export function DealGrid({
       <DealFilters
         flightType={flightType}
         onFlightTypeChange={setFlightType}
+        toggleCounts={toggleCounts}
         showNew={showNew}
         onToggleNew={setShowNew}
         showEnding={showEnding}

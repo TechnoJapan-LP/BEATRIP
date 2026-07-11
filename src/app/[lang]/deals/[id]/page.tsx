@@ -48,7 +48,6 @@ import { SiteFooter } from "@/components/site-footer";
 import { StickyCTA } from "@/components/deals/sticky-cta";
 import { RelatedDeals } from "@/components/deals/related-deals";
 import { RecentlyViewedTracker } from "@/components/recently-viewed/recently-viewed-tracker";
-import { BundlePromo } from "@/components/deals/bundle-promo";
 import { TravelEssentialsCta } from "@/components/deals/travel-essentials-cta";
 import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
 
@@ -117,9 +116,9 @@ function daysLeft(dateStr: string) {
 }
 
 const badgeConfig = {
-  NEW: { label: "NEW", className: "bg-emerald-500 text-white" },
-  ENDING_SOON: { label: "ENDING SOON", className: "bg-amber-500 text-white" },
-  LOWEST_IN_2_YEARS: { label: "LOWEST IN 2 YEARS", className: "bg-rose-500 text-white" },
+  NEW: { label: "新着", className: "bg-emerald-500 text-white" },
+  ENDING_SOON: { label: "締切間近", className: "bg-amber-500 text-white" },
+  LOWEST_IN_2_YEARS: { label: "2年で最安", className: "bg-rose-500 text-white" },
 } as const;
 
 export default async function DealDetailPage({ params }: Props) {
@@ -391,9 +390,9 @@ export default async function DealDetailPage({ params }: Props) {
                 </div>
               )}
 
-              {/* Pack B: 航空券 + ホテル バンドル試算 — BookingButton 直下で総額感を提示し
-                  ホテル送客 CTR を底上げ (無報酬の航空会社直リンクの収益回収) */}
-              <BundlePromo deal={deal} />
+              {/* バンドル試算 (航空券+ホテル総額) はユーザーフィードバックで撤去:
+                  「情報量が多くなるだけ」+ 泊数計算がディール期間全体を泊数と
+                  誤認する欠陥もあった (60泊= ¥48万 等の非現実な表示) */}
             </div>
           </div>
 

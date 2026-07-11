@@ -546,21 +546,23 @@ export default async function RoutePage({ params }: Props) {
                 <Link
                   key={deal.id}
                   href={`/deals/${deal.id}`}
-                  className="flex items-center justify-between rounded-xl border border-zinc-100 bg-white p-5 transition-colors hover:bg-zinc-50"
+                  // モバイル: 縦積み (左右潰し合いでタイトルが1文字ずつ折れるのを防止)
+                  // sm以上: 従来の左右レイアウト
+                  className="flex flex-col gap-3 rounded-xl border border-zinc-100 bg-white p-4 transition-colors hover:bg-zinc-50 sm:flex-row sm:items-center sm:justify-between sm:p-5"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                     <Image
                       src={deal.image_url}
                       alt={deal.destination}
                       width={96}
                       height={64}
                       sizes="96px"
-                      className="h-16 w-24 rounded-lg object-cover flex-shrink-0"
+                      className="h-14 w-20 flex-shrink-0 rounded-lg object-cover sm:h-16 sm:w-24"
                       placeholder="blur"
                       blurDataURL={BLUR_PLACEHOLDER_LIGHT}
                     />
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
+                    <div className="min-w-0">
+                      <div className="mb-1 flex flex-wrap items-center gap-2">
                         <span className="text-sm font-bold text-zinc-900">
                           {deal.airline_name}
                         </span>
@@ -574,30 +576,35 @@ export default async function RoutePage({ params }: Props) {
                                   : "bg-rose-500 text-white"
                             }`}
                           >
-                            {deal.badge.replace("_", " ")}
+                            {deal.badge === "NEW"
+                              ? "新着"
+                              : deal.badge === "ENDING_SOON"
+                                ? "締切間近"
+                                : "2年で最安"}
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-zinc-500">
+                      <p className="truncate text-xs text-zinc-500">
                         {deal.sale_name} · {deal.cabin}
                       </p>
-                      <div className="flex items-center gap-3 mt-1 text-[11px] text-zinc-400">
+                      <div className="mt-1 flex items-center gap-3 text-[11px] text-zinc-400">
                         <span>
-                          <Calendar className="h-3 w-3 inline mr-0.5" />
+                          <Calendar className="mr-0.5 inline h-3 w-3" />
                           {formatDate(deal.departure_date)}〜
                           {formatDate(deal.return_date)}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-xs text-zinc-400 line-through font-mono">
-                      ¥{formatPrice(deal.original_price)}
-                    </div>
+                  {/* 価格: モバイルは横並び左寄せ、sm以上は右寄せ縦積み */}
+                  <div className="flex items-baseline gap-2 pl-[92px] sm:block sm:pl-0 sm:text-right">
                     <div className="font-heading text-2xl tracking-wide text-zinc-900">
                       ¥{formatPrice(deal.sale_price)}
                     </div>
-                    <div className="flex items-center justify-end gap-1 text-rose-500">
+                    <div className="text-xs text-zinc-400 line-through font-mono">
+                      ¥{formatPrice(deal.original_price)}
+                    </div>
+                    <div className="flex items-center gap-1 text-rose-500 sm:justify-end">
                       <TrendingDown className="h-3 w-3" />
                       <span className="text-xs font-bold">
                         -{deal.discount_percent}%

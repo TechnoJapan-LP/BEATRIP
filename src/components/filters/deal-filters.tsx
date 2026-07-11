@@ -32,6 +32,9 @@ export type SortOption = "discount" | "price" | "deadline";
 type DealFiltersProps = {
   flightType: FlightType;
   onFlightTypeChange: (v: FlightType) => void;
+  /** 各トグルの該当件数 (国内/国際タブ適用後)。0 のトグルは薄く表示し
+      「押しても 0 件 = 壊れてる」という誤認を防ぐ */
+  toggleCounts?: { new: number; ending: number; niche: number; hiddenGem: number };
   showNew: boolean;
   onToggleNew: (v: boolean) => void;
   showEnding: boolean;
@@ -106,6 +109,7 @@ const SORT_LABELS: Record<SortOption, string> = {
 export function DealFilters({
   flightType,
   onFlightTypeChange,
+  toggleCounts,
   showNew,
   onToggleNew,
   showEnding,
@@ -346,33 +350,43 @@ export function DealFilters({
         />
       </div>
 
-      {/* トグル: モバイルでは2列グリッド、PCでは横並び */}
+      {/* トグル: モバイルでは2列グリッド、PCでは横並び。
+          件数バッジ付き — 0件のトグルは薄くして「押しても0件」を事前に伝える */}
       <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-3">
-        <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+        <label className={`flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2 ${toggleCounts && toggleCounts.new === 0 ? "opacity-45" : ""}`}>
           <Switch checked={showNew} onCheckedChange={onToggleNew} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Flame className="h-3.5 w-3.5 text-emerald-500" />
             {t.new}
+            {toggleCounts && (
+              <span className="text-[10px] font-bold text-zinc-400">({toggleCounts.new})</span>
+            )}
           </span>
         </label>
 
-        <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+        <label className={`flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2 ${toggleCounts && toggleCounts.ending === 0 ? "opacity-45" : ""}`}>
           <Switch checked={showEnding} onCheckedChange={onToggleEnding} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Clock className="h-3.5 w-3.5 text-amber-500" />
             {t.ending}
+            {toggleCounts && (
+              <span className="text-[10px] font-bold text-zinc-400">({toggleCounts.ending})</span>
+            )}
           </span>
         </label>
 
-        <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+        <label className={`flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2 ${toggleCounts && toggleCounts.niche === 0 ? "opacity-45" : ""}`}>
           <Switch checked={showNiche} onCheckedChange={onToggleNiche} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Sparkles className="h-3.5 w-3.5" />
             {t.niche}
+            {toggleCounts && (
+              <span className="text-[10px] font-bold text-zinc-400">({toggleCounts.niche})</span>
+            )}
           </span>
         </label>
 
-        <label className="flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2">
+        <label className={`flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2 ${toggleCounts && toggleCounts.hiddenGem === 0 ? "opacity-45" : ""}`}>
           <Switch
             checked={showHiddenGem}
             onCheckedChange={onToggleHiddenGem}
@@ -380,6 +394,9 @@ export function DealFilters({
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <MapPin className="h-3.5 w-3.5" />
             {t.hiddenGem}
+            {toggleCounts && (
+              <span className="text-[10px] font-bold text-zinc-400">({toggleCounts.hiddenGem})</span>
+            )}
           </span>
         </label>
 
