@@ -58,6 +58,17 @@ export async function GET() {
     process.env.BLUESKY_HANDLE && process.env.BLUESKY_APP_PASSWORD
   );
 
+  // 計測タグの設定状況 (値は出さず boolean + 長さのみ)。
+  // NEXT_PUBLIC_ 変数はビルド時に焼き込まれるため、この true/false で
+  // 「env が Vercel に届いているか」を切り分けられる。
+  const clarityRaw = process.env.NEXT_PUBLIC_CLARITY_ID ?? "";
+  const gaRaw = process.env.NEXT_PUBLIC_GA_ID ?? "";
+  const analytics = {
+    clarityConfigured: clarityRaw.trim().length > 0,
+    clarityIdLength: clarityRaw.trim().length,
+    gaConfigured: gaRaw.trim().length > 0,
+  };
+
   return NextResponse.json({
     ready,
     scraperMode,
@@ -65,6 +76,7 @@ export async function GET() {
     storeSalesCount,
     latestScrapedAt,
     social: { xConfigured, blueskyConfigured },
+    analytics,
     hint: ready
       ? "A 設定OK。latestScrapedAt が直近なら cron も稼働中。"
       : "本番稼働には SCRAPER_MODE=hybrid と KV 接続 (kvEnabled=true) が必要。",
