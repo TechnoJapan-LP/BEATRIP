@@ -57,7 +57,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, iata, lang } = await params;
   const airline = getAirlineByCode(code.toUpperCase());
   const airport = getAirportByCode(iata.toUpperCase());
-  if (!airline || !airport) return { title: "Not Found" };
+  if (!airline || !airport) notFound();
+  // 就航していない組合せ (17社 × 45空港 の大半) は page component と同じくここで 404 にする。
+  // metadata は streaming で先にレスポンスをコミットするため、page 側の notFound() だけでは
+  // ステータスが 200 のまま + 虚偽タイトルが残る。
+  if (!airlineServesAirport(airline, airport)) notFound();
 
   const isEn = lang === "en";
   const airlineName = isEn ? airline.nameEn || airline.name : airline.name;
