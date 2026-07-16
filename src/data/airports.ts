@@ -37,7 +37,14 @@ export type Airport = {
   prefecture: string;
   /** 主要な就航先空港 IATA (国内 + 国際を 3-5 個) */
   popularRoutes: string[];
-  /** 主に就航している航空会社の英語コード (ANA, JAL, APJ, JJP 等) */
+  /**
+   * 主に就航している航空会社コード。
+   *
+   * airlines.ts の `code` と文字列一致で突き合わせて /airlines/[code]/airports/[iata]
+   * を生成する (sitemap.ts / airports/[iata]/page.tsx) ため、必ず airlines.ts に
+   * 存在する code を使うこと。ここにしかない code (SKY/ZIP/SNA/SFJ/IBX/FDA/JAC)
+   * は一致せずページが生成されない。
+   */
   airlines: string[];
   /** 空港の特徴・観光誘導の 1 行紹介 */
   tagline?: string;
@@ -56,7 +63,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "東京都",
     popularRoutes: ["CTS", "FUK", "OKA", "ITM", "HNL"],
-    airlines: ["ANA", "JAL", "APJ", "SKY"],
+    airlines: ["ANA", "JAL", "PCH", "SKY"],
     tagline: "都心アクセス抜群・国内線最大ハブ",
     officialDomain: "tokyo-haneda.com",
   },
@@ -69,7 +76,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "千葉県",
     popularRoutes: ["BKK", "TPE", "ICN", "HNL", "JFK"],
-    airlines: ["ANA", "JAL", "JJP", "APJ", "ZIP"],
+    airlines: ["ANA", "JAL", "JJP", "PCH", "ZIP", "SJO"],
     tagline: "LCC・国際線が豊富な日本の玄関口",
     officialDomain: "narita-airport.jp",
   },
@@ -82,7 +89,7 @@ export const AIRPORTS: Airport[] = [
     size: "minor",
     prefecture: "茨城県",
     popularRoutes: ["CTS", "FUK", "OKA", "KOJ"],
-    airlines: ["SKY", "APJ"],
+    airlines: ["SKY", "PCH"],
     tagline: "首都圏第三の空港・LCC格安便",
     officialDomain: "ibaraki-airport.net",
   },
@@ -97,7 +104,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "北海道",
     popularRoutes: ["HND", "NRT", "KIX", "FUK", "OKA"],
-    airlines: ["ANA", "JAL", "APJ", "JJP", "AIRDO"],
+    airlines: ["ANA", "JAL", "PCH", "JJP", "AIRDO"],
     tagline: "札幌・道央観光の中心ゲートウェイ",
     officialDomain: "new-chitose-airport.jp",
   },
@@ -135,7 +142,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "北海道",
     popularRoutes: ["HND", "NRT", "ITM", "NGO"],
-    airlines: ["ANA", "JAL", "AIRDO", "APJ"],
+    airlines: ["ANA", "JAL", "AIRDO", "PCH"],
     tagline: "旭山動物園と道北観光の中心",
     officialDomain: "aapb.co.jp",
   },
@@ -186,7 +193,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "宮城県",
     popularRoutes: ["CTS", "ITM", "FUK", "OKA", "TPE"],
-    airlines: ["ANA", "JAL", "APJ", "JJP", "IBX"],
+    airlines: ["ANA", "JAL", "PCH", "JJP", "IBX"],
     tagline: "東北最大の拠点空港・牛タンと松島",
     officialDomain: "sendai-airport.co.jp",
   },
@@ -261,7 +268,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "愛知県",
     popularRoutes: ["CTS", "OKA", "FUK", "TPE", "ICN"],
-    airlines: ["ANA", "JAL", "APJ", "JJP", "ZIP"],
+    airlines: ["ANA", "JAL", "PCH", "JJP", "ZIP"],
     tagline: "中部圏最大ハブ・国際線も豊富",
     officialDomain: "centrair.jp",
   },
@@ -286,7 +293,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "新潟県",
     popularRoutes: ["ITM", "FUK", "CTS", "OKA", "ICN"],
-    airlines: ["ANA", "JAL", "APJ", "FDA"],
+    airlines: ["ANA", "JAL", "PCH", "FDA"],
     tagline: "佐渡・越後湯沢・日本酒の郷",
   },
   {
@@ -322,7 +329,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "静岡県",
     popularRoutes: ["CTS", "FUK", "OKA", "ICN", "TPE"],
-    airlines: ["ANA", "FDA", "APJ"],
+    airlines: ["ANA", "FDA", "PCH"],
     tagline: "富士山・伊豆・浜名湖の玄関",
   },
   {
@@ -348,7 +355,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "大阪府",
     popularRoutes: ["CTS", "OKA", "TPE", "ICN", "BKK"],
-    airlines: ["ANA", "JAL", "APJ", "JJP", "ZIP"],
+    airlines: ["ANA", "JAL", "PCH", "JJP", "ZIP"],
     tagline: "西日本最大の国際ゲートウェイ",
     officialDomain: "kansai-airport.or.jp",
   },
@@ -374,7 +381,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "兵庫県",
     popularRoutes: ["HND", "CTS", "OKA", "KOJ", "ISG"],
-    airlines: ["ANA", "APJ", "SKY"],
+    airlines: ["ANA", "PCH", "SKY"],
     tagline: "三宮直結・コンパクトで使いやすい",
     officialDomain: "kairport.co.jp",
   },
@@ -389,7 +396,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "広島県",
     popularRoutes: ["HND", "CTS", "OKA", "TPE", "ICN"],
-    airlines: ["ANA", "JAL", "APJ", "IBX"],
+    airlines: ["ANA", "JAL", "PCH", "IBX"],
     tagline: "原爆ドーム・宮島観光の玄関口",
     officialDomain: "hij.airport.jp",
   },
@@ -402,7 +409,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "岡山県",
     popularRoutes: ["HND", "CTS", "OKA", "TPE", "ICN"],
-    airlines: ["ANA", "JAL", "APJ"],
+    airlines: ["ANA", "JAL", "PCH"],
     tagline: "倉敷美観地区・瀬戸内観光の玄関",
   },
   {
@@ -476,7 +483,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "愛媛県",
     popularRoutes: ["HND", "ITM", "FUK", "OKA", "ICN"],
-    airlines: ["ANA", "JAL", "APJ", "JJP"],
+    airlines: ["ANA", "JAL", "PCH", "JJP"],
     tagline: "道後温泉の玄関口・しまなみ海道",
     officialDomain: "matsuyama-airport.co.jp",
   },
@@ -527,7 +534,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "福岡県",
     popularRoutes: ["HND", "CTS", "OKA", "ITM", "ICN"],
-    airlines: ["ANA", "JAL", "APJ", "JJP", "SFJ"],
+    airlines: ["ANA", "JAL", "PCH", "JJP", "SFJ"],
     tagline: "市街地直結・九州最大ハブ",
     officialDomain: "fukuoka-airport.jp",
   },
@@ -552,7 +559,7 @@ export const AIRPORTS: Airport[] = [
     size: "minor",
     prefecture: "佐賀県",
     popularRoutes: ["HND", "CTS", "OKA"],
-    airlines: ["ANA", "APJ"],
+    airlines: ["ANA", "PCH"],
     tagline: "有田焼・嬉野温泉・福岡からも近い",
   },
   {
@@ -564,7 +571,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "長崎県",
     popularRoutes: ["HND", "ITM", "CTS", "OKA", "ICN"],
-    airlines: ["ANA", "JAL", "APJ", "JJP"],
+    airlines: ["ANA", "JAL", "PCH", "JJP"],
     tagline: "ハウステンボス・夜景・異国情緒",
   },
   {
@@ -576,7 +583,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "熊本県",
     popularRoutes: ["HND", "ITM", "CTS", "OKA", "TPE"],
-    airlines: ["ANA", "JAL", "APJ", "FDA"],
+    airlines: ["ANA", "JAL", "PCH", "FDA"],
     tagline: "阿蘇山・くまモン・天草の玄関",
   },
   {
@@ -600,7 +607,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "宮崎県",
     popularRoutes: ["HND", "ITM", "FUK", "OKA", "ICN"],
-    airlines: ["ANA", "JAL", "APJ", "SNA"],
+    airlines: ["ANA", "JAL", "PCH", "SNA"],
     tagline: "高千穂・青島・南国リゾート",
   },
   {
@@ -612,7 +619,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "鹿児島県",
     popularRoutes: ["HND", "ITM", "OKA", "TPE", "ICN"],
-    airlines: ["ANA", "JAL", "APJ", "JJP", "JAC"],
+    airlines: ["ANA", "JAL", "PCH", "JJP", "JAC"],
     tagline: "桜島・指宿温泉・離島へのハブ",
   },
   {
@@ -648,7 +655,7 @@ export const AIRPORTS: Airport[] = [
     size: "minor",
     prefecture: "鹿児島県",
     popularRoutes: ["HND", "ITM", "KOJ", "OKA"],
-    airlines: ["JAL", "JAC", "APJ"],
+    airlines: ["JAL", "JAC", "PCH"],
     tagline: "亜熱帯の島・ダイビングと島唄",
   },
 
@@ -662,7 +669,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "沖縄県",
     popularRoutes: ["HND", "NRT", "KIX", "FUK", "TPE"],
-    airlines: ["ANA", "JAL", "APJ", "JJP", "SNA"],
+    airlines: ["ANA", "JAL", "PCH", "JJP", "SNA"],
     tagline: "沖縄観光・離島ホッピングの起点",
     officialDomain: "naha-airport.co.jp",
   },
@@ -675,7 +682,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "沖縄県",
     popularRoutes: ["HND", "NRT", "KIX", "OKA", "TPE"],
-    airlines: ["ANA", "JAL", "APJ", "JJP", "SNA"],
+    airlines: ["ANA", "JAL", "PCH", "JJP", "SNA"],
     tagline: "八重山諸島・川平湾の青い海",
   },
   {
@@ -687,7 +694,7 @@ export const AIRPORTS: Airport[] = [
     size: "regional",
     prefecture: "沖縄県",
     popularRoutes: ["HND", "KIX", "OKA", "ISG"],
-    airlines: ["ANA", "JAL", "APJ", "SNA"],
+    airlines: ["ANA", "JAL", "PCH", "SNA"],
     tagline: "宮古ブルーの海とビーチリゾート",
   },
   {

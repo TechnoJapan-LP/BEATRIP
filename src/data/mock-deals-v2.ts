@@ -298,7 +298,7 @@ export const deals: DealSchema[] = [
   },
   {
     id: "deal-010",
-    airline_id: "APJ",
+    airline_id: "SJO",
     airline_name: "Spring Japan",
     origin: "東京",
     origin_code: "NRT",
@@ -661,7 +661,7 @@ export const deals: DealSchema[] = [
   },
   {
     id: "deal-d06",
-    airline_id: "APJ",
+    airline_id: "SJO",
     airline_name: "Spring Japan",
     origin: "東京",
     origin_code: "NRT",

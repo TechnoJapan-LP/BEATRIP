@@ -72,11 +72,11 @@ export const saleHistory: SaleRecord[] = [
   { id: "h-jjp-05", airlineCode: "JJP", airlineName: "Jetstar Japan", saleName: "Jetstar スーパースターSALE", startDate: "2026-05-12", endDate: "2026-05-19", routes: ["NRT→MNL", "KIX→TPE"], minPrice: 12800, maxDiscount: 54, cabin: "Economy", source: "reference" },
 
   // Spring Japan
-  { id: "h-apj-01", airlineCode: "APJ", airlineName: "Spring Japan", saleName: "Spring 737セール", startDate: "2024-07-03", endDate: "2024-07-10", routes: ["NRT→PVG", "NRT→HRB"], minPrice: 3737, maxDiscount: 70, cabin: "Economy", source: "reference" },
-  { id: "h-apj-02", airlineCode: "APJ", airlineName: "Spring Japan", saleName: "Spring 片道キャンペーン", startDate: "2024-12-07", endDate: "2024-12-14", routes: ["NRT→PVG", "NRT→WUH"], minPrice: 4980, maxDiscount: 62, cabin: "Economy", source: "reference" },
-  { id: "h-apj-03", airlineCode: "APJ", airlineName: "Spring Japan", saleName: "Spring 737セール", startDate: "2025-03-07", endDate: "2025-03-14", routes: ["NRT→PVG", "NRT→HRB", "NRT→WUH"], minPrice: 3737, maxDiscount: 68, cabin: "Economy", source: "reference" },
-  { id: "h-apj-04", airlineCode: "APJ", airlineName: "Spring Japan", saleName: "Spring 737セール", startDate: "2025-07-07", endDate: "2025-07-14", routes: ["NRT→PVG", "NRT→HRB"], minPrice: 3737, maxDiscount: 65, cabin: "Economy", source: "reference" },
-  { id: "h-apj-05", airlineCode: "APJ", airlineName: "Spring Japan", saleName: "Spring 片道キャンペーン", startDate: "2026-05-10", endDate: "2026-05-17", routes: ["NRT→PVG"], minPrice: 8800, maxDiscount: 65, cabin: "Economy", source: "reference" },
+  { id: "h-sjo-01", airlineCode: "SJO", airlineName: "Spring Japan", saleName: "Spring 737セール", startDate: "2024-07-03", endDate: "2024-07-10", routes: ["NRT→PVG", "NRT→HRB"], minPrice: 3737, maxDiscount: 70, cabin: "Economy", source: "reference" },
+  { id: "h-sjo-02", airlineCode: "SJO", airlineName: "Spring Japan", saleName: "Spring 片道キャンペーン", startDate: "2024-12-07", endDate: "2024-12-14", routes: ["NRT→PVG", "NRT→WUH"], minPrice: 4980, maxDiscount: 62, cabin: "Economy", source: "reference" },
+  { id: "h-sjo-03", airlineCode: "SJO", airlineName: "Spring Japan", saleName: "Spring 737セール", startDate: "2025-03-07", endDate: "2025-03-14", routes: ["NRT→PVG", "NRT→HRB", "NRT→WUH"], minPrice: 3737, maxDiscount: 68, cabin: "Economy", source: "reference" },
+  { id: "h-sjo-04", airlineCode: "SJO", airlineName: "Spring Japan", saleName: "Spring 737セール", startDate: "2025-07-07", endDate: "2025-07-14", routes: ["NRT→PVG", "NRT→HRB"], minPrice: 3737, maxDiscount: 65, cabin: "Economy", source: "reference" },
+  { id: "h-sjo-05", airlineCode: "SJO", airlineName: "Spring Japan", saleName: "Spring 片道キャンペーン", startDate: "2026-05-10", endDate: "2026-05-17", routes: ["NRT→PVG"], minPrice: 8800, maxDiscount: 65, cabin: "Economy", source: "reference" },
 
   // T'way Air
   { id: "h-tw-01", airlineCode: "TW", airlineName: "T'way Air", saleName: "T'way ハッピーフライデー", startDate: "2024-04-05", endDate: "2024-04-12", routes: ["FUK→ICN", "KIX→ICN"], minPrice: 5900, maxDiscount: 60, cabin: "Economy", source: "reference" },

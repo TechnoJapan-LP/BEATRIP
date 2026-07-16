@@ -27,7 +27,7 @@ const AIRLINE_NAME_TO_CODE: Record<string, string> = {
   "JAL": "JAL", "日本航空": "JAL",
   "ピーチ": "PCH", "Peach": "PCH",
   "ジェットスター": "JJP", "Jetstar": "JJP",
-  "スプリング": "APJ", "Spring": "APJ", "春秋航空": "APJ",
+  "スプリング": "SJO", "Spring": "SJO", "春秋航空": "SJO",
   "ティーウェイ": "TW", "T'way": "TW",
   "ベトジェット": "VJ", "VietJet": "VJ",
   "エミレーツ": "EK", "Emirates": "EK",
