@@ -52,6 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("", "daily", 1),
     ...bilingual("/airlines", "weekly", 0.8),
     ...bilingual("/deals", "daily", 0.85),
+    ...bilingual("/hot-deals", "daily", 0.8),
     // 独自コンテンツ: 各社の実セール履歴を集約した「次回セール予測」ハブ
     ...bilingual("/sale-calendar", "weekly", 0.8),
     ...bilingual("/articles", "daily", 0.8),

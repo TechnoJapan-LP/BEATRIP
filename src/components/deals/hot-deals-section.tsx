@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Zap, TrendingDown, Clock, ExternalLink } from "lucide-react";
 import { loadHotDeals, type HotDeal } from "@/lib/deals/hot-deals";
 
@@ -106,24 +107,57 @@ function GoneCard({ h }: { h: HotDeal }) {
   );
 }
 
-export async function HotDealsSection() {
+export async function HotDealsSection({
+  /**
+   * "deals": /deals 埋め込み用。データ0件なら何も出さず、見出しに /hot-deals への
+   *          リンクを付ける (default)。
+   * "page":  /hot-deals 専用ページ用。見出しはページ側が持ち、0件でも
+   *          「現在監視中」の空状態を出す (SEO ページを空にしない)。
+   */
+  variant = "deals",
+}: {
+  variant?: "deals" | "page";
+} = {}) {
   const all = await loadHotDeals();
-  if (all.length === 0) return null;
 
   const active = all
     .filter((h) => h.status === "active")
     .sort((a, b) => b.drop_percent - a.drop_percent)
-    .slice(0, 6);
+    .slice(0, variant === "page" ? 12 : 6);
   const gone = all
     .filter((h) => h.status === "gone")
     .sort((a, b) => new Date(b.gone_at ?? 0).getTime() - new Date(a.gone_at ?? 0).getTime())
-    .slice(0, 3);
+    .slice(0, variant === "page" ? 9 : 3);
 
-  if (active.length === 0 && gone.length === 0) return null;
+  if (variant === "deals" && active.length === 0 && gone.length === 0) return null;
+
+  const grid =
+    active.length === 0 && gone.length === 0 ? (
+      <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 p-6 text-center dark:border-zinc-700 dark:bg-zinc-900">
+        <Zap className="mx-auto mb-2 h-6 w-6 text-zinc-300 dark:text-zinc-600" />
+        <p className="text-sm font-bold text-zinc-600 dark:text-zinc-300">
+          現在、価格の急落は検出されていません
+        </p>
+        <p className="mt-1 text-xs text-zinc-400">
+          6時間ごとに監視中。検出すると X と Bluesky に即速報し、このページに掲載されます。
+        </p>
+      </div>
+    ) : (
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {active.map((h) => (
+          <ActiveCard key={h.id} h={h} />
+        ))}
+        {gone.map((h) => (
+          <GoneCard key={h.id} h={h} />
+        ))}
+      </div>
+    );
+
+  if (variant === "page") return grid;
 
   return (
     <section aria-labelledby="hot-deals-title" className="mb-10">
-      <div className="mb-1 flex items-center gap-2">
+      <div className="mb-1 flex flex-wrap items-center gap-2">
         <Zap className="h-5 w-5 text-rose-500" />
         <h2
           id="hot-deals-title"
@@ -134,18 +168,17 @@ export async function HotDealsSection() {
         <span className="rounded-full bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-600 dark:bg-rose-900/40 dark:text-rose-300">
           BETA
         </span>
+        <Link
+          href="/hot-deals"
+          className="ml-auto text-xs font-medium text-zinc-500 underline-offset-2 hover:text-zinc-900 hover:underline dark:text-zinc-400 dark:hover:text-zinc-100"
+        >
+          エラーフェアとは？仕組みと履歴 →
+        </Link>
       </div>
       <p className="mb-4 text-xs text-zinc-500 dark:text-zinc-400">
         毎日の価格ウォッチで「直前の観測から急落した運賃」を自動検出。消える前にチェック。
       </p>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {active.map((h) => (
-          <ActiveCard key={h.id} h={h} />
-        ))}
-        {gone.map((h) => (
-          <GoneCard key={h.id} h={h} />
-        ))}
-      </div>
+      {grid}
     </section>
   );
 }
