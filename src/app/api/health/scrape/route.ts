@@ -70,6 +70,17 @@ export async function GET() {
     gaConfigured: gaRaw.trim().length > 0,
   };
 
+  // アフィリエイト: program ID が env に届いているか (値は出さず boolean のみ)。
+  // 未設定だと buildPartnerUrl が tp.media wrap せず素のリンクを返す = 報酬ゼロ。
+  const affiliate = {
+    airalo: Boolean(process.env.TP_AIRALO_PROGRAM_ID?.trim()),
+    kiwitaxi: Boolean(process.env.TP_KIWITAXI_PROGRAM_ID?.trim()),
+    insurance: Boolean(process.env.TP_INSURANCE_PROGRAM_ID?.trim()),
+    booking: Boolean(process.env.TP_BOOKING_PROGRAM_ID?.trim()),
+    agoda: Boolean(process.env.TP_AGODA_PROGRAM_ID?.trim()),
+    tripHotel: Boolean(process.env.TP_TRIP_HOTEL_PROGRAM_ID?.trim()),
+  };
+
   // 超お買い得 (価格急落) の稼働状況
   let hotDeals = { active: 0, gone: 0 };
   try {
@@ -90,6 +101,7 @@ export async function GET() {
     latestScrapedAt,
     social: { xConfigured, blueskyConfigured },
     analytics,
+    affiliate,
     hotDeals,
     hint: ready
       ? "A 設定OK。latestScrapedAt が直近なら cron も稼働中。"
