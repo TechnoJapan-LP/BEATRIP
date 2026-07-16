@@ -1,7 +1,14 @@
 {
   "sales": [],
-  "lastScraped": "2026-07-16T08:47:06.651Z",
+  "lastScraped": "2026-07-16T10:26:45.369Z",
   "history": [
+    {
+      "timestamp": "2026-07-16T10:26:45.369Z",
+      "success": true,
+      "salesCount": 0,
+      "newSales": [],
+      "endedSales": []
+    },
     {
       "timestamp": "2026-07-16T08:47:06.651Z",
       "success": true,

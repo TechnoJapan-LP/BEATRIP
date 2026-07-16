@@ -1,4 +1,12 @@
-import { BedDouble, Signal, Car, Shield, ArrowUpRight, Plane } from "lucide-react";
+import {
+  BedDouble,
+  Signal,
+  Car,
+  Shield,
+  ArrowUpRight,
+  Plane,
+  Sparkles,
+} from "lucide-react";
 import {
   PARTNERS,
   buildPartnerUrl,
@@ -25,6 +33,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Car,
   Shield,
   Plane,
+  Sparkles,
 };
 
 export function TravelCompanions({
@@ -45,8 +54,11 @@ export function TravelCompanions({
   maxItems?: number;
   source?: string;
 }) {
+  // isRelevant でページ文脈に合わないパートナーを除外 (情報過多の回避)。
+  // 例: レンタカーはクルマが要る目的地だけ、AirHelp は EU 路線だけ。
   const partners = PARTNERS.filter((p) => isPartnerEnabled(p))
     .filter((p) => !categories || categories.includes(p.category))
+    .filter((p) => !p.isRelevant || p.isRelevant(ctx))
     .slice(0, maxItems);
 
   if (partners.length === 0) return null;

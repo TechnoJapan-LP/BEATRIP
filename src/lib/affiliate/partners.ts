@@ -12,7 +12,14 @@
  * PROGRAM_ID は各パートナー承認後に TravelPayouts 管理画面で確認できる値。
  */
 
-export type PartnerCategory = "hotel" | "esim" | "transfer" | "insurance" | "tour";
+export type PartnerCategory =
+  | "hotel"
+  | "esim"
+  | "transfer"
+  | "insurance"
+  | "tour"
+  | "car"
+  | "compensation";
 
 export type PartnerContext = {
   /** 目的地の英語都市名（例 "Tokyo"） */
@@ -49,6 +56,14 @@ export type Partner = {
   iconKey: string;
   /** リンクの rel 属性 */
   rel?: string;
+  /**
+   * ページ文脈に合うときだけ出す判定（任意）。
+   * 未指定なら常に対象（従来の挙動）。ここで false を返すと枠自体に出ない。
+   *
+   * 例: レンタカーは「クルマが要る目的地」だけ、AirHelp は「EU路線」だけ。
+   * 無関係なページに出して情報過多にしないための絞り込み。
+   */
+  isRelevant?: (ctx: PartnerContext) => boolean;
 };
 
 const MARKER_ENV = "TRAVELPAYOUTS_MARKER";
@@ -181,6 +196,41 @@ const AIRALO: Partner = {
   },
   iconKey: "Signal",
   rel: "sponsored noopener noreferrer",
+  // eSIM は海外旅行の課題。国内線ディールに出しても意味がないので抑制。
+  isRelevant: isOverseas,
+};
+
+/**
+ * GigSky eSIM（Airalo より高料率。並べて選択肢にする）
+ */
+const GIGSKY: Partner = {
+  id: "gigsky",
+  name: "GigSky eSIM",
+  category: "esim",
+  programEnvVar: "TP_GIGSKY_PROGRAM_ID",
+  description: "190以上の国と地域で使えるデータプラン",
+  ctaLabel: (ctx) =>
+    ctx.countryNameEn ? `${ctx.countryNameEn} の eSIM プランを見る` : "eSIM プランを見る",
+  destinationUrl: () => "https://www.gigsky.com/",
+  iconKey: "Signal",
+  rel: "sponsored noopener noreferrer",
+  isRelevant: isOverseas,
+};
+
+/**
+ * Yesim eSIM（高料率。国別プランに対応）
+ */
+const YESIM: Partner = {
+  id: "yesim",
+  name: "Yesim eSIM",
+  category: "esim",
+  programEnvVar: "TP_YESIM_PROGRAM_ID",
+  description: "アプリで即開通・国別/周遊プランが豊富",
+  ctaLabel: () => "eSIM の料金を比較する",
+  destinationUrl: () => "https://yesim.tech/",
+  iconKey: "Signal",
+  rel: "sponsored noopener noreferrer",
+  isRelevant: isOverseas,
 };
 
 /**
@@ -223,19 +273,184 @@ const INSURANCE: Partner = {
     process.env.TP_INSURANCE_URL ?? "https://www.cherehapa.ru/",
   iconKey: "Shield",
   rel: "sponsored noopener noreferrer",
+  // 海外旅行保険。国内線ディールでは不要なので出さない。
+  isRelevant: isOverseas,
+};
+
+/**
+ * 欧州の主要空港 (EU/英国)。AirHelp の補償請求 (EU261) が現実的に効く範囲。
+ * 日本国内線や米国路線は対象外のため、ここでしか出さない。
+ */
+const EU_IATA = new Set([
+  "LHR", "LGW", "CDG", "ORY", "FRA", "MUC", "AMS", "MAD", "BCN", "FCO",
+  "MXP", "VIE", "ZRH", "GVA", "BRU", "CPH", "ARN", "OSL", "HEL", "DUB",
+  "LIS", "OPO", "PRG", "WAW", "BUD", "ATH", "IST", "MAN", "EDI", "DUS",
+  "HAM", "TXL", "BER", "STR", "NCE", "LYS", "VCE", "NAP", "AGP", "PMI",
+]);
+
+/**
+ * AirHelp — 遅延・欠航の補償請求 (最大 €600)。
+ * 「航空券特化サイト」と最も相性が良い一方、EU261 が主戦場なので
+ * 欧州路線でだけ出す (国内線に出すと誤解を招くため)。
+ */
+const AIRHELP: Partner = {
+  id: "airhelp",
+  name: "AirHelp 遅延・欠航の補償請求",
+  category: "compensation",
+  programEnvVar: "TP_AIRHELP_PROGRAM_ID",
+  description: "欧州路線の遅延・欠航は最大€600の補償対象になることも",
+  ctaLabel: () => "補償の対象か無料でチェック",
+  destinationUrl: () => "https://www.airhelp.com/ja/",
+  iconKey: "Plane",
+  rel: "sponsored noopener noreferrer",
+  // 欧州発着のみ (出発・到着どちらかが EU/UK 圏)
+  isRelevant: (ctx) =>
+    (!!ctx.destinationIata && EU_IATA.has(ctx.destinationIata)) ||
+    (!!ctx.originIata && EU_IATA.has(ctx.originIata)),
+};
+
+/** 国内線の主要空港。eSIM/保険など「海外向け」の枠を国内旅行で出さないための判定に使う。 */
+const DOMESTIC_IATA = new Set([
+  "HND", "NRT", "KIX", "ITM", "UKB", "NGO", "FUK", "CTS", "OKD", "OKA",
+  "ISG", "MMY", "HKD", "AKJ", "KUH", "MMB", "SDJ", "AOJ", "AXT", "HIJ",
+  "OKJ", "TAK", "MYJ", "KCZ", "TKS", "KOJ", "KMJ", "KMI", "OIT", "NGS",
+  "TOY", "KMQ", "ASJ", "IWJ", "TTJ", "IZO", "YGJ", "FSZ", "KIJ", "HAC",
+]);
+
+/** 海外の目的地か (eSIM/保険はここでだけ出す)。IATA 不明時は出さない安全側。 */
+function isOverseas(ctx: PartnerContext): boolean {
+  return !!ctx.destinationIata && !DOMESTIC_IATA.has(ctx.destinationIata);
+}
+
+/**
+ * レンタカーを出す目的地 (IATA)。
+ * 「公共交通だけだと厳しく、実際に多くの旅行者がクルマを借りる」場所に限定する。
+ * 東京・大阪・ソウル等の都市型目的地には出さない (地下鉄で足りるため情報過多になる)。
+ */
+const CAR_RENTAL_IATA = new Set([
+  // 沖縄・離島
+  "OKA", "ISG", "MMY",
+  // 北海道
+  "CTS", "HKD", "OKD", "AKJ", "KUH", "MMB",
+  // 九州 (阿蘇・湯布院など車前提の観光地を抱える)
+  "KOJ", "KMJ", "KMI", "OIT",
+  // 四国・山陰
+  "MYJ", "KCZ", "TAK", "TTJ", "IZO",
+  // リゾート (海外)
+  "HNL", "OGG", "KOA", "GUM", "SPN", "DPS", "CNS", "ZQN",
+]);
+
+/**
+ * レンタカー (Localrent)。現地の中小業者を含む比較。
+ * リゾート・地方限定で出す。
+ */
+const LOCALRENT: Partner = {
+  id: "localrent",
+  name: "Localrent レンタカー",
+  category: "car",
+  programEnvVar: "TP_LOCALRENT_PROGRAM_ID",
+  description: "現地レンタカーを比較・空港受取に対応",
+  ctaLabel: (ctx) =>
+    ctx.cityNameJa ? `${ctx.cityNameJa}のレンタカーを探す` : "レンタカーを探す",
+  destinationUrl: (ctx) => {
+    const params = new URLSearchParams({ lang: "ja" });
+    if (ctx.cityNameEn) params.set("q", ctx.cityNameEn);
+    return `https://localrent.com/?${params.toString()}`;
+  },
+  iconKey: "Car",
+  rel: "sponsored noopener noreferrer",
+  isRelevant: (ctx) =>
+    !!ctx.destinationIata && CAR_RENTAL_IATA.has(ctx.destinationIata),
+};
+
+/**
+ * レンタカー (GetRentacar)。大手比較。Localrent と並べて選択肢にする。
+ */
+const GETRENTACAR: Partner = {
+  id: "getrentacar",
+  name: "GetRentacar",
+  category: "car",
+  programEnvVar: "TP_GETRENTACAR_PROGRAM_ID",
+  description: "大手レンタカーを横断比較・当日受取も",
+  ctaLabel: (ctx) =>
+    ctx.cityNameJa ? `${ctx.cityNameJa}の料金を比較` : "レンタカー料金を比較",
+  destinationUrl: (ctx) => {
+    const params = new URLSearchParams({ lang: "ja" });
+    if (ctx.cityNameEn) params.set("city", ctx.cityNameEn);
+    return `https://getrentacar.com/?${params.toString()}`;
+  },
+  iconKey: "Car",
+  rel: "sponsored noopener noreferrer",
+  isRelevant: (ctx) =>
+    !!ctx.destinationIata && CAR_RENTAL_IATA.has(ctx.destinationIata),
+};
+
+/**
+ * Klook — アジア圏に強い現地アクティビティ。日本人の利用も多い。
+ * (GetYourGuide/Viator は未参加のため、参加済みで実利のある Klook/KKday を使う)
+ */
+const KLOOK: Partner = {
+  id: "klook",
+  name: "Klook 現地ツアー・入場券",
+  category: "tour",
+  programEnvVar: "TP_KLOOK_PROGRAM_ID",
+  description: "人気スポットの入場券・体験を事前予約",
+  ctaLabel: (ctx) =>
+    ctx.cityNameJa ? `${ctx.cityNameJa}の遊びを予約` : "現地の遊びを予約",
+  destinationUrl: (ctx) =>
+    ctx.cityNameEn
+      ? `https://www.klook.com/ja/search/?query=${encodeURIComponent(ctx.cityNameEn)}`
+      : "https://www.klook.com/ja/",
+  iconKey: "Sparkles",
+  rel: "sponsored noopener noreferrer",
+};
+
+/**
+ * KKday — 台湾発。アジア路線と相性が良い現地体験。
+ */
+const KKDAY: Partner = {
+  id: "kkday",
+  name: "KKday 現地体験",
+  category: "tour",
+  programEnvVar: "TP_KKDAY_PROGRAM_ID",
+  description: "現地ツアー・空港送迎・WiFiまで",
+  ctaLabel: (ctx) =>
+    ctx.cityNameJa ? `${ctx.cityNameJa}の体験を探す` : "現地体験を探す",
+  destinationUrl: (ctx) =>
+    ctx.cityNameEn
+      ? `https://www.kkday.com/ja/product/ls?keyword=${encodeURIComponent(ctx.cityNameEn)}`
+      : "https://www.kkday.com/ja",
+  iconKey: "Sparkles",
+  rel: "sponsored noopener noreferrer",
 };
 
 export const PARTNERS: Partner[] = [
   BOOKING,
   TRIP_HOTEL,
   AIRALO,
+  GIGSKY,
+  YESIM,
   KIWITAXI,
   INSURANCE,
+  LOCALRENT,
+  GETRENTACAR,
+  KLOOK,
+  KKDAY,
+  AIRHELP,
 ];
 
-/** 指定カテゴリの有効なパートナーだけ返す */
-export function getEnabledPartners(category?: PartnerCategory): Partner[] {
+/**
+ * 指定カテゴリの有効なパートナーだけ返す。
+ * ctx を渡すと isRelevant による文脈フィルタも適用する（無関係な枠を出さない）。
+ */
+export function getEnabledPartners(
+  category?: PartnerCategory,
+  ctx?: PartnerContext
+): Partner[] {
   return PARTNERS.filter(
-    (p) => isPartnerEnabled(p) && (!category || p.category === category)
+    (p) =>
+      isPartnerEnabled(p) &&
+      (!category || p.category === category) &&
+      (!ctx || !p.isRelevant || p.isRelevant(ctx))
   );
 }
