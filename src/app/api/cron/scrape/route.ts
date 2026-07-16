@@ -27,6 +27,7 @@ import { postSalesToX, postHotDealsToX } from "@/lib/social/x";
 import { getPostedIds, markPosted } from "@/lib/social/posted-store";
 import { scanHotDeals } from "@/lib/deals/hot-deals";
 import { recordPriceObservations } from "@/lib/deals/price-observations";
+import { recordObservedSales } from "@/lib/deals/sale-records";
 import { fetchBusinessWatchSales } from "@/lib/flights/travelpayouts-prices";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
@@ -63,6 +64,19 @@ export async function GET(request: NextRequest) {
     for (const result of results) {
       const change = await saveSalesAndDetectChanges(result);
       changes.push(change);
+    }
+
+    // 実セール実績の蓄積 (sale-store は毎回全置換で終了セールを捨てるため別途 archive)
+    let saleRecordSummary = { added: 0, updated: 0, total: 0 };
+    // 実セール実績を archive に積む。sale-store は毎回全置換で終了セールを
+    // 捨てるため、ここで貯めないと「セール実績」が永久に溜まらない。
+    // TP は価格ウォッチであり航空会社の告知セールではないので実績には含めない。
+    try {
+      saleRecordSummary = await recordObservedSales(
+        results.filter((r) => r.airlineCode !== "TP").flatMap((r) => r.sales)
+      );
+    } catch (e) {
+      console.warn("[CRON] sale record archive failed:", e);
     }
 
     const { sent, errors } = await dispatchNotifications(changes);
@@ -260,6 +274,7 @@ export async function GET(request: NextRequest) {
       notifications: { sent, errors },
       hotDeals: hotDealSummary,
       priceObservations: observedSummary,
+      saleRecords: saleRecordSummary,
       newsletter: {
         status: newsletterStatus,
         sent: newsletterSent,

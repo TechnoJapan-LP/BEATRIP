@@ -3,6 +3,7 @@ import { isKVEnabled } from "@/lib/store/kv";
 import { loadAllSales } from "@/lib/store/sale-store";
 import { loadHotDeals } from "@/lib/deals/hot-deals";
 import { getObservationStats } from "@/lib/deals/price-observations";
+import { getSaleRecordStats } from "@/lib/deals/sale-records";
 
 /**
  * スクレイパー稼働の公開ヘルスチェック (機密情報は出さない)。
@@ -98,6 +99,14 @@ export async function GET() {
     // KV 未設定・未蓄積時は既定値のまま
   }
 
+  // 実セール実績の蓄積状況。airlinesReadyForReal が増えるほど参考データが実測に変わる。
+  let saleRecords = { total: 0, airlines: 0, airlinesReadyForReal: 0 };
+  try {
+    saleRecords = await getSaleRecordStats();
+  } catch {
+    // KV 未設定・未蓄積時は既定値のまま
+  }
+
   let hotDeals = { active: 0, gone: 0 };
   try {
     const list = await loadHotDeals();
@@ -120,6 +129,7 @@ export async function GET() {
     affiliate,
     hotDeals,
     priceObservations,
+    saleRecords,
     hint: ready
       ? "A 設定OK。latestScrapedAt が直近なら cron も稼働中。"
       : "本番稼働には SCRAPER_MODE=hybrid と KV 接続 (kvEnabled=true) が必要。",

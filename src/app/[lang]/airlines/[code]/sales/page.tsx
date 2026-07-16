@@ -16,9 +16,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode, airlines } from "@/data/airlines";
 import {
-  getSaleHistoryByAirline,
   getAirlineSaleStats,
 } from "@/data/sale-history";
+import { resolveSaleHistory, computeSaleStats } from "@/lib/deals/sale-history-resolver";
 import { mockSaleEvents } from "@/data/mock-deals";
 import { SiteFooter } from "@/components/site-footer";
 import { getActiveDeals } from "@/lib/deals/deal-service";
@@ -36,7 +36,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const airline = getAirlineByCode(airlineCode);
   if (!airline) return { title: "Not Found" };
 
-  const stats = getAirlineSaleStats(airlineCode);
+  // 「過去N回の開催実績」は事実の主張。実測 (BEATRIPが観測した実績) のときだけ
+  // 件数を出し、参考データにフォールバック中は件数を断定しない。
+  const history = await resolveSaleHistory(airlineCode);
+  const stats = history.source === "observed" ? computeSaleStats(history.records) : null;
   // GSCで「{社名} セール 次回/過去/いつ/時期」が主流入クエリ。
   // タイトル/メタはその検索意図にドンピシャで合わせCTRを取りに行く。
   const title = stats
@@ -44,7 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `${airline.name} セール 次回はいつ？ 過去の開催実績と予測`;
   const description = stats
     ? `${airline.name}の過去${stats.totalSales}回のセール開催実績を完全分析。次回タイムセールはいつ？開催月のパターン・平均割引率${stats.avgDiscount}%・過去最安¥${stats.lowestPrice.toLocaleString()}まで。今すぐ買える現セール情報も掲載。`
-    : `${airline.name}の過去セール実績と次回開催時期の予測。タイムセール・メガセール等の開催月パターンを分析。`;
+    : `${airline.name}の過去セール実績と次回開催時期の目安。タイムセール・メガセール等の開催月パターンを分析。今すぐ買える現セール情報も掲載。`;
 
   return {
     title,
@@ -100,8 +103,12 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
   const airline = getAirlineByCode(airlineCode);
   if (!airline) notFound();
 
-  const stats = getAirlineSaleStats(airlineCode);
-  const records = getSaleHistoryByAirline(airlineCode);
+  // 実測が貯まった社は実測のみ。まだの社は出所未確認の参考データで橋渡しし、
+  // 「参考」であることを画面で必ず明示する (historySource)。
+  const history = await resolveSaleHistory(airlineCode);
+  const records = history.records;
+  const stats = computeSaleStats(records);
+  const historySource = history.source;
 
   // 収益導線: この社の「いま開催中」のセール。「次回はいつ？」で来た訪問者に
   // 現物を最初に見せるのが最も自然なコンバージョン (詳細ページ→予約アフィリ)。
@@ -156,28 +163,33 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
     .sort((a, b) => b.count - a.count);
   const peakMonths = monthIndexed.filter((m) => m.count > 0).slice(0, 3);
 
-  // FAQ — GSCで実際に検索されているクエリにピンポイントで答える
+  // FAQ — GSCで実際に検索されているクエリにピンポイントで答える。
+  // FAQPage JSON-LD に入る = Google に事実として伝わるため、出所を偽らない。
+  const isObservedHistory = historySource === "observed";
+  const basis = isObservedHistory
+    ? "BEATRIPが観測した開催実績"
+    : "参考データ（BEATRIPの観測実績が貯まり次第、実測に切り替わります）";
   const faqs: { q: string; a: string }[] = [];
   if (peakMonths.length > 0) {
     faqs.push({
       q: `${airline.name}のセールはいつ開催されますか？`,
-      a: `過去の開催実績では、${peakMonths.map((m) => `${m.month}月（${m.count}回）`).join("、")}に集中しています。${stats ? `過去${stats.totalSales}回の開催を分析した結果です。` : ""}最新の開催状況は本ページ上部の「現在開催中のセール」もしくは BEATRIP トップで確認できます。`,
+      a: `${basis}では、${peakMonths.map((m) => `${m.month}月（${m.count}回）`).join("、")}に集中しています。${stats ? `${stats.totalSales}件を分析した結果です。` : ""}最新の開催状況は本ページ上部の「現在開催中のセール」もしくは BEATRIP トップで確認できます。`,
     });
     faqs.push({
       q: `次回の${airline.name}セールはいつ頃ですか？`,
-      a: `直近の傾向では${peakMonths[0].month}月の開催が最多（${peakMonths[0].count}回）。${predictions.length > 0 ? `BEATRIPの予測では「${predictions[0].saleName}」が ${new Date(predictions[0].predictedDate).toLocaleDateString("ja-JP", { year: "numeric", month: "long" })} ごろの開催見込み（確度${predictions[0].probability}%）。` : ""}メールで通知を受け取りたい方はBEATRIPの価格アラートをご利用ください。`,
+      a: `${basis}では${peakMonths[0].month}月の開催が最多（${peakMonths[0].count}回）。${predictions.length > 0 ? `BEATRIPの予測では「${predictions[0].saleName}」が ${new Date(predictions[0].predictedDate).toLocaleDateString("ja-JP", { year: "numeric", month: "long" })} ごろの開催見込み（確度${predictions[0].probability}%）。` : ""}メールで通知を受け取りたい方はBEATRIPの価格アラートをご利用ください。`,
     });
   }
   if (topSaleTypes.length > 0) {
     faqs.push({
       q: `${airline.name}には主にどのようなセール種別がありますか？`,
-      a: `過去の開催実績で多いのは ${topSaleTypes.map(([type, count]) => `「${type}」（${count}回）`).join("、")} です。各セールの内容や対象路線は本ページの「セール開催履歴」で確認できます。`,
+      a: `${basis}で多いのは ${topSaleTypes.map(([type, count]) => `「${type}」（${count}回）`).join("、")} です。各セールの内容や対象路線は本ページの「セール開催履歴」で確認できます。`,
     });
   }
   if (stats) {
     faqs.push({
       q: `${airline.name}セールの過去最安値はいくらですか？`,
-      a: `本サイトが収集した過去のセール記録における最安値は ¥${stats.lowestPrice.toLocaleString()}（平均割引率 ${stats.avgDiscount}%）です。航路・時期によって変動します。`,
+      a: `${basis}における最安値は ¥${stats.lowestPrice.toLocaleString()}（平均割引率 ${stats.avgDiscount}%）です。航路・時期によって変動します。`,
     });
   }
   faqs.push({
@@ -285,7 +297,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 {airline.name} セール時期・実績まとめ
               </h1>
               <p className="text-xs text-zinc-400 sm:text-sm">
-                {airline.nameEn}の過去のセール開催データを分析
+                {airline.nameEn}のセール開催データを分析（{isObservedHistory ? "BEATRIP観測実績" : "参考データ"}）
               </p>
             </div>
           </div>
@@ -300,7 +312,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   {stats.totalSales}
                 </div>
                 <div className="text-[11px] text-zinc-400 mt-1">
-                  過去のセール回数
+                  {isObservedHistory ? "観測したセール回数" : "参考データの件数"}
                 </div>
               </div>
               <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center">
@@ -319,7 +331,9 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
                   ¥{formatPrice(stats.lowestPrice)}
                 </div>
-                <div className="text-[11px] text-zinc-400 mt-1">過去最安値</div>
+                <div className="text-[11px] text-zinc-400 mt-1">
+                  {isObservedHistory ? "観測最安値" : "参考最安値"}
+                </div>
               </div>
             </div>
 
@@ -361,7 +375,9 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               </div>
               <p className="text-xs text-zinc-400 mb-4">
                 「{airline.name} セール 時期」で検索する方へ —
-                過去データに基づく開催月の傾向です
+                {historySource === "observed"
+                  ? `BEATRIPが実際に観測した${records.length}件の開催実績です`
+                  : "参考データに基づく開催月の目安です（BEATRIPの観測実績が貯まり次第、実測に切り替わります）"}
               </p>
               <div
                 className="flex items-end gap-1 sm:gap-2"
@@ -632,7 +648,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
             )}
             <p>
               BEATRIPでは{airline.name}
-              のセール情報を自動収集し、過去データに基づいた次回セール予測も提供しています。
+              のセール情報を自動収集し、開催月のパターンから次回セール時期の目安も提供しています。
               セール開始の通知を受け取りたい方は、アラート機能をご利用ください。
             </p>
           </div>

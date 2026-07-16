@@ -16,10 +16,13 @@ import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { airlines } from "@/data/airlines";
 import { OG_IMAGES } from "@/lib/seo/og";
 import {
-  saleHistory,
-  getAirlineSaleStats,
+
   type SaleRecord,
 } from "@/data/sale-history";
+import {
+  resolveAllSaleHistory,
+  computeSaleStats,
+} from "@/lib/deals/sale-history-resolver";
 
 // ISR: 1日キャッシュ (予測は履歴ベースで日次更新)
 export const revalidate = 86400;
@@ -52,7 +55,7 @@ export async function generateMetadata({
     : "航空券セールカレンダー｜各社の次回セール時期・予測一覧";
   const description = isEn
     ? "When do ANA, JAL, Peach and other airline sales happen? Month-by-month sale frequency, next-sale forecasts, average discounts and record-low fares, analyzed from real past sales."
-    : "ANA・JAL・Peach など各社の航空券セールはいつ開催される？過去の実セール履歴から、開催が多い月・次回セールの予測時期・平均割引率・過去最安値を一覧で分析。セールを逃さないための時期の目安に。";
+    : "ANA・JAL・Peach など各社の航空券セールはいつ開催される？開催が多い月・次回セールの見込み時期・平均割引率・最安値を一覧で分析。セールを逃さないための時期の目安に。";
   return {
     title,
     description,
@@ -131,13 +134,18 @@ export default async function SaleCalendarPage({
   const isEn = lang === "en";
   const currentPath = isEn ? "/en/sale-calendar" : "/sale-calendar";
 
+  // 実測が貯まった社は実測、まだの社は出所未確認の参考データで橋渡しする。
+  // 参考が1件でも混ざれば historySource は "reference" になり、画面で明示する。
+  const history = await resolveAllSaleHistory();
+  const historySource = history.source;
+
   // 全社統合の月別開催回数 (どの月にセールが多いか)
   const aggMonthCounts = new Array(12).fill(0);
-  for (const r of saleHistory) {
+  for (const r of history.records) {
     aggMonthCounts[new Date(r.startDate).getMonth()]++;
   }
   const maxAgg = Math.max(...aggMonthCounts, 1);
-  const totalRecords = saleHistory.length;
+  const totalRecords = history.records.length;
   const topAggMonths = aggMonthCounts
     .map((count, i) => ({ month: i, count }))
     .filter((m) => m.count > 0)
@@ -147,7 +155,9 @@ export default async function SaleCalendarPage({
   // 航空会社別カード
   const cards: AirlineCard[] = airlines
     .map((a): AirlineCard | null => {
-      const stats = getAirlineSaleStats(a.code);
+      const stats = computeSaleStats(
+        history.records.filter((r) => r.airlineCode === a.code)
+      );
       if (!stats || stats.records.length === 0) return null;
       const lastSale = stats.records[0];
       return {
@@ -174,7 +184,11 @@ export default async function SaleCalendarPage({
   const faqs: FAQItem[] = [
     {
       q: "航空券のセールが最も多い時期はいつですか？",
-      a: `BEATRIP が収集した各社の過去セール ${totalRecords} 件を分析すると、開催が集中するのは ${topAggMonths
+      a: `${
+        historySource === "observed"
+          ? `BEATRIP が観測した各社のセール ${totalRecords} 件`
+          : `各社のセール ${totalRecords} 件の参考データ`
+      }を分析すると、開催が集中するのは ${topAggMonths
         .map((m) => `${MONTHS_JA[m.month]}（${m.count}件）`)
         .join(
           "、",
@@ -182,7 +196,9 @@ export default async function SaleCalendarPage({
     },
     {
       q: "次回のセール時期はどうやって予測していますか？",
-      a: "各社の過去セールの「平均開催間隔」と「開催が多い月」から、統計的な目安として次回の見込み時期を算出しています。確定情報ではなく過去実績に基づく予測です。確実に逃したくない方は、ニュースレターや価格アラートの登録をおすすめします。",
+      a: historySource === "observed"
+        ? "BEATRIP が観測したセール実績の「平均開催間隔」と「開催が多い月」から、統計的な目安として次回の見込み時期を算出しています。確定情報ではありません。確実に逃したくない方は、ニュースレターや価格アラートの登録をおすすめします。"
+        : "セールの「平均開催間隔」と「開催が多い月」から、統計的な目安として次回の見込み時期を算出しています。現在は参考データを用いた目安で、確定情報ではありません（BEATRIP の観測実績が貯まり次第、実測に切り替わります）。確実に逃したくない方は、ニュースレターや価格アラートの登録をおすすめします。",
     },
     {
       q: "LCC とフルサービス航空会社でセールの傾向は違いますか？",
@@ -255,10 +271,15 @@ export default async function SaleCalendarPage({
             航空券セールカレンダー｜各社の次回セール時期・予測
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/90 sm:text-base">
-            「航空券のセールはいつ？」に答える、各社の実セール履歴
+            「航空券のセールはいつ？」に答える、各社のセール
             {totalRecords}{" "}
             件の分析。開催が多い月・次回の見込み時期・平均割引率・
-            過去最安値を一覧でチェックできます。
+            最安値を一覧でチェックできます。
+            {historySource !== "observed" && (
+              <span className="mt-2 block text-xs text-white/70">
+                ※ 現在は参考データに基づく目安です。BEATRIP の観測実績が貯まり次第、実測データに切り替わります。
+              </span>
+            )}
           </p>
         </div>
       </section>
@@ -304,19 +325,27 @@ export default async function SaleCalendarPage({
               })}
             </div>
             <p className="mt-4 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-              過去実績では{" "}
+              {historySource === "observed" ? "BEATRIPの観測実績では" : "参考データでは"}{" "}
               <span className="font-bold text-rose-600 dark:text-rose-400">
                 {topAggMonths.map((m) => MONTHS_JA[m.month]).join("・")}
               </span>{" "}
               にセールが集中。航空会社の決算期（3月・9月）や大型連休前が狙い目です。
-              数値は各社の過去セール開催件数（縦軸 = 件数）。
+              数値はセール開催件数（縦軸 = 件数）。
+              {historySource !== "observed" &&
+                "参考データのため目安としてご覧ください。BEATRIPの観測実績が貯まり次第、実測に切り替わります。"}
             </p>
           </div>
         </section>
 
         {/* 航空会社別 予測カード */}
         <section className="mb-12">
-          <SectionHeading subtitle="直近の開催から平均間隔を割り出し、次回の見込み時期を統計的に予測">
+          <SectionHeading
+            subtitle={
+              historySource === "observed"
+                ? "BEATRIPが観測した開催実績から平均間隔を割り出し、次回の見込み時期を統計的に算出"
+                : "参考データの平均間隔から次回の見込み時期を算出した目安（実測ではありません）"
+            }
+          >
             航空会社別・次回セール予測
           </SectionHeading>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -334,7 +363,7 @@ export default async function SaleCalendarPage({
                     </h3>
                   </div>
                   <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] font-bold text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                    過去{c.totalSales}回
+                    {historySource === "observed" ? "実測" : "参考"} {c.totalSales}回
                   </span>
                 </div>
 
@@ -367,7 +396,9 @@ export default async function SaleCalendarPage({
                     </dd>
                   </div>
                   <div className="rounded-lg bg-zinc-50 py-2 dark:bg-zinc-800/50">
-                    <dt className="text-[10px] text-zinc-400">過去最安</dt>
+                    <dt className="text-[10px] text-zinc-400">
+                      {historySource === "observed" ? "観測最安" : "参考最安"}
+                    </dt>
                     <dd className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                       ¥{c.lowestPrice.toLocaleString()}
                     </dd>
