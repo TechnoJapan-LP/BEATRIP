@@ -72,7 +72,8 @@ async function fetchLatestForOrigin(
 ): Promise<LatestPriceItem[]> {
   const url =
     `${ENDPOINT}?currency=jpy&origin=${origin}` +
-    `&period_type=year&one_way=false&page=1&limit=30` +
+    // limit=100: 超お買い得 (急落) 検出の網羅性のため上位100路線を監視
+    `&period_type=year&one_way=false&page=1&limit=100` +
     `&show_to_affiliates=true&sorting=price&trip_class=${tripClass}`;
   try {
     const res = await fetch(url, {
@@ -195,9 +196,9 @@ export async function scrapeTravelPayoutsPrices(): Promise<ScrapeResult[]> {
   ];
 }
 
-// ビジネスクラスは首都圏発の国際線のみウォッチ (リクエスト数を抑える)。
+// ビジネスクラスは羽田・成田・関西発の国際線のみウォッチ (リクエスト数を抑える)。
 // エコノミーと違いサイトのディール一覧には流さず、超お買い得 (急落) 検出専用。
-const BUSINESS_ORIGINS = ["HND", "NRT"];
+const BUSINESS_ORIGINS = ["HND", "NRT", "KIX"];
 
 /**
  * ビジネスクラスの最安運賃ウォッチを取得する (超お買い得検出の素材)。

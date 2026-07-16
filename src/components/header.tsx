@@ -24,6 +24,7 @@ import {
   CreditCard,
   ShieldCheck,
   Trophy,
+  Zap,
   Coins,
   TrendingUp,
   BookOpen,
@@ -80,6 +81,7 @@ export function Header() {
         {
           label: nav.salesCalendar,
           items: [
+            { href: "/hot-deals", label: "超お買い得速報", desc: "エラーフェア級の価格急落を自動検出", Icon: Zap },
             { href: "/sale-calendar", label: nav.salesCalendar, desc: "各社の次回セール時期・予測", Icon: Calendar },
           ],
         },

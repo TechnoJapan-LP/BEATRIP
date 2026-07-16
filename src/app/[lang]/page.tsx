@@ -15,6 +15,7 @@ import { DealCarousel } from "@/components/deals/deal-carousel";
 import { SiteFooter } from "@/components/site-footer";
 import { CollapsibleSearch } from "@/components/search/collapsible-search";
 import { HeroDeal } from "@/components/deals/hero-deal";
+import { HotDealsSection } from "@/components/deals/hot-deals-section";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
 import { SectionHeading } from "@/components/ui/section-heading";
 
@@ -45,7 +46,8 @@ import type { Metadata } from "next";
 import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 1800秒キャッシュ (30分: deal が頻繁に変わる top)
-export const revalidate = 21600;
+// 超お買い得 (価格急落) の鮮度に合わせ 1h (従来 6h)
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -211,6 +213,9 @@ export default async function Home({
         <section className="mb-6 animate-fade-up">
           <HeroDeal deals={deals} />
         </section>
+
+        {/* 超お買い得 (価格急落検出) — 検出中のみ表示。時限性が高いので一等地 */}
+        <HotDealsSection />
 
         {/* コンパクト検索（タップで展開） */}
         <section id="beatrip-search" className="mb-4 scroll-mt-24">
