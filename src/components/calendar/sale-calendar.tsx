@@ -56,24 +56,40 @@ const airlineCodeMap: Record<string, string> = {
   スクート: "JJP",
 };
 
-export function SaleCalendar({ events }: { events: SaleEvent[] }) {
-  const sorted = [...events].sort((a, b) => a.probability - b.probability).reverse();
+export function SaleCalendar({
+  events,
+  /** 呼び出し側が独自見出しを持つ場合 (TOP の SectionHeading) は内部見出しを消す */
+  hideHeader = false,
+}: {
+  events: SaleEvent[];
+  hideHeader?: boolean;
+}) {
+  // 予測開催日から30日以上過ぎた予測は「外れた/終わった」ものなので出さない
+  // (5月予測のカードが7月に並ぶと鮮度と信頼を落とす)
+  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const sorted = [...events]
+    .filter((e) => new Date(e.predictedDate).getTime() >= cutoff)
+    .sort((a, b) => b.probability - a.probability);
+
+  if (sorted.length === 0) return null;
 
   return (
-    <section className="mt-16">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
-          <CalendarDays className="h-4.5 w-4.5" />
+    <section className={hideHeader ? "" : "mt-16"}>
+      {!hideHeader && (
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
+            <CalendarDays className="h-4.5 w-4.5" />
+          </div>
+          <div>
+            <h2 className="font-heading text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+              セール予測カレンダー
+            </h2>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              過去のセールパターンからAIが次回開催を予測
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-heading text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-            セール予測カレンダー
-          </h2>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            過去のセールパターンからAIが次回開催を予測
-          </p>
-        </div>
-      </div>
+      )}
 
       <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-3 lg:overflow-visible xl:grid-cols-5">
         {sorted.map((event, i) => {

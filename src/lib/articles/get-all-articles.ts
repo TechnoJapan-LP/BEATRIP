@@ -2,7 +2,31 @@ import { articles as mockArticles } from "@/data/mock-articles";
 import { loadGeneratedArticles } from "./article-generator";
 import { getRouteGuides } from "./route-guide-generator";
 import { getCityGuideArticles } from "./city-guide-generator";
+import { pickGenericCover } from "@/lib/deals/destination-images";
 import type { Article } from "@/data/mock-articles";
+
+/**
+ * カバー画像の重複を解消する。各 generator の画像プールが小さく、新着順に
+ * 並べると隣り合う記事が同じ写真になりがち (TOP の最新記事で顕著)。
+ * 2件目以降の重複記事は slug ハッシュで汎用プールから差し替え、それも
+ * 使用済みなら seed をずらして空きを探す (決定的なので表示は安定する)。
+ */
+function dedupeCovers(sorted: Article[]): Article[] {
+  const used = new Set<string>();
+  return sorted.map((a) => {
+    if (!a.image_url) return a;
+    if (!used.has(a.image_url)) {
+      used.add(a.image_url);
+      return a;
+    }
+    let img = pickGenericCover(a.slug);
+    for (let i = 0; used.has(img) && i < 8; i++) {
+      img = pickGenericCover(`${a.slug}:${i}`);
+    }
+    used.add(img);
+    return { ...a, image_url: img };
+  });
+}
 
 export async function getAllArticles(): Promise<Article[]> {
   const generated = await loadGeneratedArticles();
@@ -16,10 +40,11 @@ export async function getAllArticles(): Promise<Article[]> {
     seen.add(a.slug);
     all.push(a);
   }
-  return all.sort(
+  const sorted = all.sort(
     (a, b) =>
       new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
   );
+  return dedupeCovers(sorted);
 }
 
 export async function getArticleBySlug(

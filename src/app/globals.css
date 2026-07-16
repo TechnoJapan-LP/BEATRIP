@@ -167,8 +167,9 @@
   }
   html {
     @apply font-sans;
-    /* iOS Safari でラバーバンド時に横方向のチラつきを防ぐ */
-    overscroll-behavior-x: none;
+    /* 注: 以前は overscroll-behavior-x: none で iOS の横ラバーバンドを防いでいたが、
+       デスクトップのトラックパッド/マウスの「スワイプで戻る・進む」ジェスチャまで
+       殺してしまうため撤去 (実機フィードバック対応)。 */
     /* タップハイライトをサイトの統一感のある淡いカラーに */
     -webkit-tap-highlight-color: rgba(24, 24, 27, 0.06);
     /* アンカーリンク (#hash) のスムーズスクロール。

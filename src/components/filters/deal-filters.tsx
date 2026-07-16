@@ -354,7 +354,7 @@ export function DealFilters({
           件数バッジ付き — 0件のトグルは薄くして「押しても0件」を事前に伝える */}
       <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-x-5 sm:gap-y-3">
         <label className={`flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2 ${toggleCounts && toggleCounts.new === 0 ? "opacity-45" : ""}`}>
-          <Switch checked={showNew} onCheckedChange={onToggleNew} />
+          <Switch checked={showNew} onCheckedChange={onToggleNew} disabled={!!toggleCounts && toggleCounts.new === 0 && !showNew} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Flame className="h-3.5 w-3.5 text-emerald-500" />
             {t.new}
@@ -365,7 +365,7 @@ export function DealFilters({
         </label>
 
         <label className={`flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2 ${toggleCounts && toggleCounts.ending === 0 ? "opacity-45" : ""}`}>
-          <Switch checked={showEnding} onCheckedChange={onToggleEnding} />
+          <Switch checked={showEnding} onCheckedChange={onToggleEnding} disabled={!!toggleCounts && toggleCounts.ending === 0 && !showEnding} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Clock className="h-3.5 w-3.5 text-amber-500" />
             {t.ending}
@@ -376,7 +376,7 @@ export function DealFilters({
         </label>
 
         <label className={`flex items-center gap-1.5 cursor-pointer whitespace-nowrap sm:gap-2 ${toggleCounts && toggleCounts.niche === 0 ? "opacity-45" : ""}`}>
-          <Switch checked={showNiche} onCheckedChange={onToggleNiche} />
+          <Switch checked={showNiche} onCheckedChange={onToggleNiche} disabled={!!toggleCounts && toggleCounts.niche === 0 && !showNiche} />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <Sparkles className="h-3.5 w-3.5" />
             {t.niche}
@@ -390,6 +390,7 @@ export function DealFilters({
           <Switch
             checked={showHiddenGem}
             onCheckedChange={onToggleHiddenGem}
+            disabled={!!toggleCounts && toggleCounts.hiddenGem === 0 && !showHiddenGem}
           />
           <span className="flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
             <MapPin className="h-3.5 w-3.5" />

@@ -239,12 +239,23 @@ export default async function Home({
         <PopularRoutesSection deals={deals} lh={lh} />
 
         <section id="deals">
-          <div className="mb-6">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-2">
             <SectionHeading size="lg" subtitle={t.flashDealsSubtitle}>
               {t.flashDealsTitle}
             </SectionHeading>
+            <Link
+              href={lh("/deals")}
+              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              すべてのディールを見る
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-          <DealGrid deals={deals} upcomingSales={mockSaleEvents} />
+          <DealGrid
+            deals={deals}
+            upcomingSales={mockSaleEvents}
+            showSeeAllLink={false}
+          />
         </section>
 
         {/* 次回セール予測カレンダー — BEATRIP 独自資産。ディール直下に昇格して主役化 */}
@@ -261,7 +272,7 @@ export default async function Home({
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <SaleCalendar events={mockSaleEvents} />
+          <SaleCalendar events={mockSaleEvents} hideHeader />
         </section>
 
         {/* Popular Hotels — 高料率の収益面、フライト/ホテル両軸の流量に */}

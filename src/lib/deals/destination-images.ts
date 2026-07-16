@@ -111,3 +111,11 @@ export function getDestinationImage(code: string): string {
   // 登録外: コードごとに固定の汎用画像を割り当て (全部同じを防ぐ)
   return FALLBACK_POOL[hashCode(code) % FALLBACK_POOL.length];
 }
+
+/**
+ * 任意 seed で汎用プールから決定的に1枚選ぶ (記事カバーの重複回避などに使用)。
+ * 都市を詐称しない装飾画像のみなので、どのコンテンツに使っても誤認を招かない。
+ */
+export function pickGenericCover(seed: string): string {
+  return FALLBACK_POOL[hashCode(seed) % FALLBACK_POOL.length];
+}
