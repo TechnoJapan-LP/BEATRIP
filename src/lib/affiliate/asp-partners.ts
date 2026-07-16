@@ -87,11 +87,16 @@ export type AspPartner = {
    */
   matEnv: string;
   /**
-   * 外部 ASP 経由 (network='external_url') の場合に、想定される ASP 候補。
-   * UI/コードには影響しないドキュメント目的のフィールド。
-   * クレカ・保険は ASP 変動が激しいため、特定 ASP に依存しない設計。
+   * ASP の取扱い状況メモ (UI/コードには影響しないドキュメント目的)。
+   *
+   * 重要: 「たぶんこの ASP にありそう」という推測を書かないこと。実際に
+   * 確認した事実を、確認日つきで書く。ここに未検証の推測を書くと、それを
+   * 信じて審査を出し、通ってから目当ての案件が無いと分かる (実際に
+   * JAL/ANA カードで発生した)。未確認なら「未確認」と明記する。
+   *
+   * 書式: "<事実> (YYYY-MM-DD 確認)" / 未確認なら "未確認: <推測>"
    */
-  preferredAsp?: string;
+  aspAvailability?: string;
   /**
    * network='direct' 用の直リンク URL。
    * a8 / external_url では使われない。
@@ -602,7 +607,8 @@ export const ASP_PARTNERS: AspPartner[] = [
   // 3 軸で並べる。
   // クレカ・保険系の ASP は変動が激しい (例: アメックスがバリューコマース廃止 →
   // Rakuten Advertising / TGアフィリエイト経由) ため、env 名は ASP 中立な
-  // `AFFILIATE_URL_*` プレフィックスで統一する。preferredAsp は推奨候補の参考値。
+  // `AFFILIATE_URL_*` プレフィックスで統一する。aspAvailability は取扱い状況の
+  // メモで、確認済みのものだけ確認日を付ける (未確認は「未確認」と明記)。
   //   - エポス/セゾン/MUFG → A8.net (既存・mat トークン)
   //   - その他           → external_url (任意 ASP のクリック URL)
   // ─── ニッチ・限定 ASP 系 (priority=3 で、env 設定時のみ表示) ───
@@ -615,7 +621,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_AMEX_SKYTRAVELER",
-    preferredAsp: "Rakuten Advertising / TGアフィリエイト / felmat / 直接申込",
+    aspAvailability: "未確認: Rakuten Advertising / TGアフィリエイト / felmat / 直接申込。アメックス個別カードの ASP 取扱いは要確認",
     accent: "amber",
     priority: 3,
   },
@@ -626,7 +632,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_AMEX_GOLD",
-    preferredAsp: "Rakuten Advertising / TGアフィリエイト / felmat / 直接申込",
+    aspAvailability: "未確認: Rakuten Advertising / TGアフィリエイト / felmat / 直接申込。アメックス個別カードの ASP 取扱いは要確認",
     accent: "amber",
     priority: 3,
   },
@@ -637,7 +643,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_AMEX_PLATINUM",
-    preferredAsp: "Rakuten Advertising / TGアフィリエイト / felmat / 直接申込",
+    aspAvailability: "未確認: Rakuten Advertising / TGアフィリエイト / felmat / 直接申込。アメックス個別カードの ASP 取扱いは要確認",
     accent: "amber",
     priority: 3,
   },
@@ -648,7 +654,10 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_JAL_CARD",
-    preferredAsp: "アクセストレード / felmat",
+    // 主要 ASP・金融特化 ASP のいずれにも取扱いなし。公式の会員紹介プログラム
+    // 以外に導線が無いため、現状 env を設定できる見込みが無い。
+    aspAvailability:
+      "主要ASPに取扱いなし (2026-07-16 確認)。公式の会員紹介プログラムのみ。レントラックス等のクローズドASPにある可能性は未確認",
     accent: "rose",
     priority: 3,
   },
@@ -659,7 +668,10 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_ANA_CARD",
-    preferredAsp: "アクセストレード",
+    // ANA カード本体はどの ASP にも無い。ANA 系で提携可能なのは
+    // 「ANA アメックス」(バリューコマース) と「楽天ANAマイレージクラブカード」のみ。
+    aspAvailability:
+      "取扱いなし (2026-07-16 確認)。ANA系で提携可能なのは ANAアメックス (バリューコマース) と 楽天ANAマイレージクラブカード (TGアフィリエイト/レントラックス) のみ",
     accent: "sky",
     priority: 3,
   },
@@ -690,7 +702,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_DINERS_CLUB",
-    preferredAsp: "バリューコマース / Rakuten Advertising",
+    aspAvailability: "未確認: バリューコマース / Rakuten Advertising",
     accent: "zinc",
     priority: 3,
   },
@@ -702,7 +714,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_RAKUTEN_CARD",
-    preferredAsp: "楽天アフィリエイト (即時)",
+    aspAvailability: "未確認: 楽天アフィリエイト (即時)",
     accent: "rose",
     priority: 1,
   },
@@ -713,7 +725,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_SMBC_NL",
-    preferredAsp: "アクセストレード / felmat",
+    aspAvailability: "未確認: アクセストレード / felmat",
     accent: "blue",
     priority: 1,
   },
@@ -734,7 +746,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_PAYPAY_CARD",
-    preferredAsp: "アクセストレード",
+    aspAvailability: "未確認: アクセストレード",
     accent: "rose",
     priority: 2,
   },
@@ -746,7 +758,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_JCB_CARD_W",
-    preferredAsp: "バリューコマース",
+    aspAvailability: "未確認: バリューコマース",
     accent: "blue",
     priority: 1,
   },
@@ -757,7 +769,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_D_CARD_GOLD",
-    preferredAsp: "A8.net / バリューコマース",
+    aspAvailability: "未確認: A8.net / バリューコマース",
     accent: "rose",
     priority: 1,
   },
@@ -768,7 +780,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_RECRUIT_CARD",
-    preferredAsp: "A8.net",
+    aspAvailability: "未確認: A8.net",
     accent: "violet",
     priority: 1,
   },
@@ -779,7 +791,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_LIFE_CARD",
-    preferredAsp: "A8.net",
+    aspAvailability: "未確認: A8.net",
     accent: "amber",
     priority: 2,
   },
@@ -790,7 +802,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["credit-card"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_AEON_CARD",
-    preferredAsp: "A8.net",
+    aspAvailability: "未確認: A8.net",
     accent: "violet",
     priority: 2,
   },
@@ -806,7 +818,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["insurance"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_AIG_INSURANCE",
-    preferredAsp: "バリューコマース / Rakuten Advertising",
+    aspAvailability: "未確認: バリューコマース / Rakuten Advertising",
     accent: "blue",
     priority: 1,
   },
@@ -817,7 +829,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["insurance"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_CHUBB_INSURANCE",
-    preferredAsp: "アクセストレード",
+    aspAvailability: "未確認: アクセストレード",
     accent: "violet",
     priority: 1,
   },
@@ -838,7 +850,7 @@ export const ASP_PARTNERS: AspPartner[] = [
     categories: ["insurance"],
     network: "external_url",
     matEnv: "AFFILIATE_URL_RAKUTEN_INSURANCE",
-    preferredAsp: "楽天アフィリエイト (即時)",
+    aspAvailability: "未確認: 楽天アフィリエイト (即時)",
     accent: "rose",
     priority: 2,
   },
