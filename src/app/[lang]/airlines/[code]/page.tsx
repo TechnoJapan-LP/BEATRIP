@@ -27,7 +27,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code, lang } = await params;
   // URL は小文字 (/airlines/ana) でも届くため、データ照合は大文字コードで行う
   const airline = getAirlineByCode(code.toUpperCase());
-  if (!airline) return { title: "Not Found" };
+  // metadata は streaming で先にレスポンスをコミットするため、page 側の notFound()
+  // だけではステータスが 200 のまま残る。ここで 404 を確定させる。
+  if (!airline) notFound();
 
   const isEn = lang === "en";
   const airlineName = isEn ? airline.nameEn || airline.name : airline.name;

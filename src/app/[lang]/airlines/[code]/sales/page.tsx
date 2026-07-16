@@ -34,7 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // URL は小文字 (/airlines/ana/sales) でも届くため、データ照合は大文字コードで行う
   const airlineCode = code.toUpperCase();
   const airline = getAirlineByCode(airlineCode);
-  if (!airline) return { title: "Not Found" };
+  // metadata は streaming で先にレスポンスをコミットするため、page 側の notFound()
+  // だけではステータスが 200 のまま残る。ここで 404 を確定させる。
+  if (!airline) notFound();
 
   // 「過去N回の開催実績」は事実の主張。実測 (BEATRIPが観測した実績) のときだけ
   // 件数を出し、参考データにフォールバック中は件数を断定しない。
