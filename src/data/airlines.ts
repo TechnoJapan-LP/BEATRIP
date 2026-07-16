@@ -12,10 +12,13 @@ import type { AirlineProfile } from "@/lib/scrapers/types";
 // コンテンツとしてインデックスされていた経緯があり、Peach へ向けると内容の
 // 異なるページへの転送になるため見送った。
 //
-// airports.ts の airlines[] とは単純文字列一致で突き合わせて空港ページを生成する
+// airports.ts の airlines[] とは突き合わせて空港ページを生成する
 // (sitemap.ts / airports/[iata]/page.tsx)。あちらは SKY/ZIP/SNA/SFJ 等の別体系が
-// 混ざっており、一致しない社は空港ページが 0 枚になる。code を触るときは
-// airports.ts 側も必ず合わせること。
+// 混ざっているため、両者は `aliases` で繋ぐ。突き合わせは必ず
+// airlineServesAirport() / getAirlineByCode() を通すこと — 生の文字列一致で
+// 比較すると、別表記の社が黙って 0 枚になったり、コードが衝突した別の社に
+// 就航データが付いて虚偽表示になる (APJ が Peach と Spring Japan で衝突した事故)。
+// 新しい表記が出てきたら code を触るのではなく aliases に足す。
 export const airlines: AirlineProfile[] = [
   {
     code: "ANA",
