@@ -29,7 +29,14 @@ export type SaleRoute = {
 };
 
 export type AirlineProfile = {
+  /** 正規コード。URL (/airlines/[code]) と deal.airline_id はこれを使う */
   code: string;
+  /**
+   * 他データが同じ社を指すのに使う別表記 (ICAO・旧社名由来の略号など)。
+   * URL には出さず、突き合わせでのみ解決する。
+   * 例: airports.ts は スカイマーク を ICAO の "SKY" で持っている。
+   */
+  aliases?: string[];
   name: string;
   nameEn: string;
   logo: string;

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getActiveDeals, getHistoricalPrices } from "@/lib/deals/deal-service";
 import { getCityGuide } from "@/data/hotel-city-guides";
-import { airlines } from "@/data/airlines";
+import { airlines, airlineServesAirport } from "@/data/airlines";
 import { getAllArticles } from "@/lib/articles/get-all-articles";
 import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { AIRPORTS } from "@/data/airports";
@@ -226,7 +226,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...airlines.flatMap((airline) =>
       AIRPORTS.filter(
         (a) =>
-          a.airlines.includes(airline.code) &&
+          airlineServesAirport(airline, a) &&
           deals.some(
             (d) =>
               d.airline_id === airline.code &&

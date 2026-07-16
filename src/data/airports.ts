@@ -38,12 +38,17 @@ export type Airport = {
   /** 主要な就航先空港 IATA (国内 + 国際を 3-5 個) */
   popularRoutes: string[];
   /**
-   * 主に就航している航空会社コード。
+   * 主に就航している航空会社コード。正規 code でも別表記でもよい。
    *
-   * airlines.ts の `code` と文字列一致で突き合わせて /airlines/[code]/airports/[iata]
-   * を生成する (sitemap.ts / airports/[iata]/page.tsx) ため、必ず airlines.ts に
-   * 存在する code を使うこと。ここにしかない code (SKY/ZIP/SNA/SFJ/IBX/FDA/JAC)
-   * は一致せずページが生成されない。
+   * airlines.ts の `code` / `aliases` と突き合わせて /airlines/[code]/airports/[iata]
+   * を生成する (sitemap.ts / airports/[iata]/page.tsx)。突き合わせは必ず
+   * airlineServesAirport() / getAirlineByCode() を通すこと — 生の
+   * `airlines.includes(airline.code)` で比較すると、別表記の社が黙って 0 件に
+   * なったり、別の社に就航データが付いて虚偽表示になる。
+   *
+   * ここにしかなく airlines.ts 未登録の code (IBX/FDA/JAC/HAC) は解決できず、
+   * 就航社リストから落ちる。新しい表記を足すときは airlines.ts 側の
+   * `aliases` に追加するか、社ごと登録すること。
    */
   airlines: string[];
   /** 空港の特徴・観光誘導の 1 行紹介 */
