@@ -2,6 +2,12 @@ import crypto from "crypto";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { HotDeal } from "@/lib/deals/hot-deals";
 import { cityNameJa } from "@/lib/airport-names";
+import {
+  filterPostable,
+  pickBestRoute,
+  daysUntilDeadline,
+  deadlineLabel,
+} from "./postable";
 
 /**
  * X (旧Twitter) 自動投稿クライアント
@@ -93,26 +99,50 @@ function buildAuthHeader(creds: XCreds): string {
   );
 }
 
-function pickCheapestRoute(sale: AirlineSale) {
-  if (sale.routes.length === 0) return null;
-  return [...sale.routes].sort((a, b) => a.price - b.price)[0];
-}
-
 /**
  * 1セールを1ツイートに整形。X は日本語1文字=2 換算で上限280なので、
  * URL(23換算) + ハッシュタグ + 路線/価格を残せるよう航空会社+セール名を短めに。
  */
 export function buildXText(sale: AirlineSale): string | null {
-  const r = pickCheapestRoute(sale);
+  const r = pickBestRoute(sale);
   if (!r) return null;
   const yen = new Intl.NumberFormat("ja-JP").format(r.price);
   const route = `${cityNameJa(r.originCode)}→${cityNameJa(r.destinationCode)}`;
-  const discount = r.discount ? ` (-${r.discount}%)` : "";
   const url = `https://beatrip.jp/routes/${r.originCode}-${r.destinationCode}`;
-  // 航空会社 + セール名は 30 文字程度に抑える (日本語 2 換算で安全側)
-  let head = `${sale.airlineName} ${sale.saleName}`;
-  if (head.length > 30) head = head.slice(0, 29) + "…";
-  return `✈️ ${head}\n${route} ¥${yen}〜${discount}\n${url}\n#格安航空券 #航空券セール`;
+  const days = daysUntilDeadline(sale);
+  const label = deadlineLabel(sale);
+
+  // 1行目: スクロールを止めるフック。割引率/締切の強い方を前に出す。
+  const hook = buildHook(r.discount, days);
+  // 2行目: 事実 (路線・価格・割引)。誇張せず数字で語る。
+  const discount = r.discount ? ` (通常比 -${r.discount}%)` : "";
+  // 3行目: 締切の明示。景表法的にも「いつまで」を書く方が誠実。
+  const deadline =
+    days !== null && label
+      ? days <= 0
+        ? "\n⏳ 本日締切"
+        : days <= 7
+          ? `\n⏳ ${label} まで（あと${days}日）`
+          : `\n📅 ${label} まで`
+      : "";
+  // 航空会社名は残す (誰のセールかは信頼に直結)
+  const airline = sale.airlineName.slice(0, 20);
+
+  return `${hook}\n${route} ¥${yen}〜${discount}\n${airline}${deadline}\n${url}\n#格安航空券 #航空券セール`;
+}
+
+/**
+ * 1行目のフック。割引率と締切から「一番刺さる訴求」を選ぶ。
+ * 数字の裏付けがある表現だけを使い、根拠のない煽り (激安/最安級) は使わない。
+ */
+function buildHook(discount: number | undefined, days: number | null): string {
+  const d = discount ?? 0;
+  if (d >= 70) return `🚨 ${d}%OFF！ 見逃し厳禁のセール`;
+  if (d >= 50) return `🔥 半額以下！ ${d}%OFF セール開催中`;
+  if (days !== null && days <= 3) return `⚡ まもなく締切！ 限定セール`;
+  if (d >= 30) return `✈️ ${d}%OFF セール開催中`;
+  if (days !== null && days <= 7) return `⏰ 今週まで！ 期間限定セール`;
+  return `✈️ セール開催中`;
 }
 
 type PostResult = { ok: boolean; status?: number; detail?: string };
@@ -181,8 +211,12 @@ export async function postSalesToX(
   const creds = getCreds();
   if (!creds) return [];
 
+  // 品質ゲート: 着地時にサイトへ掲載され続けるセールだけ投稿する
+  // (期限切れ間近を投稿すると「セールがありません」に着地して信頼を損なう)
+  const postable = filterPostable(sales);
+
   const posted: string[] = [];
-  for (const sale of sales.slice(0, maxPosts)) {
+  for (const sale of postable.slice(0, maxPosts)) {
     const text = buildXText(sale);
     if (!text) continue;
     const res = await postTweet(text, creds);

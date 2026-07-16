@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 import { getActiveDeals } from "@/lib/deals/deal-service";
+import { getDestinationImage } from "@/lib/deals/destination-images";
+import { cityNameJa } from "@/lib/airport-names";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -32,25 +34,84 @@ export default async function OGImage({
       )
     : [];
 
+  // セールが無い路線でも「真っ黒に BEATRIP」ではなく目的地の写真を使う。
+  // SNS カードは画像で目を引くため、都市が伝わる絵にしておく方が CTR が高い。
   if (!parsed || routeDeals.length === 0) {
+    const destImage = parsed ? getDestinationImage(parsed.destination) : null;
+    const destJa = parsed ? cityNameJa(parsed.destination) : "";
+    const originJa = parsed ? cityNameJa(parsed.origin) : "";
+
     return new ImageResponse(
       (
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             width: "100%",
             height: "100%",
             background: "#18181b",
             color: "white",
-            fontSize: 56,
-            fontWeight: 700,
-            letterSpacing: 4,
             fontFamily: "sans-serif",
+            position: "relative",
           }}
         >
-          BEATRIP
+          {destImage && (
+            <img
+              src={destImage}
+              width={1200}
+              height={630}
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          )}
+          {/* 文字の可読性のための暗幕 */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              background: "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.78) 100%)",
+            }}
+          />
+          {parsed ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                position: "relative",
+              }}
+            >
+              <div style={{ display: "flex", fontSize: 68, fontWeight: 700 }}>
+                {originJa} → {destJa}
+              </div>
+              <div style={{ display: "flex", marginTop: 16, fontSize: 30, opacity: 0.9 }}>
+                格安航空券・セール情報をチェック
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  marginTop: 28,
+                  fontSize: 24,
+                  letterSpacing: 4,
+                  opacity: 0.75,
+                }}
+              >
+                BEATRIP
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: "flex", fontSize: 56, fontWeight: 700, letterSpacing: 4 }}>
+              BEATRIP
+            </div>
+          )}
         </div>
       ),
       size

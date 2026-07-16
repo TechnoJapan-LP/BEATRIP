@@ -2,6 +2,12 @@ import { AtpAgent, RichText } from "@atproto/api";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { HotDeal } from "@/lib/deals/hot-deals";
 import { cityNameJa } from "@/lib/airport-names";
+import {
+  filterPostable,
+  pickBestRoute,
+  daysUntilDeadline,
+  deadlineLabel,
+} from "./postable";
 
 /**
  * Bluesky 自動投稿クライアント
@@ -51,24 +57,43 @@ async function getAgent(): Promise<AtpAgent | null> {
   return agent;
 }
 
-function pickCheapestRoute(sale: AirlineSale) {
-  if (sale.routes.length === 0) return null;
-  return [...sale.routes].sort((a, b) => a.price - b.price)[0];
-}
-
 /** 1セールを1ポストに整形（300字以内・URL/ハッシュタグはリッチに認識される） */
 export function buildPostText(sale: AirlineSale): string | null {
-  const r = pickCheapestRoute(sale);
+  const r = pickBestRoute(sale);
   if (!r) return null;
   const yen = new Intl.NumberFormat("ja-JP").format(r.price);
   const route = `${cityNameJa(r.originCode)}→${cityNameJa(r.destinationCode)}`;
-  const discount = r.discount ? ` (-${r.discount}%)` : "";
   const url = `https://beatrip.jp/routes/${r.originCode}-${r.destinationCode}`;
-  // 全体で300字以内に収める。saleNameは長いので必要なら短縮
-  const head = `🛫 ${sale.airlineName} 「${sale.saleName}」`;
-  const headTrimmed =
-    head.length > 80 ? head.slice(0, 78) + "…" : head;
-  return `${headTrimmed}\n${route} ¥${yen}〜${discount}\n${url}\n#格安航空券 #BEATRIP`;
+  const days = daysUntilDeadline(sale);
+  const label = deadlineLabel(sale);
+
+  // X と同じ訴求ロジック (1行目でスクロールを止める)。Bluesky は300字上限。
+  const d = r.discount ?? 0;
+  const hook =
+    d >= 70
+      ? `🚨 ${d}%OFF！ 見逃し厳禁のセール`
+      : d >= 50
+        ? `🔥 半額以下！ ${d}%OFF セール開催中`
+        : days !== null && days <= 3
+          ? `⚡ まもなく締切！ 限定セール`
+          : d >= 30
+            ? `✈️ ${d}%OFF セール開催中`
+            : days !== null && days <= 7
+              ? `⏰ 今週まで！ 期間限定セール`
+              : `✈️ セール開催中`;
+
+  const discount = d ? ` (通常比 -${d}%)` : "";
+  const deadline =
+    days !== null && label
+      ? days <= 0
+        ? "\n⏳ 本日締切"
+        : days <= 7
+          ? `\n⏳ ${label} まで（あと${days}日）`
+          : `\n📅 ${label} まで`
+      : "";
+  const airline = sale.airlineName.slice(0, 20);
+
+  return `${hook}\n${route} ¥${yen}〜${discount}\n${airline}${deadline}\n${url}\n#格安航空券 #BEATRIP`;
 }
 
 /**
@@ -84,8 +109,11 @@ export async function postSalesToBluesky(
   const agent = await getAgent();
   if (!agent) return [];
 
+  // 品質ゲート: 着地時にサイトへ掲載され続けるセールだけ投稿する
+  const postable = filterPostable(sales);
+
   const posted: string[] = [];
-  for (const sale of sales.slice(0, maxPosts)) {
+  for (const sale of postable.slice(0, maxPosts)) {
     const text = buildPostText(sale);
     if (!text) continue;
     try {
