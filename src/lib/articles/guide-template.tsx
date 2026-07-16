@@ -18,6 +18,8 @@
  */
 
 import type { Metadata } from "next";
+import type { AirlineProfile } from "@/lib/scrapers/types";
+import { airlines } from "@/data/airlines";
 import Link from "next/link";
 import { BookOpen, HelpCircle, ArrowRight, ListChecks } from "lucide-react";
 import { Header } from "@/components/header";
@@ -70,6 +72,17 @@ export type GuideContent = {
   /** GA4 計測用ソース識別子 */
   aspSource: string;
   relatedLinks: GuideRelatedLink[];
+  /**
+   * 記事から各社のセール実績ページへ送る導線 (回遊率向上)。
+   * airlines マスタの type で絞り込むため、コード変更にも自動で追随する。
+   * 未指定なら非表示。
+   */
+  airlineLinks?: {
+    /** 見出し (例: "LCC 各社のセール情報") */
+    title: string;
+    /** 対象の航空会社タイプ */
+    type: AirlineProfile["type"];
+  };
 };
 
 const BASE = "https://beatrip.jp";
@@ -97,6 +110,10 @@ export function GuidePage({ content: c, lang }: { content: GuideContent; lang: s
   const locale: Locale = lang === "en" ? "en" : "ja";
   const lh = (href: string) => localizeHref(href, locale);
   const path = `/articles/guides/${c.slug}`;
+  // コードはマスタから引く。airlines.ts のコードが変わってもリンクが自動追随する。
+  const airlineLinks = c.airlineLinks
+    ? airlines.filter((a) => a.type === c.airlineLinks!.type)
+    : [];
 
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -226,6 +243,27 @@ export function GuidePage({ content: c, lang }: { content: GuideContent; lang: s
             本記事は一般的な旅行情報をまとめたものです。航空券・ホテルの価格や各社の規約・サービス内容は変更される場合があるため、予約前に必ず各公式サイトで最新情報をご確認ください。記事内のリンクの一部はアフィリエイト広告を含みます。
           </p>
         </section>
+
+        {/* 航空会社別セール導線 — 記事の読者をそのまま現物のセールへ送る */}
+        {airlineLinks.length > 0 && (
+          <section>
+            <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-4">
+              {c.airlineLinks?.title}
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {airlineLinks.map((a) => (
+                <Link
+                  key={a.code}
+                  href={lh(`/airlines/${a.code}/sales`)}
+                  className="group inline-flex items-center gap-1.5 rounded-full border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-2 text-sm text-zinc-700 dark:text-zinc-300 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
+                >
+                  <span className="font-medium">{a.name}</span>
+                  <ArrowRight className="h-3.5 w-3.5 text-zinc-300 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* 関連リンク */}
         {c.relatedLinks.length > 0 && (

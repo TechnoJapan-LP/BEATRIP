@@ -101,6 +101,12 @@ const CONTENT: GuideContent = {
   aspTitle: "格安航空券・旅行サービスを比較",
   aspSubtitle: "LCC を含む航空券や旅行の備えを信頼できるサービスから比較",
   aspSource: "guide-lcc-tips",
+  // 記事を読んだ人をそのまま各社の現物セールへ送る (回遊率向上)。
+  // コードは airlines マスタから導出されるためリンク切れが起きない。
+  airlineLinks: {
+    title: "LCC 各社のセール実績・時期",
+    type: "LCC",
+  },
   relatedLinks: [
     { href: "/articles/guides/baggage-rules", label: "機内持ち込み・預け荷物の完全ルール", desc: "サイズ・重量・液体物の基準を整理" },
     { href: "/articles/guides/best-booking-timing", label: "航空券を最安で買うベストタイミング", desc: "予約時期の考え方を解説" },
