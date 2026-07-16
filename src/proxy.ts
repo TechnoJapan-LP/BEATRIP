@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { airlineServesAirport, getAirlineByCode } from "@/data/airlines";
+import { AIRPORTS } from "@/data/airports";
 
 // Next.js 16: Middleware is now "Proxy"。機能は同じ。
 // 日本語はURL無印（内部リライトで [lang]=ja）、英語は /en を [lang]=en にマップ。
@@ -7,13 +9,38 @@ import type { NextRequest } from "next/server";
 
 const LOCALES = ["ja", "en"] as const;
 
+// /airlines/{code}/airports/{iata} は 17社 × 45空港 = 最大765通りだが、
+// 大半は就航していない組合せ。page 側の notFound() だけでは本文は 404 でも
+// HTTP ステータスが 200 のまま (ストリーミング開始後はヘッダを変更できないため)。
+// ステータスを 404 にできるのは本文が流れ始める前＝この proxy だけなので、
+// ここで就航判定してリライトに 404 を乗せる。判定はメモリ上の静的データのみで
+// 完結するため I/O は発生しない。
+const AIRLINE_AIRPORT_PATH = /^\/(?:en\/)?airlines\/([^/]+)\/airports\/([^/]+)\/?$/;
+
+function isUnservedAirlineAirport(pathname: string): boolean {
+  const match = AIRLINE_AIRPORT_PATH.exec(pathname);
+  if (!match) return false;
+
+  // 突き合わせは必ず alias 解決を通す。生の文字列一致で比較すると、別表記の社
+  // (airports.ts は ICAO 系, airlines.ts は IATA) が実在の就航なのに 404 になる。
+  const airline = getAirlineByCode(match[1]);
+  const airport = AIRPORTS.find((a) => a.iata === match[2].toUpperCase());
+  if (!airline || !airport) return true;
+
+  return !airlineServesAirport(airline, airport);
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  const notFoundInit = isUnservedAirlineAirport(pathname)
+    ? { status: 404 }
+    : undefined;
 
   // /en または /en/... は [lang]=en として自然にマッチするのでそのまま
   const isEn =
     pathname === "/en" || pathname.startsWith("/en/");
-  if (isEn) return NextResponse.next();
+  if (isEn) return NextResponse.next(notFoundInit);
 
   // 外部から /ja/... で直接アクセスされた場合は無印 URL へ 301 で正規化。
   // (/ja/hotels/tokyo と /hotels/tokyo の両方が 200 を返す duplicate content を防ぐ。
@@ -28,7 +55,7 @@ export function proxy(request: NextRequest) {
   // それ以外（無印）= 日本語。内部リライトで [lang]=ja に流す（URLは不変）
   const url = request.nextUrl.clone();
   url.pathname = `/ja${pathname === "/" ? "" : pathname}`;
-  return NextResponse.rewrite(url);
+  return NextResponse.rewrite(url, notFoundInit);
 }
 
 export const config = {
