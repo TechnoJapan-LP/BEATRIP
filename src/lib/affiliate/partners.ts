@@ -22,6 +22,14 @@ export type PartnerCategory =
   | "compensation";
 
 export type PartnerContext = {
+  /**
+   * ページ自体が海外旅行の文脈であることを明示する。
+   *
+   * isOverseas は destinationIata から判定するが、ガイド記事のように目的地を
+   * 持たないページでは判定できず「国内扱い」に倒れて eSIM 等が消えてしまう。
+   * 「文脈が無い」と「国内」は別物なので、ページ側から宣言できるようにする。
+   */
+  overseas?: boolean;
   /** 目的地の英語都市名（例 "Tokyo"） */
   cityNameEn?: string;
   /** 目的地の日本語都市名（表示用） */
@@ -319,6 +327,8 @@ const DOMESTIC_IATA = new Set([
 
 /** 海外の目的地か (eSIM/保険はここでだけ出す)。IATA 不明時は出さない安全側。 */
 function isOverseas(ctx: PartnerContext): boolean {
+  // ページが海外文脈だと宣言していればそれを優先 (目的地を持たないガイド記事用)
+  if (ctx.overseas !== undefined) return ctx.overseas;
   return !!ctx.destinationIata && !DOMESTIC_IATA.has(ctx.destinationIata);
 }
 

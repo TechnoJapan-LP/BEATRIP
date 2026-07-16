@@ -27,6 +27,8 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
+import { TravelCompanions } from "@/components/affiliate/travel-companions";
+import type { PartnerCategory, PartnerContext } from "@/lib/affiliate/partners";
 import { TravelGoodsBlock } from "@/components/affiliate/travel-goods-block";
 import { PrNotice } from "@/components/compliance/pr-notice";
 import { localizeHref, type Locale } from "@/lib/i18n/locale";
@@ -82,6 +84,20 @@ export type GuideContent = {
     title: string;
     /** 対象の航空会社タイプ */
     type: AirlineProfile["type"];
+  };
+  /**
+   * TravelPayouts 系パートナー枠 (Airalo/GigSky/Yesim 等)。
+   *
+   * JapanesePartnersPanel (A8系) とは別系統。記事のテーマに直結する稼働中の
+   * パートナーをここで出す。例: eSIM 記事に eSIM パートナー。
+   * env 未設定なら TravelCompanions 側が何も描画しないので枠ごと消える。
+   */
+  travelPartners?: {
+    title: string;
+    subtitle: string;
+    categories: PartnerCategory[];
+    /** 記事が海外旅行の文脈なら true (eSIM 等の isRelevant 判定に使う) */
+    overseas?: boolean;
   };
 };
 
@@ -209,6 +225,17 @@ export function GuidePage({ content: c, lang }: { content: GuideContent; lang: s
             </section>
           ))}
         </article>
+
+        {/* 記事テーマ直結のパートナー (TravelPayouts系) */}
+        {c.travelPartners && (
+          <TravelCompanions
+            ctx={{ overseas: c.travelPartners.overseas } as PartnerContext}
+            title={c.travelPartners.title}
+            subtitle={c.travelPartners.subtitle}
+            categories={c.travelPartners.categories}
+            source={c.aspSource}
+          />
+        )}
 
         {/* 関連 ASP CTA */}
         <section>

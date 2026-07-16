@@ -90,6 +90,17 @@ const CONTENT: GuideContent = {
       a: "プロファイルの追加は渡航前に自宅で済ませておけます。回線の切替やローミング設定は現地到着後に案内通りに行うのが一般的です。手順は提供元の公式案内に従ってください。",
     },
   ],
+  // 記事テーマ直結の稼働中パートナー (Airalo/GigSky/Yesim)。A8系の eSIM 枠は
+  // env 未設定でパネルごと消えており、このページはアフィリエイトリンクが
+  // 1本も無い状態だった。
+  travelPartners: {
+    title: "海外用 eSIM を探す",
+    subtitle: "渡航先で使える eSIM を提供元から直接購入できます",
+    categories: ["esim"],
+    // ガイド記事は目的地を持たないため、海外文脈であることを明示する
+    // (これが無いと isOverseas が国内扱いに倒れて eSIM が消える)
+    overseas: true,
+  },
   aspCategories: ["esim-wifi", "insurance", "flight-overseas", "tour-overseas"],
   aspTitle: "海外 eSIM・Wi-Fi を比較",
   aspSubtitle: "海外で使える通信サービスを信頼できる提供元から比較",
