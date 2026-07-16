@@ -17,6 +17,17 @@ const LOCALES = ["ja", "en"] as const;
 // 完結するため I/O は発生しない。
 const AIRLINE_AIRPORT_PATH = /^\/(?:en\/)?airlines\/([^/]+)\/airports\/([^/]+)\/?$/;
 
+// 未知の航空会社コード (/airlines/zzz, /airlines/zzz/sales) も同じ理由で
+// ここでしか 404 にできない。airports 配下は AIRLINE_AIRPORT_PATH が見る。
+const AIRLINE_PATH = /^\/(?:en\/)?airlines\/([^/]+)(?:\/sales)?\/?$/;
+
+function isUnknownAirline(pathname: string): boolean {
+  const match = AIRLINE_PATH.exec(pathname);
+  if (!match) return false;
+
+  return !getAirlineByCode(match[1]);
+}
+
 function isUnservedAirlineAirport(pathname: string): boolean {
   const match = AIRLINE_AIRPORT_PATH.exec(pathname);
   if (!match) return false;
@@ -33,9 +44,10 @@ function isUnservedAirlineAirport(pathname: string): boolean {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const notFoundInit = isUnservedAirlineAirport(pathname)
-    ? { status: 404 }
-    : undefined;
+  const notFoundInit =
+    isUnservedAirlineAirport(pathname) || isUnknownAirline(pathname)
+      ? { status: 404 }
+      : undefined;
 
   // /en または /en/... は [lang]=en として自然にマッチするのでそのまま
   const isEn =
