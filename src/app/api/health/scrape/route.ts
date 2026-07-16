@@ -91,6 +91,14 @@ export async function GET() {
   };
 
   // 超お買い得 (価格急落) の稼働状況
+  // TravelPayouts 価格データAPI のトークン有無。これが無いと価格ウォッチが
+  // 空になり、超お買い得の検出も実測運賃の蓄積も永久にゼロのままになる
+  // (どちらも watched = TP の観測結果を入力にしているため)。値は出さない。
+  const travelpayouts = {
+    apiTokenConfigured: !!process.env.TRAVELPAYOUTS_API_TOKEN,
+    markerConfigured: !!process.env.TRAVELPAYOUTS_MARKER,
+  };
+
   // 実測運賃の蓄積状況。routesReadyForReal が増えるほど「推計」表示が実測に変わる。
   let priceObservations = { routes: 0, points: 0, routesReadyForReal: 0 };
   try {
@@ -128,6 +136,7 @@ export async function GET() {
     analytics,
     affiliate,
     hotDeals,
+    travelpayouts,
     priceObservations,
     saleRecords,
     hint: ready
