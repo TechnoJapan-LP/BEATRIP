@@ -15,6 +15,9 @@ import type { DealHistoricalPrice } from "@/data/deal-schema";
  *
  * 設計上の約束:
  *   - 観測していない値は絶対に作らない。埋めない。補間しない。
+ *   - KV は必ずバッチ (mget/pipeline) で叩く。1回のスキャンで ~470 路線を扱うため、
+ *     路線ごとに逐次 GET/SET すると 900回超の往復になり、cron が実行時間を
+ *     超えて丸ごと失敗する (実際に発生: セール実績だけ貯まり価格実測が 0 のままだった)。
  *   - sample_count は「実際に観測した日数」。0 は実測なしを意味する（UI は
  *     これを見て「実測 / 推計」を出し分ける）。
  */
@@ -62,6 +65,24 @@ export async function loadObservations(routeKey: string): Promise<Observation[]>
   if (!kv) return [];
   const raw = await kv.get<Observation[]>(kvKey(routeKey));
   return Array.isArray(raw) ? raw : [];
+}
+
+/** 複数路線をまとめて読む (mget = 1往復)。路線ごとの get を避けるため必須。 */
+async function loadObservationsBulk(
+  routeKeys: string[]
+): Promise<Map<string, Observation[]>> {
+  const out = new Map<string, Observation[]>();
+  const kv = getKV();
+  if (!kv || routeKeys.length === 0) return out;
+
+  const values = await kv.mget<(Observation[] | null)[]>(
+    ...routeKeys.map(kvKey)
+  );
+  routeKeys.forEach((rk, i) => {
+    const v = values[i];
+    out.set(rk, Array.isArray(v) ? v : []);
+  });
+  return out;
 }
 
 /** 観測済み路線の一覧 */
@@ -146,15 +167,26 @@ export async function recordPriceObservations(
   const index = new Set(await loadObservedRoutes());
   let points = 0;
 
+  // 読みは mget で1往復
+  const routeKeys = [...byRoute.keys()];
+  const existingMap = await loadObservationsBulk(routeKeys);
+
+  // 書きは pipeline で1往復にまとめる
+  const pipe = kv.pipeline();
   for (const [routeKey, entries] of byRoute) {
-    const existing = await loadObservations(routeKey);
-    const merged = mergeObservations(existing, day, entries, now);
+    const merged = mergeObservations(
+      existingMap.get(routeKey) ?? [],
+      day,
+      entries,
+      now
+    );
     points += merged.added;
-    await kv.set(kvKey(routeKey), merged.observations);
+    pipe.set(kvKey(routeKey), merged.observations);
     index.add(routeKey);
   }
+  pipe.set(INDEX_KEY, Array.from(index));
+  await pipe.exec();
 
-  await kv.set(INDEX_KEY, Array.from(index));
   return { routes: byRoute.size, points };
 }
 
@@ -215,12 +247,14 @@ export async function getObservationStats(): Promise<{
   routesReadyForReal: number;
 }> {
   const routes = await loadObservedRoutes();
+  // 路線ごとに get すると health を叩くたびに数百往復する。mget で1往復にする。
+  const map = await loadObservationsBulk(routes);
   let points = 0;
   let ready = 0;
   for (const rk of routes) {
-    const obs = await loadObservations(rk);
+    const obs = map.get(rk) ?? [];
     points += obs.length;
-    if ((await getObservedMonthly(rk)) !== null) ready++;
+    if (aggregateMonthly(rk, obs) !== null) ready++;
   }
   return { routes: routes.length, points, routesReadyForReal: ready };
 }

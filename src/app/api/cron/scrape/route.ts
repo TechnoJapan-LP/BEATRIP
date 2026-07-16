@@ -33,6 +33,10 @@ import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import { writeAuditLog } from "@/lib/audit/audit-log";
 
+// スクレイプ + 記事生成 + 通知 + 実測蓄積まで行うため既定値では足りない。
+// Hobby の上限は 60 秒。
+export const maxDuration = 60;
+
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
