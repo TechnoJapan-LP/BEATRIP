@@ -4,12 +4,14 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { PrNotice } from "@/components/compliance/pr-notice";
 import { DealGrid } from "@/components/deals/deal-grid";
+import { HotDealsSection } from "@/components/deals/hot-deals-section";
 import { mockSaleEvents } from "@/data/mock-deals";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { OG_IMAGES } from "@/lib/seo/og";
 
 // ISR: 21600秒キャッシュ (6時間) — 他の deal 系ページと同じ
-export const revalidate = 21600;
+// 超お買い得 (価格急落) の鮮度を保つため 1h (従来 6h)
+export const revalidate = 3600;
 
 export async function generateMetadata({
   params,
@@ -105,6 +107,9 @@ export default async function DealsIndexPage({
           </p>
           <PrNotice className="mt-3" />
         </section>
+
+        {/* 超お買い得 (価格急落検出) — 鮮度が命なので一覧の最上部 */}
+        <HotDealsSection />
 
         <DealGrid
           deals={deals}

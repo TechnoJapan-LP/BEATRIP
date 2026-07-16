@@ -1,0 +1,39 @@
+# 超お買い得 (価格急落) スキャンの高頻度化
+#
+# Vercel Hobby の cron は 1日1回 + 2本上限のため、エラーフェア検出に必要な
+# 鮮度 (数時間おき) を GitHub Actions で補う。既存の scrape エンドポイントを
+# 叩くだけで、価格取得 → 急落検出 → X/Bluesky 速報まで一気通貫で走る
+# (新規セールの検出・投稿も dedup 済みなので重複しない)。
+#
+# 必要な設定: リポジトリの Settings → Secrets and variables → Actions に
+#   CRON_SECRET  (Vercel の環境変数と同じ値)
+# を登録する。未登録の場合はジョブが早期 skip する (fail しない)。
+name: hot-deal-scan
+
+on:
+  schedule:
+    # 6時間おき (UTC)。Vercel 側の日次 cron (18:00 UTC) と重なっても
+    # dedup が効くので問題ない。
+    - cron: "0 0,6,12 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger scrape + hot-deal scan
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET が未設定のため skip (Settings → Secrets → Actions で登録してください)"
+            exit 0
+          fi
+          status=$(curl -s -o /tmp/res.json -w "%{http_code}" --max-time 120 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "https://beatrip.jp/api/cron/scrape")
+          echo "HTTP $status"
+          # レスポンスの要約だけ出す (秘密情報は含まれない)
+          cat /tmp/res.json | head -c 600 || true
+          [ "$status" = "200" ]

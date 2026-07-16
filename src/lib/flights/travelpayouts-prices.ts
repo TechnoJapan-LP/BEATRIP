@@ -66,12 +66,14 @@ function getToken(): string | null {
 
 async function fetchLatestForOrigin(
   origin: string,
-  token: string
+  token: string,
+  /** 0=Economy (default), 1=Business */
+  tripClass: 0 | 1 = 0
 ): Promise<LatestPriceItem[]> {
   const url =
     `${ENDPOINT}?currency=jpy&origin=${origin}` +
     `&period_type=year&one_way=false&page=1&limit=30` +
-    `&show_to_affiliates=true&sorting=price`;
+    `&show_to_affiliates=true&sorting=price&trip_class=${tripClass}`;
   try {
     const res = await fetch(url, {
       headers: { "X-Access-Token": token, Accept: "application/json" },
@@ -92,7 +94,10 @@ async function fetchLatestForOrigin(
 }
 
 /** 1件の API 価格 → SaleRoute。相場(avgPrice)があれば honest な割引率を付与。 */
-function toRoute(item: LatestPriceItem): SaleRoute | null {
+function toRoute(
+  item: LatestPriceItem,
+  cabin: "Economy" | "Business" = "Economy"
+): SaleRoute | null {
   const price = typeof item.value === "number" ? item.value : NaN;
   if (!item.origin || !item.destination || isNaN(price) || price < 1000) {
     return null;
@@ -117,7 +122,7 @@ function toRoute(item: LatestPriceItem): SaleRoute | null {
     price,
     originalPrice,
     currency: "JPY",
-    cabin: "Economy",
+    cabin,
     discount,
   };
 }
@@ -188,4 +193,60 @@ export async function scrapeTravelPayoutsPrices(): Promise<ScrapeResult[]> {
       success: true,
     },
   ];
+}
+
+// ビジネスクラスは首都圏発の国際線のみウォッチ (リクエスト数を抑える)。
+// エコノミーと違いサイトのディール一覧には流さず、超お買い得 (急落) 検出専用。
+const BUSINESS_ORIGINS = ["HND", "NRT"];
+
+/**
+ * ビジネスクラスの最安運賃ウォッチを取得する (超お買い得検出の素材)。
+ * ディール一覧には流さない前提のため ScrapeResult ではなく AirlineSale[] を返す。
+ * トークン未設定・失敗時は空配列。
+ */
+export async function fetchBusinessWatchSales(): Promise<AirlineSale[]> {
+  const token = getToken();
+  if (!token) return [];
+
+  const now = new Date();
+  const nowIso = now.toISOString();
+  const deadline = new Date(now.getTime() + 60 * 86_400_000).toISOString();
+
+  const perOrigin = await Promise.all(
+    BUSINESS_ORIGINS.map(async (origin): Promise<AirlineSale | null> => {
+      const items = await fetchLatestForOrigin(origin, token, 1);
+      if (items.length === 0) return null;
+
+      const cheapestByDest = new Map<string, SaleRoute>();
+      for (const item of items) {
+        const route = toRoute(item, "Business");
+        if (!route) continue;
+        const key = `${route.originCode}-${route.destinationCode}`;
+        const prev = cheapestByDest.get(key);
+        if (!prev || route.price < prev.price) cheapestByDest.set(key, route);
+      }
+      const routes = [...cheapestByDest.values()].sort((a, b) => a.price - b.price);
+      if (routes.length === 0) return null;
+
+      const originJa = resolveCityJa(origin);
+      return {
+        id: `tp-biz-${origin}`,
+        airlineCode: "TP",
+        airlineName: "最安値ウォッチ",
+        saleName: `${originJa}発 ビジネスクラス最安値ウォッチ`,
+        description: `${originJa}発 国際線ビジネスクラスの最安運賃の目安 (TravelPayouts 価格データ)。`,
+        startDate: nowIso,
+        endDate: deadline,
+        bookingDeadline: deadline,
+        travelPeriodStart: nowIso,
+        travelPeriodEnd: deadline,
+        routes,
+        sourceUrl: "https://www.aviasales.com/",
+        scrapedAt: nowIso,
+        isActive: true,
+      };
+    })
+  );
+
+  return perOrigin.filter((s): s is AirlineSale => s !== null);
 }

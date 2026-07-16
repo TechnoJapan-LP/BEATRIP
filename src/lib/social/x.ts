@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import type { AirlineSale } from "@/lib/scrapers/types";
+import type { HotDeal } from "@/lib/deals/hot-deals";
 import { cityNameJa } from "@/lib/airport-names";
 
 /**
@@ -186,6 +187,36 @@ export async function postSalesToX(
     if (!text) continue;
     const res = await postTweet(text, creds);
     if (res.ok) posted.push(sale.id);
+    await new Promise((r) => setTimeout(r, 2000));
+  }
+  return posted;
+}
+
+/**
+ * 超お買い得 (価格急落) を1件1ツイートに整形。
+ * 「観測した」という事実ベース表現 (予約可能性は保証しない — 景表法配慮)。
+ */
+export function buildHotDealXText(h: HotDeal): string {
+  const yen = new Intl.NumberFormat("ja-JP").format(h.price);
+  const prevYen = new Intl.NumberFormat("ja-JP").format(h.previous_price);
+  const route = `${cityNameJa(h.origin_code)}→${cityNameJa(h.destination_code)}`;
+  const cabin = h.cabin === "Business" ? " ビジネスクラス" : "";
+  const url = `https://beatrip.jp/routes/${h.origin_code}-${h.destination_code}`;
+  return `⚡超お買い得を検出\n${route}${cabin} ¥${yen}\n直前の観測 ¥${prevYen} から -${h.drop_percent}%\n消える前にチェック👇\n${url}\n#格安航空券 #航空券セール`;
+}
+
+/** 新規検出の超お買い得を X に速報する。呼び出し側で dedup 済みのものだけ渡すこと。 */
+export async function postHotDealsToX(
+  hotDeals: HotDeal[],
+  maxPosts = 3
+): Promise<string[]> {
+  const creds = getCreds();
+  if (!creds) return [];
+
+  const posted: string[] = [];
+  for (const h of hotDeals.slice(0, maxPosts)) {
+    const res = await postTweet(buildHotDealXText(h), creds);
+    if (res.ok) posted.push(h.id);
     await new Promise((r) => setTimeout(r, 2000));
   }
   return posted;

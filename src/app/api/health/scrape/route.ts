@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isKVEnabled } from "@/lib/store/kv";
 import { loadAllSales } from "@/lib/store/sale-store";
+import { loadHotDeals } from "@/lib/deals/hot-deals";
 
 /**
  * スクレイパー稼働の公開ヘルスチェック (機密情報は出さない)。
@@ -69,6 +70,18 @@ export async function GET() {
     gaConfigured: gaRaw.trim().length > 0,
   };
 
+  // 超お買い得 (価格急落) の稼働状況
+  let hotDeals = { active: 0, gone: 0 };
+  try {
+    const list = await loadHotDeals();
+    hotDeals = {
+      active: list.filter((h) => h.status === "active").length,
+      gone: list.filter((h) => h.status === "gone").length,
+    };
+  } catch {
+    // health は常に 200 を返す
+  }
+
   return NextResponse.json({
     ready,
     scraperMode,
@@ -77,6 +90,7 @@ export async function GET() {
     latestScrapedAt,
     social: { xConfigured, blueskyConfigured },
     analytics,
+    hotDeals,
     hint: ready
       ? "A 設定OK。latestScrapedAt が直近なら cron も稼働中。"
       : "本番稼働には SCRAPER_MODE=hybrid と KV 接続 (kvEnabled=true) が必要。",

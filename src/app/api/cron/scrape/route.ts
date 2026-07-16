@@ -22,9 +22,11 @@ import {
   sendPriceAlertEmails,
   type AlertMatch,
 } from "@/lib/price-alerts/email";
-import { postSalesToBluesky } from "@/lib/social/bluesky";
-import { postSalesToX } from "@/lib/social/x";
+import { postSalesToBluesky, postHotDealsToBluesky } from "@/lib/social/bluesky";
+import { postSalesToX, postHotDealsToX } from "@/lib/social/x";
 import { getPostedIds, markPosted } from "@/lib/social/posted-store";
+import { scanHotDeals } from "@/lib/deals/hot-deals";
+import { fetchBusinessWatchSales } from "@/lib/flights/travelpayouts-prices";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import { writeAuditLog } from "@/lib/audit/audit-log";
@@ -207,6 +209,35 @@ export async function GET(request: NextRequest) {
       console.error("[CRON] X 投稿に失敗:", e);
     }
 
+    // 超お買い得 (価格急落) 検出: TP 最安値ウォッチ (エコノミー) + ビジネスクラスの
+    // 前回スナップショット比較で急落を検出し、新規検出分を X/Bluesky に速報する。
+    // hot deal の id は検出ごとに一意なので、投稿台帳の dedup がそのまま効く。
+    let hotDealSummary = { detected: 0, active: 0, gone: 0, posted: 0 };
+    try {
+      const tpEconomySales: AirlineSale[] = results
+        .filter((r) => r.airlineCode === "TP")
+        .flatMap((r) => r.sales);
+      const bizSales = await fetchBusinessWatchSales();
+      const scan = await scanHotDeals([...tpEconomySales, ...bizSales]);
+      hotDealSummary.detected = scan.detected.length;
+      hotDealSummary.active = scan.active;
+      hotDealSummary.gone = scan.wentGone;
+
+      if (scan.detected.length > 0) {
+        const postedX = await getPostedIds("x");
+        const freshHot = scan.detected.filter((h) => !postedX.has(h.id));
+        if (freshHot.length > 0) {
+          const sentX = await postHotDealsToX(freshHot, 3);
+          if (sentX.length > 0) await markPosted("x", sentX);
+          const sentBsky = await postHotDealsToBluesky(freshHot, 3);
+          if (sentBsky.length > 0) await markPosted("bluesky", sentBsky);
+          hotDealSummary.posted = sentX.length;
+        }
+      }
+    } catch (e) {
+      console.error("[CRON] 超お買い得検出に失敗:", e);
+    }
+
     const elapsed = Date.now() - startTime;
 
     const summary = {
@@ -220,6 +251,7 @@ export async function GET(request: NextRequest) {
         priceChanges: changes.reduce((sum, c) => sum + c.priceChanges.length, 0),
       },
       notifications: { sent, errors },
+      hotDeals: hotDealSummary,
       newsletter: {
         status: newsletterStatus,
         sent: newsletterSent,

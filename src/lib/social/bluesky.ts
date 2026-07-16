@@ -1,5 +1,6 @@
 import { AtpAgent, RichText } from "@atproto/api";
 import type { AirlineSale } from "@/lib/scrapers/types";
+import type { HotDeal } from "@/lib/deals/hot-deals";
 import { cityNameJa } from "@/lib/airport-names";
 
 /**
@@ -100,6 +101,39 @@ export async function postSalesToBluesky(
       console.error("[bluesky] post failed:", sale.id, e);
     }
     // 軽いスロットル
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+  return posted;
+}
+
+/** 新規検出の超お買い得 (価格急落) を Bluesky に速報する。dedup は呼び出し側。 */
+export async function postHotDealsToBluesky(
+  hotDeals: HotDeal[],
+  maxPosts = 3
+): Promise<string[]> {
+  const agent = await getAgent();
+  if (!agent) return [];
+
+  const posted: string[] = [];
+  for (const h of hotDeals.slice(0, maxPosts)) {
+    const yen = new Intl.NumberFormat("ja-JP").format(h.price);
+    const prevYen = new Intl.NumberFormat("ja-JP").format(h.previous_price);
+    const route = `${cityNameJa(h.origin_code)}→${cityNameJa(h.destination_code)}`;
+    const cabin = h.cabin === "Business" ? " ビジネスクラス" : "";
+    const url = `https://beatrip.jp/routes/${h.origin_code}-${h.destination_code}`;
+    const text = `⚡超お買い得を検出\n${route}${cabin} ¥${yen}\n直前の観測 ¥${prevYen} から -${h.drop_percent}%\n${url}\n#格安航空券 #BEATRIP`;
+    try {
+      const rt = new RichText({ text });
+      await rt.detectFacets(agent);
+      await agent.post({
+        text: rt.text,
+        facets: rt.facets,
+        createdAt: new Date().toISOString(),
+      });
+      posted.push(h.id);
+    } catch (e) {
+      console.error("[bluesky] hot deal post failed:", h.id, e);
+    }
     await new Promise((r) => setTimeout(r, 1500));
   }
   return posted;
