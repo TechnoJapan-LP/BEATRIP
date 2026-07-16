@@ -238,7 +238,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
         airlineCodes
           .filter((c) =>
             [
-              "APJ",
+              "PCH",
               "JJP",
               "SKY",
               "AIRDO",
