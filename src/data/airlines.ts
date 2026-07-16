@@ -1,5 +1,21 @@
 import type { AirlineProfile } from "@/lib/scrapers/types";
 
+// ── `code` について ──
+// code は URL (/airlines/[code], /[code]/sales, /[code]/airports/[iata]) に
+// そのまま出るため、実在コードかどうかより「既存 URL を壊さないこと」を優先する。
+// 体系は統一されていない: ANA/JAL/JJP/SJO は ICAO、それ以外は IATA。
+//
+// PCH (Peach) だけはどちらでもない BEATRIP 内部の slug。実コードは IATA "MM" /
+// ICAO "APJ"。/airlines/PCH/sales が GSC の勝ちページで、リネームすると
+// 唯一の上位ページに 301 を挟むことになるため据え置いている (2026-07 判断)。
+// APJ を Peach に付け替える案も検討したが、旧 /airlines/APJ/* は Spring Japan の
+// コンテンツとしてインデックスされていた経緯があり、Peach へ向けると内容の
+// 異なるページへの転送になるため見送った。
+//
+// airports.ts の airlines[] とは単純文字列一致で突き合わせて空港ページを生成する
+// (sitemap.ts / airports/[iata]/page.tsx)。あちらは SKY/ZIP/SNA/SFJ 等の別体系が
+// 混ざっており、一致しない社は空港ページが 0 枚になる。code を触るときは
+// airports.ts 側も必ず合わせること。
 export const airlines: AirlineProfile[] = [
   {
     code: "ANA",
@@ -36,6 +52,8 @@ export const airlines: AirlineProfile[] = [
     ],
   },
   {
+    // PCH は実在コードではなく内部 slug (実コード: IATA "MM" / ICAO "APJ")。
+    // 勝ちページ /airlines/PCH/sales の URL 保護のため据え置き。冒頭の注記参照。
     code: "PCH",
     name: "Peach Aviation",
     nameEn: "Peach",
