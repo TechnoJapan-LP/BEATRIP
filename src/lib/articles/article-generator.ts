@@ -5,6 +5,7 @@ import type { PriceChange } from "@/lib/store/sale-store";
 import type { Article } from "@/data/mock-articles";
 import { deals } from "@/data/mock-deals-v2";
 import { cityNameJa } from "@/lib/airport-names";
+import { routeLinkMd } from "./route-link";
 import { getDestinationImage } from "@/lib/deals/destination-images";
 import { isDomesticRoute } from "@/lib/airports/domestic";
 import { getKV } from "@/lib/store/kv";
@@ -78,7 +79,8 @@ function generateSaleArticle(sale: AirlineSale): Article {
     const discountText = r.discount ? `（${r.discount}%OFF）` : "";
     const seatsText =
       r.seatsRemaining !== undefined ? ` — 残${r.seatsRemaining}席` : "";
-    return `- **${cityNameJa(r.originCode)}→${cityNameJa(r.destinationCode)}（${r.originCode}→${r.destinationCode}・${r.cabin}）**: ¥${formatPrice(r.price)}${discountText}${seatsText}`;
+    // 路線名から該当路線のセールページへ直接飛べるようにする (回遊率向上)
+    return `- **${routeLinkMd(r.originCode, r.destinationCode)}（${r.originCode}→${r.destinationCode}・${r.cabin}）**: ¥${formatPrice(r.price)}${discountText}${seatsText}`;
   });
 
   const cheapest = routes[0];
@@ -187,9 +189,7 @@ export function generatePriceDropArticle(
   // 「東京→福岡（HND→FUK・エコノミー）: ¥12,210（-¥3,000 / 20%OFF）」形式。
   // IATA の羅列では読者に伝わらないため、日本語の都市名を主役にする。
   const lines = drops.map((p) => {
-    const routeJa = `${cityNameJa(p.origin)}→${cityNameJa(p.dest)}`;
-    const link = `/routes/${p.origin}-${p.dest}`;
-    return `- **[${routeJa}](${link})**（${p.origin}→${p.dest}・${cabinJa(p.cabin)}）: ¥${formatPrice(p.newPrice)}（-¥${formatPrice(p.diff)}${p.percent > 0 ? ` / ${p.percent}%OFF` : ""}）`;
+    return `- **${routeLinkMd(p.origin, p.dest)}**（${p.origin}→${p.dest}・${cabinJa(p.cabin)}）: ¥${formatPrice(p.newPrice)}（-¥${formatPrice(p.diff)}${p.percent > 0 ? ` / ${p.percent}%OFF` : ""}）`;
   });
 
   const biggestDrop = drops[0];

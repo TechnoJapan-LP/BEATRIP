@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
@@ -85,6 +86,48 @@ function formatPrice(price: number) {
   return new Intl.NumberFormat("ja-JP").format(price);
 }
 
+/**
+ * 行内の `[表示名](/path)` と `**強調**` を React ノードに変換する。
+ * 記事から路線ページへ直接飛べるようにするためリンクは必須。
+ * 外部URLは記事本文には現れない想定だが、混ざっても内部 Link に渡さないよう分岐する。
+ */
+function renderInline(text: string, keyPrefix: string): ReactNode[] {
+  const nodes: ReactNode[] = [];
+  const pattern = /\[([^\]]+)\]\(([^)]+)\)|\*\*(.+?)\*\*/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let n = 0;
+  while ((m = pattern.exec(text)) !== null) {
+    if (m.index > last) nodes.push(text.slice(last, m.index));
+    const key = `${keyPrefix}-${n++}`;
+    if (m[1] !== undefined) {
+      const href = m[2];
+      nodes.push(
+        href.startsWith("/") ? (
+          <Link
+            key={key}
+            href={href}
+            className="text-sky-600 dark:text-sky-400 underline underline-offset-2 hover:text-sky-700 dark:hover:text-sky-300"
+          >
+            {m[1]}
+          </Link>
+        ) : (
+          <span key={key}>{m[1]}</span>
+        )
+      );
+    } else {
+      nodes.push(
+        <strong key={key} className="font-bold text-zinc-800 dark:text-zinc-200">
+          {m[3]}
+        </strong>
+      );
+    }
+    last = pattern.lastIndex;
+  }
+  if (last < text.length) nodes.push(text.slice(last));
+  return nodes;
+}
+
 function renderMarkdown(body: string) {
   return body.split("\n").map((line, i) => {
     if (line.startsWith("### ")) {
@@ -112,8 +155,10 @@ function renderMarkdown(body: string) {
       if (match) {
         return (
           <li key={i} className="text-sm text-zinc-600 dark:text-zinc-300 ml-4 mb-1">
-            <span className="font-bold text-zinc-800 dark:text-zinc-200">{match[1]}</span>
-            {match[2] ? `: ${match[2]}` : ""}
+            <span className="font-bold text-zinc-800 dark:text-zinc-200">
+              {renderInline(match[1], `li-${i}-b`)}
+            </span>
+            {match[2] ? <>: {renderInline(match[2], `li-${i}-r`)}</> : ""}
           </li>
         );
       }
@@ -121,7 +166,7 @@ function renderMarkdown(body: string) {
     if (line.startsWith("- ")) {
       return (
         <li key={i} className="text-sm text-zinc-600 dark:text-zinc-300 ml-4 mb-1">
-          {line.slice(2)}
+          {renderInline(line.slice(2), `li-${i}`)}
         </li>
       );
     }
@@ -141,7 +186,7 @@ function renderMarkdown(body: string) {
               key={j}
               className={j === 0 ? "text-zinc-800 dark:text-zinc-200 font-medium" : "text-zinc-600 dark:text-zinc-300"}
             >
-              {cell}
+              {renderInline(cell, `td-${i}-${j}`)}
             </span>
           ))}
         </div>
@@ -153,20 +198,14 @@ function renderMarkdown(body: string) {
     if (line.match(/^\d+\. /)) {
       return (
         <li key={i} className="text-sm text-zinc-600 dark:text-zinc-300 ml-4 mb-1 list-decimal">
-          {line.replace(/^\d+\.\s*/, "")}
+          {renderInline(line.replace(/^\d+\.\s*/, ""), `ol-${i}`)}
         </li>
       );
     }
-    const formatted = line.replace(
-      /\*\*(.+?)\*\*/g,
-      '<strong class="font-bold text-zinc-800 dark:text-zinc-200">$1</strong>'
-    );
     return (
-      <p
-        key={i}
-        className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed"
-        dangerouslySetInnerHTML={{ __html: formatted }}
-      />
+      <p key={i} className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+        {renderInline(line, `p-${i}`)}
+      </p>
     );
   });
 }

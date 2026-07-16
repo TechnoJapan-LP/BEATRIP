@@ -1,6 +1,6 @@
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { Article } from "@/data/mock-articles";
-import { cityNameJa } from "@/lib/airport-names";
+import { routeLineMd } from "./route-link";
 
 /**
  * 週次セールまとめ記事ジェネレータ
@@ -96,10 +96,16 @@ export function buildWeeklyRoundupArticle(
 
   const sections = enriched
     .map(({ sale, cheapest, routes }) => {
-      const top = routes.slice(0, 3).map((r) => {
-        const discount = r.discount ? `（${r.discount}%OFF）` : "";
-        return `- **${cityNameJa(r.originCode)}→${cityNameJa(r.destinationCode)}**: ¥${formatPrice(r.price)}${discount}`;
-      });
+      // 路線名から該当路線のセールページへ直接飛べるようにする (回遊率向上)
+      const top = routes.slice(0, 3).map((r) =>
+        routeLineMd({
+          originCode: r.originCode,
+          destinationCode: r.destinationCode,
+          price: r.price,
+          discount: r.discount,
+          cabin: r.cabin,
+        })
+      );
       const more =
         routes.length > 3
           ? `\nほか ${routes.length - 3} 路線（販売期間: ${sale.startDate}〜${sale.endDate}）`

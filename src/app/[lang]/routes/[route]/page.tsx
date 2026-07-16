@@ -280,6 +280,11 @@ export default async function RoutePage({ params }: Props) {
 
   const sameOriginRoutes = buildSuggestions(sameOriginPairs);
   const sameDestRoutes = buildSuggestions(sameDestPairs);
+  // セールが無い時の「次の一手」。記事や SNS からこのページに来た時点で
+  // セールが終わっていることは避けられないため、いまセール中の近い路線を出す。
+  const liveNearbyRoutes = [...sameDestRoutes, ...sameOriginRoutes]
+    .filter((r): r is RouteSuggestion & { price: number } => r.price !== null)
+    .slice(0, 6);
   // deal が無い場合の checkIn/checkOut フォールバック (60-67 日後)
   const today = new Date();
   const inDays = (n: number) =>
@@ -532,10 +537,62 @@ export default async function RoutePage({ params }: Props) {
                 <h2 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-1">
                   現在この路線のセールはありません
                 </h2>
-                <p className="text-sm text-zinc-600 mb-4">
-                  {origin}→{dest}の航空券セールは、各航空会社の公式サイトから毎日収集しています。新着次第ここに掲載しますので、今後の入荷をお待ちください。
+                <p className="text-sm text-zinc-600">
+                  {origin}→{dest}の航空券セールは、各航空会社の公式サイトから毎日収集しています。新着次第ここに掲載します。
                 </p>
-                <p className="text-xs text-zinc-500">
+
+                {prediction && prediction.historical_prices.length > 0 && (
+                  <p className="mt-4 text-sm text-zinc-600">
+                    過去データでは
+                    <span className="font-bold text-zinc-900">
+                      {prediction.best_month_name}
+                    </span>
+                    の出発が最安の傾向（平均より約{prediction.avg_saving_percent}%安）。下の価格推移で狙い目を確認できます。
+                  </p>
+                )}
+
+                {liveNearbyRoutes.length > 0 && (
+                  <div className="mt-5 text-left">
+                    <p className="mb-2 text-center text-xs font-medium text-zinc-500">
+                      いまセール中の近い路線
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {liveNearbyRoutes.map((r) => (
+                        <Link
+                          key={r.route}
+                          href={`/routes/${r.route}`}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                        >
+                          <span>
+                            {cityNameJa(r.o)}→{cityNameJa(r.d)}
+                          </span>
+                          <span className="font-bold text-rose-500">
+                            ¥{r.price.toLocaleString()}〜
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-5 flex flex-wrap justify-center gap-2">
+                  <Link
+                    href="/sale-calendar"
+                    className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                  >
+                    各社の次回セール予測を見る
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
+                  <Link
+                    href="/deals"
+                    className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                  >
+                    開催中のセール一覧
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
+                </div>
+
+                <p className="mt-4 text-xs text-zinc-500">
                   価格アラートに登録すると、新着セールを優先的にお届けします。
                 </p>
               </div>
