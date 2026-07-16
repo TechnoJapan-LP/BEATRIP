@@ -118,7 +118,7 @@ function daysLeft(dateStr: string) {
 const badgeConfig = {
   NEW: { label: "新着", className: "bg-emerald-500 text-white" },
   ENDING_SOON: { label: "締切間近", className: "bg-amber-500 text-white" },
-  LOWEST_IN_2_YEARS: { label: "2年で最安", className: "bg-rose-500 text-white" },
+  BIG_DISCOUNT: { label: "50%OFF以上", className: "bg-rose-500 text-white" },
 } as const;
 
 export default async function DealDetailPage({ params }: Props) {
@@ -132,6 +132,8 @@ export default async function DealDetailPage({ params }: Props) {
   const routeKey = `${deal.origin_code}→${deal.destination_code}`;
   const historicalData = await getHistoricalPrices(routeKey);
   const prediction = calculateBestTimeToBook(routeKey, historicalData);
+  // sample_count は実際に観測した日数。合成データは 0 なので実測判定に使える。
+  const observedDays = historicalData.reduce((n, h) => n + h.sample_count, 0);
 
   const deadlineDays = daysLeft(deal.booking_deadline);
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
@@ -376,16 +378,16 @@ export default async function DealDetailPage({ params }: Props) {
                     route={`${deal.origin_code}→${deal.destination_code}`}
                     discountPercent={deal.discount_percent}
                     bestMonthName={
-                      prediction.confidence_score > 0
+                      prediction.historical_prices.length > 0
                         ? prediction.best_month_name
                         : undefined
                     }
                     avgSavingPercent={
-                      prediction.confidence_score > 0
+                      prediction.historical_prices.length > 0
                         ? prediction.avg_saving_percent
                         : undefined
                     }
-                    isLowest={deal.badge === "LOWEST_IN_2_YEARS"}
+                    isLowest={deal.badge === "BIG_DISCOUNT"}
                   />
                 </div>
               )}
@@ -505,8 +507,6 @@ export default async function DealDetailPage({ params }: Props) {
                         </div>
                       </div>
                     )}
-                    {/* 「信頼度」ゲージは全件 confidence_score=80 のハードコードで
-                        実体のない指標だったため撤去 (誠実表示)。 */}
                   </div>
                 </div>
               </div>
@@ -518,12 +518,14 @@ export default async function DealDetailPage({ params }: Props) {
                     <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-xl">
                       Best Time to Book
                     </h3>
-                    <div className="flex items-center gap-1.5">
-                      <Shield className="h-4 w-4 text-emerald-500" />
-                      <span className="text-xs font-medium text-zinc-500">
-                        信頼度 {prediction.confidence_score}%
-                      </span>
-                    </div>
+                    {/* sample_count は実際に観測した日数。合成データは 0 なので
+                        これが「実測 / 推計」の判定になる。実測が貯まれば自動で
+                        表示が切り替わる (price-observations.ts)。 */}
+                    <span className="text-[10px] font-medium text-zinc-400">
+                      {observedDays > 0
+                        ? `実測 ${observedDays}日分`
+                        : "季節傾向からの推計"}
+                    </span>
                   </div>
 
                   <div className="mb-6 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 px-4 py-3">
@@ -534,7 +536,9 @@ export default async function DealDetailPage({ params }: Props) {
                       </span>
                     </div>
                     <p className="text-xs text-emerald-600 dark:text-emerald-300">
-                      年間平均より約{prediction.avg_saving_percent}%安く予約できる傾向があります
+                      {observedDays > 0
+                        ? `実測データでは、平均より約${prediction.avg_saving_percent}%安い時期です`
+                        : `季節傾向の推計では、年間平均より約${prediction.avg_saving_percent}%安い時期です`}
                     </p>
                   </div>
 

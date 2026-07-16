@@ -76,12 +76,12 @@ export function calculateBestTimeToBook(
 
   const avgSaving = ((yearlyAvg - bestAvgPrice) / yearlyAvg) * 100;
 
+  // confidence_score は「実測サンプル数」を根拠にしていたが、履歴は合成値で
+  // sample_count は実体が無い。実測が貯まるまで信頼度は算出しない (0 = 非表示)。
   const totalSamples = routeData.reduce((sum, d) => sum + d.sample_count, 0);
-  const monthCoverage = monthlyMap.size / 12;
-  const confidenceScore = Math.min(
-    100,
-    Math.round(monthCoverage * 60 + Math.min(totalSamples / 2, 40))
-  );
+  const confidenceScore = totalSamples > 0
+    ? Math.min(100, Math.round((monthlyMap.size / 12) * 60 + Math.min(totalSamples / 2, 40)))
+    : 0;
 
   return {
     route_key: routeKey,

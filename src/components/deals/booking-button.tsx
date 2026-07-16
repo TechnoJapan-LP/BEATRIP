@@ -44,7 +44,7 @@ export function BookingButton({
   bestMonthName?: string;
   /** 価値表示: 年間平均比の節約率 */
   avgSavingPercent?: number;
-  /** 価値表示: 過去2年で最安水準か */
+  /** 価値表示: 割引率50%以上か (過去実績との比較ではない) */
   isLowest?: boolean;
 }) {
   const [clicked, setClicked] = useState(false);
@@ -173,7 +173,7 @@ export function BookingButton({
         {isLowest && (
           <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
             <BarChart3 className="h-3 w-3 flex-shrink-0" />
-            過去2年でも最安水準の価格です
+            割引率50%以上の大幅セール価格です
           </div>
         )}
         {discountPercent !== undefined && discountPercent > 0 && (
@@ -185,7 +185,7 @@ export function BookingButton({
         {bestMonthName && avgSavingPercent !== undefined && avgSavingPercent > 0 && (
           <div className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-600 dark:text-zinc-300">
             <CalendarCheck className="h-3 w-3 flex-shrink-0 text-sky-500" />
-            この路線の底値は{bestMonthName}（年間平均比 約{avgSavingPercent}%安）
+            季節傾向の推計では{bestMonthName}が狙い目（年間平均比 約{avgSavingPercent}%安）
           </div>
         )}
         <div className="text-[10px] text-zinc-400 dark:text-zinc-500 pt-0.5">

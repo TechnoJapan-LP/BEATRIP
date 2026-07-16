@@ -4,6 +4,7 @@ import { getDestinationImage } from "./destination-images";
 import { JP_AIRPORT_CODES } from "@/lib/airports/domestic";
 import { deals as mockDeals, historicalPrices as mockHistoricalPrices } from "@/data/mock-deals-v2";
 import { generateHistoricalPrices } from "@/lib/predictions/historical-generator";
+import { getObservedMonthly } from "@/lib/deals/price-observations";
 import { ROUTE_BASELINES } from "@/data/route-baselines";
 import { buildAffiliateLink, buildAffiliateLinkFromDeal } from "@/lib/affiliate/url-builder";
 import type { DealSchema, DealHistoricalPrice } from "@/data/deal-schema";
@@ -128,13 +129,13 @@ function convertToDeal(
   // 全件 NEW/ENDING_SOON になるのは誤認を招く。相場比50%超のときだけ LOWEST を出す。
   const isWatch = sale.airlineCode === "TP";
   if (isWatch) {
-    badge = route.discount >= 50 ? "LOWEST_IN_2_YEARS" : null;
+    badge = route.discount >= 50 ? "BIG_DISCOUNT" : null;
   } else if (daysFromStart <= 2) {
     badge = "NEW";
   } else if (daysUntilDeadline <= 3 && daysUntilDeadline > 0) {
     badge = "ENDING_SOON";
   } else if (route.discount >= 50) {
-    badge = "LOWEST_IN_2_YEARS";
+    badge = "BIG_DISCOUNT";
   }
 
   // アフィリエイトURL生成（公式 → 航空会社直販 → Skyscanner の優先順）
@@ -275,16 +276,20 @@ export async function getHistoricalPrices(routeKey: string): Promise<DealHistori
   // sitemap がハイフンで照会して常に空になり、中身のある路線まで noindex になる。
   const key = routeKey.includes("→") ? routeKey : routeKey.replace("-", "→");
 
-  // 1. 静的データを優先
+  // 1. 実測 (TravelPayouts の観測ログ) を最優先。sample_count > 0 が実測の証。
+  const observed = await getObservedMonthly(key);
+  if (observed && observed.length > 0) return observed;
+
+  // 2. 手入力の想定値 (実測ではない。sample_count は 0)
   const staticData = mockHistoricalPrices.filter((p) => p.route_key === key);
   if (staticData.length > 0) return staticData;
 
-  // 2. ベースラインから自動生成
+  // 3. ベースラインからの推計 (実測ではない。sample_count は 0)
   if (ROUTE_BASELINES[key]) {
     return generateHistoricalPrices(key);
   }
 
-  // 3. データなし
+  // 4. データなし
   return [];
 }
 

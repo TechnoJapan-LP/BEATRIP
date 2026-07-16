@@ -155,7 +155,7 @@
     "methodology": [
       "Sale listings are collected through a combination of automated monitoring and manual review, sourced from airline official websites, official announcements, and travel news media (such as Traicy). Primary sources (official announcements) always take priority, and we do not publish information we cannot trace to a source.",
       "All listed prices reflect the moment they were fetched. Airfares and seat availability change constantly, so always confirm the latest price and conditions on the official site before booking.",
-      "Figures such as \"typical price\", \"seasonal index\", and \"sale-timing forecast\" are statistical estimates based on historical data. They are clearly labeled as estimates on the site and do not guarantee actual prices or future sales."
+      "Figures such as \"typical price\", \"seasonal index\", and \"sale-timing forecast\" are estimates derived from assumed baseline fares and a seasonality model, not from measured fare history. They are clearly labeled as estimates on the site and do not guarantee actual prices or future sales."
     ],
     "editorialPolicyTitle": "Editorial policy",
     "editorialPolicyText": "Our content standards, how affiliate advertising relates to rankings, and our correction policy are published in the editorial policy.",
@@ -449,7 +449,7 @@
       },
       {
         "title": "4. Editorial independence",
-        "content": "Sale listings, articles, and curated hotel picks are chosen for their value to users, independent of the size of any affiliate commission. \"Best time to book\" and seasonal forecasts are statistical guidance based on historical data, not a guarantee of any particular advertiser's sale."
+        "content": "Sale listings, articles, and curated hotel picks are chosen for their value to users, independent of the size of any affiliate commission. \"Best time to book\" and seasonal forecasts are estimates derived from assumed baseline fares and a seasonality model (not measured fare history), and are not a guarantee of any particular advertiser's sale."
       },
       {
         "title": "5. Cookies and analytics",
@@ -476,7 +476,7 @@
       },
       {
         "title": "2. How we handle estimates",
-        "content": "Figures such as \"typical price\", \"seasonal index\", \"sale-timing forecast\" and \"best time to book\" are statistical estimates based on historical data. They are labeled as estimates throughout the site and do not guarantee actual prices, future sales, or seat availability. When the underlying data changes, estimates are recalculated and updated."
+        "content": "Figures such as \"typical price\", \"seasonal index\", \"sale-timing forecast\" and \"best time to book\" are estimates derived from assumed baseline fares and a seasonality model, not from measured fare history. They are labeled as estimates throughout the site and do not guarantee actual prices, future sales, or seat availability. When the underlying data changes, estimates are recalculated and updated."
       },
       {
         "title": "3. Relationship with affiliate advertising",

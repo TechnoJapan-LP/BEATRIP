@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isKVEnabled } from "@/lib/store/kv";
 import { loadAllSales } from "@/lib/store/sale-store";
 import { loadHotDeals } from "@/lib/deals/hot-deals";
+import { getObservationStats } from "@/lib/deals/price-observations";
 
 /**
  * スクレイパー稼働の公開ヘルスチェック (機密情報は出さない)。
@@ -89,6 +90,14 @@ export async function GET() {
   };
 
   // 超お買い得 (価格急落) の稼働状況
+  // 実測運賃の蓄積状況。routesReadyForReal が増えるほど「推計」表示が実測に変わる。
+  let priceObservations = { routes: 0, points: 0, routesReadyForReal: 0 };
+  try {
+    priceObservations = await getObservationStats();
+  } catch {
+    // KV 未設定・未蓄積時は既定値のまま
+  }
+
   let hotDeals = { active: 0, gone: 0 };
   try {
     const list = await loadHotDeals();
@@ -110,6 +119,7 @@ export async function GET() {
     analytics,
     affiliate,
     hotDeals,
+    priceObservations,
     hint: ready
       ? "A 設定OK。latestScrapedAt が直近なら cron も稼働中。"
       : "本番稼働には SCRAPER_MODE=hybrid と KV 接続 (kvEnabled=true) が必要。",

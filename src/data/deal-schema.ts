@@ -16,7 +16,7 @@ export type DealSchema = {
   discount_percent: number;
   confidence_score: number;
   cabin: "Economy" | "Premium Economy" | "Business" | "First";
-  badge: "NEW" | "ENDING_SOON" | "LOWEST_IN_2_YEARS" | null;
+  badge: "NEW" | "ENDING_SOON" | "BIG_DISCOUNT" | null;
   image_url: string;
   is_niche_lcc: boolean;
   is_hidden_gem: boolean;

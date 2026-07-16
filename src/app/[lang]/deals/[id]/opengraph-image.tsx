@@ -153,7 +153,7 @@ export default async function OGImage({
                   textTransform: "uppercase" as const,
                 }}
               >
-                {deal.badge === "LOWEST_IN_2_YEARS"
+                {deal.badge === "BIG_DISCOUNT"
                   ? "LOWEST IN 2 YEARS"
                   : deal.badge === "ENDING_SOON"
                     ? "ENDING SOON"

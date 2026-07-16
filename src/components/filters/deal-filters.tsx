@@ -26,7 +26,7 @@ export type AreaFilter =
   | "europe-americas"
   | "oceania-other";
 export type DiscountFilter = "all" | "gte30" | "gte50" | "gte70";
-export type BadgeFilter = "all" | "NEW" | "ENDING_SOON" | "LOWEST_IN_2_YEARS";
+export type BadgeFilter = "all" | "NEW" | "ENDING_SOON" | "BIG_DISCOUNT";
 export type SortOption = "discount" | "price" | "deadline";
 
 type DealFiltersProps = {
@@ -97,7 +97,7 @@ const BADGE_LABELS: Record<BadgeFilter, string> = {
   all: "すべて",
   NEW: "NEW",
   ENDING_SOON: "ENDING SOON",
-  LOWEST_IN_2_YEARS: "LOWEST IN 2 YEARS",
+  BIG_DISCOUNT: "50%+ OFF",
 };
 
 const SORT_LABELS: Record<SortOption, string> = {

@@ -84,7 +84,7 @@ function areaMatches(deal: DealSchema, filter: AreaFilter): boolean {
 const VALID_PRICE: PriceRange[] = ["all", "lt30k", "30k-80k", "80k-150k", "gte150k"];
 const VALID_AREA: AreaFilter[] = ["all", "domestic", "overseas", "asia", "europe-americas", "oceania-other"];
 const VALID_DISCOUNT: DiscountFilter[] = ["all", "gte30", "gte50", "gte70"];
-const VALID_BADGE: BadgeFilter[] = ["all", "NEW", "ENDING_SOON", "LOWEST_IN_2_YEARS"];
+const VALID_BADGE: BadgeFilter[] = ["all", "NEW", "ENDING_SOON", "BIG_DISCOUNT"];
 const VALID_FLIGHT_TYPE: FlightType[] = ["all", "domestic", "international"];
 const VALID_SORT: SortOption[] = ["discount", "price", "deadline"];
 

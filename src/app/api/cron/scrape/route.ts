@@ -26,6 +26,7 @@ import { postSalesToBluesky, postHotDealsToBluesky } from "@/lib/social/bluesky"
 import { postSalesToX, postHotDealsToX } from "@/lib/social/x";
 import { getPostedIds, markPosted } from "@/lib/social/posted-store";
 import { scanHotDeals } from "@/lib/deals/hot-deals";
+import { recordPriceObservations } from "@/lib/deals/price-observations";
 import { fetchBusinessWatchSales } from "@/lib/flights/travelpayouts-prices";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
@@ -212,13 +213,19 @@ export async function GET(request: NextRequest) {
     // 超お買い得 (価格急落) 検出: TP 最安値ウォッチ (エコノミー) + ビジネスクラスの
     // 前回スナップショット比較で急落を検出し、新規検出分を X/Bluesky に速報する。
     // hot deal の id は検出ごとに一意なので、投稿台帳の dedup がそのまま効く。
-    let hotDealSummary = { detected: 0, active: 0, gone: 0, posted: 0 };
+    const hotDealSummary = { detected: 0, active: 0, gone: 0, posted: 0 };
+    // 実測運賃の蓄積状況 (価格推移を推計→実測へ切り替える燃料)
+    let observedSummary = { routes: 0, points: 0 };
     try {
       const tpEconomySales: AirlineSale[] = results
         .filter((r) => r.airlineCode === "TP")
         .flatMap((r) => r.sales);
       const bizSales = await fetchBusinessWatchSales();
-      const scan = await scanHotDeals([...tpEconomySales, ...bizSales]);
+      const watched = [...tpEconomySales, ...bizSales];
+      // 観測した実運賃を蓄積する。これが貯まると「価格推移」が推計から実測に
+      // 切り替わる (price-observations.ts)。捨てると永久に実測ゼロのままになる。
+      observedSummary = await recordPriceObservations(watched);
+      const scan = await scanHotDeals(watched);
       hotDealSummary.detected = scan.detected.length;
       hotDealSummary.active = scan.active;
       hotDealSummary.gone = scan.wentGone;
@@ -252,6 +259,7 @@ export async function GET(request: NextRequest) {
       },
       notifications: { sent, errors },
       hotDeals: hotDealSummary,
+      priceObservations: observedSummary,
       newsletter: {
         status: newsletterStatus,
         sent: newsletterSent,

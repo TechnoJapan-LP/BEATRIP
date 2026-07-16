@@ -201,6 +201,9 @@ export default async function RoutePage({ params }: Props) {
     historicalData.length > 0
       ? calculateBestTimeToBook(routeKey, historicalData)
       : null;
+  // sample_count は実際に観測した日数。合成データは 0 なので、これが実測の判定になる。
+  const observedDays = historicalData.reduce((n, h) => n + h.sample_count, 0);
+  const isObserved = observedDays > 0;
 
   const firstDeal = routeDeals[0];
   const origin = firstDeal?.origin ?? cityNameJa(parsed.origin);
@@ -341,7 +344,9 @@ export default async function RoutePage({ params }: Props) {
   if (prediction && prediction.best_month_name) {
     faqs.push({
       q: `${origin}→${dest}を安く買うなら何月が良いですか？`,
-      a: `過去の${origin}→${dest}の運賃データから、${prediction.best_month_name}の出発が最も安い傾向（平均より約${prediction.avg_saving_percent}%安）です。出発の2〜3ヶ月前の予約も安く取るコツです。`,
+      a: isObserved
+        ? `BEATRIPが実測した${observedDays}日分の運賃データでは、${origin}→${dest}は${prediction.best_month_name}の出発が最も安い時期（観測期間の平均より約${prediction.avg_saving_percent}%安）です。実際の価格は各社の公式サイトでご確認ください。出発の2〜3ヶ月前の予約も安く取るコツです。`
+        : `${origin}→${dest}の季節傾向モデルによる推計では、${prediction.best_month_name}の出発が最も安い時期（年間平均より約${prediction.avg_saving_percent}%安）です。これは実測の運賃履歴ではなく目安のため、実際の価格は各社の公式サイトでご確認ください。出発の2〜3ヶ月前の予約も安く取るコツです。`,
     });
   } else {
     faqs.push({
@@ -543,11 +548,11 @@ export default async function RoutePage({ params }: Props) {
 
                 {prediction && prediction.historical_prices.length > 0 && (
                   <p className="mt-4 text-sm text-zinc-600">
-                    過去データでは
+                    {isObserved ? "実測データでは" : "季節傾向の推計では"}
                     <span className="font-bold text-zinc-900">
                       {prediction.best_month_name}
                     </span>
-                    の出発が最安の傾向（平均より約{prediction.avg_saving_percent}%安）。下の価格推移で狙い目を確認できます。
+                    の出発が狙い目（年間平均より約{prediction.avg_saving_percent}%安）。あくまで目安のため、実際の価格は公式サイトでご確認ください。
                   </p>
                 )}
 
@@ -637,7 +642,7 @@ export default async function RoutePage({ params }: Props) {
                               ? "新着"
                               : deal.badge === "ENDING_SOON"
                                 ? "締切間近"
-                                : "2年で最安"}
+                                : "50%OFF以上"}
                           </Badge>
                         )}
                       </div>
@@ -741,15 +746,20 @@ export default async function RoutePage({ params }: Props) {
 
             {prediction && prediction.historical_prices.length > 0 && (
               <div className="rounded-xl border border-zinc-100 bg-white p-5">
-                <h2 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-3">
+                <h2 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-1">
                   Best Time to Book
                 </h2>
+                <p className="mb-3 text-[10px] text-zinc-400">
+                  {isObserved
+                    ? `実測 ${observedDays}日分の観測データ`
+                    : "季節傾向からの推計（実測の運賃履歴ではありません）"}
+                </p>
                 <div className="mb-4 rounded-lg bg-emerald-50 px-3 py-2">
                   <span className="text-sm font-bold text-emerald-700">
                     ベスト: {prediction.best_month_name}
                   </span>
                   <p className="text-[11px] text-emerald-600">
-                    平均より約{prediction.avg_saving_percent}%安い
+                    {isObserved ? "" : "推計では"}平均より約{prediction.avg_saving_percent}%安い
                   </p>
                 </div>
                 <PriceChart prediction={prediction} />

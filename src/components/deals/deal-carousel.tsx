@@ -17,7 +17,7 @@ import type { DealSchema } from "@/data/deal-schema";
 const badgeConfig = {
   NEW: { label: "新着", className: "bg-emerald-500 text-white" },
   ENDING_SOON: { label: "締切間近", className: "bg-amber-500 text-white" },
-  LOWEST_IN_2_YEARS: { label: "2年で最安", className: "bg-rose-500 text-white" },
+  BIG_DISCOUNT: { label: "50%OFF以上", className: "bg-rose-500 text-white" },
 } as const;
 
 function formatPrice(price: number) {

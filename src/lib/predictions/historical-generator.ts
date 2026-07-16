@@ -7,11 +7,15 @@ import {
 const CURRENT_YEAR = new Date().getFullYear();
 
 /**
- * 路線ベースラインから12ヶ月分の価格履歴データを生成
+ * 路線ベースラインから12ヶ月分の価格「推計」を生成する。
  *
- * 月次の平均価格・最安価格を `seasonality` プロファイルに基づいて算出。
- * 統計的なバラつきを加えるためにわずかなランダム要素を入れる
- * （ただし routeKey ごとに決定的になるよう疑似乱数を使用）。
+ * 重要: これは観測データではない。ROUTE_BASELINES の想定価格に季節係数と
+ * 疑似乱数ノイズを掛けた合成値であり、実際に計測した運賃履歴ではない。
+ * UI では必ず「推計」と明示すること。実測と誤認させる表示 (「過去データでは」
+ * 「2年で最安」等) は景表法上の有利誤認にあたり得るため禁止。
+ *
+ * 実測が貯まったら (lib/deals/price-observations.ts) そちらを優先し、
+ * この推計はフォールバックに後退させる。
  */
 export function generateHistoricalPrices(
   routeKey: string,
@@ -40,8 +44,9 @@ export function generateHistoricalPrices(
       (baseline.minPrice * multiplier * (1 + noiseMin)) / 100
     ) * 100;
 
-    // 月ごとの観測サンプル数（季節性に応じて変動）
-    const sampleCount = Math.round(8 + multiplier * 8);
+    // 注: 観測件数ではない。合成値なので実サンプル数は 0。
+    // 誤って「信頼度」等の根拠に使われないよう 0 を入れる。
+    const sampleCount = 0;
 
     result.push({
       deal_id: `generated-${routeKey}-${month}`,
