@@ -13,7 +13,11 @@ import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
-import { airlines, getAirlineByCode } from "@/data/airlines";
+import {
+  airlines,
+  getAirlineByCode,
+  airlineServesAirport,
+} from "@/data/airlines";
 import { AIRPORTS, getAirportByCode } from "@/data/airports";
 import { cityNameJa } from "@/lib/airport-names";
 import { getActiveDeals } from "@/lib/deals/deal-service";
@@ -37,7 +41,7 @@ export function generateStaticParams() {
   const params: { code: string; iata: string }[] = [];
   for (const airline of airlines) {
     const servedAirports = AIRPORTS.filter((a) =>
-      a.airlines.includes(airline.code),
+      airlineServesAirport(airline, a),
     );
     for (const airport of servedAirports) {
       params.push({
@@ -121,7 +125,7 @@ export default async function AirlineAirportPage({ params }: Props) {
   const airport = getAirportByCode(iata.toUpperCase());
 
   if (!airline || !airport) notFound();
-  if (!airport.airlines.includes(airline.code)) notFound();
+  if (!airlineServesAirport(airline, airport)) notFound();
 
   const hotelSlug = getHotelSlugByIata(airport.iata);
   const hotelCitySlugs = getHotelCitiesForAirport(airport.iata);
@@ -145,9 +149,7 @@ export default async function AirlineAirportPage({ params }: Props) {
       return {
         iata: destIata,
         name: cityNameJa(destIata),
-        served: destAirport
-          ? destAirport.airlines.includes(airline.code)
-          : false,
+        served: destAirport ? airlineServesAirport(airline, destAirport) : false,
       };
     })
     .filter((r) => r.served)

@@ -12,10 +12,13 @@ import type { AirlineProfile } from "@/lib/scrapers/types";
 // コンテンツとしてインデックスされていた経緯があり、Peach へ向けると内容の
 // 異なるページへの転送になるため見送った。
 //
-// airports.ts の airlines[] とは単純文字列一致で突き合わせて空港ページを生成する
+// airports.ts の airlines[] とは突き合わせて空港ページを生成する
 // (sitemap.ts / airports/[iata]/page.tsx)。あちらは SKY/ZIP/SNA/SFJ 等の別体系が
-// 混ざっており、一致しない社は空港ページが 0 枚になる。code を触るときは
-// airports.ts 側も必ず合わせること。
+// 混ざっているため、両者は `aliases` で繋ぐ。突き合わせは必ず
+// airlineServesAirport() / getAirlineByCode() を通すこと — 生の文字列一致で
+// 比較すると、別表記の社が黙って 0 枚になったり、コードが衝突した別の社に
+// 就航データが付いて虚偽表示になる (APJ が Peach と Spring Japan で衝突した事故)。
+// 新しい表記が出てきたら code を触るのではなく aliases に足す。
 export const airlines: AirlineProfile[] = [
   {
     code: "ANA",
@@ -191,6 +194,7 @@ export const airlines: AirlineProfile[] = [
   //    IATA コードを使用)。logo はブランドロゴの捏造を避けモノグラム SVG。──
   {
     code: "BC",
+    aliases: ["SKY"], // ICAO
     name: "スカイマーク",
     nameEn: "Skymark Airlines",
     logo: "/airlines/BC.svg",
@@ -201,6 +205,7 @@ export const airlines: AirlineProfile[] = [
   },
   {
     code: "ZG",
+    aliases: ["ZIP"],
     name: "ZIPAIR",
     nameEn: "ZIPAIR Tokyo",
     logo: "/airlines/ZG.svg",
@@ -231,6 +236,7 @@ export const airlines: AirlineProfile[] = [
   },
   {
     code: "HD",
+    aliases: ["AIRDO", "ADO"], // ADO = ICAO
     name: "AIRDO",
     nameEn: "AIRDO",
     logo: "/airlines/HD.svg",
@@ -241,6 +247,7 @@ export const airlines: AirlineProfile[] = [
   },
   {
     code: "6J",
+    aliases: ["SNA", "SNJ"], // SNA = 旧社名 Skynet Asia Airways 由来, SNJ = ICAO
     name: "ソラシドエア",
     nameEn: "Solaseed Air",
     logo: "/airlines/6J.svg",
@@ -251,6 +258,7 @@ export const airlines: AirlineProfile[] = [
   },
   {
     code: "7G",
+    aliases: ["SFJ"], // ICAO
     name: "スターフライヤー",
     nameEn: "StarFlyer",
     logo: "/airlines/7G.svg",
@@ -261,8 +269,30 @@ export const airlines: AirlineProfile[] = [
   },
 ];
 
+/**
+ * 正規 code か aliases のいずれかに一致するか。
+ *
+ * 他データ (airports.ts 等) は同じ社を別表記で持っていることがあるため、
+ * 突き合わせは必ずこれを通す。生の `a.code === code` で比較すると、
+ * 別表記の社が黙って 0 件になったり、コードが偶然衝突した別の社に
+ * 就航データが付いて虚偽表示になる (ab2324e の APJ/Peach 事故)。
+ */
+export function airlineHasCode(airline: AirlineProfile, code: string) {
+  const c = code.trim().toUpperCase();
+  return airline.code === c || (airline.aliases?.includes(c) ?? false);
+}
+
+/** 空港マスタの airlines[] に、その社が (別表記も含めて) 載っているか */
+export function airlineServesAirport(
+  airline: AirlineProfile,
+  airport: { airlines: string[] }
+) {
+  return airport.airlines.some((c) => airlineHasCode(airline, c));
+}
+
+/** 正規 code または別表記から航空会社を解決。未登録キャリアは undefined */
 export function getAirlineByCode(code: string) {
-  return airlines.find((a) => a.code === code);
+  return airlines.find((a) => airlineHasCode(a, code));
 }
 
 /** 表示名（nameEn / name）から航空会社を解決。未登録キャリアは undefined */

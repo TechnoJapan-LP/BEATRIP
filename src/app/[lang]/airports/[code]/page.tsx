@@ -118,10 +118,12 @@ export default async function AirportPage({ params }: Props) {
     .sort((a, b) => b.discount_percent - a.discount_percent)
     .slice(0, 8);
 
-  // 主要就航航空会社の Link 解決
+  // 主要就航航空会社の Link 解決。airport.airlines は別表記 (SKY/SNA 等) を
+  // 含むため、表示と href には解決後の正規 code を使う。
   const airlineLinks = airport.airlines
-    .map((code) => ({ code, info: getAirlineByCode(code) }))
-    .filter((a) => a.info);
+    .map((raw) => getAirlineByCode(raw))
+    .filter((info) => info !== undefined)
+    .map((info) => ({ code: info.code, info }));
 
   // 人気路線: airport.popularRoutes は IATA list、その先空港情報を解決
   const popularDestinations = airport.popularRoutes
