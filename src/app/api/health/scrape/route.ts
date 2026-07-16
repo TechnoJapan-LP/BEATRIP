@@ -74,8 +74,15 @@ export async function GET() {
   // 未設定だと buildPartnerUrl が tp.media wrap せず素のリンクを返す = 報酬ゼロ。
   const affiliate = {
     airalo: Boolean(process.env.TP_AIRALO_PROGRAM_ID?.trim()),
+    gigsky: Boolean(process.env.TP_GIGSKY_PROGRAM_ID?.trim()),
+    yesim: Boolean(process.env.TP_YESIM_PROGRAM_ID?.trim()),
     kiwitaxi: Boolean(process.env.TP_KIWITAXI_PROGRAM_ID?.trim()),
     insurance: Boolean(process.env.TP_INSURANCE_PROGRAM_ID?.trim()),
+    localrent: Boolean(process.env.TP_LOCALRENT_PROGRAM_ID?.trim()),
+    getrentacar: Boolean(process.env.TP_GETRENTACAR_PROGRAM_ID?.trim()),
+    klook: Boolean(process.env.TP_KLOOK_PROGRAM_ID?.trim()),
+    kkday: Boolean(process.env.TP_KKDAY_PROGRAM_ID?.trim()),
+    airhelp: Boolean(process.env.TP_AIRHELP_PROGRAM_ID?.trim()),
     booking: Boolean(process.env.TP_BOOKING_PROGRAM_ID?.trim()),
     agoda: Boolean(process.env.TP_AGODA_PROGRAM_ID?.trim()),
     tripHotel: Boolean(process.env.TP_TRIP_HOTEL_PROGRAM_ID?.trim()),
