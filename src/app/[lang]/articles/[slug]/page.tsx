@@ -4,6 +4,7 @@ import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Tag, ArrowRight } from "lucide-react";
+import { cityNameJa } from "@/lib/airport-names";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Badge } from "@/components/ui/badge";
@@ -337,22 +338,40 @@ export default async function ArticleDetailPage({ params }: Props) {
             )}
 
             {linkedRoutes.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
-                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
-                  関連路線
+              /* 記事から該当路線のセールへ即遷移できる主要導線。
+                 以前は IATA (HND → OBO) の小さな文字で見落とされていたため、
+                 日本語の都市名を主役にし、枠線と背景で行として押しやすくした。 */
+              <div className="rounded-xl border border-zinc-200 bg-white p-5 ring-1 ring-zinc-900/5 dark:border-zinc-700 dark:bg-zinc-900">
+                <h3 className="mb-1 font-heading text-lg uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
+                  この路線のセールを見る
                 </h3>
-                <ul className="space-y-1">
-                  {linkedRoutes.map((r) => (
-                    <li key={r}>
-                      <Link
-                        href={`/routes/${r}`}
-                        className="flex items-center justify-between rounded-lg px-3 py-2 text-xs text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group"
-                      >
-                        <span className="font-mono">{r.replace("-", " → ")}</span>
-                        <ArrowRight className="h-3 w-3 text-zinc-300 transition-transform group-hover:translate-x-0.5" />
-                      </Link>
-                    </li>
-                  ))}
+                <p className="mb-3 text-xs text-zinc-500 dark:text-zinc-400">
+                  価格推移・最安値・現在のセールを確認できます
+                </p>
+                <ul className="space-y-1.5">
+                  {linkedRoutes.map((r) => {
+                    const [o, d] = r.split("-");
+                    const label =
+                      o && d ? `${cityNameJa(o)} → ${cityNameJa(d)}` : r;
+                    return (
+                      <li key={r}>
+                        <Link
+                          href={`/routes/${r}`}
+                          className="group flex items-center justify-between gap-2 rounded-lg border border-zinc-100 bg-zinc-50/60 px-3 py-2.5 transition-colors hover:border-zinc-300 hover:bg-white dark:border-zinc-800 dark:bg-zinc-800/40 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
+                        >
+                          <span className="min-w-0">
+                            <span className="block truncate text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                              {label}
+                            </span>
+                            <span className="block font-mono text-[10px] text-zinc-400">
+                              {o} → {d}
+                            </span>
+                          </span>
+                          <ArrowRight className="h-4 w-4 flex-shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-900 dark:group-hover:text-zinc-100" />
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}

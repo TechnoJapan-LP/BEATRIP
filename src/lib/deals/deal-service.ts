@@ -1,6 +1,7 @@
 import { loadAllSales } from "@/lib/store/sale-store";
 import { airlines, getAirlineByCode } from "@/data/airlines";
 import { getDestinationImage } from "./destination-images";
+import { JP_AIRPORT_CODES } from "@/lib/airports/domestic";
 import { deals as mockDeals, historicalPrices as mockHistoricalPrices } from "@/data/mock-deals-v2";
 import { generateHistoricalPrices } from "@/lib/predictions/historical-generator";
 import { ROUTE_BASELINES } from "@/data/route-baselines";
@@ -9,12 +10,6 @@ import type { DealSchema, DealHistoricalPrice } from "@/data/deal-schema";
 import type { AirlineSale, SaleRoute } from "@/lib/scrapers/types";
 
 // ── 日本の空港コード（国内線判定用） ──
-const JP_AIRPORT_CODES = new Set([
-  "NRT", "HND", "KIX", "ITM", "NGO", "CTS", "FUK", "OKA",
-  "KOJ", "HIJ", "SDJ", "KMQ", "NGS", "OIT", "MYJ", "KCZ",
-  "TAK", "TKS", "KMJ", "AOJ", "AKJ", "MMB", "OBO", "HKD",
-  "GAJ", "SHM", "UBJ", "IZO", "TTJ", "KMI", "ASJ", "ISG", "MMY",
-]);
 
 // ── 目的地コード → 日本語名 ──
 const DESTINATION_NAMES: Record<string, string> = {

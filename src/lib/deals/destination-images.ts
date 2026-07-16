@@ -90,7 +90,9 @@ const FALLBACK_POOL: string[] = [
   "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80", // 機窓・翼
   "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800&q=80", // 雲海
   "https://images.unsplash.com/photo-1503221043305-f7498f8b7888?w=800&q=80", // 空港・出発
-  "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?w=800&q=80", // 世界地図とカメラ
+  // 注: photo-1530521954074 (世界地図とカメラ) は被写体がカメラ本体で
+  //     「航空券セール」の記事カバーとして意味が通らないため除外した。
+  //     航空・空・旅の移動を想起させる画像だけをプールに残す。
   "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?w=800&q=80", // 飛行機と夕焼け
   "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", // 山並みと光
   "https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&q=80", // ロードトリップ

@@ -19,14 +19,9 @@ import { useDictionary, useLocalizedHref } from "@/components/i18n/locale-provid
 import type { DealSchema } from "@/data/deal-schema";
 import type { SaleEvent } from "@/data/mock-deals";
 import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
+import { JP_AIRPORT_CODES } from "@/lib/airports/domestic";
 
 // 日本国内の空港コード
-const JP_AIRPORT_CODES = new Set([
-  "NRT", "HND", "KIX", "ITM", "NGO", "CTS", "FUK", "OKA",
-  "KOJ", "HIJ", "SDJ", "KMQ", "NGS", "OIT", "MYJ", "KCZ",
-  "TAK", "TKS", "KMJ", "AOJ", "AKJ", "MMB", "OBO", "HKD",
-  "GAJ", "SHM", "UBJ", "IZO", "TTJ", "KMI", "ASJ", "ISG", "MMY",
-]);
 
 function isDomesticDeal(deal: DealSchema): boolean {
   return JP_AIRPORT_CODES.has(deal.origin_code) && JP_AIRPORT_CODES.has(deal.destination_code);

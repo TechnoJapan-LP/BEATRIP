@@ -6,6 +6,7 @@ import type { Article } from "@/data/mock-articles";
 import { deals } from "@/data/mock-deals-v2";
 import { cityNameJa } from "@/lib/airport-names";
 import { getDestinationImage } from "@/lib/deals/destination-images";
+import { isDomesticRoute } from "@/lib/airports/domestic";
 import { getKV } from "@/lib/store/kv";
 
 const KV_ARTICLES_KEY = "beatrip:articles:generated";
@@ -125,61 +126,103 @@ ${cheapest ? `最安値は**${cheapest.originCode}→${cheapest.destinationCode}
   };
 }
 
-function generatePriceDropArticle(
+/** 値下げ速報に載せる最大路線数 (多すぎると読まれないため) */
+const MAX_DROP_ROUTES = 10;
+/** 掲載する最低値下げ額: 国内線 (¥3,000 未満は誤差レベルなので載せない) */
+const MIN_DROP_DOMESTIC = 3000;
+/** 掲載する最低値下げ額: 国際線 (単価が高いので閾値も上げる) */
+const MIN_DROP_INTERNATIONAL = 10000;
+
+/** routeKey ("HND→FUK(Economy)") を分解。壊れていれば null。 */
+function parseRouteKey(
+  routeKey: string
+): { origin: string; dest: string; cabin: string } | null {
+  const m = routeKey.match(/^([A-Z]{3})→([A-Z]{3})(?:\(([^)]+)\))?/);
+  if (!m) return null;
+  return { origin: m[1], dest: m[2], cabin: m[3] ?? "Economy" };
+}
+
+/** キャビンの日本語表記 */
+function cabinJa(cabin: string): string {
+  if (/business/i.test(cabin)) return "ビジネス";
+  if (/first/i.test(cabin)) return "ファースト";
+  if (/premium/i.test(cabin)) return "プレエコ";
+  return "エコノミー";
+}
+
+/** 値下げ速報記事を組み立てる (保存はしない)。掲載に値する値下げが無ければ null。 */
+export function generatePriceDropArticle(
   airlineCode: string,
   priceChanges: PriceChange[]
 ): Article | null {
-  const drops = priceChanges.filter((p) => p.direction === "down");
-  if (drops.length === 0) return null;
+  // 値下げのうち「読者にとって意味のある幅」だけに絞る。
+  // 国内¥3,000 / 国際¥10,000 未満の変動はノイズとして載せない。
+  const candidates = priceChanges
+    .filter((p) => p.direction === "down")
+    .map((p) => {
+      const parsed = parseRouteKey(p.routeKey);
+      if (!parsed) return null;
+      const diff = p.oldPrice - p.newPrice;
+      const domestic = isDomesticRoute(parsed.origin, parsed.dest);
+      const threshold = domestic ? MIN_DROP_DOMESTIC : MIN_DROP_INTERNATIONAL;
+      if (diff < threshold) return null;
+      const percent =
+        p.oldPrice > 0 ? Math.round((diff / p.oldPrice) * 100) : 0;
+      return { ...p, ...parsed, diff, percent };
+    })
+    .filter((x): x is NonNullable<typeof x> => x !== null)
+    // 値下げ額の大きい順 = 読者の関心が高い順
+    .sort((a, b) => b.diff - a.diff);
+
+  // 閾値を超える値下げが無ければ記事化しない (薄い記事を量産しない)
+  if (candidates.length === 0) return null;
+
+  const drops = candidates.slice(0, MAX_DROP_ROUTES);
+  const omitted = candidates.length - drops.length;
 
   const slug = slugify(
     `price-drop-${airlineCode}-${new Date().toISOString().split("T")[0]}`
   );
 
-  const lines = drops.map(
-    (p) =>
-      `- **${p.routeKey}**: ¥${formatPrice(p.oldPrice)} → **¥${formatPrice(p.newPrice)}**（¥${formatPrice(p.oldPrice - p.newPrice)}値下げ）`
-  );
+  // 「東京→福岡（HND→FUK・エコノミー）: ¥12,210（-¥3,000 / 20%OFF）」形式。
+  // IATA の羅列では読者に伝わらないため、日本語の都市名を主役にする。
+  const lines = drops.map((p) => {
+    const routeJa = `${cityNameJa(p.origin)}→${cityNameJa(p.dest)}`;
+    const link = `/routes/${p.origin}-${p.dest}`;
+    return `- **[${routeJa}](${link})**（${p.origin}→${p.dest}・${cabinJa(p.cabin)}）: ¥${formatPrice(p.newPrice)}（-¥${formatPrice(p.diff)}${p.percent > 0 ? ` / ${p.percent}%OFF` : ""}）`;
+  });
 
-  const biggestDrop = drops.reduce((max, p) =>
-    p.oldPrice - p.newPrice > max.oldPrice - max.newPrice ? p : max
-  );
+  const biggestDrop = drops[0];
+  const bigRouteJa = `${cityNameJa(biggestDrop.origin)}→${cityNameJa(biggestDrop.dest)}`;
 
-  const body = `${airlineCode}の以下の路線で値下げが検出されました。
+  const body = `${airlineCode}が対象の路線で、まとまった値下げを検出しました。国内線は¥${formatPrice(MIN_DROP_DOMESTIC)}以上、国際線は¥${formatPrice(MIN_DROP_INTERNATIONAL)}以上の値下げのみを掲載しています。
 
-## 値下げ路線
+## 値下げが大きい路線
 
 ${lines.join("\n")}
-
+${omitted > 0 ? `\n※ 上記のほか${omitted}路線でも値下げを検出しています。\n` : ""}
 ## 注目
 
-最大の値下げは**${biggestDrop.routeKey}**で、¥${formatPrice(biggestDrop.oldPrice)}から**¥${formatPrice(biggestDrop.newPrice)}**に値下がり。¥${formatPrice(biggestDrop.oldPrice - biggestDrop.newPrice)}のお得です。
+最も値下げ幅が大きいのは**[${bigRouteJa}](/routes/${biggestDrop.origin}-${biggestDrop.dest})**。¥${formatPrice(biggestDrop.oldPrice)}から**¥${formatPrice(biggestDrop.newPrice)}**へ、¥${formatPrice(biggestDrop.diff)}${biggestDrop.percent > 0 ? `（${biggestDrop.percent}%OFF）` : ""}の値下がりです。
 
-セール価格はいつ元に戻るか分かりません。気になる路線は早めにチェックしましょう。`;
+各路線名をタップすると、その路線のセール情報・価格推移を確認できます。
+
+なお掲載価格は検出時点のものです。実際の価格・空席は予約サイトでご確認ください。`;
 
   return {
     slug,
-    title: `【値下げ速報】${airlineCode} ${drops.length}路線で価格ダウン`,
-    excerpt: `${airlineCode}の${drops.length}路線で値下げを検出。最大¥${formatPrice(biggestDrop.oldPrice - biggestDrop.newPrice)}の値下げ。`,
+    title: `【値下げ速報】${airlineCode} ${bigRouteJa} が¥${formatPrice(biggestDrop.diff)}値下げ`,
+    excerpt: `${airlineCode}の${drops.length}路線で値下げを検出。最大は${bigRouteJa}の¥${formatPrice(biggestDrop.diff)}${biggestDrop.percent > 0 ? `（${biggestDrop.percent}%OFF）` : ""}。`,
     body,
+    // 最も値下げ幅が大きい路線の目的地写真を採用 (記事の主役と一致させる)
     image_url: findDealImage(
       airlineCode,
-      // routeKey ("NRT→BKK(Economy)") から目的地コードを取り出し、
-      // 都市別画像を優先採用
-      drops.map((p) => {
-        const m = p.routeKey.match(/^([A-Z]{3})→([A-Z]{3})/);
-        return {
-          originCode: m?.[1] ?? "",
-          destinationCode: m?.[2] ?? "",
-        };
-      }),
+      drops.map((p) => ({ originCode: p.origin, destinationCode: p.dest })),
       slug
     ),
     category: "セール速報",
     airline_tags: [airlineCode],
-    route_tags: drops.map((p) =>
-      p.routeKey.replace("→", "-").replace(/\(.+\)$/, "")
-    ),
+    route_tags: drops.map((p) => `${p.origin}-${p.dest}`),
     published_at: new Date().toISOString(),
   };
 }
