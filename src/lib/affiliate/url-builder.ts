@@ -61,8 +61,8 @@ const AIRLINE_BOOKING_TEMPLATES: Record<
     build: (r) =>
       `https://www.jal.co.jp/jp/ja/dom/?ks=${r.originCode}&kf=${r.destinationCode}`,
   },
-  // airlines.ts の定義に一致させる: APJ=Spring Japan, PCH=Peach
-  APJ: {
+  // airlines.ts の定義に一致させる: SJO=Spring Japan, PCH=Peach
+  SJO: {
     name: "Spring Japan公式",
     routeAware: false, // jp.ch.com は路線プリフィル非対応 → Skyscannerにフォールバック
     build: () => "https://jp.ch.com/",
@@ -174,6 +174,9 @@ const AIRLINE_BOOKING_TEMPLATES: Record<
 const AIRLINE_AFFILIATE_ENV_ALIASES: Record<string, string[]> = {
   PCH: ["PEACH"],
   JJP: ["JETSTAR"],
+  // SJO は旧内部コード APJ から改名。既存の AFFILIATE_URL_AIRLINE_APJ が
+  // 設定済みでも引き続き引けるよう別名に残す。
+  SJO: ["SPRING", "APJ"],
 };
 
 /**

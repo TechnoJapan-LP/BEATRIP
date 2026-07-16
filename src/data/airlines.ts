@@ -70,10 +70,11 @@ export const airlines: AirlineProfile[] = [
     ],
   },
   {
-    code: "APJ",
+    // ICAO: SJO。APJ は Peach の ICAO なので使わない (旧 APJ から 301 済み)。
+    code: "SJO",
     name: "Spring Japan",
     nameEn: "Spring Japan",
-    logo: "/airlines/APJ.png",
+    logo: "/airlines/SJO.png",
     color: "#00A651",
     type: "LCC",
     country: "JP",

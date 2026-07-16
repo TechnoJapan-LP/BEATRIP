@@ -76,7 +76,7 @@ export const AIRPORTS: Airport[] = [
     size: "major",
     prefecture: "千葉県",
     popularRoutes: ["BKK", "TPE", "ICN", "HNL", "JFK"],
-    airlines: ["ANA", "JAL", "JJP", "PCH", "ZIP", "APJ"],
+    airlines: ["ANA", "JAL", "JJP", "PCH", "ZIP", "SJO"],
     tagline: "LCC・国際線が豊富な日本の玄関口",
     officialDomain: "narita-airport.jp",
   },

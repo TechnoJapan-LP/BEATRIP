@@ -47,7 +47,7 @@ const airlineCodeMap: Record<string, string> = {
   JAL: "JAL",
   Peach: "PCH",
   "Jetstar Japan": "JJP",
-  "Spring Japan": "APJ",
+  "Spring Japan": "SJO",
   "T'way Air": "TW",
   VietJet: "VJ",
   Emirates: "EK",

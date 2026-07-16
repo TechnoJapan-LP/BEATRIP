@@ -79,6 +79,61 @@ const nextConfig: NextConfig = {
   //   - Vercel Analytics / Speed Insights: https://va.vercel-scripts.com / https://vitals.vercel-insights.com
   //   - TravelPayouts Drive 計測: https://emrld.ltd (layout.tsx で script 読込 + 計測 beacon)
   //   - Cloudflare Turnstile: https://challenges.cloudflare.com (script + iframe challenge)
+  // ── 旧内部コード APJ → SJO の 301 ──
+  // Spring Japan は APJ (= Peach の ICAO) を誤って内部コードにしていた。
+  // SJO (実在 ICAO) へ改名したため、GSC インデックス済みの旧 URL を退避する。
+  // /airlines/apj/airports/[iata] は airports.ts 側の APJ が実際には Peach を
+  // 指していた結果生まれた虚偽ページなので、空港を引き継がず SJO の
+  // プロフィールに集約する。
+  async redirects() {
+    // airports 配下を先に評価する (先勝ちのため :path* より前に置く)。
+    return [
+      // 成田は Spring Japan の実ハブで SJO/airports/NRT が存在するため、
+      // 空港ページを引き継ぐ。
+      {
+        source: "/airlines/:code(apj|APJ)/airports/:iata(nrt|NRT)",
+        destination: "/airlines/SJO/airports/NRT",
+        permanent: true,
+      },
+      {
+        source: "/en/airlines/:code(apj|APJ)/airports/:iata(nrt|NRT)",
+        destination: "/en/airlines/SJO/airports/NRT",
+        permanent: true,
+      },
+      // 成田以外の空港ページは airports.ts の APJ が実は Peach を指していた
+      // 結果の虚偽ページ。引き継ぎ先が無いので SJO プロフィールに集約する。
+      {
+        source: "/airlines/:code(apj|APJ)/airports/:iata*",
+        destination: "/airlines/SJO",
+        permanent: true,
+      },
+      {
+        source: "/en/airlines/:code(apj|APJ)/airports/:iata*",
+        destination: "/en/airlines/SJO",
+        permanent: true,
+      },
+      {
+        source: "/airlines/:code(apj|APJ)/:path*",
+        destination: "/airlines/SJO/:path*",
+        permanent: true,
+      },
+      {
+        source: "/en/airlines/:code(apj|APJ)/:path*",
+        destination: "/en/airlines/SJO/:path*",
+        permanent: true,
+      },
+      {
+        source: "/airlines/:code(apj|APJ)",
+        destination: "/airlines/SJO",
+        permanent: true,
+      },
+      {
+        source: "/en/airlines/:code(apj|APJ)",
+        destination: "/en/airlines/SJO",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     const csp = [
       "default-src 'self'",

@@ -216,10 +216,10 @@ const MOCK_SALES_DB: Record<string, AirlineSale[]> = {
       isActive: true,
     },
   ],
-  APJ: [
+  SJO: [
     {
       id: "spring-flash-2026-05",
-      airlineCode: "APJ",
+      airlineCode: "SJO",
       airlineName: "Spring Japan",
       saleName: "Spring 片道キャンペーン",
       description: "中国路線片道が驚きの価格。成田発全路線対象。",
