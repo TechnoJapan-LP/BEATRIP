@@ -39,8 +39,10 @@ const ROUNDUP_IMAGES = [
   "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80",
   "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=1200&q=80",
   // 地球・地図
-  "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80",
-  "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=1200&q=80",
+  // 注: 旧 photo-1488646953014 は実画像がカメラと地図の静物だったため差し替え (目視済み)
+  "https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=1200&q=80",
+  // 注: 旧 photo-1502920917128 は実画像が一眼レフカメラだったため差し替え (目視済み)
+  "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1200&q=80",
   // パッキング・出発
   "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1200&q=80",
   "https://images.unsplash.com/photo-1473625247510-8ceb1760943f?w=1200&q=80",

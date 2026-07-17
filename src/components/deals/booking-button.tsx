@@ -27,6 +27,8 @@ export function BookingButton({
   bestMonthName,
   avgSavingPercent,
   isLowest,
+  routeJa,
+  departDateLabel,
 }: {
   dealId: string;
   affiliateUrl: string;
@@ -46,6 +48,10 @@ export function BookingButton({
   avgSavingPercent?: number;
   /** 価値表示: 割引率50%以上か (過去実績との比較ではない) */
   isLowest?: boolean;
+  /** 「東京→福岡」形式の日本語路線名。CTA 下の説明に使う */
+  routeJa?: string;
+  /** 観測便の日付ラベル (例 "9/5発")。TP watch のみ */
+  departDateLabel?: string;
 }) {
   const [clicked, setClicked] = useState(false);
   const handleToken = useCallback((token: string) => {
@@ -137,7 +143,12 @@ export function BookingButton({
         <ExternalLink className="h-4 w-4" />
       </a>
       <div className="flex items-center justify-center gap-2 text-[10px] text-zinc-400">
-        <span>{affiliateProvider} で「{saleName}」を予約</span>
+        {/* セール名 (「新千歳発 最安値ウォッチ」等) では利用者にどの便を
+            検索するのか伝わらない。路線 + 観測日で言い切る。 */}
+        <span>
+          {affiliateProvider} で {routeJa ?? saleName}
+          {departDateLabel ? `（${departDateLabel}）` : ""} を検索
+        </span>
       </div>
 
       {/* 価格比較リンク */}

@@ -120,10 +120,6 @@ export function DealGrid({
   const [flightType, setFlightType] = useState<FlightType>(() =>
     parseEnum(searchParams.get("type"), VALID_FLIGHT_TYPE, "all")
   );
-  const [showNew, setShowNew] = useState(() => searchParams.get("new") === "1");
-  const [showEnding, setShowEnding] = useState(() => searchParams.get("ending") === "1");
-  const [showNiche, setShowNiche] = useState(() => searchParams.get("niche") === "1");
-  const [showHiddenGem, setShowHiddenGem] = useState(() => searchParams.get("gem") === "1");
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get("q") ?? "");
   const [priceRange, setPriceRange] = useState<PriceRange>(() =>
     parseEnum(searchParams.get("price"), VALID_PRICE, "all")
@@ -203,10 +199,6 @@ export function DealGrid({
   useEffect(() => {
     const params = new URLSearchParams();
     if (flightType !== "all") params.set("type", flightType);
-    if (showNew) params.set("new", "1");
-    if (showEnding) params.set("ending", "1");
-    if (showNiche) params.set("niche", "1");
-    if (showHiddenGem) params.set("gem", "1");
     if (searchQuery) params.set("q", searchQuery);
     if (priceRange !== "all") params.set("price", priceRange);
     if (area !== "all") params.set("area", area);
@@ -226,10 +218,6 @@ export function DealGrid({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     flightType,
-    showNew,
-    showEnding,
-    showNiche,
-    showHiddenGem,
     searchQuery,
     priceRange,
     area,
@@ -246,30 +234,10 @@ export function DealGrid({
     return Array.from(set).sort();
   }, [deals]);
 
-  // トグルごとの該当件数 (国内/国際タブ適用後の母数で計算)。
-  // 「新着 ON で 0 件 = 壊れてる」と誤認されないよう、押す前に件数を見せる。
-  const toggleCounts = useMemo(() => {
-    let base = deals;
-    if (flightType === "domestic") base = base.filter(isDomesticDeal);
-    if (flightType === "international") base = base.filter((d) => !isDomesticDeal(d));
-    let newCount = 0, ending = 0, niche = 0, gem = 0;
-    for (const d of base) {
-      if (d.badge === "NEW") newCount++;
-      if (d.badge === "ENDING_SOON") ending++;
-      if (d.is_niche_lcc) niche++;
-      if (d.is_hidden_gem) gem++;
-    }
-    return { new: newCount, ending, niche, hiddenGem: gem };
-  }, [deals, flightType]);
-
   const filteredDeals = useMemo(() => {
     let result = deals;
     if (flightType === "domestic") result = result.filter(isDomesticDeal);
     if (flightType === "international") result = result.filter((d) => !isDomesticDeal(d));
-    if (showNew) result = result.filter((d) => d.badge === "NEW");
-    if (showEnding) result = result.filter((d) => d.badge === "ENDING_SOON");
-    if (showNiche) result = result.filter((d) => d.is_niche_lcc);
-    if (showHiddenGem) result = result.filter((d) => d.is_hidden_gem);
     if (priceRange !== "all") result = result.filter((d) => priceMatchesRange(d.sale_price, priceRange));
     if (area !== "all") result = result.filter((d) => areaMatches(d, area));
     if (discount !== "all") result = result.filter((d) => discountMatches(d.discount_percent, discount));
@@ -290,10 +258,6 @@ export function DealGrid({
   }, [
     deals,
     flightType,
-    showNew,
-    showEnding,
-    showNiche,
-    showHiddenGem,
     searchQuery,
     priceRange,
     area,
@@ -385,10 +349,6 @@ export function DealGrid({
 
   const clearAll = useCallback(() => {
     setFlightType("all");
-    setShowNew(false);
-    setShowEnding(false);
-    setShowNiche(false);
-    setShowHiddenGem(false);
     setSearchQuery("");
     resetAdvanced();
   }, [resetAdvanced]);
@@ -411,15 +371,6 @@ export function DealGrid({
       <DealFilters
         flightType={flightType}
         onFlightTypeChange={setFlightType}
-        toggleCounts={toggleCounts}
-        showNew={showNew}
-        onToggleNew={setShowNew}
-        showEnding={showEnding}
-        onToggleEnding={setShowEnding}
-        showNiche={showNiche}
-        onToggleNiche={setShowNiche}
-        showHiddenGem={showHiddenGem}
-        onToggleHiddenGem={setShowHiddenGem}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         priceRange={priceRange}
@@ -443,7 +394,7 @@ export function DealGrid({
       />
 
       <div
-        key={`${flightType}-${showNew}-${showEnding}-${showNiche}-${showHiddenGem}-${searchQuery}-${priceRange}-${area}-${discount}-${airlineFilter}-${badge}-${sort}`}
+        key={`${flightType}-${searchQuery}-${priceRange}-${area}-${discount}-${airlineFilter}-${badge}-${sort}`}
         className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4 animate-fade-in"
       >
           {pagedDeals.map(({ deal, variantOriginCodes }, i) => (

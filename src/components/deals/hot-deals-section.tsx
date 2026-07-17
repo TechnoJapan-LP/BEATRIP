@@ -12,6 +12,13 @@ import { loadHotDeals, type HotDeal } from "@/lib/deals/hot-deals";
  * しないため、CTA は「予約サイトで確認」とする。
  */
 
+/** "2026-09-05" → "9/5"。観測便の日付表示用 */
+function fmtDay(iso: string): string {
+  const m = iso.match(/^\d{4}-(\d{2})-(\d{2})/);
+  if (!m) return iso;
+  return `${Number(m[1])}/${Number(m[2])}`;
+}
+
 function timeAgo(iso: string): string {
   const ms = Date.now() - new Date(iso).getTime();
   const hours = Math.floor(ms / (60 * 60 * 1000));
@@ -64,6 +71,12 @@ function ActiveCard({ h }: { h: HotDeal }) {
             <TrendingDown className="h-3 w-3" />-{h.drop_percent}%
           </span>
         </div>
+        {h.depart_date && (
+          <p className="mt-1 inline-flex items-center gap-1 rounded-md bg-white/70 px-2 py-0.5 text-[11px] font-medium text-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-300">
+            {fmtDay(h.depart_date)}発
+            {h.return_date ? ` — ${fmtDay(h.return_date)}帰着` : ""} の便で観測
+          </p>
+        )}
         <p className="mt-0.5 text-[10px] text-zinc-400">
           直前の観測価格からの下落。実際の価格・空席は予約サイトでご確認ください
         </p>

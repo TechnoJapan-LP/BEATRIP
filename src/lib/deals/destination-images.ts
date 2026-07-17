@@ -20,7 +20,12 @@ const DESTINATION_IMAGES: Record<string, string> = {
   KUL: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&q=80",
   BKI: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=800&q=80",
   DPS: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800&q=80",
-  PUS: "https://images.unsplash.com/photo-1604429181848-9bcd61c0bd84?w=800&q=80",
+  PUS: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Skyline_of_Busan_Including_Gwangan_Bridge%2C_Marine_City_and_LCT_Skyscrapers.jpg/960px-Skyline_of_Busan_Including_Gwangan_Bridge%2C_Marine_City_and_LCT_Skyscrapers.jpg", // 釜山: 広安大橋とマリンシティ (旧URLは404だった)
+  // TP 最安値ウォッチが日常的に返す国内都市。フォールバックの汎用写真ではなく
+  // 実際の街の写真を出す (2026-07-17 目視検品済み)。
+  AXT: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Skyline_of_Akita_City_20200328.jpg/960px-Skyline_of_Akita_City_20200328.jpg", // 秋田駅前
+  OKJ: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Okayama_Castle%2C_November_2016_-02.jpg/960px-Okayama_Castle%2C_November_2016_-02.jpg", // 岡山城と紅葉
+  TOY: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/View_of_Toyama_Castle_from_Toyama_City_Hall.jpg/960px-View_of_Toyama_Castle_from_Toyama_City_Hall.jpg", // 富山城と市街
   CEB: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&q=80",
   PKX: "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80",
   KHH: "https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800&q=80",
@@ -86,16 +91,16 @@ const DESTINATION_IMAGES: Record<string, string> = {
  * グリッドが自然に見える。
  */
 const FALLBACK_POOL: string[] = [
-  "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&q=80", // 道と山
-  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80", // 機窓・翼
-  "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=800&q=80", // 雲海
-  "https://images.unsplash.com/photo-1503221043305-f7498f8b7888?w=800&q=80", // 空港・出発
-  // 注: photo-1530521954074 (世界地図とカメラ) は被写体がカメラ本体で
-  //     「航空券セール」の記事カバーとして意味が通らないため除外した。
-  //     航空・空・旅の移動を想起させる画像だけをプールに残す。
-  "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?w=800&q=80", // 飛行機と夕焼け
+  // 全7枚を 2026-07-17 に実画像を目視して検品済み。コメントは実際の被写体。
+  // 過去にコメントと実画像がズレて「秋田・岡山のカードがカメラの写真」事故が
+  // 起きたため、URL を追加・変更するときは必ず画像を目視してから入れること。
+  "https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&q=80", // 機窓から夕日
+  "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80", // 翼と雲
+  "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=800&q=80", // 着陸する旅客機と滑走路
+  "https://images.unsplash.com/photo-1542296332-2e4473faf563?w=800&q=80", // 空港駐機場と夕日
+  "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?w=800&q=80", // 滝と旅人
   "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&q=80", // 山並みと光
-  "https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&q=80", // ロードトリップ
+  "https://images.unsplash.com/photo-1500835556837-99ac94a94552?w=800&q=80", // 翼と雲海
 ];
 
 /** コード文字列の決定的ハッシュ (同じコードは常に同じ画像)。 */

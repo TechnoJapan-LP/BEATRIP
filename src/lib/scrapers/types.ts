@@ -26,6 +26,13 @@ export type SaleRoute = {
   cabin: "Economy" | "Premium Economy" | "Business" | "First";
   discount: number;
   seatsRemaining?: number;
+  /**
+   * この価格を観測した便の搭乗日 (YYYY-MM-DD)。TP 価格ウォッチ等、
+   * 「特定の日付の運賃」を観測したソースだけが持つ。予約リンクの
+   * 日付プリフィルに使う — これが無いと利用者が価格に辿り着けない。
+   */
+  departDate?: string;
+  returnDate?: string;
 };
 
 export type AirlineProfile = {

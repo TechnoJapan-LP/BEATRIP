@@ -125,6 +125,10 @@ function toRoute(
     currency: "JPY",
     cabin,
     discount,
+    // この価格が観測された実際の搭乗日。予約リンクの日付プリフィルに必須
+    // (無いと Skyscanner が「今日発」で開き、この運賃の便が見つからない)。
+    departDate: item.depart_date,
+    returnDate: item.return_date,
   };
 }
 

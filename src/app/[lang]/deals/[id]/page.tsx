@@ -373,6 +373,12 @@ export default async function DealDetailPage({ params }: Props) {
                     affiliateUrl={deal.affiliate_url}
                     affiliateProvider={deal.affiliate_provider ?? "パートナーサイト"}
                     saleName={deal.sale_name}
+                    routeJa={`${deal.origin}→${deal.destination}`}
+                    departDateLabel={
+                      deal.departure_date
+                        ? `${new Date(deal.departure_date).getMonth() + 1}/${new Date(deal.departure_date).getDate()}発`
+                        : undefined
+                    }
                     compareLinks={buildCompareLinksFromDeal(deal)}
                     price={deal.sale_price}
                     route={`${deal.origin_code}→${deal.destination_code}`}

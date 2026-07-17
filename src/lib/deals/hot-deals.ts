@@ -38,6 +38,9 @@ export type HotDeal = {
   detected_at: string;
   last_seen_at: string;
   status: "active" | "gone";
+  /** 観測した便の搭乗日/帰着日 (YYYY-MM-DD)。カード表示と予約リンクの根拠 */
+  depart_date?: string;
+  return_date?: string;
   gone_at?: string;
   booking_url: string;
 };
@@ -131,6 +134,11 @@ export async function scanHotDeals(sales: AirlineSale[]): Promise<HotDealScanRes
       } else {
         existing.price = Math.min(existing.price, route.price);
         existing.last_seen_at = nowIso;
+        // 予約リンクと観測便の日付は毎回更新する。据え置くと古い日付の
+        // Skyscanner 検索に飛ばしてしまい、利用者が価格に辿り着けない。
+        existing.booking_url = buildAffiliateLink(route, sale).url;
+        existing.depart_date = route.departDate ?? existing.depart_date;
+        existing.return_date = route.returnDate ?? existing.return_date;
       }
       continue;
     }
@@ -158,6 +166,9 @@ export async function scanHotDeals(sales: AirlineSale[]): Promise<HotDealScanRes
         last_seen_at: nowIso,
         status: "active",
         booking_url: buildAffiliateLink(route, sale).url,
+        // どの便の価格かを利用者が特定できるよう、観測日付を保持する
+        depart_date: route.departDate,
+        return_date: route.returnDate,
       };
       detected.push(hot);
       // 同一路線の過去の gone は置き換え (再検出)

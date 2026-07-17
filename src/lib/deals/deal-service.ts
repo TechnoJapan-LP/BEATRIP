@@ -168,8 +168,9 @@ function convertToDeal(
     image_url: getDestinationImage(route.destinationCode),
     is_niche_lcc: isLCC,
     is_hidden_gem: isLCC && route.discount >= 50,
-    departure_date: sale.travelPeriodStart,
-    return_date: sale.travelPeriodEnd,
+    // 観測した便の実日付を優先 (TP watch)。無ければセールの旅行期間
+    departure_date: route.departDate ?? sale.travelPeriodStart,
+    return_date: route.returnDate ?? sale.travelPeriodEnd,
     booking_deadline: sale.bookingDeadline,
     sale_id: sale.id,
     sale_name: sale.saleName,

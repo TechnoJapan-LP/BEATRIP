@@ -234,10 +234,12 @@ export function getAirlineAffiliateEnvStatus(): {
 
 // ── Skyscanner deep link ──
 function buildSkyscannerUrl(route: SaleRoute, sale: AirlineSale): string {
-  const dep = formatDateForSkyscanner(sale.travelPeriodStart);
-  const ret = sale.travelPeriodEnd
-    ? formatDateForSkyscanner(sale.travelPeriodEnd)
-    : "";
+  // 観測した便の実日付があれば最優先。TP 価格ウォッチの travelPeriod は
+  // 「今日〜60日後」の汎用値のため、それで開くと利用者が観測価格の便に
+  // 辿り着けない (実際に苦情が出た UX 問題)。
+  const dep = formatDateForSkyscanner(route.departDate ?? sale.travelPeriodStart);
+  const retSrc = route.returnDate ?? (route.departDate ? "" : sale.travelPeriodEnd);
+  const ret = retSrc ? formatDateForSkyscanner(retSrc) : "";
 
   const base = `https://www.skyscanner.jp/transport/flights/${route.originCode.toLowerCase()}/${route.destinationCode.toLowerCase()}/${dep}${ret ? "/" + ret : ""}/`;
 
@@ -255,7 +257,7 @@ function buildSkyscannerUrl(route: SaleRoute, sale: AirlineSale): string {
 
 // ── Trip.com deep link ──
 function buildTripComUrl(route: SaleRoute, sale: AirlineSale): string {
-  const dep = formatDateForTripCom(sale.travelPeriodStart);
+  const dep = formatDateForTripCom(route.departDate ?? sale.travelPeriodStart);
   const base = "https://jp.trip.com/flights/showfarefirst";
   const params = new URLSearchParams({
     dcity: route.originCode.toLowerCase(),
