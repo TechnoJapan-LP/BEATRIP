@@ -94,6 +94,12 @@ const CONTENT: GuideContent = {
   aspTitle: "マイルが貯まるカード・航空券を比較",
   aspSubtitle: "マイル系クレジットカードや航空券を信頼できるサービスから比較",
   aspSource: "guide-miles-complete-guide",
+  // 記事を読んだ人をそのまま各社の現物セールへ送る (回遊率向上)。
+  // コードは airlines マスタから導出されるためリンク切れが起きない。
+  airlineLinks: {
+    title: "FSC 各社のセール実績・時期",
+    type: "FSC",
+  },
   relatedLinks: [
     { href: "/credit-cards", label: "旅行系クレカを比較", desc: "マイル・保険・ラウンジで選ぶ" },
     { href: "/articles/miles-booking-guide", label: "マイル予約ガイド", desc: "JAL/ANA マイルで予約 完全ガイド" },
