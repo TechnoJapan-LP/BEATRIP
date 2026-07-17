@@ -27,7 +27,14 @@ function resolveCityJa(code: string): string {
 const ENDPOINT = "https://api.travelpayouts.com/v2/prices/latest";
 
 // 日本側の出発空港 (サイトが認識する IATA)。都市コードでなく空港コードで問い合わせる。
-const JP_ORIGINS = ["HND", "NRT", "KIX", "NGO", "FUK", "CTS", "OKA"];
+// 前半は主要7空港。後半は地方空港 (2026-07-18 追加): 地方発の実ディールを持つことで
+// /routes/SDJ-CTS のようなロングテール路線ページが自動生成され、「仙台 札幌 航空券」
+// 等の検索を実データで受けられる。1空港=1 APIコール・並列取得なので追加コストは小さい。
+// TP にデータが無い空港は 0 件が返るだけで害はない。
+const JP_ORIGINS = [
+  "HND", "NRT", "KIX", "NGO", "FUK", "CTS", "OKA",
+  "SDJ", "HIJ", "KOJ", "KMJ", "KIJ", "KMQ", "MYJ", "NGS",
+];
 
 // TravelPayouts が返す都市コード → サイトが使う代表空港コードに正規化。
 // (例: 東京=TYO→HND, ソウル=SEL→ICN)。未掲載コードはそのまま使う。
