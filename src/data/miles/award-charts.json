@@ -15,68 +15,267 @@
         {
           "zoneId": "ana-z2-korea",
           "label": "韓国 (Zone 2)",
-          "destinationCodes": ["ICN", "GMP", "PUS", "CJU"],
+          "destinationCodes": [
+            "ICN",
+            "GMP",
+            "PUS",
+            "CJU"
+          ],
           "roundTripMiles": {
-            "economy": { "low": 12000, "regular": 15000, "high": 24000 },
-            "business": { "low": 36000, "regular": 41000, "high": 50000 }
+            "economy": {
+              "low": 12000,
+              "regular": 15000,
+              "high": 24000
+            },
+            "business": {
+              "low": 36000,
+              "regular": 41000,
+              "high": 50000
+            }
           }
         },
         {
           "zoneId": "ana-z3-asia1",
           "label": "アジア1 (Zone 3)",
-          "destinationCodes": ["PVG", "SHA", "PEK", "CAN", "HKG", "TPE", "TSA", "MNL"],
+          "destinationCodes": [
+            "PVG",
+            "SHA",
+            "PEK",
+            "CAN",
+            "HKG",
+            "TPE",
+            "TSA",
+            "MNL"
+          ],
           "roundTripMiles": {
-            "economy": { "low": 17000, "regular": 20000, "high": 30000 },
-            "business": { "low": 48000, "regular": 53000, "high": 65000 }
+            "economy": {
+              "low": 17000,
+              "regular": 20000,
+              "high": 30000
+            },
+            "business": {
+              "low": 48000,
+              "regular": 53000,
+              "high": 65000
+            }
           }
         },
         {
           "zoneId": "ana-z4-asia2",
           "label": "アジア2 (Zone 4)",
-          "destinationCodes": ["BKK", "SIN", "SGN", "HAN", "CGK", "DPS", "KUL", "DEL", "BOM", "PNH"],
+          "destinationCodes": [
+            "BKK",
+            "SIN",
+            "SGN",
+            "HAN",
+            "CGK",
+            "DPS",
+            "KUL",
+            "DEL",
+            "BOM",
+            "PNH"
+          ],
           "roundTripMiles": {
-            "economy": { "low": 30000, "regular": 35000, "high": 50000 },
-            "business": { "low": 80000, "regular": 85000, "high": 95000 }
+            "economy": {
+              "low": 30000,
+              "regular": 35000,
+              "high": 50000
+            },
+            "business": {
+              "low": 80000,
+              "regular": 85000,
+              "high": 95000
+            }
           },
           "notes": "バリ(DPS)はANA直行便の就航が無い期間があり、ジャカルタ等での乗り継ぎになる場合がある"
         },
         {
           "zoneId": "ana-z5-hawaii",
           "label": "ハワイ (Zone 5)",
-          "destinationCodes": ["HNL"],
+          "destinationCodes": [
+            "HNL"
+          ],
           "roundTripMiles": {
-            "economy": { "low": 35000, "regular": 40000, "high": 65000 },
-            "business": { "low": 80000, "regular": 85000, "high": 135000 }
+            "economy": {
+              "low": 35000,
+              "regular": 40000,
+              "high": 65000
+            },
+            "business": {
+              "low": 80000,
+              "regular": 85000,
+              "high": 135000
+            }
           }
         },
         {
           "zoneId": "ana-z6-north-america",
           "label": "北米 (Zone 6)",
-          "destinationCodes": ["LAX", "SFO", "SEA", "JFK", "ORD", "IAH", "IAD", "YVR", "MEX", "SJC"],
+          "destinationCodes": [
+            "LAX",
+            "SFO",
+            "SEA",
+            "JFK",
+            "ORD",
+            "IAH",
+            "IAD",
+            "YVR",
+            "MEX",
+            "SJC"
+          ],
           "roundTripMiles": {
-            "economy": { "low": 40000, "regular": 50000, "high": 72000 },
-            "business": { "low": 100000, "regular": 105000, "high": 165000 }
+            "economy": {
+              "low": 40000,
+              "regular": 50000,
+              "high": 72000
+            },
+            "business": {
+              "low": 100000,
+              "regular": 105000,
+              "high": 165000
+            }
           }
         },
         {
           "zoneId": "ana-z7-europe",
           "label": "欧州 (Zone 7)",
-          "destinationCodes": ["CDG", "LHR", "FRA", "MUC", "DUS", "BRU", "VIE", "MXP", "ARN", "IST"],
+          "destinationCodes": [
+            "CDG",
+            "LHR",
+            "FRA",
+            "MUC",
+            "DUS",
+            "BRU",
+            "VIE",
+            "MXP",
+            "ARN",
+            "IST"
+          ],
           "roundTripMiles": {
-            "economy": { "low": 45000, "regular": 55000, "high": 78000 },
-            "business": { "low": 110000, "regular": 115000, "high": 180000 }
+            "economy": {
+              "low": 45000,
+              "regular": 55000,
+              "high": 78000
+            },
+            "business": {
+              "low": 110000,
+              "regular": 115000,
+              "high": 180000
+            }
           }
         },
         {
           "zoneId": "ana-z10-oceania",
           "label": "オセアニア (Zone 10)",
-          "destinationCodes": ["SYD", "PER"],
+          "destinationCodes": [
+            "SYD",
+            "PER"
+          ],
           "roundTripMiles": {
-            "economy": { "low": 37000, "regular": 45000, "high": 65000 },
-            "business": { "low": 80000, "regular": 90000, "high": 135000 }
+            "economy": {
+              "low": 37000,
+              "regular": 45000,
+              "high": 65000
+            },
+            "business": {
+              "low": 80000,
+              "regular": 90000,
+              "high": 135000
+            }
           }
         }
-      ]
+      ],
+      "fuelSurcharge": {
+        "unit": "perSectorOneWay",
+        "validFrom": "2026-07-01",
+        "validUntil": "2026-08-31",
+        "source": "https://www.ana.co.jp/ja/jp/guide/plan/charge/fuelsurcharge/",
+        "verifiedAt": "2026-07-17",
+        "notes": "2026年7月1日〜8月31日ご購入分。政府の航空燃料費補助を踏まえた軽減措置適用額。空港税等の諸税は含まない",
+        "bands": [
+          {
+            "label": "韓国",
+            "oneWayYen": 7400,
+            "destinationCodes": [
+              "ICN",
+              "GMP",
+              "PUS",
+              "CJU"
+            ]
+          },
+          {
+            "label": "東アジア (韓国を除く)",
+            "oneWayYen": 15400,
+            "destinationCodes": [
+              "PVG",
+              "SHA",
+              "PEK",
+              "CAN",
+              "HKG",
+              "TPE",
+              "TSA"
+            ]
+          },
+          {
+            "label": "ベトナム・グアム・フィリピン",
+            "oneWayYen": 22500,
+            "destinationCodes": [
+              "SGN",
+              "HAN",
+              "MNL",
+              "GUM"
+            ]
+          },
+          {
+            "label": "タイ・シンガポール・マレーシア",
+            "oneWayYen": 33500,
+            "destinationCodes": [
+              "BKK",
+              "SIN",
+              "KUL"
+            ]
+          },
+          {
+            "label": "ハワイ・インド・インドネシア",
+            "oneWayYen": 40400,
+            "destinationCodes": [
+              "HNL",
+              "DPS",
+              "CGK",
+              "DEL",
+              "BOM"
+            ]
+          },
+          {
+            "label": "欧州・北米・中東・オセアニア",
+            "oneWayYen": 65000,
+            "destinationCodes": [
+              "LAX",
+              "SFO",
+              "SEA",
+              "JFK",
+              "ORD",
+              "IAH",
+              "IAD",
+              "YVR",
+              "MEX",
+              "SJC",
+              "CDG",
+              "LHR",
+              "FRA",
+              "MUC",
+              "DUS",
+              "BRU",
+              "VIE",
+              "MXP",
+              "ARN",
+              "IST",
+              "SYD",
+              "PER"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "jal-mileage-bank",
@@ -92,73 +291,199 @@
         {
           "routeId": "jmb-seoul",
           "label": "ソウル",
-          "destinationCodes": ["ICN", "GMP"],
-          "oneWayBasicMiles": { "economy": 7500, "business": 18000 }
+          "destinationCodes": [
+            "ICN",
+            "GMP"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 7500,
+            "business": 18000
+          }
         },
         {
           "routeId": "jmb-taipei",
           "label": "台北 (成田・関西・中部便)",
-          "destinationCodes": ["TPE"],
-          "oneWayBasicMiles": { "economy": 9000, "business": 24000 },
+          "destinationCodes": [
+            "TPE"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 9000,
+            "business": 24000
+          },
           "notes": "羽田便はエコノミー11,000 / ビジネス26,000"
         },
         {
           "routeId": "jmb-hongkong",
           "label": "香港",
-          "destinationCodes": ["HKG"],
-          "oneWayBasicMiles": { "economy": 11000, "business": 26000 }
+          "destinationCodes": [
+            "HKG"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 11000,
+            "business": 26000
+          }
         },
         {
           "routeId": "jmb-shanghai",
           "label": "上海 (浦東便)",
-          "destinationCodes": ["PVG"],
-          "oneWayBasicMiles": { "economy": 10000, "business": 24000 },
+          "destinationCodes": [
+            "PVG"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 10000,
+            "business": 24000
+          },
           "notes": "虹橋便はエコノミー11,000 / ビジネス26,000"
         },
         {
           "routeId": "jmb-bangkok",
           "label": "バンコク (羽田・成田便)",
-          "destinationCodes": ["BKK"],
-          "oneWayBasicMiles": { "economy": 13500, "business": 40000 },
+          "destinationCodes": [
+            "BKK"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 13500,
+            "business": 40000
+          },
           "notes": "JL031/JL034便はエコノミー17,500 / ビジネス45,000。関西・中部便は12,500 / 37,500"
         },
         {
           "routeId": "jmb-singapore",
           "label": "シンガポール",
-          "destinationCodes": ["SIN"],
-          "oneWayBasicMiles": { "economy": 13000, "business": 40000 }
+          "destinationCodes": [
+            "SIN"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 13000,
+            "business": 40000
+          }
         },
         {
           "routeId": "jmb-hanoi",
           "label": "ハノイ",
-          "destinationCodes": ["HAN"],
-          "oneWayBasicMiles": { "economy": 13000, "business": 30000 }
+          "destinationCodes": [
+            "HAN"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 13000,
+            "business": 30000
+          }
         },
         {
           "routeId": "jmb-honolulu",
           "label": "ホノルル",
-          "destinationCodes": ["HNL"],
-          "oneWayBasicMiles": { "economy": 20000, "business": 43000 }
+          "destinationCodes": [
+            "HNL"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 20000,
+            "business": 43000
+          }
         },
         {
           "routeId": "jmb-losangeles",
           "label": "ロサンゼルス",
-          "destinationCodes": ["LAX"],
-          "oneWayBasicMiles": { "economy": 27000, "business": 55000 }
+          "destinationCodes": [
+            "LAX"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 27000,
+            "business": 55000
+          }
         },
         {
           "routeId": "jmb-paris",
           "label": "パリ",
-          "destinationCodes": ["CDG"],
-          "oneWayBasicMiles": { "economy": 27000, "business": 57000 }
+          "destinationCodes": [
+            "CDG"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 27000,
+            "business": 57000
+          }
         },
         {
           "routeId": "jmb-sydney",
           "label": "シドニー",
-          "destinationCodes": ["SYD"],
-          "oneWayBasicMiles": { "economy": 23000, "business": 45000 }
+          "destinationCodes": [
+            "SYD"
+          ],
+          "oneWayBasicMiles": {
+            "economy": 23000,
+            "business": 45000
+          }
         }
-      ]
+      ],
+      "fuelSurcharge": {
+        "unit": "perSectorOneWay",
+        "validFrom": "2026-07-01",
+        "validUntil": "2026-08-31",
+        "source": "https://www.jal.co.jp/jp/ja/inter/fare/fuel/detail.html",
+        "verifiedAt": "2026-07-17",
+        "notes": "2026年7月1日〜8月31日発券分 (旅行開始国が日本の場合)。空港税等の諸税は含まない",
+        "bands": [
+          {
+            "label": "ソウル・釜山・済州",
+            "oneWayYen": 7400,
+            "destinationCodes": [
+              "ICN",
+              "GMP"
+            ]
+          },
+          {
+            "label": "東アジア",
+            "oneWayYen": 16900,
+            "destinationCodes": [
+              "TPE",
+              "HKG",
+              "PVG"
+            ]
+          },
+          {
+            "label": "グアム・フィリピン・ベトナム",
+            "oneWayYen": 22500,
+            "destinationCodes": [
+              "HAN",
+              "SGN",
+              "MNL",
+              "GUM"
+            ]
+          },
+          {
+            "label": "タイ・マレーシア・シンガポール",
+            "oneWayYen": 35000,
+            "destinationCodes": [
+              "BKK",
+              "SIN",
+              "KUL"
+            ]
+          },
+          {
+            "label": "ハワイ・インドネシア・インド",
+            "oneWayYen": 40400,
+            "destinationCodes": [
+              "HNL",
+              "DPS"
+            ]
+          },
+          {
+            "label": "北米・欧州・中東・オセアニア",
+            "oneWayYen": 65000,
+            "destinationCodes": [
+              "LAX",
+              "CDG",
+              "SYD",
+              "JFK",
+              "ORD",
+              "SFO",
+              "SEA",
+              "LHR",
+              "FRA",
+              "HEL"
+            ]
+          }
+        ]
+      }
     }
   ]
 }

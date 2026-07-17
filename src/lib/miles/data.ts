@@ -32,6 +32,18 @@ export type JalRoute = {
   notes?: string;
 };
 
+export type FuelSurcharge = {
+  /** 1旅客1区間片道あたり (両社とも片道区間単位で公表) */
+  unit: "perSectorOneWay";
+  /** 発券 (購入) 期間。燃油は2ヶ月ごとに改定されるため、期限切れの額を出すと虚偽になる */
+  validFrom: string;
+  validUntil: string;
+  source: string;
+  verifiedAt: string;
+  notes: string;
+  bands: { label: string; oneWayYen: number; destinationCodes: string[] }[];
+};
+
 export type MileProgram = {
   id: string;
   name: string;
@@ -44,6 +56,7 @@ export type MileProgram = {
   verifiedAt: string;
   zones?: AnaZone[];
   routes?: JalRoute[];
+  fuelSurcharge?: FuelSurcharge;
 };
 
 export type MileCard = {
@@ -104,6 +117,18 @@ export function getMilePrograms(): MileProgram[] {
     const entries = p.chartType === "zone-season" ? p.zones : p.routes;
     if (!entries || entries.length === 0) {
       throw new Error(`miles data: program "${p.id}" にゾーン/路線がありません。`);
+    }
+    const fs = p.fuelSurcharge;
+    if (fs) {
+      assertProvenance(`fuelSurcharge(${p.id})`, p.id, fs.source, fs.verifiedAt);
+      if (!DATE_RE.test(fs.validFrom) || !DATE_RE.test(fs.validUntil)) {
+        throw new Error(`miles data: fuelSurcharge "${p.id}" の validFrom/validUntil (YYYY-MM-DD) が不正です。期限のない燃油額は掲載できません。`);
+      }
+      for (const band of fs.bands) {
+        if (!(band.oneWayYen > 0) || !band.destinationCodes?.length) {
+          throw new Error(`miles data: fuelSurcharge "${p.id}" のバンド "${band.label}" が不正です。`);
+        }
+      }
     }
   }
   programsCache = programs;

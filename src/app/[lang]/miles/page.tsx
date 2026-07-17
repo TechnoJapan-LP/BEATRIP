@@ -95,6 +95,9 @@ export default async function MilesPage({
   const cards = getMileCards();
   const verifiedAt = getMilesDataVerifiedAt();
   const deals = await getActiveDeals();
+  // 燃油の適用期間判定に使う。ISR (30分) ごとに再評価されるため、公表期間が
+  // 切れた翌日以降のリクエストでは金額が自動で非表示になる
+  const today = new Date().toISOString().slice(0, 10);
 
   const items: SimDestination[] = destinations.map((destination) => {
     const codes = new Set(destination.destinationCodes);
@@ -108,7 +111,7 @@ export default async function MilesPage({
     return {
       destination,
       awards: programs
-        .map((p) => awardRequirementFor(destination, p))
+        .map((p) => awardRequirementFor(destination, p, today))
         .filter((a): a is NonNullable<typeof a> => a !== null),
       cheapestDeal: cheapest
         ? {
@@ -191,6 +194,8 @@ export default async function MilesPage({
               本ページの必要マイル数は ANA・JAL 公式サイトの必要マイルチャート、
               カード情報は各カード公式サイトの表示を BEATRIP 編集部が確認して転記したものです
               (最終確認日 {verifiedAt}。各数値の出典リンクを画面内に併記)。
+              燃油サーチャージは公式が公表した発券期間内のみ金額を表示し、期間終了後は自動で非表示になります
+              (空港税等の諸税は経路により変動するため金額を掲載せず、予約時の表示をご確認ください)。
               マイルチャート・年会費・特典は改定されることがあります。
               お申し込み・ご予約の前に必ず公式サイトの現行情報をご確認ください。
             </p>

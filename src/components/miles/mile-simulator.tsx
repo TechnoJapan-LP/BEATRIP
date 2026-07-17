@@ -202,9 +202,16 @@ export function MileSimulator({
                   {a.programName} 特典航空券 (往復)
                 </div>
                 {miles ? (
-                  <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                    {miles.label}
-                  </div>
+                  <>
+                    <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+                      {miles.label}
+                    </div>
+                    {a.fuelSurcharge && (
+                      <div className="mt-1 text-sm font-medium text-amber-700 dark:text-amber-400">
+                        + 手出し現金 {a.fuelSurcharge.label}
+                      </div>
+                    )}
+                  </>
                 ) : (
                   <div className="text-sm text-zinc-500">このクラスの設定なし</div>
                 )}

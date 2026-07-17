@@ -14,6 +14,18 @@ export type AwardRequirement = {
   programName: string;
   /** 往復に必要なマイル。JAL は片道基本マイル×2 で正規化 */
   roundTripMiles: { economy: RangeOrExact; business: RangeOrExact | null };
+  /**
+   * マイル発券時の手出し現金 (燃油サーチャージ往復分)。
+   * 燃油は2ヶ月ごとに改定されるため、公表期間外は null になり金額を出さない。
+   * 空港税等の諸税は経路依存で単一の数字として検証できないため、金額は持たず
+   * caveats の「諸税別途」でのみ伝える。
+   */
+  fuelSurcharge: {
+    roundTripYen: number;
+    label: string;
+    validUntil: string;
+    source: string;
+  } | null;
   /** 表示上の注意 (変動制・シーズン・サーチャージ) */
   caveats: string[];
   source: string;
@@ -28,11 +40,44 @@ function fmt(n: number): string {
   return n.toLocaleString("ja-JP");
 }
 
+/**
+ * 目的地 × プログラム → 燃油サーチャージ (往復 = 片道区間 × 2)。
+ * 公表期間 (validFrom〜validUntil) 外の日付では null を返す。
+ * 期限切れの燃油額を出すと事実と異なる金額表示になるため、勝手に据え置かない。
+ */
+export function fuelSurchargeFor(
+  destination: MileDestination,
+  program: MileProgram,
+  today: string
+): AwardRequirement["fuelSurcharge"] {
+  const fs = program.fuelSurcharge;
+  if (!fs) return null;
+  if (today < fs.validFrom || today > fs.validUntil) return null;
+  const codes = new Set(destination.destinationCodes);
+  const band = fs.bands.find((b) => b.destinationCodes.some((c) => codes.has(c)));
+  if (!band) return null;
+  const roundTrip = band.oneWayYen * 2;
+  const until = fs.validUntil.replace(/^(\d{4})-(\d{2})-(\d{2})$/, "$1/$2/$3");
+  return {
+    roundTripYen: roundTrip,
+    label: `燃油 ¥${fmt(roundTrip)} (往復・${until}発券分まで)`,
+    validUntil: fs.validUntil,
+    source: fs.source,
+  };
+}
+
 /** 目的地 × プログラム → 往復必要マイル (取れない場合は null) */
 export function awardRequirementFor(
   destination: MileDestination,
-  program: MileProgram
+  program: MileProgram,
+  /** 燃油の適用判定に使う今日の日付 (YYYY-MM-DD)。テスト可能にするため引数で受ける */
+  today?: string
 ): AwardRequirement | null {
+  const surcharge = today ? fuelSurchargeFor(destination, program, today) : null;
+  const surchargeCaveat = surcharge
+    ? "空港税等の諸税が別途必要 (経路により変動、予約時に表示)"
+    : "燃油サーチャージ・空港税等の諸税は別途現金で必要 (最新額は公式で確認)";
+
   if (program.chartType === "zone-season") {
     if (!destination.anaZoneId) return null;
     const zone = program.zones?.find((z) => z.zoneId === destination.anaZoneId);
@@ -56,9 +101,10 @@ export function awardRequirementFor(
           label: `${fmt(biz.low)}〜${fmt(biz.high)}マイル`,
         },
       },
+      fuelSurcharge: surcharge,
       caveats: [
         "シーズン (L/R/H) により変動。幅の下限がローシーズン、上限がハイシーズン",
-        program.surchargeNote,
+        surchargeCaveat,
       ],
       source: program.source,
       verifiedAt: program.verifiedAt,
@@ -78,10 +124,11 @@ export function awardRequirementFor(
       economy: { kind: "from", min: eco, label: `${fmt(eco)}マイル〜` },
       business: { kind: "from", min: biz, label: `${fmt(biz)}マイル〜` },
     },
+    fuelSurcharge: surcharge,
     caveats: [
       `片道の基本マイル数 (エコノミー${fmt(route.oneWayBasicMiles.economy)}) × 2 の目安。基本マイル数の席が満席の場合「特典航空券PLUS」で必要マイルが増える`,
       ...(route.notes ? [route.notes] : []),
-      program.surchargeNote,
+      surchargeCaveat,
     ],
     source: program.source,
     verifiedAt: program.verifiedAt,
