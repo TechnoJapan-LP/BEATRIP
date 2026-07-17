@@ -88,6 +88,10 @@ export async function GET() {
     booking: Boolean(process.env.TP_BOOKING_PROGRAM_ID?.trim()),
     agoda: Boolean(process.env.TP_AGODA_PROGRAM_ID?.trim()),
     tripHotel: Boolean(process.env.TP_TRIP_HOTEL_PROGRAM_ID?.trim()),
+    // Trip.com 直接提携 (Allianceid)。主CTA を日本語+JPY にできるかの判定に使う
+    tripComFlights: Boolean(process.env.TRIP_COM_AFFILIATE_ID?.trim()),
+    // 主CTA が Skyscanner だった頃の名残。未設定なら Skyscanner リンクは無報酬
+    skyscanner: Boolean(process.env.SKYSCANNER_ASSOCIATE_ID?.trim()),
   };
 
   // 超お買い得 (価格急落) の稼働状況
