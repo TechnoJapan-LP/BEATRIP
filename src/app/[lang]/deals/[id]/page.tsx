@@ -54,7 +54,10 @@ import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
 type Props = { params: Promise<{ id: string; lang: string;}> };
 
 // ISR: 1800秒キャッシュ (30分)
-export const revalidate = 21600;
+// 30分。予約リンクの日付は 3 時間おきのスキャンで更新されるため、6 時間の
+// ままだと利用者が最大 6 時間古い観測日付の Skyscanner 検索に飛んでしまう。
+// CDN キャッシュ (kv cache:"default" 修正) が効いているので負荷は問題ない。
+export const revalidate = 1800;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, lang } = await params;
