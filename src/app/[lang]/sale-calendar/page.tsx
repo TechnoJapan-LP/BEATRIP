@@ -50,13 +50,25 @@ export async function generateMetadata({
   const { lang } = await params;
   const isEn = lang === "en";
   const path = isEn ? "/en/sale-calendar" : "/sale-calendar";
+
+  // データ連動 index 制御: 実測が 0 件の間は分析する中身が無いため
+  // noindex,follow (薄いページをインデックス母集団から外し、サイト全体の
+  // 品質評価を守る)。実測が貯まれば自動で index に復帰する。
+  const { records } = await resolveAllSaleHistory();
+  const hasContent = records.length > 0;
+
   const title = isEn
     ? "Airline sale calendar — when do Japan flight sales happen?"
     : "航空券セールカレンダー｜各社の次回セール時期・予測一覧";
   const description = isEn
-    ? "When do ANA, JAL, Peach and other airline sales happen? Month-by-month sale frequency, next-sale forecasts, average discounts and record-low fares, analyzed from real past sales."
-    : "ANA・JAL・Peach など各社の航空券セールはいつ開催される？開催が多い月・次回セールの見込み時期・平均割引率・最安値を一覧で分析。セールを逃さないための時期の目安に。";
+    ? hasContent
+      ? "When do ANA, JAL, Peach and other airline sales happen? Month-by-month sale frequency, next-sale forecasts, average discounts and record-low fares, from sales BEATRIP actually observed."
+      : "When do ANA, JAL, Peach and other airline sales happen? BEATRIP records every sale it observes. Currently collecting data — figures will be published once real observations accumulate."
+    : hasContent
+    ? "ANA・JAL・Peach など各社の航空券セールはいつ開催される？BEATRIP が実際に観測したセールから、開催が多い月・次回の見込み時期・平均割引率を分析。"
+    : "ANA・JAL・Peach など各社の航空券セールはいつ開催される？BEATRIP が実際に観測して記録しています。現在集計中で、実測が溜まり次第公開します。";
   return {
+    ...(hasContent ? {} : { robots: { index: false, follow: true } }),
     title,
     description,
     keywords: isEn
@@ -181,24 +193,26 @@ export default async function SaleCalendarPage({
       return ta - tb;
     });
 
+  // FAQ は FAQPage JSON-LD に入る = Google に事実として伝わる。実測ゼロの間は
+  // 集計件数や「◯月に集中」を主張しない (推測を事実として出さない)。
   const faqs: FAQItem[] = [
     {
       q: "航空券のセールが最も多い時期はいつですか？",
-      a: `${
-        historySource === "observed"
-          ? `BEATRIP が観測した各社のセール ${totalRecords} 件`
-          : `各社のセール ${totalRecords} 件の参考データ`
-      }を分析すると、開催が集中するのは ${topAggMonths
-        .map((m) => `${MONTHS_JA[m.month]}（${m.count}件）`)
-        .join(
-          "、",
-        )} です。航空会社の決算期（3月・9月）や大型連休前（GW前・夏休み前・年末年始前）にセールが集中する傾向があります。`,
+      a:
+        totalRecords > 0
+          ? `BEATRIP が観測した各社のセール ${totalRecords} 件を分析すると、開催が集中するのは ${topAggMonths
+              .map((m) => `${MONTHS_JA[m.month]}（${m.count}件）`)
+              .join(
+                "、",
+              )} です。航空会社の決算期（3月・9月）や大型連休前（GW前・夏休み前・年末年始前）にセールが集中する傾向があります。`
+          : "BEATRIP は各社のセール開催を実際に観測して記録しており、現在集計中です。実測が溜まり次第、開催が多い月を公開します。推測に基づく数値は掲載しません。",
     },
     {
       q: "次回のセール時期はどうやって予測していますか？",
-      a: historySource === "observed"
-        ? "BEATRIP が観測したセール実績の「平均開催間隔」と「開催が多い月」から、統計的な目安として次回の見込み時期を算出しています。確定情報ではありません。確実に逃したくない方は、ニュースレターや価格アラートの登録をおすすめします。"
-        : "セールの「平均開催間隔」と「開催が多い月」から、統計的な目安として次回の見込み時期を算出しています。現在は参考データを用いた目安で、確定情報ではありません（BEATRIP の観測実績が貯まり次第、実測に切り替わります）。確実に逃したくない方は、ニュースレターや価格アラートの登録をおすすめします。",
+      a:
+        totalRecords > 0
+          ? "BEATRIP が観測したセール実績の「平均開催間隔」と「開催が多い月」から、統計的な目安として次回の見込み時期を算出しています。確定情報ではありません。確実に逃したくない方は、ニュースレターや価格アラートの登録をおすすめします。"
+          : "BEATRIP が実際に観測したセール実績のみを根拠にします。現在は集計中のため予測は掲載していません。新着セールを逃したくない方は、ニュースレターや価格アラートの登録をおすすめします。",
     },
     {
       q: "LCC とフルサービス航空会社でセールの傾向は違いますか？",
@@ -271,14 +285,21 @@ export default async function SaleCalendarPage({
             航空券セールカレンダー｜各社の次回セール時期・予測
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/90 sm:text-base">
-            「航空券のセールはいつ？」に答える、各社のセール
-            {totalRecords}{" "}
-            件の分析。開催が多い月・次回の見込み時期・平均割引率・
-            最安値を一覧でチェックできます。
-            {historySource !== "observed" && (
-              <span className="mt-2 block text-xs text-white/70">
-                ※ 現在は参考データに基づく目安です。BEATRIP の観測実績が貯まり次第、実測データに切り替わります。
-              </span>
+            {totalRecords === 0 ? (
+              <>
+                「航空券のセールはいつ？」に答えるため、各社のセール開催を
+                BEATRIP が実際に観測して記録しています。
+                <span className="mt-2 block text-xs text-white/70">
+                  ※ 現在集計中です。実測が溜まり次第、開催が多い月・次回の見込み時期・
+                  平均割引率を公開します。推測に基づく数値は掲載しません。
+                </span>
+              </>
+            ) : (
+              <>
+                「航空券のセールはいつ？」に答える、BEATRIP が観測した各社のセール
+                {totalRecords} 件の分析。開催が多い月・次回の見込み時期・平均割引率・
+                最安値を一覧でチェックできます。
+              </>
             )}
           </p>
         </div>
@@ -288,7 +309,35 @@ export default async function SaleCalendarPage({
         id="main-content"
         className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6"
       >
+        {totalRecords === 0 && (
+          <section className="mb-12">
+            <div className="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 p-6 text-center dark:border-zinc-700 dark:bg-zinc-900/50 sm:p-10">
+              <CalendarClock className="mx-auto mb-3 h-8 w-8 text-zinc-300" />
+              <h2 className="font-heading text-lg tracking-wide text-zinc-900 uppercase dark:text-zinc-100">
+                セール実績を集計中
+              </h2>
+              <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+                BEATRIP は各社のセール開催を実際に観測して記録しています。
+                開催が多い月・次回の見込み時期は、実測が溜まり次第このページで公開します。
+                推測に基づく数値は掲載しません。
+              </p>
+              <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400">
+                いま開催中のセールは
+                <Link href="/deals" className="mx-1 underline underline-offset-2 hover:text-zinc-700 dark:hover:text-zinc-200">
+                  ディール一覧
+                </Link>
+                から、価格が急落した運賃は
+                <Link href="/hot-deals" className="mx-1 underline underline-offset-2 hover:text-zinc-700 dark:hover:text-zinc-200">
+                  超お買い得速報
+                </Link>
+                からご覧いただけます。
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* 全社統合 月別ヒートマップ */}
+        {totalRecords > 0 && (
         <section className="mb-12">
           <SectionHeading subtitle="各社のセール開催を月別に集計。最もセールが多い時期の目安に">
             1年で航空券セールが多い月
@@ -325,7 +374,7 @@ export default async function SaleCalendarPage({
               })}
             </div>
             <p className="mt-4 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-              {historySource === "observed" ? "BEATRIPの観測実績では" : "参考データでは"}{" "}
+              BEATRIPの観測実績では{" "}
               <span className="font-bold text-rose-600 dark:text-rose-400">
                 {topAggMonths.map((m) => MONTHS_JA[m.month]).join("・")}
               </span>{" "}
@@ -336,16 +385,12 @@ export default async function SaleCalendarPage({
             </p>
           </div>
         </section>
+        )}
 
-        {/* 航空会社別 予測カード */}
+        {/* 航空会社別 予測カード — 実測が無い間は出さない (空の予測は無意味) */}
+        {cards.length > 0 && (
         <section className="mb-12">
-          <SectionHeading
-            subtitle={
-              historySource === "observed"
-                ? "BEATRIPが観測した開催実績から平均間隔を割り出し、次回の見込み時期を統計的に算出"
-                : "参考データの平均間隔から次回の見込み時期を算出した目安（実測ではありません）"
-            }
-          >
+          <SectionHeading subtitle="BEATRIPが観測した開催実績から平均間隔を割り出し、次回の見込み時期を統計的に算出">
             航空会社別・次回セール予測
           </SectionHeading>
           <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -414,10 +459,12 @@ export default async function SaleCalendarPage({
           </div>
           <p className="mt-4 text-[11px] leading-relaxed text-zinc-400">
             ※
-            予測は過去のセール開催実績（平均間隔・最頻月）から算出した統計的な目安で、
-            開催を保証するものではありません。確定情報は各航空会社の公式発表をご確認ください。
+            予測は BEATRIP が観測したセール開催実績（平均間隔・最頻月）から算出した
+            統計的な目安で、開催を保証するものではありません。確定情報は各航空会社の
+            公式発表をご確認ください。
           </p>
         </section>
+        )}
 
         {/* 人気路線の最安値 — route ページへのハブ動線 (deal→route→calendar の循環を閉じる) */}
         <section className="mb-12">

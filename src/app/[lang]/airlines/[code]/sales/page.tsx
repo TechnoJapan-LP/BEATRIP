@@ -299,7 +299,9 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 {airline.name} セール時期・実績まとめ
               </h1>
               <p className="text-xs text-zinc-400 sm:text-sm">
-                {airline.nameEn}のセール開催データを分析（{isObservedHistory ? "BEATRIP観測実績" : "参考データ"}）
+                {records.length > 0
+                  ? `${airline.nameEn}のセール開催データを分析（BEATRIP観測実績）`
+                  : `${airline.nameEn}のセール開催を記録中（実測が溜まり次第公開）`}
               </p>
             </div>
           </div>
@@ -314,7 +316,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   {stats.totalSales}
                 </div>
                 <div className="text-[11px] text-zinc-400 mt-1">
-                  {isObservedHistory ? "観測したセール回数" : "参考データの件数"}
+                  観測したセール回数
                 </div>
               </div>
               <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center">
@@ -334,7 +336,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   ¥{formatPrice(stats.lowestPrice)}
                 </div>
                 <div className="text-[11px] text-zinc-400 mt-1">
-                  {isObservedHistory ? "観測最安値" : "参考最安値"}
+                  観測最安値
                 </div>
               </div>
             </div>
@@ -367,7 +369,24 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               </div>
             )}
 
-            {/* Monthly distribution */}
+            {/* Monthly distribution — 実測が無い間はセクションごと出さない。
+                空のグラフに「開催傾向」と題を付けると、存在しない傾向を
+                示唆してしまうため。 */}
+            {records.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50 p-4 mb-6 sm:p-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <BarChart3 className="h-4 w-4 text-zinc-400" />
+                  <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
+                    月別セール開催傾向
+                  </h2>
+                </div>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  {airline.name}のセール開催を BEATRIP
+                  が実際に観測して記録しています。現在集計中のため、開催月の傾向はまだ公開していません
+                  （推測に基づく数値は掲載しません）。開催中のセールは上部に、新着はニュースレターでお届けします。
+                </p>
+              </div>
+            ) : (
             <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 mb-6 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
                 <BarChart3 className="h-4 w-4 text-zinc-400" />
@@ -377,9 +396,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               </div>
               <p className="text-xs text-zinc-400 mb-4">
                 「{airline.name} セール 時期」で検索する方へ —
-                {historySource === "observed"
-                  ? `BEATRIPが実際に観測した${records.length}件の開催実績です`
-                  : "参考データに基づく開催月の目安です（BEATRIPの観測実績が貯まり次第、実測に切り替わります）"}
+                BEATRIPが実際に観測した{records.length}件の開催実績です
               </p>
               <div
                 className="flex items-end gap-1 sm:gap-2"
@@ -433,6 +450,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 </div>
               </div>
             </div>
+            )}
 
             {/* メール捕捉 — 「次回いつ?」の訪問者を読者化する最重要導線。
                 タイムセールは数時間で終わるため通知の価値提案が刺さる文脈 */}
