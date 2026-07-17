@@ -19,7 +19,10 @@ import { OG_IMAGES } from "@/lib/seo/og";
  */
 
 // 超お買い得の鮮度に合わせ 1h
-export const revalidate = 3600;
+// 15分。「急落運賃は数時間で消える」ことを売りにするページなので、1時間
+// キャッシュでは検出・売り切れ・予約リンク更新が最大1時間遅れて届き、
+// ページの主張と実体が食い違う。CDN キャッシュが効いているので負荷は問題ない。
+export const revalidate = 900;
 
 export async function generateMetadata({
   params,
