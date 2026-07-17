@@ -2,6 +2,7 @@ import awardChartsJson from "@/data/miles/award-charts.json";
 import cardsJson from "@/data/miles/cards.json";
 import destinationsJson from "@/data/miles/destinations.json";
 import priorityPassJson from "@/data/miles/priority-pass.json";
+import transferRoutesJson from "@/data/miles/transfer-routes.json";
 
 /**
  * マイルシミュレーターのデータローダー
@@ -201,6 +202,37 @@ export function getMileDestinations(): MileDestination[] {
   return destinations;
 }
 
+export type TransferRoute = {
+  id: string;
+  pointName: string;
+  issuer: string;
+  programId: string;
+  rate: { points: number; miles: number };
+  rateLabel: string;
+  notes: string;
+  source: string;
+  verifiedAt: string;
+};
+
+let transferCache: TransferRoute[] | null = null;
+
+export function getTransferRoutes(): TransferRoute[] {
+  if (transferCache) return transferCache;
+  const routes = (transferRoutesJson as { routes: TransferRoute[] }).routes;
+  const programIds = new Set(getMilePrograms().map((p) => p.id));
+  for (const r of routes) {
+    assertProvenance("transfer-route", r.id, r.source, r.verifiedAt);
+    if (!programIds.has(r.programId)) {
+      throw new Error(`miles data: transfer-route "${r.id}" の programId "${r.programId}" が award-charts に存在しません。`);
+    }
+    if (!(r.rate.points > 0) || !(r.rate.miles > 0)) {
+      throw new Error(`miles data: transfer-route "${r.id}" の rate が不正です。`);
+    }
+  }
+  transferCache = routes;
+  return routes;
+}
+
 let ppCache: PriorityPassPricing | null = null;
 
 export function getPriorityPassPricing(): PriorityPassPricing {
@@ -217,6 +249,94 @@ export function getPriorityPassPricing(): PriorityPassPricing {
   }
   ppCache = pp;
   return pp;
+}
+
+export type MilesFreshness = {
+  /** 全データの最終確認日 */
+  verifiedAt: string;
+  /** 最も古い確認日と、その経過日数 */
+  oldestVerifiedAt: string;
+  oldestAgeDays: number;
+  /** 期限つきデータ (燃油サーチャージ) の状態 */
+  expiring: {
+    id: string;
+    validUntil: string;
+    /** 失効までの日数。マイナスなら失効済み (= 金額が画面から消えている) */
+    daysLeft: number;
+    expired: boolean;
+  }[];
+  /** 要対応の警告。空なら健全 */
+  warnings: string[];
+};
+
+const STALE_AFTER_DAYS = 180;
+const EXPIRY_WARN_DAYS = 21;
+
+function daysBetween(from: string, to: string): number {
+  const ms = Date.parse(to) - Date.parse(from);
+  return Math.floor(ms / 86_400_000);
+}
+
+/**
+ * マイルデータの鮮度診断。
+ *
+ * ここのデータは公式サイトからの手動転記なので、放置すると静かに腐る
+ * (燃油サーチャージは2ヶ月ごとに改定され、失効すると画面から金額が消える)。
+ * 「消える」のは嘘をつかないための正しい挙動だが、誰も気づかないと機能が
+ * 痩せたまま放置される。/api/health/scrape から監視できるようにして、
+ * 更新すべき時期を検知可能にするのが目的。
+ */
+export function getMilesFreshness(today: string): MilesFreshness {
+  const programs = getMilePrograms();
+  const cards = getMileCards();
+  const pp = getPriorityPassPricing();
+  const transfers = getTransferRoutes();
+
+  const allDates = [
+    ...programs.map((p) => p.verifiedAt),
+    ...programs.flatMap((p) => (p.alliance ? [p.alliance.verifiedAt] : [])),
+    ...programs.flatMap((p) => (p.fuelSurcharge ? [p.fuelSurcharge.verifiedAt] : [])),
+    ...cards.flatMap((c) => c.sources.map((s) => s.verifiedAt)),
+    ...transfers.map((r) => r.verifiedAt),
+    pp.verifiedAt,
+  ].sort();
+
+  const oldest = allDates[0] ?? today;
+  const oldestAgeDays = daysBetween(oldest, today);
+
+  const expiring = programs
+    .filter((p) => p.fuelSurcharge)
+    .map((p) => {
+      const validUntil = p.fuelSurcharge!.validUntil;
+      const daysLeft = daysBetween(today, validUntil);
+      return { id: p.id, validUntil, daysLeft, expired: daysLeft < 0 };
+    });
+
+  const warnings: string[] = [];
+  for (const e of expiring) {
+    if (e.expired) {
+      warnings.push(
+        `${e.id}: 燃油サーチャージが ${e.validUntil} で失効済み (画面から金額が消えています)。公式の現行額を確認して award-charts.json を更新してください`
+      );
+    } else if (e.daysLeft <= EXPIRY_WARN_DAYS) {
+      warnings.push(
+        `${e.id}: 燃油サーチャージが ${e.validUntil} に失効します (あと${e.daysLeft}日)。次期の公表額を確認してください`
+      );
+    }
+  }
+  if (oldestAgeDays > STALE_AFTER_DAYS) {
+    warnings.push(
+      `マイルデータの最終確認から ${oldestAgeDays} 日経過 (最古: ${oldest})。公式サイトで現行値を再確認してください`
+    );
+  }
+
+  return {
+    verifiedAt: allDates.at(-1) ?? today,
+    oldestVerifiedAt: oldest,
+    oldestAgeDays,
+    expiring,
+    warnings,
+  };
 }
 
 /** データ全体の最終確認日 (画面の「◯年◯月時点の情報」表示に使う) */

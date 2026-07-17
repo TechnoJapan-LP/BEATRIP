@@ -13,6 +13,7 @@ import {
   getMilePrograms,
   getMilesDataVerifiedAt,
   getPriorityPassPricing,
+  getTransferRoutes,
 } from "@/lib/miles/data";
 import { awardRequirementFor } from "@/lib/miles/simulator";
 import { getAspPartner, getAspPartnerUrl } from "@/lib/affiliate/asp-partners";
@@ -196,6 +197,7 @@ export default async function MilesPage({
             items={items}
             cards={simCards}
             ppPricing={getPriorityPassPricing()}
+            transferRoutes={getTransferRoutes()}
             verifiedAt={verifiedAt}
           />
         </div>

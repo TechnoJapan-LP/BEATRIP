@@ -2,8 +2,13 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Plane, CreditCard, Armchair, BadgeCheck } from "lucide-react";
-import type { MileCard, MileDestination, PriorityPassPricing } from "@/lib/miles/data";
+import { ArrowUpRight, Plane, CreditCard, Armchair, BadgeCheck, Coins } from "lucide-react";
+import type {
+  MileCard,
+  MileDestination,
+  PriorityPassPricing,
+  TransferRoute,
+} from "@/lib/miles/data";
 import type { AwardRequirement } from "@/lib/miles/simulator";
 import { destinationSummary, ppCostComparison, rankCards } from "@/lib/miles/simulator";
 import { trackPartnerClick } from "@/components/analytics";
@@ -37,11 +42,13 @@ export function MileSimulator({
   items,
   cards,
   ppPricing,
+  transferRoutes,
   verifiedAt,
 }: {
   items: SimDestination[];
   cards: SimCard[];
   ppPricing: PriorityPassPricing;
+  transferRoutes: TransferRoute[];
   verifiedAt: string;
 }) {
   const [destId, setDestId] = useState(items[0]?.destination.id ?? "");
@@ -358,6 +365,103 @@ export function MileSimulator({
             <CreditCard className="h-3.5 w-3.5 mt-0.5 shrink-0" />
             並び順はマイル獲得効率と年会費で決めています (提携の有無は順位に影響しません)。
             カード情報は{verifiedAt}時点の公式サイト表示に基づきます。最新の条件・入会特典は必ず公式サイトでご確認ください。
+          </p>
+        </div>
+      )}
+
+      {/* ── 手持ちポイントの移行先 ── */}
+      {targetMiles && transferRoutes.length > 0 && (
+        <div>
+          <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
+            手持ちのポイントはどちらのマイルに変える？
+          </h2>
+          <p className="text-xs text-zinc-500 mb-3">
+            {current.destination.label}往復
+            {cabin === "economy" ? "エコノミー" : "ビジネス"}に必要な
+            {targetMiles.toLocaleString("ja-JP")}マイル (下限) に届くまでに必要なポイント数の換算です。
+            交換レートは各社の公式ページで確認した現行値 ({verifiedAt}時点)。
+          </p>
+          <div className="space-y-3">
+            {Object.entries(
+              transferRoutes.reduce<Record<string, TransferRoute[]>>((acc, r) => {
+                (acc[r.pointName] ??= []).push(r);
+                return acc;
+              }, {})
+            ).map(([pointName, routes]) => {
+              // 同じポイントで ANA/JAL のどちらが少ないポイントで届くかを比較
+              const withNeed = routes
+                .map((r) => {
+                  const award = current.awards.find((a) => a.programId === r.programId);
+                  const min = award?.roundTripMiles[cabin]?.min;
+                  if (!min) return null;
+                  return {
+                    route: r,
+                    needPoints: Math.ceil(min / (r.rate.miles / r.rate.points)),
+                    programName: award.programName,
+                    allianceName: award.alliance?.name ?? null,
+                  };
+                })
+                .filter((x): x is NonNullable<typeof x> => x !== null)
+                .sort((a, b) => a.needPoints - b.needPoints);
+              if (withNeed.length === 0) return null;
+              const best = withNeed[0];
+              return (
+                <div
+                  key={pointName}
+                  className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-5"
+                >
+                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                    <Coins className="h-4 w-4 text-amber-500" />
+                    <span className="font-medium text-zinc-900 dark:text-zinc-100">{pointName}</span>
+                    <span className="text-[11px] text-zinc-400">{best.route.issuer}</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {withNeed.map((w, i) => (
+                      <div
+                        key={w.route.id}
+                        className={`rounded-xl px-3 py-2 border ${
+                          i === 0 && withNeed.length > 1
+                            ? "border-emerald-300 dark:border-emerald-700 bg-emerald-50/60 dark:bg-emerald-900/20"
+                            : "border-zinc-100 dark:border-zinc-800"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
+                            {w.programName}
+                          </span>
+                          {i === 0 && withNeed.length > 1 && (
+                            <span className="rounded bg-emerald-600 text-white px-1.5 py-0.5 text-[10px] font-medium">
+                              少ないポイントで届く
+                            </span>
+                          )}
+                        </div>
+                        <div className="mt-1 text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                          {w.needPoints.toLocaleString("ja-JP")}
+                          <span className="text-xs font-normal text-zinc-400 ml-1">ポイント必要</span>
+                        </div>
+                        <div className="text-[11px] text-zinc-400">
+                          {w.route.rateLabel}
+                          {w.allianceName ? ` ・ ${w.allianceName}` : ""}
+                        </div>
+                        <div className="text-[11px] text-zinc-400 mt-1">{w.route.notes}</div>
+                        <a
+                          href={w.route.source}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-block text-[11px] text-zinc-400 underline"
+                        >
+                          公式の交換条件
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-3 text-[11px] text-zinc-400">
+            ここに無いポイント (Vポイント・アメックスのメンバーシップ・リワード・JCB Oki Doki 等) は、
+            公式の交換条件を確認できたものから順次追加します。確認できていないレートは掲載していません。
           </p>
         </div>
       )}

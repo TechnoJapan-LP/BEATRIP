@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isKVEnabled } from "@/lib/store/kv";
 import { loadAllSales } from "@/lib/store/sale-store";
+import { getMilesFreshness } from "@/lib/miles/data";
 import { loadHotDeals } from "@/lib/deals/hot-deals";
 import { getObservationStats } from "@/lib/deals/price-observations";
 import { getSaleRecordStats } from "@/lib/deals/sale-records";
@@ -130,6 +131,17 @@ export async function GET() {
     // health は常に 200 を返す
   }
 
+  // マイルデータ (公式転記) の鮮度。燃油サーチャージは2ヶ月ごとに改定され、
+  // 失効すると画面から金額が消える (嘘をつかないための挙動) が、放置に
+  // 気づけないため health から監視できるようにする。
+  const today = new Date().toISOString().slice(0, 10);
+  let milesData: ReturnType<typeof getMilesFreshness> | { error: string };
+  try {
+    milesData = getMilesFreshness(today);
+  } catch (e) {
+    milesData = { error: e instanceof Error ? e.message : String(e) };
+  }
+
   return NextResponse.json({
     ready,
     scraperMode,
@@ -143,6 +155,7 @@ export async function GET() {
     travelpayouts,
     priceObservations,
     saleRecords,
+    milesData,
     hint: ready
       ? "A 設定OK。latestScrapedAt が直近なら cron も稼働中。"
       : "本番稼働には SCRAPER_MODE=hybrid と KV 接続 (kvEnabled=true) が必要。",
