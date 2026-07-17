@@ -258,12 +258,18 @@ function buildSkyscannerUrl(route: SaleRoute, sale: AirlineSale): string {
 // ── Trip.com deep link ──
 function buildTripComUrl(route: SaleRoute, sale: AirlineSale): string {
   const dep = formatDateForTripCom(route.departDate ?? sale.travelPeriodStart);
+  // 復路を観測している運賃は往復で検索する。triptype=ow 固定だと、往復で
+  // 観測した価格を片道検索で開くことになり、表示価格が噛み合わない
+  // (TP の価格ウォッチは one_way=false = 往復運賃を返している)。
+  // 往復書式は 2026-07-17 にブラウザで実地検証済み。
+  const ret = route.returnDate ? formatDateForTripCom(route.returnDate) : "";
   const base = "https://jp.trip.com/flights/showfarefirst";
   const params = new URLSearchParams({
     dcity: route.originCode.toLowerCase(),
     acity: route.destinationCode.toLowerCase(),
     ddate: dep,
-    triptype: "ow",
+    ...(ret ? { rdate: ret } : {}),
+    triptype: ret ? "rt" : "ow",
     class: route.cabin === "Business" ? "c" : "y",
     locale: "ja-jp",
     curr: "JPY",
