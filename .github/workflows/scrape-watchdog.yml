@@ -1,0 +1,46 @@
+# スクレイプ鮮度の番犬 (独立監視)
+#
+# 蓄積フェーズの唯一の隙間対策。実測運賃・セール実績の蓄積はスクレイプが
+# 走り続けることに依存するが、トリガー2系統 (Vercel 日次 cron + hot-deal-scan
+# の GitHub Actions) が両方とも静かに死ぬと、内部からは気づけない
+# (死んだ番犬は吠えない)。
+#
+# この番犬は hot-deal-scan とは別スケジュール・別ワークフローで、公開 GET の
+# /api/health/scrape を叩き、scrapeFreshness.stale が true (最終スクレイプから
+# 28h 超) なら job を失敗させる。→ GitHub 標準の「ワークフロー失敗メール」が
+# リポジトリ所有者に届く (公開 SNS には流さない = フォロワーに ops 通知が出ない)。
+#
+# CRON_SECRET 不要 (health は公開 GET)。hot-deal-scan とは独立に動くため、
+# 片方が死んでももう片方が検知できる。
+name: scrape-watchdog
+
+on:
+  schedule:
+    # 毎日 20:00 UTC (Vercel 日次 cron 18:00 の 2h 後 = 日次の底が降りた後に確認)。
+    - cron: "0 20 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check scrape freshness
+        run: |
+          curl -s -o /tmp/health.json --max-time 60 \
+            "https://beatrip.jp/api/health/scrape" || {
+            echo "health エンドポイントに到達できません"; exit 1;
+          }
+          echo "--- scrapeFreshness ---"
+          python3 - <<'PY'
+          import json, sys
+          d = json.load(open("/tmp/health.json"))
+          sf = d.get("scrapeFreshness") or {}
+          print("latestScrapedAt:", d.get("latestScrapedAt"))
+          print("ageMinutes:", sf.get("ageMinutes"))
+          print("stale:", sf.get("stale"))
+          if sf.get("stale"):
+              print("::error::" + (sf.get("warning") or "スクレイプが停止している可能性があります"))
+              sys.exit(1)
+          print("OK: スクレイプは新鮮です")
+          PY

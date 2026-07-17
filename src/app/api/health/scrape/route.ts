@@ -51,6 +51,38 @@ export async function GET() {
   const kvEnabled = isKVEnabled();
   const ready = scraperMode === "hybrid" && kvEnabled;
 
+  // スクレイプ鮮度の番犬。トリガーは2系統 (Vercel 日次 cron + GitHub Actions 3h
+  // おき) で、どちらか生きていれば latestScrapedAt は更新される。両方が静かに
+  // 死ぬと蓄積が止まるが、内部からは気づけないため、この stale フラグを
+  // 独立した watchdog ワークフローが外から監視する (.github/workflows/
+  // scrape-watchdog.yml)。閾値は日次の底 (24h) + Vercel/GH の発火遅延を見込んで
+  // 28h。これ未満の欠落は 3h 冗長化と日次 dedup が吸収するので鳴らさない。
+  const STALE_THRESHOLD_MIN = 28 * 60;
+  let scrapeFreshness: {
+    ageMinutes: number | null;
+    stale: boolean;
+    warning: string | null;
+  } = { ageMinutes: null, stale: !ready, warning: null };
+  if (ready) {
+    if (!latestScrapedAt) {
+      scrapeFreshness = {
+        ageMinutes: null,
+        stale: true,
+        warning: "スクレイプ実績が1件もありません。cron が一度も成功していない可能性があります。",
+      };
+    } else {
+      const ageMin = Math.floor((Date.now() - Date.parse(latestScrapedAt)) / 60000);
+      const stale = ageMin > STALE_THRESHOLD_MIN;
+      scrapeFreshness = {
+        ageMinutes: ageMin,
+        stale,
+        warning: stale
+          ? `最終スクレイプから ${Math.floor(ageMin / 60)} 時間経過。Vercel cron と GitHub Actions の両方が止まっている可能性があります (CRON_SECRET・エンドポイント・スケジュールを確認)。`
+          : null,
+      };
+    }
+  }
+
   // SNS 自動投稿の設定状況 (値は出さず boolean のみ)。新着セール発生時に投稿される。
   const xConfigured = Boolean(
     process.env.X_API_KEY &&
@@ -148,6 +180,7 @@ export async function GET() {
     kvEnabled,
     storeSalesCount,
     latestScrapedAt,
+    scrapeFreshness,
     social: { xConfigured, blueskyConfigured },
     analytics,
     affiliate,
