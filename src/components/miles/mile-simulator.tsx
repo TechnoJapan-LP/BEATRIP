@@ -44,14 +44,21 @@ export function MileSimulator({
   ppPricing,
   transferRoutes,
   verifiedAt,
+  initialDestId,
 }: {
   items: SimDestination[];
   cards: SimCard[];
   ppPricing: PriorityPassPricing;
   transferRoutes: TransferRoute[];
   verifiedAt: string;
+  /** 遷移元 (ディール等) から都市をプリセットする。無効値は無視して先頭都市 */
+  initialDestId?: string;
 }) {
-  const [destId, setDestId] = useState(items[0]?.destination.id ?? "");
+  const defaultDestId =
+    (initialDestId && items.some((i) => i.destination.id === initialDestId)
+      ? initialDestId
+      : items[0]?.destination.id) ?? "";
+  const [destId, setDestId] = useState(defaultDestId);
   const [spend, setSpend] = useState<number>(50000);
   const [cabin, setCabin] = useState<"economy" | "business">("economy");
   const [wantsLounge, setWantsLounge] = useState(false);

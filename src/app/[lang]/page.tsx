@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import dynamic from "next/dynamic";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Award } from "lucide-react";
 import { Header } from "@/components/header";
 import { DealGrid } from "@/components/deals/deal-grid";
 import { SaleCalendar } from "@/components/calendar/sale-calendar";
@@ -277,6 +277,33 @@ export default async function Home({
             <SaleCalendar events={mockSaleEvents} hideHeader />
           </section>
         )}
+
+        {/* マイル導線 — セールを見た人が最も興味を持つ「現金 vs マイル」比較へ。
+            サイト最大流量のTOP/deals から /miles に繋ぐ (メガメニュー以外の入口)。 */}
+        <section className="mt-12">
+          <Link
+            href={lh("/miles")}
+            className="group flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 p-6 sm:p-8 text-white transition-transform hover:scale-[1.01]"
+          >
+            <Award className="h-8 w-8 flex-shrink-0 text-white/90" />
+            <div className="flex-1 min-w-0">
+              <div className="text-[11px] font-medium tracking-[0.15em] text-white/70 uppercase mb-1">
+                Miles Simulator
+              </div>
+              <h2 className="font-heading text-xl sm:text-2xl tracking-wide uppercase">
+                マイルで行く？ セールで買う？
+              </h2>
+              <p className="mt-1 text-sm text-white/85">
+                ANA・JALの特典航空券に必要なマイル数と、観測中のセール最安値を並べて比較。
+                手持ちのポイントをどちらのマイルに変えるべきかも分かります。
+              </p>
+            </div>
+            <span className="flex items-center gap-1 text-sm font-medium text-white shrink-0">
+              試してみる
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </Link>
+        </section>
 
         {/* Popular Hotels — 高料率の収益面、フライト/ホテル両軸の流量に */}
         <section className="mt-12">

@@ -339,6 +339,18 @@ export function getMilesFreshness(today: string): MilesFreshness {
   };
 }
 
+/**
+ * 目的地の空港コード → /miles の目的地 id。
+ * /miles が扱う都市 (destinations.json) のときだけ id を返す。
+ * ディール詳細から「マイルなら？」導線を出すかの判定に使う。
+ */
+export function milesDestinationIdFor(destinationCode: string): string | null {
+  const dest = getMileDestinations().find((d) =>
+    d.destinationCodes.includes(destinationCode)
+  );
+  return dest?.id ?? null;
+}
+
 /** データ全体の最終確認日 (画面の「◯年◯月時点の情報」表示に使う) */
 export function getMilesDataVerifiedAt(): string {
   const dates = [

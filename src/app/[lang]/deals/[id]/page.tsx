@@ -14,6 +14,8 @@ import {
   ExternalLink,
   Fuel,
   Receipt,
+  Award,
+  ArrowRight,
 } from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -32,6 +34,7 @@ import {
   getHotelSlugByIata,
 } from "@/data/hotel-destinations";
 import { cityNameEn, displayCityJa } from "@/lib/airport-names";
+import { milesDestinationIdFor } from "@/lib/miles/data";
 import { getAirlineByCode } from "@/data/airlines";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
@@ -148,6 +151,10 @@ export default async function DealDetailPage({ params }: Props) {
 
   const deadlineDays = daysLeft(deal.booking_deadline);
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
+
+  // マイルシミュレーターが扱う都市なら「マイルなら？」導線を出す (その都市を
+  // プリセットして /miles へ)。対象外の都市では出さない (飛んでも比較できないため)。
+  const milesDestId = milesDestinationIdFor(deal.destination_code);
 
   // 同一セールの他の対象便。件数が多くなるため、割引率の高い順に最大10件だけ出す。
   const sameSaleDeals = deals
@@ -657,6 +664,26 @@ export default async function DealDetailPage({ params }: Props) {
               currentPrice={deal.sale_price}
               dealId={deal.id}
             />
+
+            {/* マイル導線 — この目的地がシミュレーター対象都市のときだけ、その都市を
+                プリセットして /miles へ。現金 (このセール価格) と特典航空券の比較へ誘導。 */}
+            {milesDestId && (
+              <Link
+                href={`/miles?to=${milesDestId}`}
+                className="group flex items-center gap-3 rounded-xl bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 p-4 text-white transition-transform hover:scale-[1.01]"
+              >
+                <Award className="h-6 w-6 flex-shrink-0 text-white/90" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold">
+                    このセール価格、マイルなら何マイル？
+                  </div>
+                  <div className="text-[11px] text-white/80 mt-0.5">
+                    {destJa}の特典航空券に必要なマイル数と比較する
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4 flex-shrink-0 transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            )}
 
             {sameSaleDeals.length > 0 && (
               <div className="rounded-xl border border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900 p-5">

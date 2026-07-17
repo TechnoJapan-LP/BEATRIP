@@ -94,10 +94,13 @@ const FAQ = [
 
 export default async function MilesPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string }>;
+  searchParams: Promise<{ to?: string }>;
 }) {
   const { lang } = await params;
+  const { to } = await searchParams;
   const lh = (p: string) => (lang === "en" ? `/en${p}` : p);
 
   const programs = getMilePrograms();
@@ -199,6 +202,7 @@ export default async function MilesPage({
             ppPricing={getPriorityPassPricing()}
             transferRoutes={getTransferRoutes()}
             verifiedAt={verifiedAt}
+            initialDestId={to}
           />
         </div>
 
