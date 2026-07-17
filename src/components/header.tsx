@@ -24,6 +24,7 @@ import {
   CreditCard,
   ShieldCheck,
   Trophy,
+  Award,
   Zap,
   Coins,
   TrendingUp,
@@ -135,6 +136,7 @@ export function Header() {
           items: [
             { href: "/articles/ota-compare", label: `OTA 比較 (${OTA_COMPARE_ARTICLES.length} 都市)`, desc: "都市別に最安ホテル予約サイトを比較", Icon: BedDouble },
             { href: "/ota-sales", label: "OTAセール比較", desc: "Booking / Trip / 楽天 / じゃらん 完全比較", Icon: BedDouble },
+            { href: "/miles", label: "マイルシミュレーター", desc: "特典航空券×セール最安×クレカ試算", Icon: Award },
             { href: "/credit-cards", label: "クレカ比較", desc: "マイル・保険・ラウンジで選ぶ", Icon: CreditCard },
             { href: "/insurance", label: "海外旅行保険", desc: "クレカ付帯 vs ネット保険", Icon: ShieldCheck },
             { href: "/esim", label: "eSIM", desc: "海外通信ガイド", Icon: Wifi },

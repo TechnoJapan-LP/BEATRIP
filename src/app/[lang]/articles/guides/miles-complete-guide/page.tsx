@@ -101,6 +101,7 @@ const CONTENT: GuideContent = {
     type: "FSC",
   },
   relatedLinks: [
+    { href: "/miles", label: "マイル獲得シミュレーター", desc: "特典航空券×セール最安×クレカ試算を1画面で" },
     { href: "/credit-cards", label: "旅行系クレカを比較", desc: "マイル・保険・ラウンジで選ぶ" },
     { href: "/articles/miles-booking-guide", label: "マイル予約ガイド", desc: "JAL/ANA マイルで予約 完全ガイド" },
     { href: "/articles/guides/best-booking-timing", label: "航空券を最安で買うベストタイミング", desc: "予約時期の考え方" },

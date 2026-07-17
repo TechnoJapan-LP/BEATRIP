@@ -69,7 +69,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...bilingual("/package-tour", "monthly", 0.7),
     ...bilingual("/okinawa", "monthly", 0.7),
     ...bilingual("/ota-sales", "weekly", 0.7),
-    // 高単価 ASP ランディング (クレカ / 海外旅行保険)
+    // 高単価 ASP ランディング (クレカ / 海外旅行保険 / マイル)
+    ...bilingual("/miles", "weekly", 0.75),
     ...bilingual("/credit-cards", "monthly", 0.75),
     ...bilingual("/insurance", "monthly", 0.75),
     // IA ハブ (OTA 比較 13 都市の一覧 / シーズン特集インデックス)

@@ -155,9 +155,9 @@ export function MileSimulator({
 
       {/* ── 現金 vs マイル ── */}
       <div>
-        <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
+        <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-3">
           {current.destination.label}: 現金セール vs マイル
-        </h3>
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/20 p-5">
             <div className="flex items-center gap-2 text-xs font-medium text-emerald-700 dark:text-emerald-300 mb-2">
@@ -272,9 +272,9 @@ export function MileSimulator({
       {/* ── カードで貯める推計 ── */}
       {targetMiles && (
         <div>
-          <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
+          <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
             カード決済でいつ貯まる？
-          </h3>
+          </h2>
           <p className="text-xs text-zinc-500 mb-3">
             前提: 月{yen(spend)}を対象決済に使い、目標は
             {current.destination.label}往復{cabin === "economy" ? "エコノミー" : "ビジネス"}の
@@ -364,10 +364,10 @@ export function MileSimulator({
 
       {/* ── プライオリティ・パス比較 ── */}
       <div className="rounded-2xl border border-violet-200 dark:border-violet-800 bg-violet-50/40 dark:bg-violet-900/10 p-5">
-        <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1 flex items-center gap-2">
+        <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1 flex items-center gap-2">
           <Armchair className="h-5 w-5 text-violet-600 dark:text-violet-400" />
           プライオリティ・パスはどう持つのが安い？
-        </h3>
+        </h2>
         <p className="text-xs text-zinc-500 mb-4">
           世界1,700カ所以上の空港ラウンジに入れる会員制度。直接入会するより
           カード付帯のほうが安く済むことが多く、年間の利用回数で最適解が変わります。

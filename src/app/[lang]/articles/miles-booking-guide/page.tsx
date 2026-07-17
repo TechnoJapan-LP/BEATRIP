@@ -389,6 +389,20 @@ export default async function MilesBookingGuidePage({
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <Link
+                  href="/miles"
+                  className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
+                >
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
+                    マイル獲得シミュレーター
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1">
+                    特典航空券の必要マイルとセール最安値を比較
+                  </p>
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                    シミュレーターを試す <ArrowRight className="h-3 w-3" />
+                  </div>
+                </Link>
+                <Link
                   href="/credit-cards"
                   className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 hover:border-zinc-200 dark:hover:border-zinc-700 transition-colors"
                 >
