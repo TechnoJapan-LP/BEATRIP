@@ -1,0 +1,164 @@
+{
+  "_readme": "特典航空券の必要マイル数。全数値は公式サイトの表示を実ブラウザで確認して転記したもの。source と verifiedAt の無いレコードはローダー (src/lib/miles/data.ts) がビルド時に落とす。数値を推測や記憶で書き足すことは禁止。更新時は必ず source のページを開いて現行値を確認し verifiedAt を更新すること。",
+  "programs": [
+    {
+      "id": "ana-mileage-club",
+      "name": "ANAマイレージクラブ",
+      "airlineCode": "NH",
+      "chartType": "zone-season",
+      "fareBasis": "roundTrip",
+      "seasonNote": "L=ローシーズン / R=レギュラー / H=ハイシーズン。シーズンは搭乗日で決まり、往路と復路でシーズンが異なる場合は各半額の合算。2025年6月24日以降の予約・発券分の改定後マイル数。",
+      "surchargeNote": "燃油サーチャージ・諸税は別途現金で必要",
+      "source": "https://www.ana.co.jp/ja/jp/guide/amc/award/international/terms/",
+      "verifiedAt": "2026-07-17",
+      "zones": [
+        {
+          "zoneId": "ana-z2-korea",
+          "label": "韓国 (Zone 2)",
+          "destinationCodes": ["ICN", "GMP", "PUS", "CJU"],
+          "roundTripMiles": {
+            "economy": { "low": 12000, "regular": 15000, "high": 24000 },
+            "business": { "low": 36000, "regular": 41000, "high": 50000 }
+          }
+        },
+        {
+          "zoneId": "ana-z3-asia1",
+          "label": "アジア1 (Zone 3)",
+          "destinationCodes": ["PVG", "SHA", "PEK", "CAN", "HKG", "TPE", "TSA", "MNL"],
+          "roundTripMiles": {
+            "economy": { "low": 17000, "regular": 20000, "high": 30000 },
+            "business": { "low": 48000, "regular": 53000, "high": 65000 }
+          }
+        },
+        {
+          "zoneId": "ana-z4-asia2",
+          "label": "アジア2 (Zone 4)",
+          "destinationCodes": ["BKK", "SIN", "SGN", "HAN", "CGK", "DPS", "KUL", "DEL", "BOM", "PNH"],
+          "roundTripMiles": {
+            "economy": { "low": 30000, "regular": 35000, "high": 50000 },
+            "business": { "low": 80000, "regular": 85000, "high": 95000 }
+          },
+          "notes": "バリ(DPS)はANA直行便の就航が無い期間があり、ジャカルタ等での乗り継ぎになる場合がある"
+        },
+        {
+          "zoneId": "ana-z5-hawaii",
+          "label": "ハワイ (Zone 5)",
+          "destinationCodes": ["HNL"],
+          "roundTripMiles": {
+            "economy": { "low": 35000, "regular": 40000, "high": 65000 },
+            "business": { "low": 80000, "regular": 85000, "high": 135000 }
+          }
+        },
+        {
+          "zoneId": "ana-z6-north-america",
+          "label": "北米 (Zone 6)",
+          "destinationCodes": ["LAX", "SFO", "SEA", "JFK", "ORD", "IAH", "IAD", "YVR", "MEX", "SJC"],
+          "roundTripMiles": {
+            "economy": { "low": 40000, "regular": 50000, "high": 72000 },
+            "business": { "low": 100000, "regular": 105000, "high": 165000 }
+          }
+        },
+        {
+          "zoneId": "ana-z7-europe",
+          "label": "欧州 (Zone 7)",
+          "destinationCodes": ["CDG", "LHR", "FRA", "MUC", "DUS", "BRU", "VIE", "MXP", "ARN", "IST"],
+          "roundTripMiles": {
+            "economy": { "low": 45000, "regular": 55000, "high": 78000 },
+            "business": { "low": 110000, "regular": 115000, "high": 180000 }
+          }
+        },
+        {
+          "zoneId": "ana-z10-oceania",
+          "label": "オセアニア (Zone 10)",
+          "destinationCodes": ["SYD", "PER"],
+          "roundTripMiles": {
+            "economy": { "low": 37000, "regular": 45000, "high": 65000 },
+            "business": { "low": 80000, "regular": 90000, "high": 135000 }
+          }
+        }
+      ]
+    },
+    {
+      "id": "jal-mileage-bank",
+      "name": "JALマイレージバンク",
+      "airlineCode": "JL",
+      "chartType": "route-basic-plus",
+      "fareBasis": "oneWay",
+      "seasonNote": "路線別の基本マイル数 (片道)。基本マイル数の席が満席の場合は「特典航空券PLUS」により必要マイルが増える変動制。2025年6月10日発券分からの改定後マイル数。",
+      "surchargeNote": "燃油サーチャージ・諸税は別途現金で必要",
+      "source": "https://www.jal.co.jp/jp/ja/jalmile/use/jal/inter/routemiles.html",
+      "verifiedAt": "2026-07-17",
+      "routes": [
+        {
+          "routeId": "jmb-seoul",
+          "label": "ソウル",
+          "destinationCodes": ["ICN", "GMP"],
+          "oneWayBasicMiles": { "economy": 7500, "business": 18000 }
+        },
+        {
+          "routeId": "jmb-taipei",
+          "label": "台北 (成田・関西・中部便)",
+          "destinationCodes": ["TPE"],
+          "oneWayBasicMiles": { "economy": 9000, "business": 24000 },
+          "notes": "羽田便はエコノミー11,000 / ビジネス26,000"
+        },
+        {
+          "routeId": "jmb-hongkong",
+          "label": "香港",
+          "destinationCodes": ["HKG"],
+          "oneWayBasicMiles": { "economy": 11000, "business": 26000 }
+        },
+        {
+          "routeId": "jmb-shanghai",
+          "label": "上海 (浦東便)",
+          "destinationCodes": ["PVG"],
+          "oneWayBasicMiles": { "economy": 10000, "business": 24000 },
+          "notes": "虹橋便はエコノミー11,000 / ビジネス26,000"
+        },
+        {
+          "routeId": "jmb-bangkok",
+          "label": "バンコク (羽田・成田便)",
+          "destinationCodes": ["BKK"],
+          "oneWayBasicMiles": { "economy": 13500, "business": 40000 },
+          "notes": "JL031/JL034便はエコノミー17,500 / ビジネス45,000。関西・中部便は12,500 / 37,500"
+        },
+        {
+          "routeId": "jmb-singapore",
+          "label": "シンガポール",
+          "destinationCodes": ["SIN"],
+          "oneWayBasicMiles": { "economy": 13000, "business": 40000 }
+        },
+        {
+          "routeId": "jmb-hanoi",
+          "label": "ハノイ",
+          "destinationCodes": ["HAN"],
+          "oneWayBasicMiles": { "economy": 13000, "business": 30000 }
+        },
+        {
+          "routeId": "jmb-honolulu",
+          "label": "ホノルル",
+          "destinationCodes": ["HNL"],
+          "oneWayBasicMiles": { "economy": 20000, "business": 43000 }
+        },
+        {
+          "routeId": "jmb-losangeles",
+          "label": "ロサンゼルス",
+          "destinationCodes": ["LAX"],
+          "oneWayBasicMiles": { "economy": 27000, "business": 55000 }
+        },
+        {
+          "routeId": "jmb-paris",
+          "label": "パリ",
+          "destinationCodes": ["CDG"],
+          "oneWayBasicMiles": { "economy": 27000, "business": 57000 }
+        },
+        {
+          "routeId": "jmb-sydney",
+          "label": "シドニー",
+          "destinationCodes": ["SYD"],
+          "oneWayBasicMiles": { "economy": 23000, "business": 45000 }
+        }
+      ]
+    }
+  ]
+}

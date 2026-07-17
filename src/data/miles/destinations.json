@@ -1,0 +1,17 @@
+{
+  "_readme": "シミュレーター対象の目的地マスタ。destinationCodes が既存 deals (DealSchema.destination_code) との JOIN キー。選定基準はセール実績が実際に観測されている人気目的地 (2026-07-17 の /api/deals で確認)。追加時は award-charts.json の該当ゾーン/路線に destinationCodes が含まれるか確認すること。",
+  "destinations": [
+    { "id": "seoul", "label": "ソウル", "labelEn": "Seoul", "destinationCodes": ["ICN", "GMP"], "anaZoneId": "ana-z2-korea", "jalRouteId": "jmb-seoul" },
+    { "id": "taipei", "label": "台北", "labelEn": "Taipei", "destinationCodes": ["TPE", "TSA"], "anaZoneId": "ana-z3-asia1", "jalRouteId": "jmb-taipei" },
+    { "id": "hongkong", "label": "香港", "labelEn": "Hong Kong", "destinationCodes": ["HKG"], "anaZoneId": "ana-z3-asia1", "jalRouteId": "jmb-hongkong" },
+    { "id": "shanghai", "label": "上海", "labelEn": "Shanghai", "destinationCodes": ["PVG", "SHA"], "anaZoneId": "ana-z3-asia1", "jalRouteId": "jmb-shanghai" },
+    { "id": "bangkok", "label": "バンコク", "labelEn": "Bangkok", "destinationCodes": ["BKK"], "anaZoneId": "ana-z4-asia2", "jalRouteId": "jmb-bangkok" },
+    { "id": "singapore", "label": "シンガポール", "labelEn": "Singapore", "destinationCodes": ["SIN"], "anaZoneId": "ana-z4-asia2", "jalRouteId": "jmb-singapore" },
+    { "id": "hanoi", "label": "ハノイ", "labelEn": "Hanoi", "destinationCodes": ["HAN"], "anaZoneId": "ana-z4-asia2", "jalRouteId": "jmb-hanoi" },
+    { "id": "bali", "label": "バリ (デンパサール)", "labelEn": "Bali", "destinationCodes": ["DPS"], "anaZoneId": "ana-z4-asia2", "jalRouteId": null, "notes": "JALはバリ直行便の設定なし" },
+    { "id": "honolulu", "label": "ホノルル", "labelEn": "Honolulu", "destinationCodes": ["HNL"], "anaZoneId": "ana-z5-hawaii", "jalRouteId": "jmb-honolulu" },
+    { "id": "losangeles", "label": "ロサンゼルス", "labelEn": "Los Angeles", "destinationCodes": ["LAX"], "anaZoneId": "ana-z6-north-america", "jalRouteId": "jmb-losangeles" },
+    { "id": "paris", "label": "パリ", "labelEn": "Paris", "destinationCodes": ["CDG"], "anaZoneId": "ana-z7-europe", "jalRouteId": "jmb-paris" },
+    { "id": "sydney", "label": "シドニー", "labelEn": "Sydney", "destinationCodes": ["SYD"], "anaZoneId": "ana-z10-oceania", "jalRouteId": "jmb-sydney" }
+  ]
+}

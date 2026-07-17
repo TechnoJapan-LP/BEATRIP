@@ -1,0 +1,122 @@
+{
+  "_readme": "マイルが貯まるクレジットカードのマスタ。全スペックは公式サイトを実ブラウザで確認して転記したもの (verifiedAt = 確認日)。確認できなかった項目は書かない (null や省略にする)。入会キャンペーンのボーナスマイル数は変動が激しく腐りやすいため持たない。affiliatePartnerId は src/lib/affiliate/asp-partners.ts の id を参照し、null なら公式リンクのみ。おすすめ順 (recommendRank) はマイル効率・年会費・ラウンジ条件だけで決め、アフィリエイトの有無を影響させないこと。",
+  "cards": [
+    {
+      "id": "jal-card-regular",
+      "name": "JALカード 普通カード",
+      "programId": "jal-mileage-bank",
+      "annualFeeYen": 2200,
+      "annualFeeNote": "入会後1年間無料 (JALアメックスは本会員6,600円)",
+      "mileEarning": {
+        "base": { "yenPerMile": 200, "label": "200円=1マイル" },
+        "boosted": {
+          "yenPerMile": 100,
+          "label": "100円=1マイル",
+          "optionName": "ショッピングマイル・プレミアム",
+          "optionFeeYen": 4950
+        }
+      },
+      "lounge": null,
+      "affiliatePartnerId": null,
+      "affiliateNote": "JALカードは主要ASPに取扱いなし (2026-07-16確認)。公式リンクのみ",
+      "officialUrl": "https://www.jal.co.jp/jp/ja/jalcard/card/regular.html",
+      "sources": [
+        { "url": "https://www.jal.co.jp/jp/ja/jalcard/card/regular.html", "covers": "年会費・還元率・ショッピングマイル・プレミアム", "verifiedAt": "2026-07-17" }
+      ],
+      "fitTags": ["jal"]
+    },
+    {
+      "id": "ana-visa-general",
+      "name": "ANA VISA 一般カード",
+      "programId": "ana-mileage-club",
+      "annualFeeYen": 2200,
+      "annualFeeNote": "初年度無料。家族会員1,100円",
+      "mileEarning": {
+        "base": { "yenPerMile": 200, "label": "200円=1マイル" },
+        "boosted": {
+          "yenPerMile": 100,
+          "label": "100円=1マイル相当",
+          "optionName": "10マイルコース",
+          "optionFeeYen": null,
+          "optionFeeNote": "移行手数料が別途必要 (金額はカード会社の現行案内を確認)"
+        }
+      },
+      "lounge": null,
+      "affiliatePartnerId": null,
+      "affiliateNote": "ANAカード本体は主要ASPに取扱いなし (2026-07-16確認)。公式リンクのみ",
+      "officialUrl": "https://www.ana.co.jp/ja/jp/amc/anacard/ichiran/",
+      "sources": [
+        { "url": "https://www.ana.co.jp/ja/jp/amc/anacard/ichiran/", "covers": "年会費・基本還元率 (200円=1マイル)・搭乗ボーナス10%", "verifiedAt": "2026-07-17" }
+      ],
+      "fitTags": ["ana"]
+    },
+    {
+      "id": "saison-platinum-amex",
+      "name": "セゾンプラチナ・アメリカン・エキスプレス・カード",
+      "programId": "jal-mileage-bank",
+      "annualFeeYen": 33000,
+      "annualFeeNote": "家族カード3,300円",
+      "mileEarning": {
+        "base": null,
+        "boosted": {
+          "yenPerMile": null,
+          "label": "JALマイル還元率1.125% (1,000円=10マイル + 永久不滅ポイント分)",
+          "optionName": "SAISON MILE CLUB",
+          "optionFeeYen": 5500,
+          "optionFeeNote": "移行上限150,000マイル/年。上限到達で翌年のサービス年会費無料"
+        }
+      },
+      "lounge": {
+        "priorityPass": true,
+        "detail": "プライオリティ・パス無料 (プレステージプラン相当・通常年会費469米ドル)。同伴者は1名につき35米ドル"
+      },
+      "affiliatePartnerId": null,
+      "affiliateNote": "ASP提携が取れたら asp-partners に partner を追加してここに id を張る",
+      "officialUrl": "https://www.saisoncard.co.jp/amex/platinum/",
+      "sources": [
+        { "url": "https://www.saisoncard.co.jp/amex/platinum/", "covers": "年会費・SAISON MILE CLUB (1.125% / 5,500円 / 上限15万)・プライオリティ・パス条件・保険", "verifiedAt": "2026-07-17" }
+      ],
+      "fitTags": ["jal", "priority-pass", "fast-earn"]
+    },
+    {
+      "id": "rakuten-premium",
+      "name": "楽天プレミアムカード",
+      "programId": null,
+      "annualFeeYen": 11000,
+      "annualFeeNote": null,
+      "mileEarning": null,
+      "mileEarningNote": "楽天ポイントからのマイル交換レートは公式ページで要確認 (未検証のため本データには持たない)",
+      "lounge": {
+        "priorityPass": true,
+        "detail": "プライオリティ・パスを年間5回まで無料 (6回目以降は1回あたり35米ドル)。楽天e-NAVIから別途申込が必要"
+      },
+      "affiliatePartnerId": null,
+      "affiliateNote": "楽天カード系のASP提携が取れたら接続",
+      "officialUrl": "https://www.rakuten-card.co.jp/card/rakuten-premium-card/",
+      "sources": [
+        { "url": "https://www.rakuten-card.co.jp/card/rakuten-premium-card/", "covers": "年会費・プライオリティ・パス年5回無料の条件", "verifiedAt": "2026-07-17" }
+      ],
+      "fitTags": ["priority-pass", "entry"]
+    },
+    {
+      "id": "amex-platinum",
+      "name": "アメリカン・エキスプレス・プラチナ・カード",
+      "programId": null,
+      "annualFeeYen": 165000,
+      "annualFeeNote": "家族カード4枚まで無料",
+      "mileEarning": null,
+      "mileEarningNote": "メンバーシップ・リワードのポイントを提携航空会社マイルへ移行可能 (移行条件は公式で要確認)",
+      "lounge": {
+        "priorityPass": false,
+        "detail": "センチュリオン・ラウンジ (羽田) ほかラウンジ特典。詳細は公式で要確認"
+      },
+      "affiliatePartnerId": "amex-platinum",
+      "affiliateNote": null,
+      "officialUrl": "https://www.americanexpress.com/ja-jp/credit-cards/platinum-card/",
+      "sources": [
+        { "url": "https://www.americanexpress.com/ja-jp/credit-cards/platinum-card/", "covers": "年会費・センチュリオン・ラウンジ", "verifiedAt": "2026-07-17" }
+      ],
+      "fitTags": ["premium"]
+    }
+  ]
+}

@@ -62,6 +62,7 @@ export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
         { href: "/cruise", label: t.cruise ?? "クルーズ" },
         { href: "/package-tour", label: t.packageTour ?? "パッケージツアー" },
         { href: "/credit-cards", label: "クレカ比較" },
+        { href: "/miles", label: "マイル獲得シミュレーター" },
       ],
     },
     guides: {
