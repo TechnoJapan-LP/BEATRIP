@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, RefreshCw, Clock } from "lucide-react";
+import { ArrowLeft, Clock } from "lucide-react";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SaleDetailCard } from "@/components/airlines/sale-detail-card";
@@ -73,7 +73,7 @@ async function getAirlineData(code: string) {
     };
   }
   const result = await scrapeAirline(code);
-  const change = await saveSalesAndDetectChanges(result);
+  await saveSalesAndDetectChanges(result);
   const updated = await loadSales(code);
   return {
     sales: updated.sales,

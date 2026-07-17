@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { CalendarDays, TrendingUp, Zap } from "lucide-react";
 import type { SaleEvent } from "@/data/mock-deals";
-import type { AirlineProfile } from "@/lib/scrapers/types";
 
 function ProbabilityMeter({ value }: { value: number }) {
   const color =

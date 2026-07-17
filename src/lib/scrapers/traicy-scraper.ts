@@ -501,14 +501,6 @@ export class TraicyScraper extends AirlineScraper {
 
 // ── ヘルパー ──
 
-const DESTINATION_NAMES_REV: Record<string, string> = {
-  NRT: "東京", HND: "羽田", KIX: "大阪", NGO: "名古屋", FUK: "福岡",
-};
-
-const CITY_TO_CODE_REV: Record<string, string> = Object.fromEntries(
-  Object.entries(CITY_TO_CODE).map(([k, v]) => [v, k])
-);
-
 function addDays(dateStr: string, days: number): string {
   const d = new Date(dateStr);
   d.setDate(d.getDate() + days);

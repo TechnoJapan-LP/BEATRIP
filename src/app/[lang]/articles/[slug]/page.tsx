@@ -4,7 +4,7 @@ import Image from "next/image";
 import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Clock, Tag, ArrowRight } from "lucide-react";
+import { Clock, ArrowRight } from "lucide-react";
 import { cityNameJa } from "@/lib/airport-names";
 import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -12,7 +12,6 @@ import { Badge } from "@/components/ui/badge";
 import { ArticleCard } from "@/components/articles/article-card";
 import { ShareButtons } from "@/components/deals/share-buttons";
 import {
-  getAllArticles,
   getArticleBySlug,
   getRelatedArticles,
 } from "@/lib/articles/get-all-articles";

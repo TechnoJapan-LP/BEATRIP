@@ -4,11 +4,8 @@ import { BLUR_PLACEHOLDER_DARK } from "@/lib/images/blur";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft,
   Plane,
   Calendar,
-  Clock,
-  Shield,
   TrendingDown,
   Users,
   ExternalLink,
@@ -117,12 +114,6 @@ function formatDate(dateStr: string) {
   });
 }
 
-function daysLeft(dateStr: string) {
-  return Math.ceil(
-    (new Date(dateStr).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
-}
-
 const badgeConfig = {
   NEW: { label: "新着", className: "bg-emerald-500 text-white" },
   ENDING_SOON: { label: "締切間近", className: "bg-amber-500 text-white" },
@@ -149,7 +140,6 @@ export default async function DealDetailPage({ params }: Props) {
   // sample_count は実際に観測した日数。合成データは 0 なので実測判定に使える。
   const observedDays = historicalData.reduce((n, h) => n + h.sample_count, 0);
 
-  const deadlineDays = daysLeft(deal.booking_deadline);
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
 
   // マイルシミュレーターが扱う都市なら「マイルなら？」導線を出す (その都市を
@@ -185,12 +175,6 @@ export default async function DealDetailPage({ params }: Props) {
   // airlines マスタに登録のあるキャリアのみ航空会社リンク/ロゴを描画 (TP は undefined → 404防止)
   const airline = getAirlineByCode(deal.airline_id);
 
-  // 最安値の取得時点 (鮮度表示) — YYYY/MM/DD
-  const updatedAtLabel = new Date(deal.updated_at).toLocaleDateString("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
 
   const jsonLd = {
     "@context": "https://schema.org",

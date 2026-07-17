@@ -1,5 +1,5 @@
 import { loadAllSales } from "@/lib/store/sale-store";
-import { airlines, getAirlineByCode } from "@/data/airlines";
+import { getAirlineByCode } from "@/data/airlines";
 import { getDestinationImage } from "./destination-images";
 import { JP_AIRPORT_CODES } from "@/lib/airports/domestic";
 import { deals as mockDeals, historicalPrices as mockHistoricalPrices } from "@/data/mock-deals-v2";
@@ -103,8 +103,7 @@ function mockFallback(reason: string): DealSchema[] {
  */
 function convertToDeal(
   sale: AirlineSale,
-  route: SaleRoute,
-  index: number
+  route: SaleRoute
 ): DealSchema {
   const fuelSurcharge = estimateFuelSurcharge(
     route.originCode,
@@ -227,7 +226,6 @@ export async function getActiveDeals(): Promise<DealSchema[]> {
 
     const now = new Date();
     const deals: DealSchema[] = [];
-    let index = 0;
 
     for (const code of airlineCodes) {
       const { sales } = allSales[code];
@@ -238,7 +236,7 @@ export async function getActiveDeals(): Promise<DealSchema[]> {
         if (deadline < now) continue;
 
         for (const route of sale.routes) {
-          deals.push(convertToDeal(sale, route, index++));
+          deals.push(convertToDeal(sale, route));
         }
       }
     }

@@ -10,7 +10,7 @@ import { LocaleProvider } from "@/components/i18n/locale-provider";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { FloatingWidgets } from "@/components/floating-widgets";
 import { ExitIntent } from "@/components/conversion/exit-intent";
-import { getDictionary, hasLocale, LOCALES } from "./dictionaries";
+import { getDictionary, hasLocale } from "./dictionaries";
 import {
   CONTACT_EMAIL,
   ESTABLISHED,

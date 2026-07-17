@@ -3,7 +3,6 @@ import { join } from "path";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { PriceChange } from "@/lib/store/sale-store";
 import type { Article } from "@/data/mock-articles";
-import { deals } from "@/data/mock-deals-v2";
 import { cityNameJa } from "@/lib/airport-names";
 import { routeLinkMd } from "./route-link";
 import { getDestinationImage } from "@/lib/deals/destination-images";

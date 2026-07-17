@@ -7,8 +7,7 @@ import {
   Sparkles,
   MapPin,
   ArrowRight,
-  ArrowUpRight,
-} from "lucide-react";
+  } from "lucide-react";
 import { Header } from "@/components/header";
 import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
