@@ -288,11 +288,22 @@ function buildTravelPayoutsUrl(
 ): string {
   const marker = getTravelPayoutsMarker();
 
-  // tp.media リダイレクター経由（収益発生）
-  const searchUrl = encodeURIComponent(
-    `https://www.aviasales.com/search/${route.originCode}${formatDateForAviasales(sale.travelPeriodStart)}${route.destinationCode}1`
-  );
-  return `https://tp.media/r?marker=${marker}&trs=&p=4114&sub_id=${encodeURIComponent(subId)}&u=${searchUrl}`;
+  // Aviasales の検索 URL 書式 (2026-07-17 にブラウザで実地検証):
+  //   往復: {ORIGIN}{DDMM}{DEST}{DDMM_return}{人数}  例 HND0509KIX15091
+  //   片道: {ORIGIN}{DDMM}{DEST}{人数}              例 HND0509KIX1
+  // 開くと検索がプリフィルされた状態で結果一覧まで出る (Skyscanner のように
+  // 検索フォームで止まらない)。通貨は利用者の地域から自動判定されるため
+  // 日本からのアクセスは JPY 表示になる (UI 言語は英語のみ)。
+  const dep = formatDateForAviasales(route.departDate ?? sale.travelPeriodStart);
+  const ret = route.returnDate
+    ? formatDateForAviasales(route.returnDate)
+    : "";
+  const search = `${route.originCode}${dep}${route.destinationCode}${ret}1`;
+  const searchUrl = encodeURIComponent(`https://www.aviasales.com/search/${search}`);
+
+  // 注: `trs=` (空) を付けると tp.media が "traffic_source is not valid" を返して
+  // リンクが機能しない (実地検証済み)。空パラメータは絶対に足さないこと。
+  return `https://tp.media/r?marker=${marker}&p=4114&sub_id=${encodeURIComponent(subId)}&u=${searchUrl}`;
 }
 
 /**
@@ -414,13 +425,19 @@ export function buildAffiliateLink(
     };
   }
 
-  // 2. フォールバック: Skyscanner の路線+日付プリフィル
-  //    （汎用トップしか出せない航空会社・未対応キャリアはこちら。
-  //     404にならず実在便を予約でき収益化もされる確実な導線）
+  // 2. フォールバック: Aviasales の路線+日付プリフィル (tp.media 経由 = 収益化)
+  //
+  //    以前は Skyscanner を主CTAにしていたが、SKYSCANNER_ASSOCIATE_ID が未設定で
+  //    アフィリエイト帰属が付かず「主CTAが1円も収益化されない」状態だった。
+  //    Aviasales は稼働中の marker (TRAVELPAYOUTS_MARKER) がそのまま使え、
+  //    かつ検索結果一覧まで出るので着地体験も上 (Skyscanner は検索フォーム止まり)。
+  //    トレードオフ: Aviasales の UI 言語は英語のみ (日本語版が存在しない)。
+  //    通貨は利用者の地域で自動判定され、日本からは JPY 表示になる。
+  //    Skyscanner (日本語) は比較リンクとして残してある。
   return {
-    url: buildSkyscannerUrl(route, sale),
-    provider: "Skyscanner",
-    strategy: "skyscanner",
+    url: buildTravelPayoutsUrl(route, sale, options.subId),
+    provider: "Aviasales",
+    strategy: "travelpayouts",
   };
 }
 
