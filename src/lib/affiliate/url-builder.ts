@@ -435,15 +435,25 @@ export function buildAffiliateLink(
     };
   }
 
-  // 2. フォールバック: Aviasales の路線+日付プリフィル (tp.media 経由 = 収益化)
+  // 2. フォールバック: Trip.com の路線+日付プリフィル (Allianceid = 収益化)
   //
-  //    以前は Skyscanner を主CTAにしていたが、SKYSCANNER_ASSOCIATE_ID が未設定で
-  //    アフィリエイト帰属が付かず「主CTAが1円も収益化されない」状態だった。
-  //    Aviasales は稼働中の marker (TRAVELPAYOUTS_MARKER) がそのまま使え、
-  //    かつ検索結果一覧まで出るので着地体験も上 (Skyscanner は検索フォーム止まり)。
-  //    トレードオフ: Aviasales の UI 言語は英語のみ (日本語版が存在しない)。
-  //    通貨は利用者の地域で自動判定され、日本からは JPY 表示になる。
-  //    Skyscanner (日本語) は比較リンクとして残してある。
+  //    主CTA の変遷と理由:
+  //      Skyscanner → SKYSCANNER_ASSOCIATE_ID 未設定で帰属が付かず、最もクリック
+  //                   される導線が無報酬で流出していた (実測で判明)。
+  //      Aviasales  → 稼働中の marker で即収益化できたが UI が英語のみ。
+  //      Trip.com   → 日本語 + JPY + 往復プリフィル + 収益化 が全て揃う。日本人
+  //                   向けサイトとして体験が最も良く、報酬率も航空券で同水準。
+  //
+  //    TRIP_COM_AFFILIATE_ID が未設定の環境では帰属なしの素リンクになるため、
+  //    その場合は収益化済みの Aviasales を主CTAにフォールバックする。
+  //    Aviasales / Skyscanner は比較リンクとして常に併記される。
+  if (process.env.TRIP_COM_AFFILIATE_ID) {
+    return {
+      url: buildTripComUrl(route, sale),
+      provider: "Trip.com",
+      strategy: "trip",
+    };
+  }
   return {
     url: buildTravelPayoutsUrl(route, sale, options.subId),
     provider: "Aviasales",
@@ -541,6 +551,15 @@ export function buildCompareLinks(
     url: buildTripComUrl(route, sale),
     provider: "Trip.com",
     strategy: "trip",
+  });
+
+  // Aviasales (tp.media = 収益化)。主CTA が Trip.com になったため、比較側にも
+  // 収益化リンクを1本置く。UI 側が主CTA と同一プロバイダーを除外するので、
+  // 主CTA が Aviasales の環境 (Trip.com 未設定) では自動的に重複表示されない。
+  links.push({
+    url: buildTravelPayoutsUrl(route, sale, "flight_compare"),
+    provider: "Aviasales",
+    strategy: "travelpayouts",
   });
 
   return links;
