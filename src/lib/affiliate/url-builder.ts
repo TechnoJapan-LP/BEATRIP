@@ -451,8 +451,15 @@ export function buildAffiliateLink(
  * DealSchema から予約CTAリンクを生成
  * （mockディール等、AirlineSale を持たない経路用）
  */
-export function buildAffiliateLinkFromDeal(deal: DealSchema): AffiliateLink {
-  const route: SaleRoute = {
+/**
+ * DealSchema → SaleRoute の復元。
+ *
+ * 主CTAと比較リンクで別々に組み立てていたため、departDate/returnDate の
+ * 引き継ぎが比較リンク側だけ漏れ、往復運賃が片道検索で開く不具合が出た。
+ * 復元は必ずこの1箇所を通すこと (フィールドを増やしたときの直し忘れ防止)。
+ */
+function routeFromDeal(deal: DealSchema): SaleRoute {
+  return {
     origin: deal.origin,
     originCode: deal.origin_code,
     destination: deal.destination,
@@ -463,7 +470,15 @@ export function buildAffiliateLinkFromDeal(deal: DealSchema): AffiliateLink {
     cabin: deal.cabin,
     discount: deal.discount_percent,
     seatsRemaining: deal.seats_remaining,
+    // 観測便の日付。これが無いと予約リンクが「今日発」や片道で開き、
+    // 利用者が掲載価格の便に辿り着けない。
+    departDate: deal.departure_date,
+    returnDate: deal.return_date,
   };
+}
+
+export function buildAffiliateLinkFromDeal(deal: DealSchema): AffiliateLink {
+  const route: SaleRoute = routeFromDeal(deal);
   const sale: AirlineSale = {
     id: deal.sale_id ?? deal.id,
     airlineCode: deal.airline_id,
@@ -534,18 +549,7 @@ export function buildCompareLinks(
  */
 export function buildCompareLinksFromDeal(deal: DealSchema): AffiliateLink[] {
   // DealSchemaから疑似的なSaleRoute/AirlineSaleを構築
-  const route: SaleRoute = {
-    origin: deal.origin,
-    originCode: deal.origin_code,
-    destination: deal.destination,
-    destinationCode: deal.destination_code,
-    price: deal.sale_price,
-    originalPrice: deal.original_price,
-    currency: deal.currency,
-    cabin: deal.cabin,
-    discount: deal.discount_percent,
-    seatsRemaining: deal.seats_remaining,
-  };
+  const route: SaleRoute = routeFromDeal(deal);
 
   const sale: AirlineSale = {
     id: deal.sale_id ?? deal.id,
