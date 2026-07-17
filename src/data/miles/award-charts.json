@@ -275,6 +275,13 @@
             ]
           }
         ]
+      },
+      "alliance": {
+        "name": "スターアライアンス",
+        "nameEn": "Star Alliance",
+        "source": "https://www.ana.co.jp/ja/jp/guide/plan/airinfo/staralliance/",
+        "verifiedAt": "2026-07-17",
+        "note": "ANAマイルはスターアライアンス加盟社の便でも貯まり、提携特典航空券として加盟社の便にも使える (必要マイル数は別チャート)"
       }
     },
     {
@@ -483,6 +490,13 @@
             ]
           }
         ]
+      },
+      "alliance": {
+        "name": "ワンワールド",
+        "nameEn": "oneworld",
+        "source": "https://www.jal.co.jp/jp/ja/oneworld/",
+        "verifiedAt": "2026-07-17",
+        "note": "JALマイルはワンワールド加盟社の便でも貯まり、ワンワールド特典航空券として加盟社の便にも使える (必要マイル数は別チャート)"
       }
     }
   ]

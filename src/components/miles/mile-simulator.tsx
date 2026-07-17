@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Plane, CreditCard, Armchair, BadgeCheck } from "lucide-react";
-import type { MileCard, MileDestination } from "@/lib/miles/data";
+import type { MileCard, MileDestination, PriorityPassPricing } from "@/lib/miles/data";
 import type { AwardRequirement } from "@/lib/miles/simulator";
-import { rankCards } from "@/lib/miles/simulator";
+import { destinationSummary, ppCostComparison, rankCards } from "@/lib/miles/simulator";
 import { trackPartnerClick } from "@/components/analytics";
 
 /** サーバー側で解決済みの、目的地ごとの表示データ */
@@ -36,16 +36,19 @@ function yen(n: number): string {
 export function MileSimulator({
   items,
   cards,
+  ppPricing,
   verifiedAt,
 }: {
   items: SimDestination[];
   cards: SimCard[];
+  ppPricing: PriorityPassPricing;
   verifiedAt: string;
 }) {
   const [destId, setDestId] = useState(items[0]?.destination.id ?? "");
   const [spend, setSpend] = useState<number>(50000);
   const [cabin, setCabin] = useState<"economy" | "business">("economy");
   const [wantsLounge, setWantsLounge] = useState(false);
+  const [ppVisits, setPpVisits] = useState<number>(4);
 
   const current = useMemo(
     () => items.find((i) => i.destination.id === destId) ?? items[0],
@@ -197,9 +200,14 @@ export function MileSimulator({
                 key={a.programId}
                 className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
               >
-                <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 mb-2">
+                <div className="flex items-center gap-2 flex-wrap text-xs font-medium text-zinc-500 mb-2">
                   <BadgeCheck className="h-4 w-4" />
                   {a.programName} 特典航空券 (往復)
+                  {a.alliance && (
+                    <span className="rounded bg-indigo-100 dark:bg-indigo-900/40 px-1.5 py-0.5 text-[10px] font-medium text-indigo-700 dark:text-indigo-300">
+                      {a.alliance.name}
+                    </span>
+                  )}
                 </div>
                 {miles ? (
                   <>
@@ -239,6 +247,26 @@ export function MileSimulator({
             </div>
           )}
         </div>
+        {(() => {
+          const s = destinationSummary(current.awards, cabin);
+          if (!s) return null;
+          return (
+            <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-300">
+              必要マイルの下限が少ないのは <strong>{s.programName}</strong> (
+              {s.minMiles.toLocaleString("ja-JP")}マイル
+              {s.fuelYen ? ` + 燃油 ¥${s.fuelYen.toLocaleString("ja-JP")}` : ""})。
+              {s.allianceName && (
+                <>
+                  {s.programName.includes("ANA") ? "ANA" : "JAL"}マイルは
+                  <strong>{s.allianceName}</strong>系のポイント・カードから貯めるのが近道です。
+                </>
+              )}
+              <span className="block mt-1 text-xs text-zinc-400">
+                ※どちらが「得」かはマイルの貯めやすさ (お手持ちのカード) 次第です。下の試算で比較してください。
+              </span>
+            </p>
+          );
+        })()}
       </div>
 
       {/* ── カードで貯める推計 ── */}
@@ -333,6 +361,66 @@ export function MileSimulator({
           </p>
         </div>
       )}
+
+      {/* ── プライオリティ・パス比較 ── */}
+      <div className="rounded-2xl border border-violet-200 dark:border-violet-800 bg-violet-50/40 dark:bg-violet-900/10 p-5">
+        <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1 flex items-center gap-2">
+          <Armchair className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+          プライオリティ・パスはどう持つのが安い？
+        </h3>
+        <p className="text-xs text-zinc-500 mb-4">
+          世界1,700カ所以上の空港ラウンジに入れる会員制度。直接入会するより
+          カード付帯のほうが安く済むことが多く、年間の利用回数で最適解が変わります。
+          料金は{ppPricing.verifiedAt}時点の
+          <a href={ppPricing.source} target="_blank" rel="noopener noreferrer" className="underline mx-0.5">
+            公式サイト
+          </a>
+          の表示です。
+        </p>
+        <div className="mb-4">
+          <div className="text-xs font-medium text-zinc-500 mb-2">年間何回ラウンジを使いそう？ (同伴者を除く本人分)</div>
+          <div className="flex flex-wrap gap-2">
+            {[2, 4, 8, 15].map((v) => (
+              <button
+                key={v}
+                onClick={() => setPpVisits(v)}
+                className={`rounded-lg px-3 py-1.5 text-sm border transition-colors ${
+                  ppVisits === v
+                    ? "bg-violet-600 text-white border-violet-600"
+                    : "border-zinc-200 text-zinc-600 hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-300"
+                }`}
+              >
+                年{v}回
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="space-y-2">
+          {ppCostComparison(ppVisits, ppPricing, cards).map((row) => (
+            <div
+              key={row.id}
+              className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 px-4 py-3"
+            >
+              <div className="flex-1 min-w-0">
+                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{row.name}</span>
+                <span className="block text-[11px] text-zinc-400">{row.note}</span>
+              </div>
+              <div className="text-right shrink-0 text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                {row.costJpy !== null && `年会費 ¥${row.costJpy.toLocaleString("ja-JP")}`}
+                {row.costJpy !== null && row.costUsd !== null && " + "}
+                {row.costUsd !== null && `US$${row.costUsd.toLocaleString("ja-JP")}`}
+                {row.costJpy === null && row.costUsd === null && "¥0"}
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-[11px] text-zinc-400">
+          例: プレステージ (本人無制限) を直接契約すると年US$469。同等のプレステージ相当が付帯する
+          セゾンプラチナは年会費¥33,000で、ラウンジ以外の特典 (コンシェルジュ・旅行保険など) も付きます。
+          カード付帯分の年会費はカード自体の特典も含んだ金額であり、ラウンジ単体の対価ではありません。
+          為替換算はご自身のレートでご確認ください (通貨をまたぐ合算はしていません)。
+        </p>
+      </div>
     </div>
   );
 }

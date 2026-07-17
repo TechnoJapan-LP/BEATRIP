@@ -1,0 +1,33 @@
+{
+  "_readme": "プライオリティ・パスの公式会員プラン価格。公式サイトの表示を実ブラウザで確認して転記 (verifiedAt = 確認日)。source と verifiedAt の無いデータはローダーが落とす。価格改定があったら公式ページを開いて確認してから更新すること。カード付帯の条件 (セゾンプラチナ等) は cards.json の lounge が正で、ここには持たない。",
+  "source": "https://www.prioritypass.com/ja-JP/join-prioritypass",
+  "verifiedAt": "2026-07-17",
+  "currency": "USD",
+  "guestFeeUsd": 35,
+  "plans": [
+    {
+      "id": "standard",
+      "name": "スタンダード",
+      "annualFeeUsd": 99,
+      "freeVisits": 0,
+      "visitFeeUsd": 35,
+      "tagline": "旅行頻度が少ない方向け"
+    },
+    {
+      "id": "standard-plus",
+      "name": "スタンダード・プラス",
+      "annualFeeUsd": 329,
+      "freeVisits": 10,
+      "visitFeeUsd": 35,
+      "tagline": "定期的に旅行される方向け"
+    },
+    {
+      "id": "prestige",
+      "name": "プレステージ",
+      "annualFeeUsd": 469,
+      "freeVisits": null,
+      "visitFeeUsd": 0,
+      "tagline": "頻繁に旅行される方向け (本人利用は無制限で無料)"
+    }
+  ]
+}

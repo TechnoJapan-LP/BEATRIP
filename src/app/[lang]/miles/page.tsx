@@ -12,6 +12,7 @@ import {
   getMileDestinations,
   getMilePrograms,
   getMilesDataVerifiedAt,
+  getPriorityPassPricing,
 } from "@/lib/miles/data";
 import { awardRequirementFor } from "@/lib/miles/simulator";
 import { getAspPartner, getAspPartnerUrl } from "@/lib/affiliate/asp-partners";
@@ -75,6 +76,14 @@ const FAQ = [
   {
     q: "マイルと現金セールはどちらが得ですか？",
     a: "一般に長距離路線・ビジネスクラスほどマイルの価値が出やすく、近距離はセール運賃が安いことが多いです。特典航空券でも燃油サーチャージ・諸税は現金で必要な点を含めて比較してください。",
+  },
+  {
+    q: "ANAマイルとJALマイル、どちらを貯めるべきですか？",
+    a: "ANAはスターアライアンス、JALはワンワールドに加盟しており、貯めたマイルは各アライアンスの提携航空会社の便にも使えます (必要マイル数は別チャート)。行きたい目的地の必要マイル数と、お手持ちのカード・ポイントがどちらに移行しやすいかで選ぶのが実用的です。本シミュレーターで目的地ごとの必要マイル数を比較できます。",
+  },
+  {
+    q: "プライオリティ・パスは直接入会とカード付帯のどちらが安いですか？",
+    a: "公式の直接入会はスタンダード年US$99 (利用ごとにUS$35)〜プレステージ年US$469 (本人無制限)。一方、プレステージ相当が付帯するカード (セゾンプラチナ・アメックス 年会費33,000円) や、年5回まで無料の楽天プレミアムカード (年会費11,000円) もあります。年間の利用回数が多いほどカード付帯が有利になりやすく、本ページの比較で確認できます。",
   },
   {
     q: "掲載カードの選定基準は？",
@@ -183,7 +192,12 @@ export default async function MilesPage({
         />
 
         <div className="mt-6">
-          <MileSimulator items={items} cards={simCards} verifiedAt={verifiedAt} />
+          <MileSimulator
+            items={items}
+            cards={simCards}
+            ppPricing={getPriorityPassPricing()}
+            verifiedAt={verifiedAt}
+          />
         </div>
 
         {/* データの出所と免責 */}

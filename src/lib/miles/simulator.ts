@@ -1,4 +1,9 @@
-import type { MileCard, MileDestination, MileProgram } from "./data";
+import type {
+  MileCard,
+  MileDestination,
+  MileProgram,
+  PriorityPassPricing,
+} from "./data";
 
 /**
  * マイルシミュレーターの計算ロジック (純関数)
@@ -12,6 +17,8 @@ import type { MileCard, MileDestination, MileProgram } from "./data";
 export type AwardRequirement = {
   programId: string;
   programName: string;
+  /** 所属アライアンス (公式ページで確認済みの事実のみ) */
+  alliance: { name: string; note: string } | null;
   /** 往復に必要なマイル。JAL は片道基本マイル×2 で正規化 */
   roundTripMiles: { economy: RangeOrExact; business: RangeOrExact | null };
   /**
@@ -87,6 +94,9 @@ export function awardRequirementFor(
     return {
       programId: program.id,
       programName: program.name,
+      alliance: program.alliance
+        ? { name: program.alliance.name, note: program.alliance.note }
+        : null,
       roundTripMiles: {
         economy: {
           kind: "range",
@@ -120,6 +130,9 @@ export function awardRequirementFor(
   return {
     programId: program.id,
     programName: program.name,
+    alliance: program.alliance
+      ? { name: program.alliance.name, note: program.alliance.note }
+      : null,
     roundTripMiles: {
       economy: { kind: "from", min: eco, label: `${fmt(eco)}マイル〜` },
       business: { kind: "from", min: biz, label: `${fmt(biz)}マイル〜` },
@@ -224,4 +237,83 @@ export function rankCards<T extends MileCard>(
     if (ma !== mb) return mb - ma;
     return a.card.annualFeeYen - b.card.annualFeeYen;
   });
+}
+
+/**
+ * 目的地のプログラム比較サマリ (算術事実のみ)。
+ * 「必要マイル下限が少ないのはどちらか」を、選択キャビンの下限マイルと
+ * 燃油手出しで並べる。「お得」とは言わない — マイルの調達コストは
+ * 利用者のカード次第で、ここでは断定できないため。
+ */
+export function destinationSummary(
+  awards: AwardRequirement[],
+  cabin: "economy" | "business"
+): { programName: string; allianceName: string | null; minMiles: number; fuelYen: number | null } | null {
+  const rows = awards
+    .map((a) => {
+      const m = a.roundTripMiles[cabin];
+      if (!m) return null;
+      return {
+        programName: a.programName,
+        allianceName: a.alliance?.name ?? null,
+        minMiles: m.min,
+        fuelYen: a.fuelSurcharge?.roundTripYen ?? null,
+      };
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
+  if (rows.length < 2) return null;
+  return rows.sort((a, b) => a.minMiles - b.minMiles)[0];
+}
+
+export type PpCostRow = {
+  id: string;
+  name: string;
+  /** 年間コスト。PP直接契約は USD、カード付帯は JPY で通貨を分けて持つ */
+  costUsd: number | null;
+  costJpy: number | null;
+  note: string;
+};
+
+/**
+ * 年間ラウンジ利用回数 → 入手手段ごとの年間コスト比較。
+ * PP公式プランは USD、カード付帯は年会費 (JPY)。通貨をまたぐ換算は
+ * 為替の断定になるため行わず、UI 側で参考レートを明示して併記する。
+ */
+export function ppCostComparison(
+  visitsPerYear: number,
+  pricing: PriorityPassPricing,
+  cards: MileCard[]
+): PpCostRow[] {
+  const rows: PpCostRow[] = pricing.plans.map((plan) => {
+    const paidVisits =
+      plan.freeVisits === null ? 0 : Math.max(0, visitsPerYear - plan.freeVisits);
+    return {
+      id: `pp-${plan.id}`,
+      name: `PP直接入会: ${plan.name}`,
+      costUsd: plan.annualFeeUsd + paidVisits * plan.visitFeeUsd,
+      costJpy: null,
+      note:
+        plan.freeVisits === null
+          ? "本人無制限で無料"
+          : plan.freeVisits > 0
+            ? `${plan.freeVisits}回まで無料、以降1回US$${plan.visitFeeUsd}`
+            : `1回あたりUS$${plan.visitFeeUsd}`,
+    };
+  });
+
+  for (const card of cards) {
+    if (!card.lounge?.priorityPass) continue;
+    // 楽天プレミアム型 (年5回まで無料) の超過分は US$35/回。回数制限の詳細は
+    // lounge.detail の文言が正だが、計算には検証済みの5回/35ドルを使う
+    const isLimited = card.lounge.detail.includes("5回");
+    const extraVisits = isLimited ? Math.max(0, visitsPerYear - 5) : 0;
+    rows.push({
+      id: `card-${card.id}`,
+      name: `${card.name} 付帯`,
+      costUsd: extraVisits > 0 ? extraVisits * 35 : null,
+      costJpy: card.annualFeeYen,
+      note: card.lounge.detail,
+    });
+  }
+  return rows;
 }

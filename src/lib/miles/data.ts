@@ -1,6 +1,7 @@
 import awardChartsJson from "@/data/miles/award-charts.json";
 import cardsJson from "@/data/miles/cards.json";
 import destinationsJson from "@/data/miles/destinations.json";
+import priorityPassJson from "@/data/miles/priority-pass.json";
 
 /**
  * マイルシミュレーターのデータローダー
@@ -44,6 +45,14 @@ export type FuelSurcharge = {
   bands: { label: string; oneWayYen: number; destinationCodes: string[] }[];
 };
 
+export type ProgramAlliance = {
+  name: string;
+  nameEn: string;
+  source: string;
+  verifiedAt: string;
+  note: string;
+};
+
 export type MileProgram = {
   id: string;
   name: string;
@@ -57,6 +66,25 @@ export type MileProgram = {
   zones?: AnaZone[];
   routes?: JalRoute[];
   fuelSurcharge?: FuelSurcharge;
+  alliance?: ProgramAlliance;
+};
+
+export type PriorityPassPlan = {
+  id: string;
+  name: string;
+  annualFeeUsd: number;
+  /** null = 本人無制限無料 */
+  freeVisits: number | null;
+  visitFeeUsd: number;
+  tagline: string;
+};
+
+export type PriorityPassPricing = {
+  source: string;
+  verifiedAt: string;
+  currency: "USD";
+  guestFeeUsd: number;
+  plans: PriorityPassPlan[];
 };
 
 export type MileCard = {
@@ -118,6 +146,9 @@ export function getMilePrograms(): MileProgram[] {
     if (!entries || entries.length === 0) {
       throw new Error(`miles data: program "${p.id}" にゾーン/路線がありません。`);
     }
+    if (p.alliance) {
+      assertProvenance(`alliance(${p.id})`, p.id, p.alliance.source, p.alliance.verifiedAt);
+    }
     const fs = p.fuelSurcharge;
     if (fs) {
       assertProvenance(`fuelSurcharge(${p.id})`, p.id, fs.source, fs.verifiedAt);
@@ -168,6 +199,24 @@ export function getMileDestinations(): MileDestination[] {
   }
   destinationsCache = destinations;
   return destinations;
+}
+
+let ppCache: PriorityPassPricing | null = null;
+
+export function getPriorityPassPricing(): PriorityPassPricing {
+  if (ppCache) return ppCache;
+  const pp = priorityPassJson as PriorityPassPricing;
+  assertProvenance("priority-pass", "pricing", pp.source, pp.verifiedAt);
+  if (!pp.plans?.length) {
+    throw new Error("miles data: priority-pass.json に plans がありません。");
+  }
+  for (const plan of pp.plans) {
+    if (!(plan.annualFeeUsd > 0)) {
+      throw new Error(`miles data: priority-pass plan "${plan.id}" の annualFeeUsd が不正です。`);
+    }
+  }
+  ppCache = pp;
+  return pp;
 }
 
 /** データ全体の最終確認日 (画面の「◯年◯月時点の情報」表示に使う) */
