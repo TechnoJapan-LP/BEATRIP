@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title =
     "2027 航空券セール スケジュール予測 — JAL/ANA/Peach/Jetstar 完全網羅";
   const description =
-    "2027 年の航空券セール時期を主要キャリア (JAL / ANA / Peach / Jetstar / ZIPAIR / Skymark) 別に予測。過去 5 年分の傾向から月別セール開催確率と狙い目時期を整理した完全予測ガイド。";
+    "2027 年の航空券が安くなる時期を主要キャリア (JAL / ANA / Peach / Jetstar / ZIPAIR / Skymark) 別に整理。各社が公表する早割制度と旅行需要の繁閑から、四半期ごとの狙い目をまとめたガイド。";
   return {
     title,
     description,
@@ -166,7 +166,7 @@ const FAQS = [
   },
   {
     q: "本予測の精度はどの程度ですか？",
-    a: "過去 5 年分のセール開催パターンに基づく傾向予測です。航空会社の経営判断・需給状況・燃油サーチャージ等で変動するため、実際の開催時期・割引率は変わる可能性があります。最新情報は各キャリア公式と当サイトのフラッシュディールで随時確認推奨。",
+    a: "各社が公表している早割・先得などの運賃制度と、旅行需要の繁閑期という一般的な傾向に基づく見立てです。BEATRIP が独自に集計した過去データに基づくものではありません。航空会社の経営判断・需給状況・燃油サーチャージ等で変動するため、実際の開催時期・割引率は変わる可能性があります。最新情報は各キャリア公式と当サイトのフラッシュディールで随時確認推奨。",
   },
 ];
 
@@ -247,8 +247,8 @@ export default async function SalePrediction2027Page({
           </h1>
           <p className="mt-4 text-sm sm:text-base text-white/90 max-w-2xl">
             主要キャリア (JAL / ANA / Peach / Jetstar / ZIPAIR / Skymark)
-            のセール時期を 過去 5
-            年分の傾向から四半期別に予測。年間で最も安い時期と狙い目を整理した予測ガイドです。
+            が安くなりやすい時期を四半期別に整理。各社が公表する早割制度と旅行需要の
+            繁閑から、年間の狙い目をまとめたガイドです。
           </p>
         </div>
       </section>
@@ -265,8 +265,8 @@ export default async function SalePrediction2027Page({
                 2027 四半期別セール予測
               </h2>
               <p className="text-sm text-zinc-500 mb-6">
-                過去 5 年分の傾向から導出した 2027
-                年セール時期の予測カレンダー。
+                各社の運賃制度と旅行需要の繁閑から見た 2027 年の狙い目。確定した
+                開催スケジュールではありません。
               </p>
               <div className="space-y-4">
                 {QUARTERLY.map((q) => (
@@ -364,9 +364,8 @@ export default async function SalePrediction2027Page({
                     予測の見方
                   </h2>
                   <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                    本予測は過去 5
-                    年分のセール開催パターンに基づく傾向予測であり、
-                    確定スケジュールではありません。実際の開催時期・割引率は航空会社の判断・
+                    本記事は各社が公表する運賃制度と旅行需要の繁閑から書いた一般的な
+                    見立てであり、BEATRIP の独自集計や確定スケジュールではありません。実際の開催時期・割引率は航空会社の判断・
                     需給状況・燃油サーチャージ等で変動します。最新情報は各キャリア公式と当サイトの
                     フラッシュディール・空港別ハブで随時確認してください。
                   </p>

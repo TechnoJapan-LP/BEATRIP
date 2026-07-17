@@ -1318,126 +1318,24 @@ export const mockDeals: Deal[] = [
   },
 ];
 
-export const mockSaleEvents: SaleEvent[] = [
-  {
-    id: "s1",
-    airline: "ANA",
-    saleName: "ANA スーパーバリュー SALE",
-    historicalDates: ["2024-05-15", "2024-11-20", "2025-05-12", "2025-11-18"],
-    predictedDate: "2026-05-18",
-    probability: 87,
-    routes: ["NRT→BKK", "HND→JFK", "NRT→CDG"],
-    avgDiscount: 45,
-    imageUrl: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=800&q=80",
-  },
-  {
-    id: "s2",
-    airline: "JAL",
-    saleName: "JAL スペシャルセーバー",
-    historicalDates: ["2024-06-01", "2024-12-01", "2025-06-03", "2025-12-02"],
-    predictedDate: "2026-06-02",
-    probability: 82,
-    routes: ["HND→CDG", "NRT→LHR", "HND→LAX"],
-    avgDiscount: 40,
-    imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80",
-  },
-  {
-    id: "s3",
-    airline: "Peach",
-    saleName: "Peach メガセール",
-    historicalDates: ["2024-03-10", "2024-07-15", "2024-11-10", "2025-03-12"],
-    predictedDate: "2026-07-14",
-    probability: 75,
-    routes: ["KIX→TPE", "KIX→ICN", "NRT→BKK"],
-    avgDiscount: 60,
-    imageUrl: "https://images.unsplash.com/photo-1470004914212-05527e49370b?w=800&q=80",
-  },
-  {
-    id: "s4",
-    airline: "スクート",
-    saleName: "スクート TAKE OFF SALE",
-    historicalDates: ["2024-04-20", "2024-08-22", "2025-01-15", "2025-04-18"],
-    predictedDate: "2026-08-20",
-    probability: 68,
-    routes: ["NRT→SIN", "KIX→SIN", "CTS→TPE"],
-    avgDiscount: 55,
-    imageUrl: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80",
-  },
-  {
-    id: "s5",
-    airline: "Emirates",
-    saleName: "Emirates グローバルセール",
-    historicalDates: ["2024-01-10", "2024-06-15", "2025-01-12", "2025-06-14"],
-    predictedDate: "2026-06-15",
-    probability: 91,
-    routes: ["NRT→DXB", "KIX→DXB", "HND→DXB"],
-    avgDiscount: 35,
-    imageUrl: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
-  },
-  {
-    id: "s6",
-    airline: "Jetstar Japan",
-    saleName: "Jetstar スーパースターSALE",
-    historicalDates: ["2024-06-20", "2024-09-15", "2025-01-10", "2025-06-18"],
-    predictedDate: "2026-06-18",
-    probability: 79,
-    routes: ["NRT→MNL", "KIX→TPE", "NRT→BKK"],
-    avgDiscount: 55,
-    imageUrl: "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800&q=80",
-  },
-  {
-    id: "s7",
-    airline: "Cathay Pacific",
-    saleName: "キャセイ ファンフェア",
-    historicalDates: ["2024-03-15", "2024-09-20", "2025-03-18", "2025-09-15"],
-    predictedDate: "2026-09-18",
-    probability: 84,
-    routes: ["NRT→HKG", "KIX→HKG", "HND→HKG"],
-    avgDiscount: 38,
-    imageUrl: "https://images.unsplash.com/photo-1536599018102-9f803c140fc1?w=800&q=80",
-  },
-  {
-    id: "s8",
-    airline: "T'way Air",
-    saleName: "T'way ハッピーフライデー",
-    historicalDates: ["2024-04-05", "2024-07-05", "2024-10-04", "2025-04-04"],
-    predictedDate: "2026-07-03",
-    probability: 72,
-    routes: ["FUK→ICN", "KIX→ICN", "NRT→ICN"],
-    avgDiscount: 58,
-    imageUrl: "https://images.unsplash.com/photo-1534274867514-d5b47ef89ed7?w=800&q=80",
-  },
-  {
-    id: "s9",
-    airline: "Spring Japan",
-    saleName: "Spring 737セール",
-    historicalDates: ["2024-07-03", "2024-12-07", "2025-03-07", "2025-07-07"],
-    predictedDate: "2026-07-07",
-    probability: 70,
-    routes: ["NRT→PVG", "NRT→HRB", "NRT→WUH"],
-    avgDiscount: 65,
-    imageUrl: "https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?w=800&q=80",
-  },
-  {
-    id: "s10",
-    airline: "Singapore Airlines",
-    saleName: "SIA プレミアムセール",
-    historicalDates: ["2024-02-10", "2024-08-15", "2025-02-12", "2025-08-10"],
-    predictedDate: "2026-08-12",
-    probability: 80,
-    routes: ["NRT→SIN", "HND→SIN", "KIX→SIN"],
-    avgDiscount: 40,
-    imageUrl: "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=800&q=80",
-  },
-  {
-    id: "s11",
-    airline: "VietJet",
-    saleName: "VietJet ゼロ円フェスタ",
-    historicalDates: ["2024-05-05", "2024-09-09", "2025-01-01", "2025-05-05"],
-    predictedDate: "2026-09-09",
-    probability: 76,
-    routes: ["NRT→HAN", "NGO→SGN", "KIX→HAN"],
-    avgDiscount: 62,
-    imageUrl: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=800&q=80",
-  },
-];
+/**
+ * セール開催予測データ（現在は空）
+ *
+ * 2026-07-17 の調査で **捏造と確定した**ため全件削除した。sale-history.ts の
+ * 95 件と同じ性質の作り物で、TOP・/deals・/airlines 系の 5 ページで
+ * 「過去の開催日」「開催確率 87%」として本番表示されていた。根拠:
+ *   - historicalDates が実在しない開催日。VietJet「ゼロ円フェスタ」は
+ *     5/5・9/9・1/1 というゾロ目の並びで、日付として作為が明白。
+ *   - 「JAL スペシャルセーバー」は国内線の運賃プランでセール名ではない。
+ *   - 「ANA スーパーバリュー SALE」は実在するが公式は毎月1〜2回開催。
+ *     ここでは年2回として履歴が組まれており実態と合わない。
+ *   - probability (68〜91%) は上記の架空履歴から出しており、根拠が無い。
+ *
+ * **予測は「推計」と断れば出してよい類のものではない。** 推計の前提になる
+ * 過去の開催実績そのものが事実であって初めて成立する。実績は
+ * lib/deals/sale-records.ts が観測ベースで蓄積中（source="observed"）。
+ * 航空会社ごとに MIN_OBSERVED_RECORDS 件たまってから予測を再実装すること。
+ *
+ * **ここに手書きでレコードを足さないこと。**
+ */
+export const mockSaleEvents: SaleEvent[] = [];

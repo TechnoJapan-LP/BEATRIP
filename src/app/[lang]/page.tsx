@@ -258,22 +258,25 @@ export default async function Home({
           />
         </section>
 
-        {/* 次回セール予測カレンダー — BEATRIP 独自資産。ディール直下に昇格して主役化 */}
-        <section className="mt-12" id="calendar">
-          <div className="mb-6 flex items-center justify-between">
-            <SectionHeading subtitle="各社の開催パターンから次回セール時期を予測">
-              セール予測カレンダー
-            </SectionHeading>
-            <Link
-              href={lh("/sale-calendar")}
-              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-            >
-              各社の予測を見る
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-          <SaleCalendar events={mockSaleEvents} hideHeader />
-        </section>
+        {/* 次回セール予測カレンダー。予測の土台になる開催実績は観測ベースで蓄積中で、
+            貯まるまでは節ごと出さない (見出しだけ残ると空箱になるため section 全体を gate)。 */}
+        {mockSaleEvents.length > 0 && (
+          <section className="mt-12" id="calendar">
+            <div className="mb-6 flex items-center justify-between">
+              <SectionHeading subtitle="各社の開催パターンから次回セール時期を予測">
+                セール予測カレンダー
+              </SectionHeading>
+              <Link
+                href={lh("/sale-calendar")}
+                className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              >
+                各社の予測を見る
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <SaleCalendar events={mockSaleEvents} hideHeader />
+          </section>
+        )}
 
         {/* Popular Hotels — 高料率の収益面、フライト/ホテル両軸の流量に */}
         <section className="mt-12">
