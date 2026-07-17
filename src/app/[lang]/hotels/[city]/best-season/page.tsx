@@ -99,11 +99,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export function generateStaticParams() {
-  // when-to-visit データのある都市のみ事前生成。
-  // データ無し都市はオンデマンド描画 + noindex (上記 generateMetadata)。
-  return HOTEL_DESTINATIONS.filter((d) => hasWhenToVisitContent(d.slug)).map(
-    (d) => ({ city: d.slug }),
-  );
+  // サブページ (60都市超 × 3種) を全て事前生成するとビルドを数分押し上げる。
+  // 検索流入の中心である主要都市のみ事前生成し、残りは on-demand ISR。
+  const MAJOR = new Set([
+    "tokyo", "osaka", "sapporo", "fukuoka", "okinawa", "kyoto",
+    "seoul", "taipei", "bangkok", "singapore", "honolulu", "paris",
+  ]);
+  return HOTEL_DESTINATIONS.filter((d) => MAJOR.has(d.slug)).map((d) => ({
+    city: d.slug,
+  }));
 }
 
 const RATING_CHIP: Record<

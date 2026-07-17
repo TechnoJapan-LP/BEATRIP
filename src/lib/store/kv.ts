@@ -31,7 +31,12 @@ export function getKV(): Redis | null {
   }
 
   try {
-    cached = new Redis({ url, token });
+    // cache: SDK 既定の "no-store" は Next.js の動的レンダリング bailout を
+    // 引き起こし、KV を読む全ページ (routes/deals/home 等) が ISR から SSR に
+    // 落ちて CDN キャッシュが一切効かなくなっていた (x-vercel-cache: MISS 固定)。
+    // Upstash は POST なので Next の data cache には元々乗らず、"default" にしても
+    // Redis 応答が古くなることはない。ページ側の revalidate (ISR) が鮮度を司る。
+    cached = new Redis({ url, token, cache: "default" });
   } catch (e) {
     console.warn("[KV] Failed to init Redis client:", e);
     cached = null;

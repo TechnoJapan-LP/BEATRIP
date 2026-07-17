@@ -1,9 +1,14 @@
-# 超お買い得 (価格急落) スキャンの高頻度化
+# 超お買い得 (価格急落) スキャン + 実測蓄積の定期実行
 #
-# Vercel Hobby の cron は 1日1回 + 2本上限のため、エラーフェア検出に必要な
-# 鮮度 (数時間おき) を GitHub Actions で補う。既存の scrape エンドポイントを
-# 叩くだけで、価格取得 → 急落検出 → X/Bluesky 速報まで一気通貫で走る
-# (新規セールの検出・投稿も dedup 済みなので重複しない)。
+# Vercel Hobby の cron は 1日1回 + 2本上限で時刻保証も無いため、鮮度が要る
+# エラーフェア検出と実測運賃の日次蓄積は GitHub Actions が主担当。既存の
+# scrape エンドポイントを叩くだけで、価格取得 → 急落検出 → X/Bluesky 速報 →
+# 実測蓄積まで一気通貫で走る (dedup 済みなので重複しない)。
+#
+# スケジュールを 3 時間おきにしている理由: GitHub Actions の schedule は
+# 発火保証が無く、混雑時は 1-2 時間遅延・スキップもある (実際に 07-17 09:00
+# JST 分が発火しなかった)。ジョブは冪等で ~20 秒なので、回数を増やして
+# 取りこぼしに耐える方が確実。
 #
 # 必要な設定: リポジトリの Settings → Secrets and variables → Actions に
 #   CRON_SECRET  (Vercel の環境変数と同じ値)
@@ -12,15 +17,14 @@ name: hot-deal-scan
 
 on:
   schedule:
-    # 6時間おき (UTC)。Vercel 側の日次 cron (18:00 UTC) と重なっても
-    # dedup が効くので問題ない。
-    - cron: "0 0,6,12 * * *"
+    # 3時間おき (UTC)。GH の遅延・スキップ前提の冗長スケジュール。
+    - cron: "0 */3 * * *"
   workflow_dispatch: {}
 
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     steps:
       - name: Trigger scrape + hot-deal scan
         env:
@@ -30,10 +34,22 @@ jobs:
             echo "CRON_SECRET が未設定のため skip (Settings → Secrets → Actions で登録してください)"
             exit 0
           fi
-          status=$(curl -s -o /tmp/res.json -w "%{http_code}" --max-time 120 \
-            -H "Authorization: Bearer $CRON_SECRET" \
-            "https://beatrip.jp/api/cron/scrape")
+          # 一時的な 5xx (コールドスタート・デプロイ直後・関数タイムアウト) に
+          # 1 回だけリトライする。07-16 に 504 で失敗したままスキャンが丸ごと
+          # 抜けた実績があるため。
+          attempt() {
+            curl -s -o /tmp/res.json -w "%{http_code}" --max-time 120 \
+              -H "Authorization: Bearer $CRON_SECRET" \
+              "https://beatrip.jp/api/cron/scrape"
+          }
+          status=$(attempt)
           echo "HTTP $status"
+          if [ "$status" != "200" ]; then
+            echo "retrying in 90s..."
+            sleep 90
+            status=$(attempt)
+            echo "HTTP $status (retry)"
+          fi
           # レスポンスの要約だけ出す (秘密情報は含まれない)
           cat /tmp/res.json | head -c 600 || true
           [ "$status" = "200" ]

@@ -13,12 +13,10 @@ import { Header } from "@/components/header";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
-import {
-  airlines,
-  getAirlineByCode,
+import { getAirlineByCode,
   airlineServesAirport,
 } from "@/data/airlines";
-import { AIRPORTS, getAirportByCode } from "@/data/airports";
+import { getAirportByCode } from "@/data/airports";
 import { cityNameJa } from "@/lib/airport-names";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getHotelSlugByIata } from "@/data/hotel-destinations";
@@ -38,19 +36,10 @@ export const revalidate = 86400;
  * 「実際に airport.airlines にコードが含まれる」組合せのみ生成する。
  */
 export function generateStaticParams() {
-  const params: { code: string; iata: string }[] = [];
-  for (const airline of airlines) {
-    const servedAirports = AIRPORTS.filter((a) =>
-      airlineServesAirport(airline, a),
-    );
-    for (const airport of servedAirports) {
-      params.push({
-        code: airline.code.toLowerCase(),
-        iata: airport.iata,
-      });
-    }
-  }
-  return params;
+  // 就航ペアは ~150 ページあるが検索流入はロングテールのため、ビルドでは
+  // 事前生成せず on-demand ISR (dynamicParams 既定 true) に任せる。
+  // 初回アクセスのみ ~0.5s、以降は CDN。ビルド時間を全体で数分削減する。
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

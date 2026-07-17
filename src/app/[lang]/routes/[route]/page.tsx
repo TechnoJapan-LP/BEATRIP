@@ -159,15 +159,11 @@ export async function generateStaticParams() {
       routes.add(`${d.origin_code}-${d.destination_code}`);
     }
   }
-  // AIRPORTS の popularRoutes から全 O→D ペアを追加 (deal 不在路線の SSG)
-  // popularRoutes に airline 名等が混じるケースがあるので IATA 3 文字のみ受け付ける
-  for (const ap of AIRPORTS) {
-    for (const dst of ap.popularRoutes ?? []) {
-      if (/^[A-Z]{3}$/.test(dst) && dst !== ap.iata && isKnownCode(dst)) {
-        routes.add(`${ap.iata}-${dst}`);
-      }
-    }
-  }
+  // deal のある路線 (実トラフィックの中心) だけを事前生成する。
+  // 以前は AIRPORTS.popularRoutes 由来の全ペア (~200ページ) も事前生成していたが、
+  // ロングテールでアクセス頻度が低く、ビルド時間を数分押し上げていた。
+  // dynamicParams (既定 true) の on-demand ISR に任せる — 初回のみ ~0.5s、
+  // 以降は CDN。sitemap 掲載 URL は変わらないため SEO 影響なし。
   return Array.from(routes).map((r) => ({ route: r }));
 }
 

@@ -94,9 +94,9 @@ async function sendLine(webhookUrl: string, payload: NotificationPayload) {
   }
 }
 
-export async function sendLineBroadcast(payload: NotificationPayload) {
+export async function sendLineBroadcast(payload: NotificationPayload): Promise<boolean> {
   const token = process.env.LINE_CHANNEL_ACCESS_TOKEN;
-  if (!token) return;
+  if (!token) return false;
 
   const dealUrl = payload.routes?.[0]
     ? `https://beatrip.jp`
@@ -170,8 +170,10 @@ export async function sendLineBroadcast(payload: NotificationPayload) {
         ],
       }),
     });
+    return true;
   } catch (e) {
     console.error("LINE broadcast failed:", e);
+    return false;
   }
 }
 
@@ -205,10 +207,13 @@ export async function dispatchNotifications(
     const notifications = buildNotifications(change);
 
     for (const notification of notifications) {
-      if (notification.type === "new_sale" || notification.type === "price_drop") {
+      // ブロードキャスト (全友だち一斉配信) は新規セールのみ。
+      // price_drop まで含めると TP 価格ウォッチの日常変動 (1スキャン数百件) が
+      // そのまま全員配信になり、実際に1回のスキャンで443連投になった。
+      // 大幅な急落の速報は hot-deals が閾値付きで担う。
+      if (notification.type === "new_sale") {
         try {
-          await sendLineBroadcast(notification);
-          sent++;
+          if (await sendLineBroadcast(notification)) sent++;
         } catch {
           errors++;
         }
