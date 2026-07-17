@@ -31,7 +31,7 @@ import {
   getHotelDestinationBySlug,
   getHotelSlugByIata,
 } from "@/data/hotel-destinations";
-import { cityNameEn } from "@/lib/airport-names";
+import { cityNameEn, displayCityJa } from "@/lib/airport-names";
 import { getAirlineByCode } from "@/data/airlines";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
@@ -67,6 +67,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const isEn = lang === "en";
   const originEn = cityNameEn(deal.origin_code);
   const destEn = cityNameEn(deal.destination_code);
+  const originJa = displayCityJa(deal.origin_code, deal.origin);
+  const destJa = displayCityJa(deal.destination_code, deal.destination);
   const path = isEn ? `/en/deals/${id}` : `/deals/${id}`;
 
   return {
@@ -75,14 +77,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // 数百ページが同型に酷似していた。template が末尾に「 | BEATRIP」を1回付与。
     title: isEn
       ? `${originEn} to ${destEn} flights from JPY ${deal.sale_price.toLocaleString()} — ${deal.airline_name} sale`
-      : `${deal.origin}→${deal.destination} 航空券 ¥${deal.sale_price.toLocaleString()}〜｜${deal.airline_name}セール`,
+      : `${originJa}→${destJa} 航空券 ¥${deal.sale_price.toLocaleString()}〜｜${deal.airline_name}セール`,
     description: isEn
       ? `${deal.airline_name} ${deal.sale_name} — ${originEn} to ${destEn} from JPY ${deal.sale_price.toLocaleString()} (${deal.discount_percent}% off).`
-      : `${deal.airline_name} ${deal.sale_name} — ${deal.origin}から${deal.destination}まで¥${deal.sale_price.toLocaleString()}。${deal.discount_percent}%OFF。`,
+      : `${deal.airline_name} ${deal.sale_name} — ${originJa}から${destJa}まで¥${deal.sale_price.toLocaleString()}。${deal.discount_percent}%OFF。`,
     openGraph: {
       title: isEn
         ? `${destEn} from JPY ${deal.sale_price.toLocaleString()} (-${deal.discount_percent}%)`
-        : `${deal.destination} ¥${deal.sale_price.toLocaleString()} (-${deal.discount_percent}%)`,
+        : `${destJa} ¥${deal.sale_price.toLocaleString()} (-${deal.discount_percent}%)`,
       description: `${deal.airline_name} ${deal.sale_name}`,
     },
     alternates: {
@@ -132,6 +134,12 @@ export default async function DealDetailPage({ params }: Props) {
   ]);
   if (!deal) notFound();
 
+  // 表示用の都市名。TP ウォッチ由来は origin/destination が IATA 生値のことが
+  // 多いため displayCityJa で補完する (画面に "CJJ" 等が出るのを防ぐ)。
+  const originJa = displayCityJa(deal.origin_code, deal.origin);
+  const destJa = displayCityJa(deal.destination_code, deal.destination);
+  const cityJa = (code: string, name: string) => displayCityJa(code, name);
+
   const routeKey = `${deal.origin_code}→${deal.destination_code}`;
   const historicalData = await getHistoricalPrices(routeKey);
   const prediction = calculateBestTimeToBook(routeKey, historicalData);
@@ -141,9 +149,11 @@ export default async function DealDetailPage({ params }: Props) {
   const deadlineDays = daysLeft(deal.booking_deadline);
   const badge = deal.badge ? badgeConfig[deal.badge] : null;
 
-  const sameSaleDeals = deals.filter(
-    (d) => d.id !== deal.id && d.sale_id === deal.sale_id
-  );
+  // 同一セールの他の対象便。件数が多くなるため、割引率の高い順に最大10件だけ出す。
+  const sameSaleDeals = deals
+    .filter((d) => d.id !== deal.id && d.sale_id === deal.sale_id)
+    .sort((a, b) => b.discount_percent - a.discount_percent)
+    .slice(0, 10);
 
   const similar = deals
     .filter((d) => d.id !== deal.id && d.sale_id !== deal.sale_id)
@@ -179,7 +189,7 @@ export default async function DealDetailPage({ params }: Props) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: `${deal.origin_code}→${deal.destination_code} ${deal.airline_name} ${deal.sale_name}`,
-    description: `${deal.airline_name} ${deal.sale_name} — ${deal.origin}から${deal.destination}まで¥${deal.sale_price.toLocaleString()}。${deal.discount_percent}%OFF。`,
+    description: `${deal.airline_name} ${deal.sale_name} — ${originJa}から${destJa}まで¥${deal.sale_price.toLocaleString()}。${deal.discount_percent}%OFF。`,
     image: deal.image_url,
     dateModified: deal.updated_at,
     brand: {
@@ -204,12 +214,12 @@ export default async function DealDetailPage({ params }: Props) {
       {
         "@type": "PropertyValue",
         name: "出発地",
-        value: `${deal.origin} (${deal.origin_code})`,
+        value: `${originJa} (${deal.origin_code})`,
       },
       {
         "@type": "PropertyValue",
         name: "目的地",
-        value: `${deal.destination} (${deal.destination_code})`,
+        value: `${destJa} (${deal.destination_code})`,
       },
       {
         "@type": "PropertyValue",
@@ -236,7 +246,7 @@ export default async function DealDetailPage({ params }: Props) {
         item={{
           type: "deal",
           id: deal.id,
-          label: `${deal.origin_code} → ${deal.destination}`,
+          label: `${deal.origin_code} → ${destJa}`,
           sublabel: `¥${deal.sale_price.toLocaleString()} · ${deal.airline_name}`,
           href: `/deals/${deal.id}`,
           imageUrl: deal.image_url,
@@ -247,7 +257,7 @@ export default async function DealDetailPage({ params }: Props) {
       <div className="relative h-[30vh] min-h-[240px] overflow-hidden sm:h-[40vh] sm:min-h-[320px]">
         <Image
           src={deal.image_url}
-          alt={deal.destination}
+          alt={destJa}
           fill
           priority
           sizes="100vw"
@@ -266,7 +276,7 @@ export default async function DealDetailPage({ params }: Props) {
                 items={[
                   { label: "Home", href: "/" },
                   { label: "Flash Deals", href: "/" },
-                  { label: deal.destination },
+                  { label: destJa },
                 ]}
               />
             </div>
@@ -287,7 +297,7 @@ export default async function DealDetailPage({ params }: Props) {
                 </div>
                 <div className="flex items-center gap-3">
                   <h1 className="font-heading text-3xl tracking-wide text-white uppercase sm:text-5xl lg:text-6xl">
-                    {deal.destination}
+                    {destJa}
                   </h1>
                   <FavoriteButton dealId={deal.id} />
                 </div>
@@ -376,7 +386,7 @@ export default async function DealDetailPage({ params }: Props) {
                     affiliateUrl={deal.affiliate_url}
                     affiliateProvider={deal.affiliate_provider ?? "パートナーサイト"}
                     saleName={deal.sale_name}
-                    routeJa={`${deal.origin}→${deal.destination}`}
+                    routeJa={`${originJa}→${destJa}`}
                     departDateLabel={
                       deal.departure_date
                         ? `${new Date(deal.departure_date).getMonth() + 1}/${new Date(deal.departure_date).getDate()}発`
@@ -559,14 +569,14 @@ export default async function DealDetailPage({ params }: Props) {
             {/* ホテルゾーン — 検索 + 代表ホテル + OTA ピルの統合カード (高料率アフィリエイト) */}
             <HotelCrossSell
               destinationCode={deal.destination_code}
-              destinationLabel={deal.destination}
+              destinationLabel={destJa}
               checkIn={deal.departure_date}
               checkOut={deal.return_date}
               dealId={deal.id}
               hotelHighlights={
                 <DealHotelHighlights
                   destinationCode={deal.destination_code}
-                  destinationLabel={deal.destination}
+                  destinationLabel={destJa}
                 />
               }
             />
@@ -607,7 +617,7 @@ export default async function DealDetailPage({ params }: Props) {
 
               {/* 日本系 ASP partner — 旧 2 枚 (旅行のお供 / 比較・予約) を 1 枚に統合 */}
               <JapanesePartnersPanel
-                title={`${deal.destination}行きの比較・準備`}
+                title={`${destJa}行きの比較・準備`}
                 subtitle="航空券・ホテル・ツアー・保険・eSIM を厳選サイトで比較"
                 categories={
                   (getHotelDestinationBySlug(
@@ -665,9 +675,9 @@ export default async function DealDetailPage({ params }: Props) {
                     >
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5 text-sm font-bold text-zinc-800 dark:text-zinc-200">
-                          <span className="truncate">{s.origin}</span>
+                          <span className="truncate">{cityJa(s.origin_code, s.origin)}</span>
                           <Plane className="h-3 w-3 flex-shrink-0 text-zinc-300 rotate-45" />
-                          <span className="truncate">{s.destination}</span>
+                          <span className="truncate">{cityJa(s.destination_code, s.destination)}</span>
                         </div>
                         <div className="text-[11px] text-zinc-400 font-mono mt-0.5">
                           {s.origin_code}→{s.destination_code} · {s.cabin}
@@ -747,9 +757,9 @@ export default async function DealDetailPage({ params }: Props) {
                     >
                       <div className="min-w-0">
                         <div className="text-sm font-bold text-zinc-800 dark:text-zinc-200 truncate">
-                          {s.origin}
+                          {cityJa(s.origin_code, s.origin)}
                           <span className="mx-1 font-normal text-zinc-400">→</span>
-                          {s.destination}
+                          {cityJa(s.destination_code, s.destination)}
                         </div>
                         <div className="text-[11px] text-zinc-400 font-mono mt-0.5">
                           {s.origin_code}→{s.destination_code} · {s.airline_name}

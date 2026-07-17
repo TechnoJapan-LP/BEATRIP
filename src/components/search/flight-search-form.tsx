@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
+import { cityNameJa } from "@/lib/airport-names";
 import { useDictionary } from "@/components/i18n/locale-provider";
 import { trackSearchSubmit } from "@/components/analytics";
 
@@ -35,7 +36,14 @@ function getInternationalAirports(deals: DealSchema[]): Airport[] {
       seen.add(d.destination_code);
       return true;
     })
-    .map((d) => ({ code: d.destination_code, name: d.destination }));
+    // d.destination は TP ウォッチ由来だと IATA コード生値のことが多いため、
+    // 共通マスタ (cityNameJa) を優先し、無ければ deal 側の名称にフォールバックする。
+    .map((d) => ({
+      code: d.destination_code,
+      name: cityNameJa(d.destination_code) !== d.destination_code
+        ? cityNameJa(d.destination_code)
+        : d.destination,
+    }));
 }
 
 type Props = {

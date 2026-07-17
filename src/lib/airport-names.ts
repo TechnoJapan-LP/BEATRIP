@@ -49,11 +49,62 @@ export const CITY_NAMES_JA: Record<string, string> = {
   ASJ: "奄美", TTJ: "鳥取", IZO: "出雲", YGJ: "米子", FSZ: "静岡",
   HAC: "八丈島", UBJ: "山口宇部", MSJ: "三沢", ONJ: "大館能代",
   SHB: "中標津", RIS: "利尻", MBE: "紋別", KUM: "屋久島", TKN: "徳之島",
+  NTQ: "能登", TSJ: "対馬", OKI: "隠岐", HNA: "花巻", RNJ: "与論",
+  // TP ウォッチの長尾を追加 (2026-07-18)。KTI/BSZ は 2025 年に IATA コードが
+  // 変わったばかりのため公式で確認して登録した (KTI=プノンペン新空港, BSZ=旧FRU)。
+  // 中国
+  CGO: "鄭州", CGQ: "長春", HEK: "黒河", HGH: "杭州", HIA: "淮安",
+  KWE: "貴陽", NKG: "南京", SYX: "三亜", XMN: "廈門", FOC: "福州",
+  // 台湾・韓国
+  RMQ: "台中", CJJ: "清州",
+  // 東南アジア
+  CNX: "チェンマイ", CEI: "チェンライ", HKT: "プーケット", KBV: "クラビ",
+  USM: "サムイ", UTP: "パタヤ", CRK: "クラーク", DVO: "ダバオ",
+  IAO: "シアルガオ", MPH: "ボラカイ", JKT: "ジャカルタ", MES: "メダン",
+  JOG: "ジョグジャカルタ", PEN: "ペナン", LGK: "ランカウイ", SDK: "サンダカン",
+  PQC: "フーコック", DAC: "ダッカ", KTM: "カトマンズ", MLE: "マレ",
+  KTI: "プノンペン",
+  // ロシア
+  AER: "ソチ", BQS: "ブラゴヴェシチェンスク", CEK: "チェリャビンスク",
+  IKT: "イルクーツク", KHV: "ハバロフスク", KJA: "クラスノヤルスク",
+  KZN: "カザン", MRV: "ミネラリヌイエ・ヴォーディ", OMS: "オムスク",
+  OVB: "ノボシビルスク", PKC: "ペトロパブロフスク・カムチャツキー",
+  UFA: "ウファ", VVO: "ウラジオストク",
+  // 中央アジア・コーカサス
+  TAS: "タシケント", SKD: "サマルカンド", DYU: "ドゥシャンベ",
+  NQZ: "アスタナ", UBN: "ウランバートル", BAK: "バクー", TBS: "トビリシ",
+  EVN: "エレバン", BSZ: "ビシュケク", BUS: "バトゥミ",
+  // 中東
+  JED: "ジッダ", RUH: "リヤド", SHJ: "シャルジャ",
+  // ヨーロッパ
+  BEG: "ベオグラード", BLQ: "ボローニャ", BDS: "ブリンディジ", BRI: "バーリ",
+  FLR: "フィレンツェ", GVA: "ジュネーブ", PMI: "パルマ・デ・マヨルカ",
+  VLC: "バレンシア", STR: "シュトゥットガルト", VNO: "ビリニュス",
+  RMO: "キシナウ", BUH: "ブカレスト", LCA: "ラルナカ",
+  // アフリカ
+  CMN: "カサブランカ", LOS: "ラゴス", ZNZ: "ザンジバル",
+  // 南北アメリカ
+  CHI: "シカゴ", HOU: "ヒューストン", OAK: "オークランド", ONT: "オンタリオ",
+  PVD: "プロビデンス", SJC: "サンノゼ", SLC: "ソルトレイクシティ",
+  SCL: "サンティアゴ", NAS: "ナッソー",
+  // オセアニア・トルコ
+  PER: "パース", AYT: "アンタルヤ",
 };
 
 /** 空港コードを日本語都市名に。未知コードはそのまま返す */
 export function cityNameJa(code: string): string {
   return CITY_NAMES_JA[code] ?? code;
+}
+
+/**
+ * 表示用の都市名を返す。deal 側の名称 (name) を優先し、それが IATA コード
+ * 生値のまま (= 未解決) のときだけ共通マスタで補う。
+ * TP ウォッチ由来のディールは destination が生コードのことが多く、そのまま
+ * 出すと画面に "CJJ" 等が並ぶため、この関数を通して表示する。
+ */
+export function displayCityJa(code: string, name?: string): string {
+  if (name && name !== code) return name;
+  return cityNameJa(code);
 }
 
 /** "東京→鹿児島" 形式の路線文字列 */
