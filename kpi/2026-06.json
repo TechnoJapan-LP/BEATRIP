@@ -1,12 +1,33 @@
 {
   "month": "2026-06",
-  "capturedAt": "2026-07-18T05:23:18.848050+00:00",
+  "capturedAt": "2026-07-18T05:34:22.543397+00:00",
   "_note": "自動項目はBEATRIP自身が保有する事実。manual は各社管理画面から運用者が手入力する。**推測値で埋めないこと**（未入力は null のままにする）。",
   "auto": {
     "sitemapUrls": 1429,
-    "assets": null,
-    "audience": null,
-    "traffic": null
+    "assets": {
+      "priceObservations": {
+        "routes": 483,
+        "points": 1285,
+        "routesReadyForReal": 0
+      },
+      "saleRecords": {
+        "total": 6,
+        "airlines": 4,
+        "airlinesReadyForReal": 0
+      },
+      "hotDeals": {
+        "active": 5,
+        "gone": 0
+      },
+      "activeDeals": 527
+    },
+    "audience": {
+      "newsletterSubscribers": 5
+    },
+    "traffic": {
+      "totalAffiliateClicks": 15,
+      "dealsWithClicks": 10
+    }
   },
   "manual": {
     "revenueYen": {
