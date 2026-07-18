@@ -25,9 +25,16 @@ import { getActiveDeals } from "@/lib/deals/deal-service";
 export const dynamic = "force-dynamic";
 
 function isAdmin(req: NextRequest): boolean {
-  const adminKey = process.env.ADMIN_API_KEY ?? process.env.CRON_SECRET;
-  if (!adminKey) return false;
-  return req.headers.get("authorization") === `Bearer ${adminKey}`;
+  // ADMIN_API_KEY と CRON_SECRET の **どちらでも** 通す。
+  // `??` で片方だけを期待値にすると、Vercel に両方あり GitHub Actions 側には
+  // CRON_SECRET しか無い場合に 401 になる (実際に起きた: ワークフローは成功
+  // したのに auto 項目が全て null で記録される「静かな失敗」)。
+  const auth = req.headers.get("authorization");
+  if (!auth) return false;
+  const keys = [process.env.ADMIN_API_KEY, process.env.CRON_SECRET].filter(
+    (k): k is string => typeof k === "string" && k.length > 0
+  );
+  return keys.some((k) => auth === `Bearer ${k}`);
 }
 
 export async function GET(req: NextRequest) {

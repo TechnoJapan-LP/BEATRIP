@@ -43,12 +43,21 @@ jobs:
           KEY="${ADMIN_API_KEY:-$CRON_SECRET}"
 
           # 自社KPI (認証必須)
+          # 認証失敗を検知して job を落とす。黙って null で記録すると
+          # 「ワークフローは成功しているのに中身が空」の静かな失敗になり、
+          # 後から月次推移を復元できなくなるため (実際に一度起きた)。
           if [ -n "$KEY" ]; then
-            curl -s --max-time 60 -H "Authorization: Bearer $KEY" \
-              "https://beatrip.jp/api/kpi/snapshot" -o /tmp/kpi.json || echo '{}' > /tmp/kpi.json
+            CODE=$(curl -s --max-time 60 -H "Authorization: Bearer $KEY" \
+              -w "%{http_code}" -o /tmp/kpi.json "https://beatrip.jp/api/kpi/snapshot")
+            echo "KPI API: HTTP $CODE"
+            if [ "$CODE" != "200" ]; then
+              echo "::error::KPI API が $CODE を返しました。ADMIN_API_KEY / CRON_SECRET の不一致か障害です。"
+              cat /tmp/kpi.json | head -c 200
+              exit 1
+            fi
           else
-            echo "ADMIN_API_KEY 未設定のため自動項目はスキップ (雛形のみ作成)"
-            echo '{}' > /tmp/kpi.json
+            echo "::error::ADMIN_API_KEY / CRON_SECRET が未設定です。Secrets に登録してください。"
+            exit 1
           fi
 
           # sitemap 掲載URL数 (公開情報。インデックス対象ページの規模)
