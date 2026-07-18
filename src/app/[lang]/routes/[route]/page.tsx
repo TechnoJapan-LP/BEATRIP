@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { BLUR_PLACEHOLDER_LIGHT } from "@/lib/images/blur";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Plane, TrendingDown, Calendar } from "lucide-react";
 import { Header } from "@/components/header";
@@ -67,6 +67,20 @@ function parseRoute(slug: string) {
   // 両端が既知コードでなければ無効ルート扱い (doorway 封鎖)
   if (!isKnownCode(origin) || !isKnownCode(destination)) return null;
   return { origin, destination };
+}
+
+/**
+ * 大文字に直せば有効な路線になる slug か判定する (例: "nrt-bkk" → "NRT-BKK")。
+ * IATA コードは大文字が正式表記で sitemap も canonical も大文字だが、
+ * 手入力や外部サイトのリンクは小文字で来ることがある。以前はそれが
+ * notFound() に落ちて「実在する路線なのに行き止まり」になっていた。
+ * 有効なら正規URL (大文字) を返し、呼び出し側で 308 リダイレクトする。
+ */
+function canonicalRouteSlug(slug: string): string | null {
+  const decoded = decodeURIComponent(slug);
+  const upper = decoded.toUpperCase();
+  if (upper === decoded) return null; // 既に大文字 = 直すべきものがない
+  return parseRoute(upper) ? upper : null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -181,7 +195,17 @@ function formatDate(dateStr: string) {
 export default async function RoutePage({ params }: Props) {
   const { route, lang } = await params;
   const parsed = parseRoute(route);
-  if (!parsed) notFound();
+  if (!parsed) {
+    // 小文字表記なら正規URL (大文字) へ 308。行き止まりを潰し、被リンクの
+    // 評価も正規URLに集約させる。直しようがないものだけ 404 にする。
+    const fixed = canonicalRouteSlug(route);
+    if (fixed) {
+      permanentRedirect(
+        lang === "en" ? `/en/routes/${fixed}` : `/routes/${fixed}`
+      );
+    }
+    notFound();
+  }
 
   const deals = await getActiveDeals();
   const routeDeals = deals.filter(

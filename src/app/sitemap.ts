@@ -188,9 +188,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...jaOnly(`/airlines/${airline.code}/sales`, "daily", 0.7),
   ]);
 
-  const articlePages: MetadataRoute.Sitemap = articles.flatMap((article) =>
-    jaOnly(`/articles/${article.slug}`, "monthly", 0.6)
-  );
+  // 記事は published_at という実際の日付を持っているので lastModified に載せる。
+  // (deal と同じ「実日付が分かるものだけ付ける」方針。日付が壊れている記事は
+  //  嘘の日付を出すより省略する。)
+  const articlePages: MetadataRoute.Sitemap = articles.flatMap((article) => {
+    const at = new Date(article.published_at);
+    const valid = !Number.isNaN(at.getTime());
+    return jaOnly(
+      `/articles/${article.slug}`,
+      "monthly",
+      0.6,
+      valid ? at : undefined
+    );
+  });
 
   // ホテル特集（インデックス + 目的地別 + 都市別ベストシーズン）
   // /hotels インデックスのみ UI 翻訳済みのため bilingual、都市別は ja のみ
