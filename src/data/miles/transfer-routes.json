@@ -84,14 +84,132 @@
       "notes": "2ポイント単位。JMB×Ponta会員登録 (無料) が必要。交換後約1週間で積算。公式交換フォームの換算表示 (2,000pt→1,000マイル) で確認",
       "source": "https://spend.ponta.jp/Page/Jal.aspx",
       "verifiedAt": "2026-07-18"
+    },
+    {
+      "id": "vpoint-to-ana",
+      "pointName": "Vポイント",
+      "issuer": "三井住友カード/CCC",
+      "programId": "ana-mileage-club",
+      "rate": {
+        "points": 500,
+        "miles": 250
+      },
+      "rateLabel": "500ポイント → 250マイル",
+      "notes": "移行上限なし・移行手数料無料。Vポイントに登録済みのANAマイレージクラブ会員が対象",
+      "source": "https://www.ana.co.jp/ja/jp/shoppingandlife/point/tameru_tpoint/",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "agent"
+    },
+    {
+      "id": "amex-mr-to-ana",
+      "pointName": "メンバーシップ・リワード",
+      "issuer": "アメリカン・エキスプレス",
+      "programId": "ana-mileage-club",
+      "rate": {
+        "points": 1000,
+        "miles": 1000
+      },
+      "rateLabel": "1,000ポイント → 1,000マイル",
+      "notes": "カード13種の場合、オプション「メンバーシップ・リワード・プラス」(年3,300円税込) 登録時のレート。未登録時は2,000ポイント→1,000マイル。ANAへの移行には年間参加費5,500円(税込)が別途必要。1日1回・1,000ポイント単位",
+      "source": "https://www.americanexpress.com/ja-jp/point/mile-point/airline/",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "agent"
+    },
+    {
+      "id": "amex-mr-to-jal",
+      "pointName": "メンバーシップ・リワード",
+      "issuer": "アメリカン・エキスプレス",
+      "programId": "jal-mileage-bank",
+      "rate": {
+        "points": 2500,
+        "miles": 1000
+      },
+      "rateLabel": "2,500ポイント → 1,000マイル",
+      "notes": "「メンバーシップ・リワード・プラス」(年3,300円税込) 登録時のレート。未登録時は3,000ポイント→1,000マイル",
+      "source": "https://www.americanexpress.com/ja-jp/point/mile-point/airline/",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "agent"
+    },
+    {
+      "id": "marriott-to-ana",
+      "pointName": "Marriott Bonvoyポイント",
+      "issuer": "マリオット",
+      "programId": "ana-mileage-club",
+      "rate": {
+        "points": 3,
+        "miles": 1
+      },
+      "rateLabel": "3ポイント → 1マイル",
+      "notes": "60,000ポイントごとに5,000ボーナスマイル進呈 (実質 60,000pt→25,000マイル)。1日あたり3,000〜240,000ポイント移行可能。提携38社",
+      "source": "https://www.marriott.com/ja/loyalty/redeem/travel/points-to-miles.mi",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "agent"
+    },
+    {
+      "id": "marriott-to-jal",
+      "pointName": "Marriott Bonvoyポイント",
+      "issuer": "マリオット",
+      "programId": "jal-mileage-bank",
+      "rate": {
+        "points": 3,
+        "miles": 1
+      },
+      "rateLabel": "3ポイント → 1マイル",
+      "notes": "60,000ポイントごとに5,000ボーナスマイル進呈 (実質 60,000pt→25,000マイル)",
+      "source": "https://www.marriott.com/ja/loyalty/redeem/travel/points-to-miles.mi",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "agent"
+    },
+    {
+      "id": "tokyu-to-jal",
+      "pointName": "TOKYU POINT",
+      "issuer": "東急カード",
+      "programId": "jal-mileage-bank",
+      "rate": {
+        "points": 2000,
+        "miles": 1000
+      },
+      "rateLabel": "2,000ポイント → 1,000マイル",
+      "notes": "TOKYU CARD ClubQ JMB 系のカードが対象。ANA TOKYU POINT ClubQ PASMO と口座合算するとJALへ交換できなくなる",
+      "source": "https://point.tokyu.co.jp/use/other-point",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "agent"
+    },
+    {
+      "id": "tokyu-to-ana",
+      "pointName": "TOKYU POINT",
+      "issuer": "東急カード",
+      "programId": "ana-mileage-club",
+      "rate": {
+        "points": 1000,
+        "miles": 500
+      },
+      "rateLabel": "1,000ポイント → 500マイル",
+      "notes": "ANA TOKYU POINT ClubQ PASMO で貯めた場合は 1,000ポイント→750マイルと有利。JALマイレージバンク機能付カードで貯めたポイントはANAへ交換不可",
+      "source": "https://qa.topcard.co.jp/inquiries/dbe665aa3214b418eab2",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "agent"
+    },
+    {
+      "id": "metro-to-ana",
+      "pointName": "メトロポイント (メトポ)",
+      "issuer": "東京メトロ",
+      "programId": "ana-mileage-club",
+      "rate": {
+        "points": 100,
+        "miles": 90
+      },
+      "rateLabel": "100ポイント → 90マイル",
+      "notes": "ソラチカ一般/ゴールドカード保有時のレート (100ポイント単位)。To Me CARD の Prime/ゴールド/一般は 1,000ポイント→600マイル、未登録会員は 1,000→500マイル。移行は毎月1回・1回20,000ポイントまで",
+      "source": "https://www.to-me-card.jp/use/",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "agent"
     }
   ],
   "_unverified": {
-    "_note": "以下は公式ページで未検証のため掲載していない。検証できたら routes に移すこと。ここに推測レートを書かない。",
+    "_note": "以下は公式ページで未検証のため掲載していない。検証できたら routes に移すこと。ここに推測レートを書かない。verifiedBy=agent は自分で公式ページを開いて確認したもの。",
     "pending": [
-      "Vポイント (三井住友) → ANA/JAL: smbc-card.com が本環境からアクセス不可で未検証",
-      "メンバーシップ・リワード (アメックス) → ANA: 2026-07-18 再試行もポイント移行ページがシステムメンテ表示で未検証",
-      "Oki Doki ポイント (JCB) → ANA/JAL: jcb.co.jp が本環境からアクセス不可で未検証",
+      "J-POINT (JCB、旧Oki Dokiから改称) → ANA/JAL: 運営者から「1ポイント=0.6マイル・2,500ポイント以上1ポイント単位」の情報提供あり (出典 https://www.jcb.co.jp/ordercard/special/mile.html) だが、jcb.co.jp が本環境からアクセス不可で agent 自身が確認できていない。**掲載するなら誰かが公式ページを開いて確認してから**",
       "dポイント→ANA / Ponta→ANA: ルートの存在自体が未確認 (JAL側のみ確認済み)"
     ]
   }

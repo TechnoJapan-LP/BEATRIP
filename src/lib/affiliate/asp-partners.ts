@@ -708,6 +708,18 @@ export const ASP_PARTNERS: AspPartner[] = [
   },
   // 追加カード
   {
+    id: "rakuten-premium-card",
+    label: "楽天プレミアムカード（ラウンジ・マイル）",
+    tagline: "年会費11,000円・プライオリティ・パス年5回無料・楽天ポイントをANA/JALマイルへ",
+    categories: ["credit-card"],
+    network: "external_url",
+    matEnv: "AFFILIATE_URL_RAKUTEN_PREMIUM",
+    // 楽天アフィリエイト (即時提携・審査なし)。/miles のカードランキングから参照する。
+    aspAvailability: "楽天アフィリエイト (提携済み 2026-07-18)",
+    accent: "rose",
+    priority: 2,
+  },
+  {
     id: "rakuten-card",
     label: "楽天カード",
     tagline: "年会費無料・楽天ポイント還元・楽天トラベルとの相性◎",
