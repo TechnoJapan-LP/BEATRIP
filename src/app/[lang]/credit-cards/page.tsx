@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CreditCard, Plane, Sparkles, ArrowRight, Wallet } from "lucide-react";
+import { CreditCard, Plane, Sparkles, ArrowRight, Wallet, Award } from "lucide-react";
 import { Header } from "@/components/header";
 import { CATEGORY_GRADIENTS } from "@/lib/theme/category-gradients";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -382,6 +382,24 @@ export default async function CreditCardsPage({
       >
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
           <div className="space-y-12">
+            {/* マイル文脈の内部リンク強化 — クレカ選びの目的が「マイルを貯めて
+                特典航空券」の人を、必要マイル数×カード試算のシミュレーターへ回遊 */}
+            <Link
+              href="/miles"
+              className="group flex items-center gap-4 rounded-2xl bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 p-5 sm:p-6 text-white transition-transform hover:scale-[1.01]"
+            >
+              <Award className="h-8 w-8 flex-shrink-0 text-white/90" />
+              <div className="flex-1 min-w-0">
+                <div className="font-heading text-lg tracking-wide uppercase">
+                  そのカードで何ヶ月でマイルが貯まる？
+                </div>
+                <p className="mt-1 text-sm text-white/85">
+                  ANA・JALの特典航空券に必要なマイル数と、カード別の到達期間・現金セール最安値を1画面で試算できます。
+                </p>
+              </div>
+              <ArrowRight className="h-5 w-5 flex-shrink-0 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+
             {/* セグメント別カード */}
             {SEGMENTS.map((seg) => (
               <section key={seg.id} id={seg.id}>

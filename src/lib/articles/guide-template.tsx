@@ -45,6 +45,8 @@ export type GuideSection = {
   checklist?: boolean;
   /** セクション末尾の補足段落 */
   note?: string;
+  /** セクション末尾の文脈リンク (本文内から関連ページへ回遊させる)。SEOの内部リンク強化用 */
+  cta?: { href: string; label: string; desc?: string };
 };
 
 export type GuideRelatedLink = {
@@ -221,6 +223,22 @@ export function GuidePage({ content: c, lang }: { content: GuideContent; lang: s
                 <p className="mt-3 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed border-l-2 border-zinc-200 dark:border-zinc-700 pl-3">
                   {s.note}
                 </p>
+              )}
+              {s.cta && (
+                <Link
+                  href={s.cta.href}
+                  className="group mt-4 flex items-center justify-between gap-3 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 transition-colors hover:border-zinc-200 dark:hover:border-zinc-700"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:underline">
+                      {s.cta.label}
+                    </span>
+                    {s.cta.desc && (
+                      <span className="block text-xs text-zinc-500 mt-0.5">{s.cta.desc}</span>
+                    )}
+                  </span>
+                  <ArrowRight className="h-4 w-4 flex-shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5" />
+                </Link>
               )}
             </section>
           ))}
