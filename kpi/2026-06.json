@@ -1,0 +1,31 @@
+{
+  "month": "2026-06",
+  "capturedAt": "2026-07-18T05:23:18.848050+00:00",
+  "_note": "自動項目はBEATRIP自身が保有する事実。manual は各社管理画面から運用者が手入力する。**推測値で埋めないこと**（未入力は null のままにする）。",
+  "auto": {
+    "sitemapUrls": 1429,
+    "assets": null,
+    "audience": null,
+    "traffic": null
+  },
+  "manual": {
+    "revenueYen": {
+      "travelpayouts": null,
+      "tripcom": null,
+      "a8net": null,
+      "other": null,
+      "total": null
+    },
+    "ga4": {
+      "sessions": null,
+      "users": null,
+      "engagementRate": null
+    },
+    "gsc": {
+      "impressions": null,
+      "clicks": null,
+      "avgPosition": null
+    },
+    "notes": ""
+  }
+}
