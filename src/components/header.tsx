@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
   Plane,
-  Globe,
   Menu,
   X,
   ChevronDown,
@@ -38,10 +36,8 @@ import { HOTEL_DESTINATIONS } from "@/data/hotel-destinations";
 import { OTA_COMPARE_ARTICLES } from "@/lib/articles/static-articles";
 import {
   useDictionary,
-  useLocale,
   useLocalizedHref,
 } from "@/components/i18n/locale-provider";
-import { trackLanguageSwitch } from "@/components/analytics";
 
 type MenuItem = {
   href: string;
@@ -60,9 +56,7 @@ export function Header() {
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const nav = useDictionary<Record<string, string>>("nav");
-  const locale = useLocale();
   const lh = useLocalizedHref();
-  const pathname = usePathname();
 
   // メガメニュー: 3 グループ + 記事 (フラット)
   const menus: { key: string; label: string; groups: MenuGroup[] }[] = [
@@ -165,11 +159,6 @@ export function Header() {
       ],
     },
   ];
-
-  // 言語トグルの相手側URL
-  const stripped = pathname.replace(/^\/en(?=\/|$)/, "") || "/";
-  const toJa = stripped;
-  const toEn = stripped === "/" ? "/en" : `/en${stripped}`;
 
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-100 bg-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/80">
@@ -293,36 +282,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <div className="hidden items-center gap-1.5 text-xs sm:flex">
-            <Globe className="h-3.5 w-3.5 text-zinc-400" />
-            <Link
-              href={toJa}
-              onClick={() =>
-                locale !== "ja" && trackLanguageSwitch({ from: locale, to: "ja" })
-              }
-              className={`font-mono transition-colors ${
-                locale === "ja"
-                  ? "text-zinc-900 dark:text-zinc-100 font-bold"
-                  : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-              }`}
-            >
-              JA
-            </Link>
-            <span className="text-zinc-300 dark:text-zinc-600">/</span>
-            <Link
-              href={toEn}
-              onClick={() =>
-                locale !== "en" && trackLanguageSwitch({ from: locale, to: "en" })
-              }
-              className={`font-mono transition-colors ${
-                locale === "en"
-                  ? "text-zinc-900 dark:text-zinc-100 font-bold"
-                  : "text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
-              }`}
-            >
-              EN
-            </Link>
-          </div>
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>
@@ -400,42 +359,6 @@ export function Header() {
               {nav.themeToggle}
             </span>
             <ThemeToggle />
-          </div>
-          <div className="mt-1 flex items-center justify-between rounded-lg px-3 py-2.5">
-            <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
-              {nav.language}
-            </span>
-            <div className="flex items-center gap-2 text-sm font-mono">
-              <Link
-                href={toJa}
-                onClick={() => {
-                  if (locale !== "ja") trackLanguageSwitch({ from: locale, to: "ja" });
-                  setOpen(false);
-                }}
-                className={`inline-block px-3 py-2 rounded-md ${
-                  locale === "ja"
-                    ? "font-bold text-zinc-900 dark:text-zinc-100"
-                    : "text-zinc-400"
-                }`}
-              >
-                JA
-              </Link>
-              <span className="text-zinc-300 dark:text-zinc-600">/</span>
-              <Link
-                href={toEn}
-                onClick={() => {
-                  if (locale !== "en") trackLanguageSwitch({ from: locale, to: "en" });
-                  setOpen(false);
-                }}
-                className={`inline-block px-3 py-2 rounded-md ${
-                  locale === "en"
-                    ? "font-bold text-zinc-900 dark:text-zinc-100"
-                    : "text-zinc-400"
-                }`}
-              >
-                EN
-              </Link>
-            </div>
           </div>
         </nav>
       )}

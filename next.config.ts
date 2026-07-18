@@ -97,7 +97,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/en/airlines/:code(apj|APJ)/airports/:iata(nrt|NRT)",
-        destination: "/en/airlines/SJO/airports/NRT",
+        destination: "/airlines/SJO/airports/NRT",
         permanent: true,
       },
       // 成田以外の空港ページは airports.ts の APJ が実は Peach を指していた
@@ -109,7 +109,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/en/airlines/:code(apj|APJ)/airports/:iata*",
-        destination: "/en/airlines/SJO",
+        destination: "/airlines/SJO",
         permanent: true,
       },
       {
@@ -119,7 +119,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/en/airlines/:code(apj|APJ)/:path*",
-        destination: "/en/airlines/SJO/:path*",
+        destination: "/airlines/SJO/:path*",
         permanent: true,
       },
       {
@@ -129,7 +129,26 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/en/airlines/:code(apj|APJ)",
-        destination: "/en/airlines/SJO",
+        destination: "/airlines/SJO",
+        permanent: true,
+      },
+      // ── 英語版の廃止 (2026-07-18) ──
+      // /en は「英語メタ + 日本語本文」の見せかけで、全ページ noindex・sitemap
+      // 未掲載のまま実質機能していなかった。読者は日本発の航空券を探す日本語
+      // 話者が中心で英語版の需要が薄く、中途半端な多言語は品質シグナル上も
+      // マイナスなため畳む。既存の /en URL は日本語版へ 301 で集約する
+      // (被リンク・ブックマークを失わない)。
+      // 本気で英語展開する場合は、本文まで翻訳した上でこの 2 つを外し、
+      // layout.tsx の generateStaticParams と sitemap の bilingual() を戻すこと。
+      // ※ 上の APJ ルールを先に評価させるため、必ずこの位置 (末尾) に置く。
+      {
+        source: "/en",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/en/:path*",
+        destination: "/:path*",
         permanent: true,
       },
     ];

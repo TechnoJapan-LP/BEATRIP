@@ -15,8 +15,9 @@ export const revalidate = 86400;
 /**
  * sitemap の言語方針:
  *
- * - 静的ページ (about/faq/privacy/特集 LP 等、en.json 辞書で UI 翻訳済み)
- *   → bilingual(): ja + /en を hreflang alternates 付きで両方掲載。
+ * - 英語版は 2026-07-18 に廃止 (/en は日本語版へ 301)。bilingual() は歴史的な
+ *   名前だが ja のみを返す。英語展開を再開するなら next.config の /en リダイレクト
+ *   を外し、本文翻訳後にここも /en を返すよう戻すこと。
  * - 動的ルート (hotels/[city] 系, routes, airports, airlines 系,
  *   articles/[slug], deals, local-flights/[region])
  *   → jaOnly(): ja のみ掲載。/en 側は「英語メタ + 日本語本文」の状態で

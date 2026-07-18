@@ -1,0 +1,120 @@
+# 月次KPIスナップショット (売却・資金調達のデューデリ用の自社時系列)
+#
+# なぜ必要か:
+#   トラフィックは GA4、収益は各 ASP の管理画面にあり、いずれも自社の資産では
+#   ない。特に GA4 の無料枠はデータ保持に上限があり、1〜2年後には過去月の
+#   数字を再現できなくなる。売却時に必ず求められる「◯ヶ月分の月次推移」を
+#   出せるよう、毎月1日に自社が持つ指標を JSON で git に追記する。
+#   git 履歴 = 改ざんできないタイムスタンプ付きの記録になり、そのまま提出できる。
+#
+# 何を記録するか:
+#   - 自動: 実測運賃の蓄積量・セール実績・急落検出・掲載ディール数・
+#           累計アフィリクリック数・メルマガ購読者数・sitemap 掲載URL数
+#   - 手動: 収益 (ASP別)・GA4 セッション/ユーザー・GSC 表示回数/クリック
+#           → null で雛形だけ作る。運用者が毎月 数字を入れてコミットする。
+#             **推測値で埋めないこと** (捏造データを二度と作らないため)
+#
+# 必要な設定: Secrets に ADMIN_API_KEY (または CRON_SECRET) を登録。
+# 未登録なら自動項目は取れないが、雛形は作られるので手動記入は可能。
+name: kpi-snapshot
+
+on:
+  schedule:
+    # 毎月1日 21:00 UTC (= 日本時間 2日 6:00)。前月分として記録する。
+    - cron: "0 21 1 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Collect KPI snapshot
+        env:
+          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          mkdir -p kpi
+          KEY="${ADMIN_API_KEY:-$CRON_SECRET}"
+
+          # 自社KPI (認証必須)
+          if [ -n "$KEY" ]; then
+            curl -s --max-time 60 -H "Authorization: Bearer $KEY" \
+              "https://beatrip.jp/api/kpi/snapshot" -o /tmp/kpi.json || echo '{}' > /tmp/kpi.json
+          else
+            echo "ADMIN_API_KEY 未設定のため自動項目はスキップ (雛形のみ作成)"
+            echo '{}' > /tmp/kpi.json
+          fi
+
+          # sitemap 掲載URL数 (公開情報。インデックス対象ページの規模)
+          SITEMAP_URLS=$(curl -s --max-time 60 "https://beatrip.jp/sitemap.xml" | grep -c "<loc>" || echo 0)
+
+          python3 - "$SITEMAP_URLS" <<'PY'
+          import json, os, sys, datetime
+
+          sitemap_urls = int(sys.argv[1] or 0)
+          try:
+              auto = json.load(open("/tmp/kpi.json"))
+          except Exception:
+              auto = {}
+
+          # 記録対象は「前月」。1日に走らせて前月を締める。
+          today = datetime.date.today()
+          first = today.replace(day=1)
+          prev = first - datetime.timedelta(days=1)
+          month = prev.strftime("%Y-%m")
+          path = f"kpi/{month}.json"
+
+          # 既存があれば手動入力値を保持したまま自動項目だけ更新する
+          existing = {}
+          if os.path.exists(path):
+              try:
+                  existing = json.load(open(path))
+              except Exception:
+                  existing = {}
+
+          snapshot = {
+              "month": month,
+              "capturedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+              "_note": "自動項目はBEATRIP自身が保有する事実。manual は各社管理画面から運用者が手入力する。**推測値で埋めないこと**（未入力は null のままにする）。",
+              "auto": {
+                  "sitemapUrls": sitemap_urls,
+                  "assets": auto.get("assets"),
+                  "audience": auto.get("audience"),
+                  "traffic": auto.get("traffic"),
+              },
+              "manual": existing.get("manual") or {
+                  "revenueYen": {
+                      "travelpayouts": None,
+                      "tripcom": None,
+                      "a8net": None,
+                      "other": None,
+                      "total": None,
+                  },
+                  "ga4": {"sessions": None, "users": None, "engagementRate": None},
+                  "gsc": {"impressions": None, "clicks": None, "avgPosition": None},
+                  "notes": "",
+              },
+          }
+          with open(path, "w") as f:
+              json.dump(snapshot, f, ensure_ascii=False, indent=2)
+              f.write("\n")
+          print(f"wrote {path}")
+          PY
+
+      - name: Commit snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add kpi/
+          if git diff --cached --quiet; then
+            echo "変更なし"
+          else
+            git commit -m "KPI月次スナップショット (自動記録)"
+            git push
+          fi
