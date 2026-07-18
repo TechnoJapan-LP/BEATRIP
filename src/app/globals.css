@@ -153,6 +153,13 @@
     overflow-x: hidden;
     width: 100%;
     max-width: 100vw;
+    /* 数字を等幅に。運賃比較サイトなので数字の桁幅が揺れると、カードが並んだ
+       ときに価格の頭が微妙にズレて読みにくく、価格が更新されるたびに幅が
+       変わってガタつく。価格は35ファイルで個別に描画されており (共有の
+       Price コンポーネントが無い) 一箇所ずつ tabular-nums を足すのは
+       取りこぼすため、body に一括で効かせる。
+       比例数字に戻したい箇所があれば font-variant-numeric: proportional-nums。 */
+    font-variant-numeric: tabular-nums;
   }
   /* iOS Safari の自動ズーム（フォーカス時に画面拡大）を抑止。
      16px 未満の入力要素ではフォーカス時に zoom が起きるため、

@@ -70,7 +70,9 @@ export function NotificationPanel() {
           bottom: "calc(72px + env(safe-area-inset-bottom, 0px))",
           right: "calc(1rem + env(safe-area-inset-right, 0px))",
         }}
-        className="fixed z-50 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-transform hover:scale-105 active:scale-95 sm:!bottom-6 sm:!right-6"
+        /* hover は他の FAB (履歴/比較/チャット) と揃える。ここだけ
+           hover:scale-105 で拡大し、同じ位置に並ぶボタンで反応が違っていた。 */
+        className="fixed z-50 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 sm:!bottom-6 sm:!right-6"
       >
         <Bell className="h-5 w-5" />
         {subscriptions.length > 0 && (

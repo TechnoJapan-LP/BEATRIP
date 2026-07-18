@@ -33,7 +33,7 @@ function DealMiniCard({ deal }: { deal: DealSchema }) {
   return (
     <Link
       href={lh(`/deals/${deal.id}`)}
-      className="group flex-shrink-0 w-[72vw] max-w-[256px] flex flex-col rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 overflow-hidden transition-all duration-300 hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1 sm:w-64 sm:max-w-none"
+      className="group flex-shrink-0 w-[72vw] max-w-[256px] flex flex-col rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 overflow-hidden transition-[box-shadow,transform] duration-300 hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1 sm:w-64 sm:max-w-none"
     >
       <div className="relative h-32 overflow-hidden bg-zinc-200 dark:bg-zinc-800 sm:h-36">
         <Image
@@ -163,7 +163,7 @@ export function DealCarousel({
         {canScrollLeft && (
           <button
             onClick={() => scroll("left")}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-white/90 shadow-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-white transition-all opacity-0 group-hover/carousel:opacity-100"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-white/90 shadow-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-white transition-[background-color,opacity] opacity-0 group-hover/carousel:opacity-100"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -171,7 +171,7 @@ export function DealCarousel({
         {canScrollRight && (
           <button
             onClick={() => scroll("right")}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-white/90 shadow-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-white transition-all opacity-0 group-hover/carousel:opacity-100"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 h-9 w-9 rounded-full bg-white/90 shadow-lg border border-zinc-200 flex items-center justify-center text-zinc-600 hover:bg-white transition-[background-color,opacity] opacity-0 group-hover/carousel:opacity-100"
           >
             <ChevronRight className="h-4 w-4" />
           </button>

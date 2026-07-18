@@ -88,7 +88,7 @@ export function NewsletterCTASlim({ source = "slim" }: { source?: string }) {
       <button
         type="submit"
         disabled={status === "loading"}
-        className="flex items-center justify-center gap-1.5 rounded-lg bg-white px-4 py-2 text-xs font-bold text-zinc-900 transition-all hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-60 whitespace-nowrap sm:text-sm"
+        className="flex items-center justify-center gap-1.5 rounded-lg bg-white px-4 py-2 text-xs font-bold text-zinc-900 transition-[transform,background-color] hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-60 whitespace-nowrap sm:text-sm"
       >
         {status === "loading" ? (
           <Loader2 className="h-3.5 w-3.5 animate-spin" />

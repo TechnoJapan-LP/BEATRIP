@@ -58,7 +58,7 @@ export function ArticleList({ articles }: { articles: Article[] }) {
           {categories.map((cat) => (
             <button key={cat} onClick={() => setCategory(cat)}>
               <Badge
-                className={`text-[11px] cursor-pointer transition-all ${
+                className={`text-[11px] cursor-pointer transition-[background-color,color] ${
                   category === cat
                     ? categoryStyle[cat]
                     : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"

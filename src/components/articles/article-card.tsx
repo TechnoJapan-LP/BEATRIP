@@ -33,7 +33,7 @@ export function ArticleCard({
     return (
       <Link
         href={`/articles/${article.slug}`}
-        className="group relative block overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100 transition-all hover:shadow-lg hover:-translate-y-0.5"
+        className="group relative block overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100 transition-[box-shadow,transform] hover:shadow-lg hover:-translate-y-0.5"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2">
           <div className="relative aspect-[4/3] sm:aspect-auto overflow-hidden">
@@ -77,7 +77,7 @@ export function ArticleCard({
   return (
     <Link
       href={`/articles/${article.slug}`}
-      className="group block overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100 transition-all hover:shadow-lg hover:-translate-y-0.5"
+      className="group block overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100 transition-[box-shadow,transform] hover:shadow-lg hover:-translate-y-0.5"
     >
       <div className="relative aspect-[16/9] overflow-hidden">
         <Image

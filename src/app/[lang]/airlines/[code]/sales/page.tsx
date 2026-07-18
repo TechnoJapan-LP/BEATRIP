@@ -417,7 +417,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                         </span>
                       )}
                       <div
-                        className={`w-full rounded-t transition-all ${
+                        className={`w-full rounded-t transition-[height] ${
                           isPeak
                             ? "bg-emerald-500"
                             : count > 0

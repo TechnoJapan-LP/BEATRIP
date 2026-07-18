@@ -32,7 +32,7 @@ export function HeroDeal({ deals }: { deals: DealSchema[] }) {
   return (
     <Link
       href={lh(`/deals/${deal.id}`)}
-      className="group relative block overflow-hidden rounded-2xl ring-1 ring-zinc-200 dark:ring-zinc-800 shadow-sm transition-all hover:shadow-xl active:scale-[0.99] active:duration-100"
+      className="group relative block overflow-hidden rounded-2xl ring-1 ring-zinc-200 dark:ring-zinc-800 shadow-sm transition-[box-shadow,transform] hover:shadow-xl active:scale-[0.99] active:duration-100"
     >
       <div
         className="relative w-full"

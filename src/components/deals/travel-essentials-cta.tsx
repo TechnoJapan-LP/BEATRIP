@@ -123,7 +123,7 @@ export function TravelEssentialsCta({ deal }: { deal: DealSchema }) {
           <Link
             key={it.title}
             href={it.href}
-            className={`group flex items-start gap-3 rounded-lg ring-1 ${it.ring} bg-zinc-50 dark:bg-zinc-800/40 p-3 transition-all hover:-translate-y-0.5 hover:bg-white dark:hover:bg-zinc-800`}
+            className={`group flex items-start gap-3 rounded-lg ring-1 ${it.ring} bg-zinc-50 dark:bg-zinc-800/40 p-3 transition-[transform,background-color] hover:-translate-y-0.5 hover:bg-white dark:hover:bg-zinc-800`}
           >
             <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-white dark:bg-zinc-900 shadow-sm">
               <it.Icon className={`h-4 w-4 ${it.accent}`} />

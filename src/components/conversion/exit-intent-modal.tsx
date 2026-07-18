@@ -311,7 +311,7 @@ export function ExitIntentModal({ deals = [] }: { deals?: ExitIntentDeal[] }) {
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-bold text-white transition-all hover:bg-zinc-700 active:scale-[0.98] disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-bold text-white transition-[transform,background-color] hover:bg-zinc-700 active:scale-[0.98] disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
               >
                 {status === "loading" ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

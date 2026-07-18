@@ -55,7 +55,7 @@ export function NextTripSuggestions({
           <Link
             key={d.slug}
             href={`/hotels/${d.slug}`}
-            className="group relative block overflow-hidden rounded-xl ring-1 ring-zinc-200 dark:ring-zinc-800 shadow-sm transition-all hover:shadow-lg hover:-translate-y-0.5"
+            className="group relative block overflow-hidden rounded-xl ring-1 ring-zinc-200 dark:ring-zinc-800 shadow-sm transition-[box-shadow,transform] hover:shadow-lg hover:-translate-y-0.5"
           >
             <div className="relative aspect-[5/3] bg-zinc-200 dark:bg-zinc-800">
               {d.image && (

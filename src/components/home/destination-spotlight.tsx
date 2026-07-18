@@ -118,7 +118,7 @@ function SpotlightCard({
   return (
     <Link
       href={lh(`/hotels/${dest.slug}`)}
-      className={`group relative block overflow-hidden rounded-2xl ring-1 ring-zinc-200 dark:ring-zinc-800 shadow-sm transition-all hover:shadow-xl active:scale-[0.99] ${className}`}
+      className={`group relative block overflow-hidden rounded-2xl ring-1 ring-zinc-200 dark:ring-zinc-800 shadow-sm transition-[box-shadow,transform] hover:shadow-xl active:scale-[0.99] ${className}`}
     >
       <div
         className={`relative w-full ${

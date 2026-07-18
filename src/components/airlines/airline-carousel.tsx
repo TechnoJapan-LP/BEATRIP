@@ -36,7 +36,7 @@ export function AirlineCarousel({ airlines }: { airlines: AirlineProfile[] }) {
       {canScrollLeft && (
         <button
           onClick={() => scroll("left")}
-          className="absolute -left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white dark:bg-zinc-800 shadow-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all opacity-0 group-hover/carousel:opacity-100"
+          className="absolute -left-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white dark:bg-zinc-800 shadow-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-[background-color,opacity] opacity-0 group-hover/carousel:opacity-100"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -44,7 +44,7 @@ export function AirlineCarousel({ airlines }: { airlines: AirlineProfile[] }) {
       {canScrollRight && (
         <button
           onClick={() => scroll("right")}
-          className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white dark:bg-zinc-800 shadow-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all opacity-0 group-hover/carousel:opacity-100"
+          className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 h-10 w-10 rounded-full bg-white dark:bg-zinc-800 shadow-lg border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-600 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-[background-color,opacity] opacity-0 group-hover/carousel:opacity-100"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -60,7 +60,7 @@ export function AirlineCarousel({ airlines }: { airlines: AirlineProfile[] }) {
           <Link
             key={a.code}
             href={`/airlines/${a.code}`}
-            className="group relative flex-shrink-0 w-[140px] rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/80 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-zinc-300 dark:hover:border-zinc-600 sm:w-[160px]"
+            className="group relative flex-shrink-0 w-[140px] rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800/80 overflow-hidden transition-[box-shadow,border-color,transform] duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-zinc-300 dark:hover:border-zinc-600 sm:w-[160px]"
           >
             {/* Colored accent bar */}
             <div

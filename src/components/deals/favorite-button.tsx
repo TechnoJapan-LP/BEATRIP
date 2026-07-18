@@ -44,7 +44,7 @@ export function FavoriteButton({ dealId }: { dealId: string }) {
     <button
       onClick={toggle}
       aria-label={isFavorited ? "お気に入りから削除" : "お気に入りに追加"}
-      className="flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm p-1.5 shadow-sm transition-all hover:bg-white hover:shadow-md sm:p-2"
+      className="flex items-center justify-center rounded-full bg-white/90 backdrop-blur-sm p-1.5 shadow-sm transition-[box-shadow,background-color] hover:bg-white hover:shadow-md sm:p-2"
       style={{
         transform: animate ? "scale(1.25)" : "scale(1)",
         transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",

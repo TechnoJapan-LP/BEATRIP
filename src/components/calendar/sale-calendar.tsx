@@ -105,7 +105,7 @@ export function SaleCalendar({
             >
             <Link
               href={`/airlines/${airlineCode}/sales`}
-              className={`block min-w-[75vw] snap-start rounded-xl border p-4 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 sm:min-w-[260px] sm:p-5 lg:min-w-0 ${
+              className={`block min-w-[75vw] snap-start rounded-xl border p-4 transition-[box-shadow,transform] duration-200 hover:shadow-md hover:-translate-y-0.5 sm:min-w-[260px] sm:p-5 lg:min-w-0 ${
                 isImminent
                   ? "border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/20"
                   : "border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900"

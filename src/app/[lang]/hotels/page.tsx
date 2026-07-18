@@ -108,7 +108,7 @@ export default async function HotelsIndexPage({ params }: { params: Promise<{ la
                 <Link
                   key={d.slug}
                   href={`/hotels/${d.slug}`}
-                  className="group block overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 transition-all hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700"
+                  className="group block overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 transition-[box-shadow] hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-zinc-200 dark:bg-zinc-800">
                     {d.image && (

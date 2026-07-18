@@ -327,7 +327,7 @@ export default async function Home({
                 <Link
                   key={d.slug}
                   href={lh(`/hotels/${d.slug}`)}
-                  className="group block overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 transition-all hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1"
+                  className="group block overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 dark:ring-zinc-800 transition-[box-shadow,transform] hover:shadow-xl hover:ring-zinc-200 dark:hover:ring-zinc-700 hover:-translate-y-1"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden bg-zinc-200 dark:bg-zinc-800">
                     {d.image && (
@@ -397,7 +397,7 @@ export default async function Home({
                 <Link
                   key={region}
                   href={lh(`/local-flights/${REGION_SLUGS[region]}`)}
-                  className="group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-all hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 hover:-translate-y-0.5"
+                  className="group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-[box-shadow,border-color,transform] hover:shadow-md hover:border-zinc-300 dark:hover:border-zinc-700 hover:-translate-y-0.5"
                 >
                   <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
                     {region}発

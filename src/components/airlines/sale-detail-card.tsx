@@ -44,7 +44,7 @@ export function SaleDetailCard({
 
   return (
     <div
-      className={`animate-fade-up rounded-xl border p-6 transition-all ${
+      className={`animate-fade-up rounded-xl border p-6 transition-[border-color,background-color] ${
         isUrgent
           ? "border-rose-200 bg-rose-50/30"
           : "border-zinc-100 bg-white"

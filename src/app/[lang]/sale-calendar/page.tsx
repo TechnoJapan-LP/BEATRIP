@@ -354,7 +354,7 @@ export default async function SaleCalendarPage({
                   >
                     <div className="flex h-28 w-full items-end sm:h-36">
                       <div
-                        className={`w-full rounded-t-md transition-all ${
+                        className={`w-full rounded-t-md transition-[height] ${
                           isTop
                             ? "bg-gradient-to-t from-rose-500 to-amber-400"
                             : "bg-zinc-200 dark:bg-zinc-700"

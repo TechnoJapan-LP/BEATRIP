@@ -59,7 +59,7 @@ export function ComparisonDrawer() {
         aria-label={`比較中 ${count} 件を開く`}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="fixed right-3 sm:right-6 bottom-[var(--fab-2)] sm:bottom-[72px] z-30 flex min-h-[44px] items-center gap-1.5 rounded-full bg-violet-600 px-3.5 py-2 text-white shadow-lg shadow-violet-600/30 transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-violet-500 dark:shadow-violet-500/20"
+        className="fixed right-3 sm:right-6 bottom-[var(--fab-2)] sm:bottom-[72px] z-30 flex min-h-[44px] items-center gap-1.5 rounded-full bg-violet-600 px-3.5 py-2 text-white shadow-lg shadow-violet-600/30 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-violet-500 dark:shadow-violet-500/20"
       >
         <Columns3 className="h-4 w-4" aria-hidden="true" />
         <span className="text-xs font-bold">比較中 {count}</span>

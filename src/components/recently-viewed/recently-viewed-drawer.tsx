@@ -53,7 +53,7 @@ export function RecentlyViewedDrawer() {
         aria-label={`最近見たアイテム ${count} 件を開く`}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="fixed right-3 sm:right-6 bottom-[var(--fab-1)] sm:bottom-6 z-30 flex min-h-[44px] items-center gap-1.5 rounded-full bg-zinc-900 px-3.5 py-2 text-white shadow-lg shadow-zinc-900/30 transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-zinc-100/20"
+        className="fixed right-3 sm:right-6 bottom-[var(--fab-1)] sm:bottom-6 z-30 flex min-h-[44px] items-center gap-1.5 rounded-full bg-zinc-900 px-3.5 py-2 text-white shadow-lg shadow-zinc-900/30 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-zinc-100/20"
       >
         <History className="h-4 w-4" aria-hidden="true" />
         <span className="text-xs font-bold">最近 {count}</span>

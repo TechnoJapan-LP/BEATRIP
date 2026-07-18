@@ -304,7 +304,7 @@ export function DealFilters({
           <button
             key={tab.value}
             onClick={() => onFlightTypeChange(tab.value)}
-            className={`rounded-md px-4 py-1.5 text-sm font-medium transition-all ${
+            className={`rounded-md px-4 py-1.5 text-sm font-medium transition-[background-color,color,box-shadow] ${
               flightType === tab.value
                 ? "bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm"
                 : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300"

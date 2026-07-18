@@ -66,7 +66,7 @@ export function CityPrevNextNav({ currentSlug }: Props) {
         {/* 前の都市 */}
         <Link
           href={`/hotels/${prev.slug}`}
-          className="group relative overflow-hidden rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all hover:-translate-y-0.5 hover:border-zinc-200 dark:hover:border-zinc-700 hover:shadow-lg"
+          className="group relative overflow-hidden rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-[box-shadow,border-color,transform] hover:-translate-y-0.5 hover:border-zinc-200 dark:hover:border-zinc-700 hover:shadow-lg"
         >
           <div className="relative aspect-[16/9] bg-zinc-100 dark:bg-zinc-800">
             {prev.image ? (
@@ -107,7 +107,7 @@ export function CityPrevNextNav({ currentSlug }: Props) {
         {/* 次の都市 */}
         <Link
           href={`/hotels/${next.slug}`}
-          className="group relative overflow-hidden rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-all hover:-translate-y-0.5 hover:border-zinc-200 dark:hover:border-zinc-700 hover:shadow-lg"
+          className="group relative overflow-hidden rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-[box-shadow,border-color,transform] hover:-translate-y-0.5 hover:border-zinc-200 dark:hover:border-zinc-700 hover:shadow-lg"
         >
           <div className="relative aspect-[16/9] bg-zinc-100 dark:bg-zinc-800">
             {next.image ? (

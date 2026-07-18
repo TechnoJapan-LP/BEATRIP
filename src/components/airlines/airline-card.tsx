@@ -60,7 +60,7 @@ export function AirlineCard({
     >
       <Link
         href={`/airlines/${airline.code}`}
-        className="group block rounded-xl border border-zinc-100 bg-white overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:border-zinc-200"
+        className="group block rounded-xl border border-zinc-100 bg-white overflow-hidden transition-[box-shadow,border-color,transform] duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:border-zinc-200"
       >
         <div
           className="relative h-16 flex items-center justify-between px-5"

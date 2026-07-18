@@ -64,7 +64,7 @@ export async function RelatedDeals({
           <Link
             key={d.id}
             href={`/deals/${d.id}`}
-            className="group flex flex-col rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 transition-all hover:-translate-y-0.5 hover:border-zinc-200 dark:hover:border-zinc-700 hover:shadow-md"
+            className="group flex flex-col rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3 transition-[box-shadow,border-color,transform] hover:-translate-y-0.5 hover:border-zinc-200 dark:hover:border-zinc-700 hover:shadow-md"
           >
             <div className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-400">
               <span>{d.origin_code}</span>

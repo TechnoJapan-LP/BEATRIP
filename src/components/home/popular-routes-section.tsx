@@ -63,7 +63,7 @@ export function PopularRoutesSection({
             <Link
               key={d.id}
               href={lh(`/routes/${routeSlug}`)}
-              className="group relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 sm:p-4"
+              className="group relative overflow-hidden rounded-xl border border-zinc-200 bg-white p-3 transition-[box-shadow,border-color,transform] hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 sm:p-4"
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">

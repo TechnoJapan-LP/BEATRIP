@@ -97,7 +97,7 @@ export function NewsletterCTA() {
             <button
               type="submit"
               disabled={status === "loading"}
-              className="flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-zinc-900 transition-all hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-60 whitespace-nowrap"
+              className="flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-zinc-900 transition-[transform,background-color] hover:bg-zinc-200 active:scale-[0.98] disabled:opacity-60 whitespace-nowrap"
             >
               {status === "loading" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

@@ -221,7 +221,7 @@ export function ChatWidget() {
         aria-label="AI コンシェルジュを開く"
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="fixed right-3 sm:right-6 bottom-[var(--fab-3)] sm:bottom-20 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-all hover:-translate-y-0.5 hover:bg-orange-700 hover:shadow-xl active:scale-95 dark:bg-orange-500 dark:hover:bg-orange-600"
+        className="fixed right-3 sm:right-6 bottom-[var(--fab-3)] sm:bottom-20 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-[box-shadow,transform,background-color] hover:-translate-y-0.5 hover:bg-orange-700 hover:shadow-xl active:scale-95 dark:bg-orange-500 dark:hover:bg-orange-600"
       >
         <MessageCircle className="h-5 w-5" aria-hidden />
       </button>
