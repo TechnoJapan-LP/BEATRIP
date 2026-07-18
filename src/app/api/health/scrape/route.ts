@@ -5,6 +5,12 @@ import { getMilesFreshness } from "@/lib/miles/data";
 import { loadHotDeals } from "@/lib/deals/hot-deals";
 import { getObservationStats } from "@/lib/deals/price-observations";
 import { getSaleRecordStats } from "@/lib/deals/sale-records";
+import { listAlerts } from "@/lib/price-alerts/store";
+import { listSubscribers } from "@/lib/newsletter/store";
+import {
+  loadSubscriptions,
+  loadAlerts,
+} from "@/lib/notifications/subscriptions";
 
 /**
  * スクレイパー稼働の公開ヘルスチェック (機密情報は出さない)。
@@ -174,6 +180,33 @@ export async function GET() {
     milesData = { error: e instanceof Error ? e.message : String(e) };
   }
 
+  // 「利用者が残していった資産」の蓄積量。**件数だけを出す** —
+  // メールアドレスや購読エンドポイントは公開エンドポイントに絶対に載せない。
+  //
+  // なぜ要るか:
+  //  - 価格アラートは登録されても、これまで外から件数を見る手段が無かった。
+  //    0件なのか、登録があるのに配信が壊れているのかを区別できず「静かな失敗」
+  //    になる (KPI スナップショットで実際に踏んだ) 。
+  //  - この3つは買い手が最も見る「継続利用の証拠」でもある。日次で控えれば
+  //    月次 KPI の間を埋める推移になる。
+  const engagement = await (async () => {
+    const [alerts, subscribers, pushSubs, pushAlerts] = await Promise.all([
+      listAlerts().catch(() => null),
+      listSubscribers().catch(() => null),
+      loadSubscriptions().catch(() => null),
+      loadAlerts().catch(() => null),
+    ]);
+    return {
+      priceAlerts: alerts?.length ?? null,
+      newsletterSubscribers: subscribers?.length ?? null,
+      pushSubscriptions: pushSubs?.length ?? null,
+      // Web Push の購読はあるが配信側 (/api/alerts/dispatch) を呼ぶ経路が
+      // 無い。0 でない場合、登録した人に一度も届いていないことを意味する。
+      pushAlertsRegistered: pushAlerts?.length ?? null,
+      note: "件数のみ。個人情報は出さない",
+    };
+  })();
+
   return NextResponse.json({
     ready,
     scraperMode,
@@ -189,6 +222,7 @@ export async function GET() {
     priceObservations,
     saleRecords,
     milesData,
+    engagement,
     hint: ready
       ? "A 設定OK。latestScrapedAt が直近なら cron も稼働中。"
       : "本番稼働には SCRAPER_MODE=hybrid と KV 接続 (kvEnabled=true) が必要。",
