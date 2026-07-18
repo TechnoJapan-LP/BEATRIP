@@ -29,5 +29,21 @@
       "visitFeeUsd": 0,
       "tagline": "頻繁に旅行される方向け (本人利用は無制限で無料)"
     }
-  ]
+  ],
+  "network": {
+    "label": "143以上の都市・856以上の空港で、1,900以上のラウンジとエクスペリエンス",
+    "source": "https://www.prioritypass.com/ja-JP/membership-benefits",
+    "verifiedAt": "2026-07-18"
+  },
+  "benefits": {
+    "items": [
+      "食事・ドリンク",
+      "リフレッシュ (シャワー等・一部ラウンジ)",
+      "休息スペース・仮眠",
+      "Wi-Fi・ワークスペース"
+    ],
+    "caveat": "カード付帯 (決済カード・提携銀行経由) のプライオリティ・パスでは一部の特典が利用できない場合がある (公式注記)",
+    "source": "https://www.prioritypass.com/ja-JP/membership-benefits",
+    "verifiedAt": "2026-07-18"
+  }
 }

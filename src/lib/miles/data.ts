@@ -86,6 +86,15 @@ export type PriorityPassPricing = {
   currency: "USD";
   guestFeeUsd: number;
   plans: PriorityPassPlan[];
+  /** ネットワーク規模 (公式表記の転記) */
+  network?: { label: string; source: string; verifiedAt: string };
+  /** ラウンジで受けられる特典 (公式ページの転記) と、カード付帯の注意 */
+  benefits?: {
+    items: string[];
+    caveat: string;
+    source: string;
+    verifiedAt: string;
+  };
 };
 
 export type MileCard = {

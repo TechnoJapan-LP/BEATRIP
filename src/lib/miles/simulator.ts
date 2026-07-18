@@ -19,6 +19,15 @@ export type AwardRequirement = {
   programName: string;
   /** 所属アライアンス (公式ページで確認済みの事実のみ) */
   alliance: { name: string; note: string } | null;
+  /**
+   * シーズン別の必要マイル (ANA のゾーン×シーズン制のみ)。
+   * JAL は基本マイル固定 + 満席時 PLUS 変動のため undefined。
+   * UI のシーズン選択はここを参照し、undefined なら基本マイル (min) を使う。
+   */
+  seasonMiles?: {
+    economy: { low: number; regular: number; high: number };
+    business: { low: number; regular: number; high: number };
+  };
   /** 往復に必要なマイル。JAL は片道基本マイル×2 で正規化 */
   roundTripMiles: { economy: RangeOrExact; business: RangeOrExact | null };
   /**
@@ -97,6 +106,7 @@ export function awardRequirementFor(
       alliance: program.alliance
         ? { name: program.alliance.name, note: program.alliance.note }
         : null,
+      seasonMiles: { economy: eco, business: biz },
       roundTripMiles: {
         economy: {
           kind: "range",
@@ -316,4 +326,26 @@ export function ppCostComparison(
     });
   }
   return rows;
+}
+
+export type Season = "low" | "regular" | "high";
+
+export const SEASON_LABELS: Record<Season, string> = {
+  low: "ローシーズン",
+  regular: "レギュラーシーズン",
+  high: "ハイシーズン",
+};
+
+/**
+ * 選択シーズンでの必要マイル。
+ * ANA (seasonMiles あり) はシーズンの値、JAL は基本マイル (min) を返す
+ * (JAL はシーズン制でなく、満席時に PLUS で増える変動制のため)。
+ */
+export function milesForSeason(
+  award: AwardRequirement,
+  cabin: "economy" | "business",
+  season: Season
+): number | null {
+  if (award.seasonMiles) return award.seasonMiles[cabin][season];
+  return award.roundTripMiles[cabin]?.min ?? null;
 }

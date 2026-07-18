@@ -6,7 +6,10 @@
       "pointName": "永久不滅ポイント",
       "issuer": "クレディセゾン",
       "programId": "jal-mileage-bank",
-      "rate": { "points": 200, "miles": 500 },
+      "rate": {
+        "points": 200,
+        "miles": 500
+      },
       "rateLabel": "200ポイント → 500マイル",
       "notes": "JALマイレージバンクへの入会が必要。交換後3〜4週間で反映。セゾンプラチナ・アメックスは SAISON MILE CLUB (別枠・1,000円=10マイル) の方が主軸",
       "source": "https://storee.saisoncard.co.jp/shop/g/gCA0001-LP0003-P/",
@@ -17,7 +20,10 @@
       "pointName": "永久不滅ポイント",
       "issuer": "クレディセゾン",
       "programId": "ana-mileage-club",
-      "rate": { "points": 200, "miles": 600 },
+      "rate": {
+        "points": 200,
+        "miles": 600
+      },
       "rateLabel": "200ポイント → 600マイル",
       "notes": "ANAマイレージクラブへの入会が必要。交換後3〜4週間で反映",
       "source": "https://storee.saisoncard.co.jp/shop/g/gCA0001-LP0004-P/",
@@ -28,7 +34,10 @@
       "pointName": "楽天ポイント",
       "issuer": "楽天",
       "programId": "ana-mileage-club",
-      "rate": { "points": 2, "miles": 1 },
+      "rate": {
+        "points": 2,
+        "miles": 1
+      },
       "rateLabel": "2ポイント → 1マイル",
       "notes": "上限 20,000ポイント/月 (1回5,000ポイントまで)。交換後3〜4週間で反映。期間限定ポイント等は交換対象外",
       "source": "https://point.rakuten.co.jp/exchange/ana/rule/",
@@ -39,20 +48,51 @@
       "pointName": "楽天ポイント",
       "issuer": "楽天",
       "programId": "jal-mileage-bank",
-      "rate": { "points": 2, "miles": 1 },
+      "rate": {
+        "points": 2,
+        "miles": 1
+      },
       "rateLabel": "2ポイント → 1マイル",
       "notes": "50ポイント以上・2ポイント単位。上限 20,000ポイント/月 (1回5,000ポイントまで)。交換後1週間〜10日で反映",
       "source": "https://point.rakuten.co.jp/exchange/jal/rule/",
       "verifiedAt": "2026-07-17"
+    },
+    {
+      "id": "dpoint-to-jal",
+      "pointName": "dポイント",
+      "issuer": "NTTドコモ",
+      "programId": "jal-mileage-bank",
+      "rate": {
+        "points": 1000,
+        "miles": 500
+      },
+      "rateLabel": "1,000ポイント → 500マイル",
+      "notes": "1,000ポイント単位。上限 40,000ポイント/月 (=20,000マイル)。交換申込み月の翌月中旬頃に積算。JALマイレージバンクとの紐付け登録が必要",
+      "source": "https://dpoint.docomo.ne.jp/article/2009_07.html",
+      "verifiedAt": "2026-07-18"
+    },
+    {
+      "id": "ponta-to-jal",
+      "pointName": "Pontaポイント",
+      "issuer": "ロイヤリティマーケティング",
+      "programId": "jal-mileage-bank",
+      "rate": {
+        "points": 2,
+        "miles": 1
+      },
+      "rateLabel": "2ポイント → 1マイル",
+      "notes": "2ポイント単位。JMB×Ponta会員登録 (無料) が必要。交換後約1週間で積算。公式交換フォームの換算表示 (2,000pt→1,000マイル) で確認",
+      "source": "https://spend.ponta.jp/Page/Jal.aspx",
+      "verifiedAt": "2026-07-18"
     }
   ],
   "_unverified": {
     "_note": "以下は公式ページで未検証のため掲載していない。検証できたら routes に移すこと。ここに推測レートを書かない。",
     "pending": [
-      "Vポイント (三井住友) → ANA/JAL: smbc-card.com が本環境からアクセスできず未検証",
-      "メンバーシップ・リワード (アメックス) → ANA: 公式ページがタイムアウトし未検証",
-      "Oki Doki ポイント (JCB) → ANA/JAL: jcb.co.jp が本環境からアクセスできず未検証",
-      "dポイント / PayPayポイント → マイル: ルートの存在自体が未確認"
+      "Vポイント (三井住友) → ANA/JAL: smbc-card.com が本環境からアクセス不可で未検証",
+      "メンバーシップ・リワード (アメックス) → ANA: 2026-07-18 再試行もポイント移行ページがシステムメンテ表示で未検証",
+      "Oki Doki ポイント (JCB) → ANA/JAL: jcb.co.jp が本環境からアクセス不可で未検証",
+      "dポイント→ANA / Ponta→ANA: ルートの存在自体が未確認 (JAL側のみ確認済み)"
     ]
   }
 }
