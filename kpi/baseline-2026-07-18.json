@@ -1,0 +1,64 @@
+{
+  "_readme": "2週間インサイト計測の0日目 (baseline)。月次KPI (kpi/YYYY-MM.json) は毎月1日実行なので、期中に始めた計測の起点が無い。2週間後にこの値と差分を取るために残す。**自動取得できた値のみ。GA4/GSC/収益はこちらから取得できないので null のまま置き、ユーザーが手で埋める。推測で埋めないこと。**",
+  "measurementWindow": {
+    "start": "2026-07-18",
+    "plannedReview": "2026-08-01 以降",
+    "purpose": [
+      "サイト改善のインサイト",
+      "ユーザーデータの蓄積",
+      "次の機能の判断材料"
+    ]
+  },
+  "commit": "cb3b33225cc984c5dc999b6bdd0a118de2759897",
+  "auto": {
+    "sitemapUrls": 1421,
+    "sitemapLastmod": 678,
+    "activeDeals": 520,
+    "uniqueDestinations": 190,
+    "priceObservations": {
+      "routes": 485,
+      "points": 1288,
+      "routesReadyForReal": 0
+    },
+    "saleRecords": {
+      "total": 6,
+      "airlines": 4,
+      "airlinesReadyForReal": 0
+    },
+    "hotDeals": {
+      "active": 6,
+      "gone": 0
+    },
+    "engagement": {
+      "priceAlerts": 0,
+      "newsletterSubscribers": 5,
+      "pushSubscriptions": 0,
+      "pushAlertsRegistered": 0
+    },
+    "scraperReady": true,
+    "analyticsConfigured": {
+      "clarityConfigured": true,
+      "clarityIdLength": 10,
+      "gaConfigured": true
+    }
+  },
+  "manual": {
+    "_note": "ユーザーのブラウザ/アカウントでしか取れない。計測開始日の値を手で入れる。分からなければ null のまま。",
+    "ga4": {
+      "sessions28d": null,
+      "users28d": null
+    },
+    "gsc": {
+      "impressions28d": null,
+      "clicks28d": null,
+      "avgPosition": null,
+      "indexedPages": null
+    },
+    "revenueJpy": {
+      "tripCom": null,
+      "a8": null,
+      "rakuten": null,
+      "travelpayouts": null
+    }
+  }
+}
