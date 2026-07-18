@@ -54,3 +54,8 @@ next-env.d.ts
 # editor/merge backup files
 *.orig
 *.bak
+
+# skills.sh で入れたエージェント用スキルの実体 (公開リポジトリに1MB弱を抱えない)。
+# skills-lock.json はコミットしてあるので `npx skills add` で同じ版を再現できる。
+.agents/
+.claude/skills/
