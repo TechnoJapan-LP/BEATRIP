@@ -68,10 +68,20 @@ export async function loadObservations(routeKey: string): Promise<Observation[]>
 }
 
 /** 複数路線をまとめて読む (mget = 1往復)。路線ごとの get を避けるため必須。 */
+/**
+ * 複数路線の観測列をまとめて読む。
+ *
+ * **null と空配列を区別する。** null は「キーが読めなかった/存在しない」、
+ * 空配列は「読めたが中身が無い」。呼び出し側はこの差で上書きの可否を決める:
+ * 既知路線 (index にいる) なのに null が返ったら読み取り失敗の疑いがあり、
+ * そのまま書くと今日の1点で履歴を全消ししてしまう (書き込みは set の全件
+ * 上書きのため)。実測運賃の時系列はこのサービスで最も価値のある資産なので、
+ * 1日分を取りこぼす方が、まとめて失う可能性を残すよりましと判断する。
+ */
 async function loadObservationsBulk(
   routeKeys: string[]
-): Promise<Map<string, Observation[]>> {
-  const out = new Map<string, Observation[]>();
+): Promise<Map<string, Observation[] | null>> {
+  const out = new Map<string, Observation[] | null>();
   const kv = getKV();
   if (!kv || routeKeys.length === 0) return out;
 
@@ -80,7 +90,7 @@ async function loadObservationsBulk(
   );
   routeKeys.forEach((rk, i) => {
     const v = values[i];
-    out.set(rk, Array.isArray(v) ? v : []);
+    out.set(rk, Array.isArray(v) ? v : null);
   });
   return out;
 }
@@ -173,21 +183,38 @@ export async function recordPriceObservations(
 
   // 書きは pipeline で1往復にまとめる
   const pipe = kv.pipeline();
+  let written = 0;
+  let skipped = 0;
   for (const [routeKey, entries] of byRoute) {
-    const merged = mergeObservations(
-      existingMap.get(routeKey) ?? [],
-      day,
-      entries,
-      now
-    );
+    const existing = existingMap.get(routeKey);
+
+    // 既知路線 (index にいる) なのに読めなかった = 読み取り失敗の疑い。
+    // 書き込みは set の全件上書きなので、ここで空から作り直すと過去の
+    // 観測が丸ごと消える。1日分を諦めて次回に回す方が損失が小さい。
+    // 未知路線の null は「まだ無い」が正しいので通常どおり新規作成する。
+    if (existing == null && index.has(routeKey)) {
+      skipped++;
+      continue;
+    }
+
+    const merged = mergeObservations(existing ?? [], day, entries, now);
     points += merged.added;
     pipe.set(kvKey(routeKey), merged.observations);
     index.add(routeKey);
+    written++;
   }
   pipe.set(INDEX_KEY, Array.from(index));
   await pipe.exec();
 
-  return { routes: byRoute.size, points };
+  if (skipped > 0) {
+    // 静かに握りつぶさない。継続的に出るなら KV 側の異常を疑う手掛かりになる。
+    console.warn(
+      `[price-obs] ${skipped}路線を書き込みスキップ (既知路線なのに既存データを読めず、` +
+        `上書きすると履歴が消えるため)。書き込み ${written}路線。`
+    );
+  }
+
+  return { routes: written, points };
 }
 
 /**
