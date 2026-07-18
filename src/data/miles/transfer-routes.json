@@ -204,12 +204,41 @@
       "source": "https://www.to-me-card.jp/use/",
       "verifiedAt": "2026-07-18",
       "verifiedBy": "agent"
+    },
+    {
+      "id": "jcb-jpoint-to-ana",
+      "pointName": "J-POINT",
+      "issuer": "JCB (旧 Oki Doki ポイント)",
+      "programId": "ana-mileage-club",
+      "rate": {
+        "points": 1000,
+        "miles": 600
+      },
+      "rateLabel": "1ポイント → 0.6マイル (1,000ポイント → 600マイル)",
+      "notes": "2,500ポイント以上・1ポイント単位で移行 (最低移行単位は運営者提供情報)。公式ページの交換レート表は本環境からドメインにアクセスできず、運営者が撮影した公式ページのスクリーンショットで数値を確認した。ANAマイル・スカイコインが対象。移行は受付後約1週間",
+      "source": "https://www.jcb.co.jp/point/index.html?tabopen=par2#top",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "operator-screenshot"
+    },
+    {
+      "id": "jcb-jpoint-to-jal",
+      "pointName": "J-POINT",
+      "issuer": "JCB (旧 Oki Doki ポイント)",
+      "programId": "jal-mileage-bank",
+      "rate": {
+        "points": 1000,
+        "miles": 600
+      },
+      "rateLabel": "1ポイント → 0.6マイル (1,000ポイント → 600マイル)",
+      "notes": "2,500ポイント以上・1ポイント単位で移行 (最低移行単位は運営者提供情報)。公式ページの交換レート表は本環境からドメインにアクセスできず、運営者が撮影した公式ページのスクリーンショットで数値を確認した。移行は受付後約1〜3週間",
+      "source": "https://www.jcb.co.jp/point/index.html?tabopen=par2#top",
+      "verifiedAt": "2026-07-18",
+      "verifiedBy": "operator-screenshot"
     }
   ],
   "_unverified": {
-    "_note": "以下は公式ページで未検証のため掲載していない。検証できたら routes に移すこと。ここに推測レートを書かない。verifiedBy=agent は自分で公式ページを開いて確認したもの。",
+    "_note": "以下は公式ページで未検証のため掲載していない。検証できたら routes に移すこと。ここに推測レートを書かない。verifiedBy: agent=自分で公式ページを開いて確認 / operator-screenshot=運営者が撮影した公式ページのスクショで確認 (該当ドメインが本環境から不可)",
     "pending": [
-      "J-POINT (JCB、旧Oki Dokiから改称) → ANA/JAL: 運営者から「1ポイント=0.6マイル・2,500ポイント以上1ポイント単位」の情報提供あり (出典 https://www.jcb.co.jp/ordercard/special/mile.html) だが、jcb.co.jp が本環境からアクセス不可で agent 自身が確認できていない。**掲載するなら誰かが公式ページを開いて確認してから**",
       "dポイント→ANA / Ponta→ANA: ルートの存在自体が未確認 (JAL側のみ確認済み)"
     ]
   }
