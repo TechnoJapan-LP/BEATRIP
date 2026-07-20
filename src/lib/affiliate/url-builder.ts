@@ -275,14 +275,20 @@ function buildTripComUrl(route: SaleRoute, sale: AirlineSale): string {
     curr: "JPY",
   });
 
-  // アフィリエイト帰属。パラメータ名は大文字小文字を区別するため要注意:
-  // 実リンク例は `?Allianceid=3239732&SID=7915496` (SID は大文字)。
-  // 以前 `Sid` と書いており、サブID計測が効かない状態だった。
-  // 未設定なら素の検索リンク (無報酬) として成立する。
+  // アフィリエイト帰属。パラメータ名は大文字小文字を区別する (SID は大文字)。
+  //
+  // Allianceid = アカウントID / SID = 管理画面 "Manage My Sites" で発行される
+  // **サイトID (数値)**。2026-07-19 まで SID に "BEATRIP" という文字列を
+  // 入れており、登録済みサイトに紐づかないため管理画面のクリックが 0 のまま
+  // だった (Allianceid 側は正しかった)。**SID は任意の識別子ではない。**
+  //
+  // どちらも未設定なら素の検索リンク (無報酬) として成立させる。誤った値を
+  // 埋めるより、付けない方が原因を追いやすい。
   const affiliateId = process.env.TRIP_COM_AFFILIATE_ID;
+  const siteId = process.env.TRIP_COM_SITE_ID;
   if (affiliateId) {
     params.set("Allianceid", affiliateId);
-    params.set("SID", "BEATRIP");
+    if (siteId) params.set("SID", siteId);
   }
 
   return `${base}?${params.toString()}`;

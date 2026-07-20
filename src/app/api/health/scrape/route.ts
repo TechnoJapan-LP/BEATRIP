@@ -130,6 +130,10 @@ export async function GET() {
     tripHotel: Boolean(process.env.TP_TRIP_HOTEL_PROGRAM_ID?.trim()),
     // Trip.com 直接提携 (Allianceid)。主CTA を日本語+JPY にできるかの判定に使う
     tripComFlights: Boolean(process.env.TRIP_COM_AFFILIATE_ID?.trim()),
+    // SID = Trip.com 管理画面の Site ID (数値)。Allianceid だけ合っていても
+    // SID が未設定/誤りだと管理画面のクリックが 0 のままになる (実際に起きた:
+    // SID に "BEATRIP" という文字列を入れていて計上されていなかった)。
+    tripComSiteId: Boolean(process.env.TRIP_COM_SITE_ID?.trim()),
     // 主CTA が Skyscanner だった頃の名残。未設定なら Skyscanner リンクは無報酬
     skyscanner: Boolean(process.env.SKYSCANNER_ASSOCIATE_ID?.trim()),
   };
