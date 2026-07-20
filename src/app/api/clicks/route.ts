@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getActiveDeals } from "@/lib/deals/deal-service";
 import {
   recordClick,
   loadAllClickStats,
@@ -94,6 +95,26 @@ export async function POST(req: NextRequest) {
       { error: "Invalid deal_id" },
       { status: 400 }
     );
+  }
+
+  // 形式が正しいだけでは足りない。**実在するディールか**を確認する。
+  //
+  // isValidDealId は文字種と長さしか見ないため、以前は誰でも任意の文字列を
+  // POST してクリック数を膨らませられた (実際に診断中の誤爆で架空IDの
+  // クリックが1件記録され、累計を汚した)。この数字は将来デューデリで
+  // 提出する KPI なので、外から書き換えられる状態は許容できない。
+  //
+  // 弾くときも 200 + skipped で返す (bot 判定と同じ)。攻撃者に「どのIDが
+  // 実在するか」を 4xx で教えないため、かつ正規利用者の遷移を妨げないため。
+  // 掲載終了直後のクリックは取りこぼすが、開いた書き込み口を残すより良い。
+  try {
+    const active = await getActiveDeals();
+    if (!active.some((d) => d.id === deal_id)) {
+      return NextResponse.json({ success: true, skipped: "unknown_deal" });
+    }
+  } catch {
+    // ストアが読めないときは計測を諦める (記録して汚すより落とす)
+    return NextResponse.json({ success: true, skipped: "store_unavailable" });
   }
 
   if (typeof affiliate_url !== "string" || affiliate_url.length > 2048) {

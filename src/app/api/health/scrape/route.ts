@@ -138,6 +138,17 @@ export async function GET() {
     skyscanner: Boolean(process.env.SKYSCANNER_ASSOCIATE_ID?.trim()),
   };
 
+  // 未設定のアフィリエイトを名指しで並べる。
+  //
+  // affiliate は15個以上の boolean が並ぶため、false を目視で拾うのは無理が
+  // ある。実際 TP_TRIP_HOTEL / BOOKING / AGODA の3つが未設定で、ホテル導線が
+  // 丸ごと無報酬のまま気づかれていなかった (2026-07-19 発覚)。
+  // プログラムIDが無いと wrapWithTpMedia は素のURLを返す = リンクは動くので
+  // 画面上は何も壊れて見えない。だから名指しで出す。
+  const affiliateGaps = Object.entries(affiliate)
+    .filter(([, configured]) => !configured)
+    .map(([name]) => name);
+
   // 超お買い得 (価格急落) の稼働状況
   // TravelPayouts 価格データAPI のトークン有無。これが無いと価格ウォッチが
   // 空になり、超お買い得の検出も実測運賃の蓄積も永久にゼロのままになる
@@ -231,6 +242,7 @@ export async function GET() {
     social: { xConfigured, blueskyConfigured, lastPost },
     analytics,
     affiliate,
+    affiliateGaps,
     hotDeals,
     travelpayouts,
     priceObservations,
