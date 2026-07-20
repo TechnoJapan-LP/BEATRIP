@@ -5,6 +5,7 @@ import { getMilesFreshness } from "@/lib/miles/data";
 import { loadHotDeals } from "@/lib/deals/hot-deals";
 import { getObservationStats } from "@/lib/deals/price-observations";
 import { getSaleRecordStats } from "@/lib/deals/sale-records";
+import { loadPostOutcome } from "@/lib/social/posted-store";
 import { listAlerts } from "@/lib/price-alerts/store";
 import { listSubscribers } from "@/lib/newsletter/store";
 import {
@@ -180,6 +181,15 @@ export async function GET() {
     milesData = { error: e instanceof Error ? e.message : String(e) };
   }
 
+  // 直近の SNS 投稿結果。xConfigured は env の有無しか見ておらず、
+  // 「認証は通るが残高ゼロで 402」のような状態を検知できない。
+  // succeeded が 0 のまま続くなら、サイトの「Xに即速報します」という
+  // 説明が実態と食い違っている状態なので要対応。
+  const lastPost = {
+    x: await loadPostOutcome("x").catch(() => null),
+    bluesky: await loadPostOutcome("bluesky").catch(() => null),
+  };
+
   // 「利用者が残していった資産」の蓄積量。**件数だけを出す** —
   // メールアドレスや購読エンドポイントは公開エンドポイントに絶対に載せない。
   //
@@ -214,7 +224,7 @@ export async function GET() {
     storeSalesCount,
     latestScrapedAt,
     scrapeFreshness,
-    social: { xConfigured, blueskyConfigured },
+    social: { xConfigured, blueskyConfigured, lastPost },
     analytics,
     affiliate,
     hotDeals,

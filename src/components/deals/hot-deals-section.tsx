@@ -148,13 +148,27 @@ export async function HotDealsSection({
   // 絞る。データは消さず表示から外すだけなので、実績としては残る。
   const FRESH_WINDOW_MS = 48 * 60 * 60 * 1000;
   const now = Date.now();
-  const isFresh = (iso: string) => {
+  // detected_at が壊れている (パースできない) ケースの扱い。
+  // 表示自体は残す — 消すと不正データの存在に気づけなくなるため。ただし
+  // **比較には絶対に NaN を持ち込まない**。sort の比較関数が一度でも NaN を
+  // 返すと順序が実装依存になり、壊れた1件が他のカードの並びまで巻き込んで
+  // 崩す (JS の仕様上ソート結果は不定)。壊れたものは常に末尾に置く。
+  const at = (iso: string): number | null => {
     const t = new Date(iso).getTime();
-    // 日付が壊れているものは弾かない (握りつぶすと原因が見えなくなる)
-    return Number.isNaN(t) || now - t <= FRESH_WINDOW_MS;
+    return Number.isNaN(t) ? null : t;
   };
-  const byNewest = (a: HotDeal, b: HotDeal) =>
-    new Date(b.detected_at).getTime() - new Date(a.detected_at).getTime();
+  const isFresh = (iso: string) => {
+    const t = at(iso);
+    return t === null || now - t <= FRESH_WINDOW_MS;
+  };
+  const byNewest = (a: HotDeal, b: HotDeal) => {
+    const ta = at(a.detected_at);
+    const tb = at(b.detected_at);
+    if (ta === null && tb === null) return 0;
+    if (ta === null) return 1; // 壊れている方を後ろへ
+    if (tb === null) return -1;
+    return tb - ta;
+  };
 
   // 下落率の下限は store の検出基準をそのまま使う (二重管理しない)。
   // 表示側にも敷くのは、基準を引き上げたときに旧基準で検出済みのものが

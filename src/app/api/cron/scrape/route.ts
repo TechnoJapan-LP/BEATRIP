@@ -24,7 +24,7 @@ import {
 } from "@/lib/price-alerts/email";
 import { postSalesToBluesky, postHotDealsToBluesky } from "@/lib/social/bluesky";
 import { postSalesToX, postHotDealsToX } from "@/lib/social/x";
-import { getPostedIds, markPosted } from "@/lib/social/posted-store";
+import { getPostedIds, markPosted, recordPostOutcome } from "@/lib/social/posted-store";
 import { scanHotDeals } from "@/lib/deals/hot-deals";
 import { recordPriceObservations } from "@/lib/deals/price-observations";
 import { recordObservedSales } from "@/lib/deals/sale-records";
@@ -252,10 +252,35 @@ export async function GET(request: NextRequest) {
         const postedX = await getPostedIds("x");
         const freshHot = scan.detected.filter((h) => !postedX.has(h.id));
         if (freshHot.length > 0) {
+          // 上限3件は投稿の連投を避けるため。試行数もこの数で数える。
+          const attempted = Math.min(freshHot.length, 3);
+          const nowIso = new Date().toISOString();
+
           const sentX = await postHotDealsToX(freshHot, 3);
           if (sentX.length > 0) await markPosted("x", sentX);
+          // 投稿結果を残す。0件成功は「認証は通るが残高ゼロで402」等の
+          // 静かな失敗を示す唯一の手掛かりになる (console だけだと外から
+          // 見えない)。health から読めるようにしてある。
+          await recordPostOutcome("x", {
+            at: nowIso,
+            attempted,
+            succeeded: sentX.length,
+            ...(sentX.length === 0
+              ? { lastError: "投稿0件 (API上限・残高・認証を確認)" }
+              : {}),
+          });
+
           const sentBsky = await postHotDealsToBluesky(freshHot, 3);
           if (sentBsky.length > 0) await markPosted("bluesky", sentBsky);
+          await recordPostOutcome("bluesky", {
+            at: nowIso,
+            attempted,
+            succeeded: sentBsky.length,
+            ...(sentBsky.length === 0
+              ? { lastError: "投稿0件 (認証・レート制限を確認)" }
+              : {}),
+          });
+
           hotDealSummary.posted = sentX.length;
         }
       }
