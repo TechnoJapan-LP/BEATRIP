@@ -133,9 +133,28 @@ export async function HotDealsSection({
 } = {}) {
   const all = await loadHotDeals();
 
+  // 表示は「新しい順」かつ「検出から2日以内」に限る。
+  //
+  // 以前は下落率の高い順に並べていたが、急落は鮮度が命で、数日前の検出は
+  // 既に値が戻っている/売り切れていることが多く、割引率が高いというだけで
+  // 上に居座り続けてしまう。掲載順とカードの「◯日前に検出」も噛み合わない。
+  //
+  // store 側の STALE_ACTIVE_MS も 48h だが判定軸が違う (あちらは last_seen_at
+  // = 観測できなくなってからの経過)。ここは detected_at = 検出からの経過で
+  // 絞る。データは消さず表示から外すだけなので、実績としては残る。
+  const FRESH_WINDOW_MS = 48 * 60 * 60 * 1000;
+  const now = Date.now();
+  const isFresh = (iso: string) => {
+    const t = new Date(iso).getTime();
+    // 日付が壊れているものは弾かない (握りつぶすと原因が見えなくなる)
+    return Number.isNaN(t) || now - t <= FRESH_WINDOW_MS;
+  };
+  const byNewest = (a: HotDeal, b: HotDeal) =>
+    new Date(b.detected_at).getTime() - new Date(a.detected_at).getTime();
+
   const active = all
-    .filter((h) => h.status === "active")
-    .sort((a, b) => b.drop_percent - a.drop_percent)
+    .filter((h) => h.status === "active" && isFresh(h.detected_at))
+    .sort(byNewest)
     .slice(0, variant === "page" ? 12 : 6);
   const gone = all
     .filter((h) => h.status === "gone")
