@@ -26,6 +26,7 @@ import { SITE_URL as SITE } from "@/lib/email/client";
 import type { DealSchema } from "@/data/deal-schema";
 import type { Article } from "@/data/mock-articles";
 import type { CuratedHotel } from "@/data/hotel-curated";
+import { formatPrice } from "@/lib/format";
 
 /** 全 ASP リンクの末尾に付与する共通 UTM */
 function utmCampaignFor(date: Date): string {
@@ -56,9 +57,6 @@ export function appendUtm(url: string, campaign: string): string {
   }
 }
 
-function yen(n: number): string {
-  return new Intl.NumberFormat("ja-JP").format(n);
-}
 
 function esc(s: string): string {
   return s
@@ -211,7 +209,7 @@ function dealRowHtml(d: DealSchema, campaign: string): string {
                 ${esc(d.origin)} &rarr; ${esc(d.destination)}
               </p>
               <p style="font-size:13px;color:#3f3f46;margin:0">
-                <span style="color:#18181b;font-weight:bold">&yen;${yen(d.sale_price)}</span>
+                <span style="color:#18181b;font-weight:bold">&yen;${formatPrice(d.sale_price)}</span>
                 <span style="color:#e11d48;font-weight:bold;margin-left:6px">-${discount}%</span>
               </p>
             </td>
@@ -409,7 +407,7 @@ export async function generateWeeklyDigest(
     textLines.push(`# 今週の TOP ${topDeals.length} ディール`);
     for (const d of topDeals) {
       textLines.push(
-        `- [${d.airline_name}] ${d.origin} -> ${d.destination}  ¥${yen(d.sale_price)} (-${d.discount_percent ?? 0}%)`
+        `- [${d.airline_name}] ${d.origin} -> ${d.destination}  ¥${formatPrice(d.sale_price)} (-${d.discount_percent ?? 0}%)`
       );
     }
     textLines.push("");

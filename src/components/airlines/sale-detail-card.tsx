@@ -14,10 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import { deals } from "@/data/mock-deals-v2";
 import { cityNameJa } from "@/lib/airport-names";
+import { formatPrice } from "@/lib/format";
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("ja-JP", {

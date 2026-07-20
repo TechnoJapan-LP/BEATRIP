@@ -6,10 +6,8 @@ import type { AirlineProfile } from "@/lib/scrapers/types";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { SaleEvent } from "@/data/mock-deals";
 import Link from "next/link";
+import { formatPrice } from "@/lib/format";
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function daysLeft(endDate: string) {
   const diff = Math.ceil(

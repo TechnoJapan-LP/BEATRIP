@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell, Check, Loader2, X, TrendingDown, ArrowUpRight } from "lucide-react";
 import { trackNewsletterSignup } from "@/components/analytics";
+import { formatPrice } from "@/lib/format";
 
 /**
  * ExitIntentModal — 離脱直前に「お得情報を見逃さない」訴求を出す
@@ -100,9 +101,6 @@ function currentScrollRatio(): number {
   return window.scrollY / total;
 }
 
-function yen(n: number): string {
-  return new Intl.NumberFormat("ja-JP").format(n);
-}
 
 export function ExitIntentModal({ deals = [] }: { deals?: ExitIntentDeal[] }) {
   const [open, setOpen] = useState(false);
@@ -354,7 +352,7 @@ export function ExitIntentModal({ deals = [] }: { deals?: ExitIntentDeal[] }) {
                     </div>
                     <div className="flex flex-shrink-0 items-center gap-1.5">
                       <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
-                        ¥{yen(d.price)}
+                        ¥{formatPrice(d.price)}
                       </span>
                       {d.discountPercent > 0 && (
                         <span className="text-[10px] font-bold text-rose-500">

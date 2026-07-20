@@ -8,6 +8,7 @@ import { routeLinkMd } from "./route-link";
 import { getDestinationImage } from "@/lib/deals/destination-images";
 import { isDomesticRoute } from "@/lib/airports/domestic";
 import { getKV } from "@/lib/store/kv";
+import { formatPrice } from "@/lib/format";
 
 const KV_ARTICLES_KEY = "beatrip:articles:generated";
 
@@ -64,9 +65,6 @@ function slugify(text: string): string {
     .replace(/-{2,}/g, "-");
 }
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function generateSaleArticle(sale: AirlineSale): Article {
   const slug = slugify(`${sale.airlineCode}-${sale.saleName}-${sale.startDate}`);

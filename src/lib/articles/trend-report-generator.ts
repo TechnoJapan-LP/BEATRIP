@@ -1,6 +1,7 @@
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { Article } from "@/data/mock-articles";
 import { cityNameJa } from "@/lib/airport-names";
+import { formatPrice } from "@/lib/format";
 
 /**
  * 月次トレンドレポート記事ジェネレータ
@@ -10,9 +11,6 @@ import { cityNameJa } from "@/lib/airport-names";
  * セール" "夏休み 格安" 等) を取りにいく。slug は YYYY-MM で一意。
  */
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 const MONTH_HIGHLIGHT: Record<number, string> = {
   1: "正月明け閑散期。航空券は底値が出やすい",

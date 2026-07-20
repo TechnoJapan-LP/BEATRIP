@@ -1,10 +1,8 @@
 // Server component: 純表示用 (useClient 不要)
 
 import type { BestTimeToBook } from "@/data/deal-schema";
+import { formatPrice } from "@/lib/format";
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function priceColor(ratio: number): string {
   if (ratio <= 0.2) return "bg-emerald-500";

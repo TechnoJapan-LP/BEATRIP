@@ -2,14 +2,12 @@ import { ImageResponse } from "next/og";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getDestinationImage } from "@/lib/deals/destination-images";
 import { cityNameJa } from "@/lib/airport-names";
+import { formatPrice } from "@/lib/format";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "BEATRIP 路線別格安航空券";
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function parseRoute(slug: string) {
   const decoded = decodeURIComponent(slug);

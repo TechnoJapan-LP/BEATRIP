@@ -26,6 +26,7 @@ import { DealCard } from "@/components/deals/deal-card";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
 import { OG_IMAGES } from "@/lib/seo/og";
+import { formatPrice } from "@/lib/format";
 
 type Props = { params: Promise<{ code: string; lang: string }> };
 
@@ -88,9 +89,6 @@ const monthNames = [
   "12月",
 ];
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function formatDateRange(start: string, end: string) {
   const s = new Date(start);

@@ -20,6 +20,7 @@ import { airlines } from "@/data/airlines";
 import { SiteFooter } from "@/components/site-footer";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
 import { getHotelSlugByIata, getHotelDestinationBySlug } from "@/data/hotel-destinations";
+import { formatPrice } from "@/lib/format";
 
 type Props = { params: Promise<{ slug: string; lang: string;}> };
 
@@ -81,9 +82,6 @@ function formatDate(dateStr: string) {
   });
 }
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 /**
  * 行内の `[表示名](/path)` と `**強調**` を React ノードに変換する。

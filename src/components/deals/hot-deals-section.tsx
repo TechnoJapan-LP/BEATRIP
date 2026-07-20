@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Zap, TrendingDown, Clock, ExternalLink } from "lucide-react";
+import { formatPrice } from "@/lib/format";
 import {
   loadHotDeals,
   HOT_DEAL_CRITERIA,
@@ -38,9 +39,6 @@ function survivedLabel(h: HotDeal): string {
   return hours < 24 ? `約${hours}時間で消滅` : `約${Math.round(hours / 24)}日で消滅`;
 }
 
-function yen(n: number): string {
-  return new Intl.NumberFormat("ja-JP").format(n);
-}
 
 function ActiveCard({ h }: { h: HotDeal }) {
   return (
@@ -68,9 +66,9 @@ function ActiveCard({ h }: { h: HotDeal }) {
         </p>
         <div className="mt-1 flex flex-wrap items-baseline gap-x-2">
           <span className="font-heading text-2xl tracking-wide text-rose-600 dark:text-rose-400">
-            ¥{yen(h.price)}
+            ¥{formatPrice(h.price)}
           </span>
-          <span className="text-xs text-zinc-400 line-through">¥{yen(h.previous_price)}</span>
+          <span className="text-xs text-zinc-400 line-through">¥{formatPrice(h.previous_price)}</span>
           <span className="inline-flex items-center gap-0.5 text-xs font-bold text-rose-600 dark:text-rose-400">
             <TrendingDown className="h-3 w-3" />-{h.drop_percent}%
           </span>
@@ -112,7 +110,7 @@ function GoneCard({ h }: { h: HotDeal }) {
         </p>
         <div className="mt-1 flex items-baseline gap-2">
           <span className="font-heading text-xl tracking-wide text-zinc-400 line-through">
-            ¥{yen(h.price)}
+            ¥{formatPrice(h.price)}
           </span>
           <span className="text-xs font-bold text-zinc-400">-{h.drop_percent}%だった</span>
         </div>

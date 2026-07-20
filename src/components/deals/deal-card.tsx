@@ -9,6 +9,7 @@ import { getAirlineByCode } from "@/data/airlines";
 import { cityNameJa } from "@/lib/airport-names";
 import type { DealSchema } from "@/data/deal-schema";
 import { CountdownBadge } from "@/components/deals/countdown-badge";
+import { formatPrice } from "@/lib/format";
 
 const badgeConfig = {
   NEW: { label: "新着", className: "bg-emerald-500 text-white hover:bg-emerald-600" },
@@ -16,9 +17,6 @@ const badgeConfig = {
   BIG_DISCOUNT: { label: "50%OFF以上", className: "bg-rose-500 text-white hover:bg-rose-600" },
 } as const;
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function daysUntil(dateStr: string) {
   return Math.ceil(

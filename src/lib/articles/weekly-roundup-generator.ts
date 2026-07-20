@@ -1,6 +1,7 @@
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { Article } from "@/data/mock-articles";
 import { routeLineMd } from "./route-link";
+import { formatPrice } from "@/lib/format";
 
 /**
  * 週次セールまとめ記事ジェネレータ
@@ -11,9 +12,6 @@ import { routeLineMd } from "./route-link";
  * 新しい slug になり、サイトに新記事として並ぶ。
  */
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 /** ISO週番号 ({year, week}) を返す */
 function isoWeek(date: Date): { year: number; week: number } {

@@ -13,6 +13,7 @@ import {
   useLocalizedHref,
 } from "@/components/i18n/locale-provider";
 import type { DealSchema } from "@/data/deal-schema";
+import { formatPrice } from "@/lib/format";
 
 const badgeConfig = {
   NEW: { label: "新着", className: "bg-emerald-500 text-white" },
@@ -20,9 +21,6 @@ const badgeConfig = {
   BIG_DISCOUNT: { label: "50%OFF以上", className: "bg-rose-500 text-white" },
 } as const;
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 // DealCard と同一デザイン（カルーセル用にサイズのみ維持）
 function DealMiniCard({ deal }: { deal: DealSchema }) {

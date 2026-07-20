@@ -50,6 +50,7 @@ import { RelatedDeals } from "@/components/deals/related-deals";
 import { RecentlyViewedTracker } from "@/components/recently-viewed/recently-viewed-tracker";
 import { TravelEssentialsCta } from "@/components/deals/travel-essentials-cta";
 import { MobileStickyCta } from "@/components/sticky-cta/mobile-sticky-cta";
+import { formatPrice } from "@/lib/format";
 
 type Props = { params: Promise<{ id: string; lang: string;}> };
 
@@ -102,9 +103,6 @@ export async function generateStaticParams() {
   return deals.map((deal) => ({ id: deal.id }));
 }
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("ja-JP", {

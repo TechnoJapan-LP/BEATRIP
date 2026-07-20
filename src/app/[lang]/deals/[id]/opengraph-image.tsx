@@ -1,13 +1,11 @@
 import { ImageResponse } from "next/og";
 import { getDealById } from "@/lib/deals/deal-service";
+import { formatPrice } from "@/lib/format";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const alt = "BEATRIP フライトディール";
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 export default async function OGImage({
   params,

@@ -1,6 +1,7 @@
 import type { AirlineSale } from "@/lib/scrapers/types";
 import type { Article } from "@/data/mock-articles";
 import { routeLineMd } from "./route-link";
+import { formatPrice } from "@/lib/format";
 
 /**
  * 「セール終了予告」記事ジェネレータ
@@ -11,9 +12,6 @@ import { routeLineMd } from "./route-link";
  * slug は YYYY-MM-DD ベースで日次重複排除。同じ日に複数回呼んでも OK。
  */
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function daysBetween(a: Date, b: Date): number {
   return Math.ceil((b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24));

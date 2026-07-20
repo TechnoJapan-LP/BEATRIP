@@ -1,4 +1,5 @@
 import { cityNameJa } from "@/lib/airport-names";
+import { formatPrice } from "@/lib/format";
 
 /**
  * 記事本文の「路線行」を組み立てる共通ヘルパー
@@ -23,9 +24,6 @@ export type RouteLineInput = {
   note?: string;
 };
 
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 /** キャビンの日本語表記 (Economy は既定なので表示しない) */
 function cabinJa(cabin?: string): string {

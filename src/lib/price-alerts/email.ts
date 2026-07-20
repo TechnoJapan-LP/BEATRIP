@@ -1,6 +1,7 @@
 import { getResend, MAIL_FROM as FROM, SITE_URL as SITE } from "@/lib/email/client";
 import { getAirportByCode } from "@/data/airports";
 import { alertCancelUrl } from "./token";
+import { formatPrice } from "@/lib/format";
 
 export type AlertMatch = {
   alertId: string;
@@ -13,9 +14,6 @@ export type AlertMatch = {
   dealId: string;
 };
 
-function yen(n: number): string {
-  return new Intl.NumberFormat("ja-JP").format(n);
-}
 
 /**
  * メール内リンクに UTM を付与。utm_source=price_alert / utm_medium=email 固定。
@@ -97,9 +95,9 @@ function html(m: AlertMatch): string {
       <div style="border:1px solid #e4e4e7;border-radius:12px;padding:18px;margin:0 0 20px">
         <table style="width:100%;border-collapse:collapse">
           <tr><td style="font-size:13px;color:#71717a;padding:4px 0">設定価格</td>
-              <td style="font-size:13px;color:#3f3f46;text-align:right;padding:4px 0">¥${yen(m.threshold)} 以下</td></tr>
+              <td style="font-size:13px;color:#3f3f46;text-align:right;padding:4px 0">¥${formatPrice(m.threshold)} 以下</td></tr>
           <tr><td style="font-size:13px;color:#71717a;padding:4px 0">現在の最安値</td>
-              <td style="font-size:18px;color:#e11d48;font-weight:bold;text-align:right;padding:4px 0">¥${yen(m.price)}</td></tr>
+              <td style="font-size:18px;color:#e11d48;font-weight:bold;text-align:right;padding:4px 0">¥${formatPrice(m.price)}</td></tr>
         </table>
       </div>
       <div style="text-align:center;margin:0 0 8px">
@@ -141,7 +139,7 @@ export async function sendPriceAlertEmails(
     const batch = chunk.map((m) => ({
       from: FROM,
       to: m.email,
-      subject: `【BEATRIP】${m.routeKey} が¥${yen(m.price)}に — 価格アラート`,
+      subject: `【BEATRIP】${m.routeKey} が¥${formatPrice(m.price)}に — 価格アラート`,
       html: html(m),
       headers: {
         "List-Unsubscribe": `<${alertCancelUrl(m.alertId)}>`,

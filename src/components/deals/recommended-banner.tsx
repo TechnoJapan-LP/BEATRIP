@@ -6,10 +6,8 @@ import { BLUR_PLACEHOLDER_LIGHT } from "@/lib/images/blur";
 import { Plane, TrendingDown, ArrowRight } from "lucide-react";
 import type { DealSchema } from "@/data/deal-schema";
 import { cityNameJa } from "@/lib/airport-names";
+import { formatPrice } from "@/lib/format";
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
   const top3 = [...deals]

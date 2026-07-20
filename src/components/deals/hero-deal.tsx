@@ -11,10 +11,8 @@ import {
   useLocalizedHref,
 } from "@/components/i18n/locale-provider";
 import { CountdownBadge } from "@/components/deals/countdown-badge";
+import { formatPrice } from "@/lib/format";
 
-function formatPrice(p: number) {
-  return new Intl.NumberFormat("ja-JP").format(p);
-}
 
 /**
  * ファーストビュー用ヒーロー枠。

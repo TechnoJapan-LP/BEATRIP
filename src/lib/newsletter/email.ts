@@ -1,6 +1,7 @@
 import type { AirlineSale } from "@/lib/scrapers/types";
 import { unsubscribeUrl } from "./token";
 import { getResend, MAIL_FROM as FROM, SITE_URL as SITE } from "@/lib/email/client";
+import { formatPrice } from "@/lib/format";
 
 export async function sendWelcomeEmail(to: string): Promise<void> {
   const resend = getResend();
@@ -34,9 +35,6 @@ export async function sendWelcomeEmail(to: string): Promise<void> {
   });
 }
 
-function yen(n: number): string {
-  return new Intl.NumberFormat("ja-JP").format(n);
-}
 
 function saleRowsHtml(sales: AirlineSale[]): string {
   return sales
@@ -47,7 +45,7 @@ function saleRowsHtml(sales: AirlineSale[]): string {
           (r) =>
             `<tr>
               <td style="padding:4px 0;font-size:13px;color:#3f3f46">${r.originCode} → ${r.destinationCode}</td>
-              <td style="padding:4px 0;font-size:13px;color:#18181b;font-weight:bold;text-align:right">¥${yen(r.price)} <span style="color:#e11d48">(-${r.discount}%)</span></td>
+              <td style="padding:4px 0;font-size:13px;color:#18181b;font-weight:bold;text-align:right">¥${formatPrice(r.price)} <span style="color:#e11d48">(-${r.discount}%)</span></td>
             </tr>`
         )
         .join("");

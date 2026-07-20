@@ -27,6 +27,7 @@ import {
 import { calculateBestTimeToBook } from "@/lib/predictions/best-time-to-book";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { AIRPORTS, getAirportByCode, type AirportRegion } from "@/data/airports";
+import { formatPrice } from "@/lib/format";
 
 const REGION_SLUGS: Record<AirportRegion, string> = {
   北海道: "hokkaido",
@@ -181,9 +182,6 @@ export async function generateStaticParams() {
   return Array.from(routes).map((r) => ({ route: r }));
 }
 
-function formatPrice(price: number) {
-  return new Intl.NumberFormat("ja-JP").format(price);
-}
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("ja-JP", {
