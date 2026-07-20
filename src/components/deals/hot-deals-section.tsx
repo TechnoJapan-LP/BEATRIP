@@ -156,9 +156,16 @@ export async function HotDealsSection({
     .filter((h) => h.status === "active" && isFresh(h.detected_at))
     .sort(byNewest)
     .slice(0, variant === "page" ? 12 : 6);
+  // 売り切れカードも active と同じ軸で揃える。セクション全体を
+  // 「検出から2日以内のものを、検出の新しい順に」という1つのルールで
+  // 説明できる状態にする (以前は active=下落率順・gone=売り切れ時刻順で
+  // 軸が2つあり、並びの根拠が読み手に伝わらなかった)。
+  //
+  // ストア側の GONE_TTL_MS は 72時間のままにしてある。ここは表示の絞り込み
+  // だけで、検出の実績はデータとして残す。
   const gone = all
-    .filter((h) => h.status === "gone")
-    .sort((a, b) => new Date(b.gone_at ?? 0).getTime() - new Date(a.gone_at ?? 0).getTime())
+    .filter((h) => h.status === "gone" && isFresh(h.detected_at))
+    .sort(byNewest)
     .slice(0, variant === "page" ? 9 : 3);
 
   if (variant === "deals" && active.length === 0 && gone.length === 0) return null;
