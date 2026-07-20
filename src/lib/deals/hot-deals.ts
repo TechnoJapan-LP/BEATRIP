@@ -81,6 +81,23 @@ export const HOT_DEAL_CRITERIA = {
   minDropPercent: Math.round(DROP_THRESHOLD * 100),
   /** 下落額の下限 (円) */
   minDropYen: MIN_DROP_YEN,
+  /**
+   * 価格を観測する間隔 (時間)。画面の説明文で「◯時間ごとに観測」と名乗る値。
+   *
+   * **実体は .github/workflows/hot-deal-scan.yml の cron: "0 * /3 * * *"。**
+   * (スペースはコメント中のため。実ファイルはスラッシュ3)
+   * スキャン側に間引きは無く、cron が回るたびに scanHotDeals が走る。
+   * ワークフローの cron を変えたらこの値も合わせること。
+   *
+   * 経緯: 以前は文言に「6時間ごと」と直書きされていたが、実際の cron は
+   * 3時間おきで、**説明文だけが実態から取り残されていた** (2026-07-18 発見)。
+   * FAQ は JSON-LD にも出るため、検索結果にも誤った値が出ていた。
+   *
+   * 注意: GitHub Actions の schedule は発火保証が無く、実測で1〜2.5時間の
+   * 遅延や連続スキップも観測されている。この値は「設定上の最短間隔」であり
+   * SLA ではない。断定を強めた表現 (必ず◯時間以内 等) にはしないこと。
+   */
+  scanIntervalHours: 3,
   /** 説明文用の一文。上2つから組み立てるので、ここに数字を書かないこと */
   get label(): string {
     return `${this.minDropPercent}%以上（かつ${this.minDropYen.toLocaleString("ja-JP")}円以上）`;

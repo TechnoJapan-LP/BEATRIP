@@ -18,6 +18,12 @@ name: hot-deal-scan
 on:
   schedule:
     # 3時間おき (UTC)。GH の遅延・スキップ前提の冗長スケジュール。
+    #
+    # ★この間隔を変えたら src/lib/deals/hot-deals.ts の
+    #   HOT_DEAL_CRITERIA.scanIntervalHours も必ず合わせること。
+    #   画面の「◯時間ごとに観測」という説明文はあの定数から生成している。
+    #   以前ここを 6→3 に変えたとき文言が取り残され、FAQ (JSON-LD 経由で
+    #   検索結果にも出る) が実態と食い違ったまま放置されていた。
     - cron: "0 */3 * * *"
   workflow_dispatch: {}
 

@@ -188,7 +188,7 @@ export async function HotDealsSection({
           現在、価格の急落は検出されていません
         </p>
         <p className="mt-1 text-xs text-zinc-400">
-          6時間ごとに監視中。検出すると X と Bluesky に即速報し、このページに掲載されます。
+          {HOT_DEAL_CRITERIA.scanIntervalHours}時間ごとに監視中。検出すると X と Bluesky に即速報し、このページに掲載されます。
         </p>
       </div>
     ) : (

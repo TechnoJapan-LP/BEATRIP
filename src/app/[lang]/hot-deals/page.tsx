@@ -36,8 +36,8 @@ export async function generateMetadata({
     ? "Error fares & sudden price-drop alerts from Japan"
     : "航空券のエラーフェア・価格急落を自動検出｜超お買い得速報";
   const description = isEn
-    ? "BEATRIP monitors airfares from Japan every 6 hours and flags sudden price drops — error-fare-class deals on economy and business class. Sold-out fares stay visible so you know what you missed."
-    : "「航空券が急に安くなる」エラーフェア・フラッシュセール級の価格急落を6時間ごとに自動検出。エコノミーだけでなくビジネスクラスの急落もウォッチ。消えた運賃は売り切れ表示で残るので、次を逃さない準備ができます。";
+    ? `BEATRIP monitors airfares from Japan every ${HOT_DEAL_CRITERIA.scanIntervalHours} hours and flags sudden price drops — error-fare-class deals on economy and business class. Sold-out fares stay visible so you know what you missed.`
+    : `「航空券が急に安くなる」エラーフェア・フラッシュセール級の価格急落を${HOT_DEAL_CRITERIA.scanIntervalHours}時間ごとに自動検出。エコノミーだけでなくビジネスクラスの急落もウォッチ。消えた運賃は売り切れ表示で残るので、次を逃さない準備ができます。`;
   const path = isEn ? "/en/hot-deals" : "/hot-deals";
   return {
     title,
@@ -71,7 +71,7 @@ const FAQS = [
   },
   {
     q: "どうやって検出しているのですか？",
-    a: `日本発の主要路線の最安運賃を6時間ごとに観測し、直前の観測価格から${HOT_DEAL_CRITERIA.label}下落した運賃を「超お買い得」として自動検出しています。エコノミーに加え、羽田・成田・関西発 国際線のビジネスクラスも監視対象です。`,
+    a: `日本発の主要路線の最安運賃を${HOT_DEAL_CRITERIA.scanIntervalHours}時間ごとに観測し、直前の観測価格から${HOT_DEAL_CRITERIA.label}下落した運賃を「超お買い得」として自動検出しています。エコノミーに加え、羽田・成田・関西発 国際線のビジネスクラスも監視対象です。`,
   },
   {
     q: "掲載価格で必ず予約できますか？",
@@ -134,7 +134,7 @@ export default async function HotDealsPage({
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
             「航空券が急に安くなっている」——エラーフェアやフラッシュセール級の
-            <strong className="text-zinc-700 dark:text-zinc-200">価格急落を6時間ごとに自動検出</strong>
+            <strong className="text-zinc-700 dark:text-zinc-200">価格急落を{HOT_DEAL_CRITERIA.scanIntervalHours}時間ごとに自動検出</strong>
             して掲載します。エコノミーに加え、羽田・成田・関西発のビジネスクラスも監視対象。
             急落運賃は数時間で消えることもあるため、見つけたら早めのチェックがおすすめです。
           </p>
@@ -160,7 +160,7 @@ export default async function HotDealsPage({
             <div className="rounded-xl border border-zinc-100 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
               <Radar className="mb-2 h-5 w-5 text-rose-500" />
               <h3 className="mb-1 text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                1. 6時間ごとに価格を観測
+                1. {HOT_DEAL_CRITERIA.scanIntervalHours}時間ごとに価格を観測
               </h3>
               <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
                 日本の主要7空港発の最安運賃と、羽田・成田・関西発 国際線ビジネスクラスの最安値を継続的に記録します。
