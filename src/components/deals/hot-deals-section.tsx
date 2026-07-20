@@ -152,8 +152,15 @@ export async function HotDealsSection({
   const byNewest = (a: HotDeal, b: HotDeal) =>
     new Date(b.detected_at).getTime() - new Date(a.detected_at).getTime();
 
+  // 下落率の下限。store 側の DROP_THRESHOLD (0.30) と同じ基準を表示にも敷く。
+  // 引き上げ前 (25%) に検出済みのものが KV に残っており、それらは新基準を
+  // 満たさないまま TTL まで表示され続けてしまうため、ここでも弾く。
+  // store 側を変えるときはこの値も合わせること (現状ここだけ二重管理)。
+  const MIN_DROP_PERCENT = 30;
+  const isBigEnough = (h: HotDeal) => h.drop_percent >= MIN_DROP_PERCENT;
+
   const active = all
-    .filter((h) => h.status === "active" && isFresh(h.detected_at))
+    .filter((h) => h.status === "active" && isFresh(h.detected_at) && isBigEnough(h))
     .sort(byNewest)
     .slice(0, variant === "page" ? 12 : 6);
   // 売り切れカードも active と同じ軸で揃える。セクション全体を
@@ -164,7 +171,7 @@ export async function HotDealsSection({
   // ストア側の GONE_TTL_MS は 72時間のままにしてある。ここは表示の絞り込み
   // だけで、検出の実績はデータとして残す。
   const gone = all
-    .filter((h) => h.status === "gone" && isFresh(h.detected_at))
+    .filter((h) => h.status === "gone" && isFresh(h.detected_at) && isBigEnough(h))
     .sort(byNewest)
     .slice(0, variant === "page" ? 9 : 3);
 
