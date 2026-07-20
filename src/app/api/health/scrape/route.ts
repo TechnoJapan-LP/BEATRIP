@@ -149,6 +149,17 @@ export async function GET() {
     .filter(([, configured]) => !configured)
     .map(([name]) => name);
 
+  // 診断用: TRIP_COM_* として実際に届いている env の **名前だけ** を返す。
+  //
+  // 「設定したのに false のまま」を切り分けるため。名前のスペル違い
+  // (TRIPCOM_SITE_ID 等)、環境スコープ漏れ、再デプロイ前の env 保存漏れの
+  // どれなのかが、これを見れば一発で分かる。値は絶対に出さない。名前自体は
+  // 公開リポジトリのソースに書かれているので新たな情報にはならない。
+  // 原因が判明したら消してよい (恒久的に必要なものではない)。
+  const tripComEnvKeys = Object.keys(process.env)
+    .filter((k) => k.toUpperCase().includes("TRIP_COM"))
+    .sort();
+
   // 超お買い得 (価格急落) の稼働状況
   // TravelPayouts 価格データAPI のトークン有無。これが無いと価格ウォッチが
   // 空になり、超お買い得の検出も実測運賃の蓄積も永久にゼロのままになる
@@ -243,6 +254,7 @@ export async function GET() {
     analytics,
     affiliate,
     affiliateGaps,
+    tripComEnvKeys,
     hotDeals,
     travelpayouts,
     priceObservations,
