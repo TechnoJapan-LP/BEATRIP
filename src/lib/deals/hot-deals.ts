@@ -63,6 +63,29 @@ const LIST_KEY = "beatrip:hotdeals:list";
  */
 const DROP_THRESHOLD = 0.3;
 const MIN_DROP_YEN = 3000;
+
+/**
+ * 「超お買い得」の基準を外部に見せるための単一の出所。
+ *
+ * 検出 (この関数群)・表示の絞り込み (HotDealsSection)・画面の説明文
+ * (/hot-deals の FAQ と本文) の3箇所が同じ基準を語る必要があり、以前は
+ * それぞれに数字を直書きしていた。実際 25%→30% の変更時に説明文の更新が
+ * 漏れかけている (FAQ は JSON-LD にも出るため、放置すると検索結果の説明と
+ * 実挙動が食い違う)。
+ *
+ * **基準を変えるときは DROP_THRESHOLD / MIN_DROP_YEN だけを直せばよい。**
+ * 表示も文言も自動で追従する。
+ */
+export const HOT_DEAL_CRITERIA = {
+  /** 下落率の下限 (%)。カードの drop_percent と直接比較できる整数 */
+  minDropPercent: Math.round(DROP_THRESHOLD * 100),
+  /** 下落額の下限 (円) */
+  minDropYen: MIN_DROP_YEN,
+  /** 説明文用の一文。上2つから組み立てるので、ここに数字を書かないこと */
+  get label(): string {
+    return `${this.minDropPercent}%以上（かつ${this.minDropYen.toLocaleString("ja-JP")}円以上）`;
+  },
+} as const;
 /** 売り切れ判定: 検出価格の +20% 超に戻ったら gone */
 const GONE_THRESHOLD = 1.2;
 /** gone のまま残す時間 (悔しさ演出 → メルマガ/X 導線)。超えたら削除 */

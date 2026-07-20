@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SiteFooter } from "@/components/site-footer";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { HotDealsSection } from "@/components/deals/hot-deals-section";
+import { HOT_DEAL_CRITERIA } from "@/lib/deals/hot-deals";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
 import { PrNotice } from "@/components/compliance/pr-notice";
 import { OG_IMAGES } from "@/lib/seo/og";
@@ -70,7 +71,7 @@ const FAQS = [
   },
   {
     q: "どうやって検出しているのですか？",
-    a: "日本発の主要路線の最安運賃を6時間ごとに観測し、直前の観測価格から30%以上（かつ3,000円以上）下落した運賃を「超お買い得」として自動検出しています。エコノミーに加え、羽田・成田・関西発 国際線のビジネスクラスも監視対象です。",
+    a: `日本発の主要路線の最安運賃を6時間ごとに観測し、直前の観測価格から${HOT_DEAL_CRITERIA.label}下落した運賃を「超お買い得」として自動検出しています。エコノミーに加え、羽田・成田・関西発 国際線のビジネスクラスも監視対象です。`,
   },
   {
     q: "掲載価格で必ず予約できますか？",
@@ -171,7 +172,7 @@ export default async function HotDealsPage({
                 2. 急落だけを抽出
               </h3>
               <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-                直前の観測から30%以上 (かつ3,000円以上) 下がった運賃だけを「超お買い得」として検出。通常のセール情報とは別軸の掘り出し物です。
+                直前の観測から{HOT_DEAL_CRITERIA.label}下がった運賃だけを「超お買い得」として検出。通常のセール情報とは別軸の掘り出し物です。
               </p>
             </div>
             <div className="rounded-xl border border-zinc-100 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">

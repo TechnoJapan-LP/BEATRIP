@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { Zap, TrendingDown, Clock, ExternalLink } from "lucide-react";
-import { loadHotDeals, type HotDeal } from "@/lib/deals/hot-deals";
+import {
+  loadHotDeals,
+  HOT_DEAL_CRITERIA,
+  type HotDeal,
+} from "@/lib/deals/hot-deals";
 
 /**
  * 超お買い得 (価格急落) セクション — /deals 上部
@@ -152,12 +156,11 @@ export async function HotDealsSection({
   const byNewest = (a: HotDeal, b: HotDeal) =>
     new Date(b.detected_at).getTime() - new Date(a.detected_at).getTime();
 
-  // 下落率の下限。store 側の DROP_THRESHOLD (0.30) と同じ基準を表示にも敷く。
-  // 引き上げ前 (25%) に検出済みのものが KV に残っており、それらは新基準を
-  // 満たさないまま TTL まで表示され続けてしまうため、ここでも弾く。
-  // store 側を変えるときはこの値も合わせること (現状ここだけ二重管理)。
-  const MIN_DROP_PERCENT = 30;
-  const isBigEnough = (h: HotDeal) => h.drop_percent >= MIN_DROP_PERCENT;
+  // 下落率の下限は store の検出基準をそのまま使う (二重管理しない)。
+  // 表示側にも敷くのは、基準を引き上げたときに旧基準で検出済みのものが
+  // KV に残り、TTL まで新基準未満のカードが出続けてしまうため。
+  const isBigEnough = (h: HotDeal) =>
+    h.drop_percent >= HOT_DEAL_CRITERIA.minDropPercent;
 
   const active = all
     .filter((h) => h.status === "active" && isFresh(h.detected_at) && isBigEnough(h))
