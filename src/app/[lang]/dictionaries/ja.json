@@ -53,9 +53,9 @@
   },
   "search": {
     "barTitle": "フライトを検索",
-    "barSubtitle": "出発地・行き先・日程からセール便を探す",
+    "barSubtitle": "出発地と行き先からセール便を探す",
     "formTitle": "フライト検索",
-    "formSubtitle": "行き先と日程からセール中のフライトを探す",
+    "formSubtitle": "出発地と行き先からセール中のフライトを探す",
     "close": "閉じる",
     "closeAria": "検索を閉じる",
     "all": "すべて",
@@ -66,10 +66,9 @@
     "selectOrigin": "出発地を選択",
     "selectDestination": "行き先を選択",
     "swapAria": "出発地と行き先を入れ替え",
-    "departDate": "出発日",
-    "returnDate": "帰国日",
-    "submit": "検索する",
-    "popular": "人気:"
+    "submit": "セールを探す",
+    "popular": "人気:",
+    "observedNote": "価格はセール・最安値の観測ベースです。搭乗日の指定・変更は予約サイトで行えます。"
   },
   "newsletter": {
     "title": "セール情報を見逃さない",

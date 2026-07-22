@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import {
   Search,
   MapPin,
-  Calendar,
   ChevronDown,
   Plane,
   ArrowRightLeft,
@@ -64,10 +63,13 @@ export function FlightSearchForm({ deals, onClose }: Props) {
     [internationalAirports]
   );
 
+  // 日付入力は 2026-07-21 に撤去した。収集が /v2/prices/latest (1路線につき
+  // 最安の1日付ペアのみ) である以上、任意の日付で探せるデータは存在せず、
+  // 「7/23 で検索したのに 7/29 発が出る」という壊れた約束になっていた
+  // (実際にユーザー報告あり)。日付・片道往復の選択は実在庫を持つ遷移先
+  // (Trip.com) の役割とし、ここは「セール路線を見つける」ことに特化する。
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
-  const [departDate, setDepartDate] = useState("");
-  const [returnDate, setReturnDate] = useState("");
   const [openDropdown, setOpenDropdown] = useState<
     "origin" | "dest" | null
   >(null);
@@ -101,19 +103,22 @@ export function FlightSearchForm({ deals, onClose }: Props) {
     trackSearchSubmit({
       origin,
       destination,
-      departDate,
-      returnDate,
+      departDate: "",
+      returnDate: "",
     });
     const matched = deals.filter((d) => {
       if (origin && d.origin_code !== origin) return false;
       if (destination && d.destination_code !== destination) return false;
-      if (departDate && d.departure_date < departDate) return false;
-      if (returnDate && d.return_date > returnDate) return false;
       return true;
     });
 
-    if (matched.length === 1) {
-      router.push(`/deals/${matched[0].id}`);
+    // 出発地×行き先が揃っていて観測があるなら、路線ページ (セールのハブ) へ。
+    // 以前は「一致1件なら deal 詳細へ直行」で、観測日と違う日付を検索した人が
+    // 個別の観測結果 (例: 7/29発) にいきなり落ちて混乱していた。路線ページなら
+    // その路線の全ディール・価格推移・予約導線 (日付は Trip.com 側で変更可能)
+    // が揃っており、「この路線のセール状況」という検索意図に正しく応えられる。
+    if (origin && destination && matched.length > 0) {
+      router.push(`/routes/${origin}-${destination}`);
       return;
     }
 
@@ -295,39 +300,12 @@ export function FlightSearchForm({ deals, onClose }: Props) {
             })}
         </div>
 
-        {/* Dates */}
-        <div className="grid grid-cols-2 gap-2 sm:col-span-2 lg:col-span-4">
-          <div>
-            <label className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-zinc-400">
-              {t.departDate}
-            </label>
-            <div className="relative">
-              <Calendar className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
-              <input
-                type="date"
-                value={departDate}
-                onChange={(e) => setDepartDate(e.target.value)}
-                // モバイルでは text-base (16px) で iOS の自動ズームを抑止
-                className="h-11 w-full rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 pl-9 pr-2 text-base text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-300 dark:hover:border-zinc-600 focus:border-zinc-400 focus:outline-none sm:text-sm"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-zinc-400">
-              {t.returnDate}
-            </label>
-            <div className="relative">
-              <Calendar className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
-              <input
-                type="date"
-                value={returnDate}
-                onChange={(e) => setReturnDate(e.target.value)}
-                min={departDate || undefined}
-                // モバイルでは text-base (16px) で iOS の自動ズームを抑止
-                className="h-11 w-full rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 pl-9 pr-2 text-base text-zinc-700 dark:text-zinc-200 transition-colors hover:border-zinc-300 dark:hover:border-zinc-600 focus:border-zinc-400 focus:outline-none sm:text-sm"
-              />
-            </div>
-          </div>
+        {/* 観測日の注記: 日付入力の代わりに「観測ベース」であることを明示する。
+            価格は観測時点の便のものであり、任意日付の検索はここでは提供しない */}
+        <div className="flex items-center sm:col-span-2 lg:col-span-4 lg:items-end lg:pb-2">
+          <p className="text-[11px] leading-relaxed text-zinc-400">
+            {t.observedNote}
+          </p>
         </div>
 
         {/* Search button */}

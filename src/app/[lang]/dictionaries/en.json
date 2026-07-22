@@ -53,9 +53,9 @@
   },
   "search": {
     "barTitle": "Search flights",
-    "barSubtitle": "Find sale fares by origin, destination, and travel dates",
+    "barSubtitle": "Find sale fares by origin and destination",
     "formTitle": "Flight search",
-    "formSubtitle": "Find flights on sale by destination and travel dates",
+    "formSubtitle": "Find flights on sale by origin and destination",
     "close": "Close",
     "closeAria": "Close search",
     "all": "All",
@@ -66,10 +66,9 @@
     "selectOrigin": "Select departure city",
     "selectDestination": "Select destination",
     "swapAria": "Swap origin and destination",
-    "departDate": "Depart",
-    "returnDate": "Return",
-    "submit": "Search",
-    "popular": "Trending:"
+    "submit": "Find sales",
+    "popular": "Trending:",
+    "observedNote": "Prices are based on observed sale fares. Pick or change travel dates on the booking site."
   },
   "newsletter": {
     "title": "Never miss a sale",
