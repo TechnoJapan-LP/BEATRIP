@@ -502,7 +502,7 @@ export default async function RoutePage({ params }: Props) {
           </div>
           {/* h1 に主要検索意図 (格安航空券) を含める — GSC で路線×格安クエリが
               200表示/0クリックのため、見出し一致で順位/CTR を取りにいく */}
-          <h1 className="font-heading text-4xl tracking-wide text-zinc-900 uppercase sm:text-5xl">
+          <h1 className="font-heading text-4xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-5xl">
             {origin}→{dest} 格安航空券
           </h1>
           <p className="mt-1 text-sm text-zinc-500">
@@ -521,14 +521,14 @@ export default async function RoutePage({ params }: Props) {
         <div className="mb-6 flex flex-wrap gap-2 text-xs">
           <Link
             href={`/airports/${parsed.origin}`}
-            className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+            className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
           >
             <ArrowLeft className="h-3 w-3" />
             {origin} ({parsed.origin}) 発の他路線
           </Link>
           <Link
             href={`/airports/${parsed.destination}`}
-            className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+            className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
           >
             {dest} ({parsed.destination}) 着の他路線
             <ArrowRight className="h-3 w-3" />
@@ -536,7 +536,7 @@ export default async function RoutePage({ params }: Props) {
           {originRegionSlug && (
             <Link
               href={`/local-flights/${originRegionSlug}`}
-              className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+              className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
             >
               {originAirport?.region}発の地方便ハブ
               <ArrowRight className="h-3 w-3" />
@@ -545,7 +545,7 @@ export default async function RoutePage({ params }: Props) {
           {/* セール速報の中核ハブへの動線 (deal→route→calendar の循環を閉じる) */}
           <Link
             href="/sale-calendar"
-            className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+            className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
           >
             各社の次回セール時期・予測
             <ArrowRight className="h-3 w-3" />
@@ -557,7 +557,7 @@ export default async function RoutePage({ params }: Props) {
             {!hasDeals && (
               <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 p-8 text-center">
                 <Plane className="mx-auto mb-3 h-8 w-8 text-zinc-300" />
-                <h2 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-1">
+                <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
                   現在この路線のセールはありません
                 </h2>
                 <p className="text-sm text-zinc-600">
@@ -567,7 +567,7 @@ export default async function RoutePage({ params }: Props) {
                 {prediction && prediction.historical_prices.length > 0 && (
                   <p className="mt-4 text-sm text-zinc-600">
                     {isObserved ? "実測データでは" : "季節傾向の推計では"}
-                    <span className="font-bold text-zinc-900">
+                    <span className="font-bold text-zinc-900 dark:text-zinc-100">
                       {prediction.best_month_name}
                     </span>
                     の出発が狙い目（年間平均より約{prediction.avg_saving_percent}%安）。あくまで目安のため、実際の価格は公式サイトでご確認ください。
@@ -584,7 +584,7 @@ export default async function RoutePage({ params }: Props) {
                         <Link
                           key={r.route}
                           href={`/routes/${r.route}`}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
                         >
                           <span>
                             {cityNameJa(r.o)}→{cityNameJa(r.d)}
@@ -601,14 +601,14 @@ export default async function RoutePage({ params }: Props) {
                 <div className="mt-5 flex flex-wrap justify-center gap-2">
                   <Link
                     href="/sale-calendar"
-                    className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                    className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
                   >
                     各社の次回セール予測を見る
                     <ArrowRight className="h-3 w-3" />
                   </Link>
                   <Link
                     href="/deals"
-                    className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50"
+                    className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
                   >
                     開催中のセール一覧
                     <ArrowRight className="h-3 w-3" />
@@ -628,7 +628,7 @@ export default async function RoutePage({ params }: Props) {
                   href={`/deals/${deal.id}`}
                   // モバイル: 縦積み (左右潰し合いでタイトルが1文字ずつ折れるのを防止)
                   // sm以上: 従来の左右レイアウト
-                  className="flex flex-col gap-3 rounded-xl border border-zinc-100 bg-white p-4 transition-colors hover:bg-zinc-50 sm:flex-row sm:items-center sm:justify-between sm:p-5"
+                  className="flex flex-col gap-3 rounded-xl border border-zinc-100 bg-white p-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800 sm:flex-row sm:items-center sm:justify-between sm:p-5"
                 >
                   <div className="flex min-w-0 items-center gap-3 sm:gap-4">
                     <Image
@@ -643,7 +643,7 @@ export default async function RoutePage({ params }: Props) {
                     />
                     <div className="min-w-0">
                       <div className="mb-1 flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-bold text-zinc-900">
+                        <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                           {deal.airline_name}
                         </span>
                         {deal.badge && (
@@ -678,7 +678,7 @@ export default async function RoutePage({ params }: Props) {
                   </div>
                   {/* 価格: モバイルは横並び左寄せ、sm以上は右寄せ縦積み */}
                   <div className="flex items-baseline gap-2 pl-[92px] sm:block sm:pl-0 sm:text-right">
-                    <div className="font-heading text-2xl tracking-wide text-zinc-900">
+                    <div className="font-heading text-2xl tracking-wide text-zinc-900 dark:text-zinc-100">
                       ¥{formatPrice(deal.sale_price)}
                     </div>
                     <div className="text-xs text-zinc-400 line-through font-mono">
@@ -763,8 +763,8 @@ export default async function RoutePage({ params }: Props) {
             )}
 
             {prediction && prediction.historical_prices.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white p-5">
-                <h2 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-1">
+              <div className="rounded-xl border border-zinc-100 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+                <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
                   Best Time to Book
                 </h2>
                 <p className="mb-3 text-[10px] text-zinc-400">
@@ -785,8 +785,8 @@ export default async function RoutePage({ params }: Props) {
             )}
 
             {sameDestRoutes.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white p-5">
-                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-1">
+              <div className="rounded-xl border border-zinc-100 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
                   {dest}への他の路線
                 </h3>
                 <p className="text-[11px] text-zinc-400 mb-3">
@@ -818,8 +818,8 @@ export default async function RoutePage({ params }: Props) {
             )}
 
             {sameOriginRoutes.length > 0 && (
-              <div className="rounded-xl border border-zinc-100 bg-white p-5">
-                <h3 className="font-heading text-lg tracking-wide text-zinc-900 uppercase mb-1">
+              <div className="rounded-xl border border-zinc-100 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+                <h3 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
                   {origin}発の他の路線
                 </h3>
                 <p className="text-[11px] text-zinc-400 mb-3">
