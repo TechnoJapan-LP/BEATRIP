@@ -53,10 +53,18 @@ export function RecentlyViewedDrawer() {
         aria-label={`最近見たアイテム ${count} 件を開く`}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="fixed right-3 sm:right-6 bottom-[var(--fab-1)] sm:bottom-6 z-30 flex min-h-[44px] items-center gap-1.5 rounded-full bg-zinc-900 px-3.5 py-2 text-white shadow-lg shadow-zinc-900/30 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-zinc-100/20"
+        // 「最近 N」というラベル付きの横長ピルだったが、幅があり Aviasales 等の
+        // コンテンツに被って見えた。他の FAB (通知/チャット) と同じ円形アイコン
+        // ボタンに統一し、件数はベルと同じ右上バッジで示す。文字は出さない
+        // (視覚ラベルは撤去。スクリーンリーダー用 aria-label は残す)。
+        className="fixed right-3 sm:right-6 bottom-[var(--fab-1)] sm:bottom-6 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/30 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-zinc-100/20"
       >
-        <History className="h-4 w-4" aria-hidden="true" />
-        <span className="text-xs font-bold">最近 {count}</span>
+        <History className="h-5 w-5" aria-hidden="true" />
+        {count > 0 && (
+          <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+            {count}
+          </span>
+        )}
       </button>
 
       {open && (
