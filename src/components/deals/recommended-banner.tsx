@@ -22,7 +22,7 @@ export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div className="flex items-center gap-2">
             <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="font-heading text-sm tracking-wider text-zinc-900 uppercase">
+            <span className="font-heading text-sm tracking-wider text-zinc-900 dark:text-zinc-100 uppercase">
               おすすめディール
             </span>
           </div>
@@ -39,7 +39,7 @@ export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
             <Link
               key={deal.id}
               href={`/deals/${deal.id}`}
-              className="flex items-center gap-3 rounded-lg bg-white px-3 py-2.5 border border-zinc-100 transition-[box-shadow,transform] hover:shadow-md hover:-translate-y-0.5"
+              className="flex items-center gap-3 rounded-lg bg-white dark:bg-zinc-900 px-3 py-2.5 border border-zinc-100 dark:border-zinc-800 transition-[box-shadow,transform] hover:shadow-md hover:-translate-y-0.5"
             >
               <div className="relative h-12 w-12 flex-shrink-0 rounded-lg overflow-hidden">
                 <Image

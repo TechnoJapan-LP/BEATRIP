@@ -502,7 +502,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                             {origin.nameJa} → {cityNameJa(destIata)}
                           </div>
                         </div>
-                        <ArrowRight className="h-3 w-3 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
+                        <ArrowRight className="h-3 w-3 text-zinc-300 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100 transition-colors" />
                       </div>
                     </Link>
                   ))}
@@ -565,7 +565,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                   <p className="text-xs text-zinc-500 mt-1">
                     北海道から沖縄まで、全国地方発の航空券セールを一覧
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     地方発トップへ
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -580,7 +580,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                   <p className="text-xs text-zinc-500 mt-1">
                     全 45 空港の就航路線・航空会社・特徴を空港別に確認
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     空港ハブを見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -598,7 +598,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                       {a.tagline ??
                         `${a.prefecture} の代表空港。発着セール・人気路線を確認。`}
                     </p>
-                    <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                    <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                       空港ページを見る
                       <ArrowRight className="h-3 w-3" />
                     </div>

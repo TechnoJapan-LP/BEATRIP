@@ -108,7 +108,7 @@ export default async function AirlinesPage({ params }: { params: Promise<{ lang:
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
           <div>
-            <h1 className="font-heading text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl lg:text-4xl">
+            <h1 className="font-heading text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl lg:text-4xl">
               航空会社セール
             </h1>
             <p className="mt-1 text-sm text-zinc-500">

@@ -35,7 +35,7 @@ export default function HubPageSkeleton({
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div
                       key={i}
-                      className="h-20 rounded-xl border border-zinc-100 bg-white p-4 animate-pulse"
+                      className="h-20 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 animate-pulse"
                     >
                       <div className="h-4 w-2/3 rounded bg-zinc-100" />
                       <div className="mt-2 h-3 w-1/2 rounded bg-zinc-100" />
@@ -51,7 +51,7 @@ export default function HubPageSkeleton({
             {Array.from({ length: 2 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-zinc-100 bg-white p-5 animate-pulse"
+                className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 animate-pulse"
               >
                 <div className="h-5 w-32 rounded bg-zinc-200" />
                 <div className="mt-3 space-y-2">

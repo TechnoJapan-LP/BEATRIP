@@ -398,7 +398,7 @@ export default async function MilesBookingGuidePage({
                   <p className="text-xs text-zinc-500 mt-1">
                     特典航空券の必要マイルとセール最安値を比較
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     シミュレーターを試す <ArrowRight className="h-3 w-3" />
                   </div>
                 </Link>
@@ -412,7 +412,7 @@ export default async function MilesBookingGuidePage({
                   <p className="text-xs text-zinc-500 mt-1">
                     マイル付与率・年会費・特典で選ぶ
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     クレカ比較を見る <ArrowRight className="h-3 w-3" />
                   </div>
                 </Link>
@@ -426,7 +426,7 @@ export default async function MilesBookingGuidePage({
                   <p className="text-xs text-zinc-500 mt-1">
                     JAL/ANA/LCC 主要キャリア網羅
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     セール予測を見る <ArrowRight className="h-3 w-3" />
                   </div>
                 </Link>

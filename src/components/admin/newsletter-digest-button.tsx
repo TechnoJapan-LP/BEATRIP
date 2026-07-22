@@ -130,7 +130,7 @@ export function NewsletterDigestButton({ token }: { token: string }) {
               <iframe
                 title="digest preview"
                 srcDoc={preview.sampleHtml}
-                className="mt-2 h-[420px] w-full rounded-md border border-zinc-200 bg-white dark:border-zinc-700"
+                className="mt-2 h-[420px] w-full rounded-md border border-zinc-200 bg-white dark:bg-zinc-900 dark:border-zinc-700"
               />
             </details>
           )}

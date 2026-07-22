@@ -49,7 +49,7 @@ export function PopularRoutesSection({
         </div>
         <Link
           href={lh("/#deals")}
-          className="hidden items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors sm:flex"
+          className="hidden items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 transition-colors sm:flex"
         >
           全ディール
           <ArrowRight className="h-4 w-4" />

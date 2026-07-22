@@ -143,7 +143,7 @@ export function DealCarousel({
     <div>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="font-heading text-xl tracking-wide text-zinc-900 uppercase">
+          <h2 className="font-heading text-xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase">
             {title}
           </h2>
           {subtitle && (

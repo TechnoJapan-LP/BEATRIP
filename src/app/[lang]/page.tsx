@@ -245,7 +245,7 @@ export default async function Home({
             </SectionHeading>
             <Link
               href={lh("/deals")}
-              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 transition-colors"
             >
               すべてのディールを見る
               <ArrowRight className="h-4 w-4" />
@@ -268,7 +268,7 @@ export default async function Home({
               </SectionHeading>
               <Link
                 href={lh("/sale-calendar")}
-                className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 transition-colors"
               >
                 各社の予測を見る
                 <ArrowRight className="h-4 w-4" />
@@ -313,7 +313,7 @@ export default async function Home({
             </SectionHeading>
             <Link
               href={lh("/hotels")}
-              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 transition-colors"
             >
               {dict.common.seeAll}
               <ArrowRight className="h-4 w-4" />
@@ -379,7 +379,7 @@ export default async function Home({
             </SectionHeading>
             <Link
               href={lh("/airports")}
-              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 transition-colors"
             >
               空港一覧
               <ArrowRight className="h-4 w-4" />
@@ -450,7 +450,7 @@ export default async function Home({
             </SectionHeading>
             <Link
               href={lh("/articles")}
-              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 transition-colors"
             >
               {dict.common.seeAll}
               <ArrowRight className="h-4 w-4" />
@@ -470,7 +470,7 @@ export default async function Home({
             </SectionHeading>
             <Link
               href={lh("/airlines")}
-              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className="flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 transition-colors"
             >
               {dict.common.seeAll}
               <ArrowRight className="h-4 w-4" />

@@ -8,10 +8,10 @@ export function ScrapeHistory({ history }: { history: ScrapeLogEntry[] }) {
     <section className="mt-8">
       <div className="flex items-center gap-2 mb-4">
         <History className="h-4 w-4 text-zinc-400" />
-        <h2 className="font-bold text-zinc-900 text-sm">取得履歴</h2>
+        <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm">取得履歴</h2>
       </div>
 
-      <div className="rounded-xl border border-zinc-100 bg-white overflow-hidden">
+      <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
         <div className="divide-y divide-zinc-50">
           {history.slice(0, 10).map((entry, i) => (
             <div

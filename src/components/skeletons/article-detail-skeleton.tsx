@@ -22,7 +22,7 @@ export default function ArticleDetailSkeleton() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8">
           {/* 本文 */}
           <div className="lg:col-span-2">
-            <div className="animate-pulse rounded-xl border border-zinc-100 bg-white p-4 sm:p-6 lg:p-8">
+            <div className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-6 lg:p-8">
               <div className="space-y-3">
                 {Array.from({ length: 10 }).map((_, i) => (
                   <div
@@ -41,7 +41,7 @@ export default function ArticleDetailSkeleton() {
             {Array.from({ length: 3 }).map((_, i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-xl border border-zinc-100 bg-white p-5"
+                className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
               >
                 <div className="h-5 w-28 rounded bg-zinc-200" />
                 <div className="mt-3 space-y-2">

@@ -382,7 +382,7 @@ export default async function EsimPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     現地通信もこのページから手配
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ハワイの予約・比較
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -397,7 +397,7 @@ export default async function EsimPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     寄港地での通信にも eSIM が便利
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     クルーズ航路を見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -412,7 +412,7 @@ export default async function EsimPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     海外ホテルもまとめて予約
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ホテル一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>

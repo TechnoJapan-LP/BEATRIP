@@ -164,7 +164,7 @@ export function PriceAlertForm({ routeKey, currentPrice, dealId }: Props) {
                 min={0}
                 step={1000}
                 // モバイル: text-base (16px) で iOS 自動ズーム回避、PC: sm:text-sm
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 py-2.5 pl-7 pr-3 text-base font-mono text-zinc-800 outline-none transition-colors focus:border-zinc-400 focus:bg-white sm:py-2 sm:text-sm"
+                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 py-2.5 pl-7 pr-3 text-base font-mono text-zinc-800 outline-none transition-colors focus:border-zinc-400 focus:bg-white dark:bg-zinc-900 sm:py-2 sm:text-sm"
               />
             </div>
           </div>
@@ -198,7 +198,7 @@ export function PriceAlertForm({ routeKey, currentPrice, dealId }: Props) {
               autoCorrect="off"
               spellCheck={false}
               // モバイル: text-base (16px) で iOS 自動ズーム回避
-              className="w-full rounded-lg border border-zinc-200 bg-zinc-50 py-2.5 px-3 text-base text-zinc-800 outline-none transition-colors focus:border-zinc-400 focus:bg-white placeholder:text-zinc-400 sm:py-2 sm:text-sm"
+              className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 py-2.5 px-3 text-base text-zinc-800 outline-none transition-colors focus:border-zinc-400 focus:bg-white dark:bg-zinc-900 placeholder:text-zinc-400 sm:py-2 sm:text-sm"
             />
           </div>
           {status === "error" && (

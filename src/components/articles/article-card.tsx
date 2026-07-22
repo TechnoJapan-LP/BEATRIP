@@ -33,7 +33,7 @@ export function ArticleCard({
     return (
       <Link
         href={`/articles/${article.slug}`}
-        className="group relative block overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100 transition-[box-shadow,transform] hover:shadow-lg hover:-translate-y-0.5"
+        className="group relative block overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 transition-[box-shadow,transform] hover:shadow-lg hover:-translate-y-0.5"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2">
           <div className="relative aspect-[4/3] sm:aspect-auto overflow-hidden">
@@ -53,7 +53,7 @@ export function ArticleCard({
             >
               {article.category}
             </Badge>
-            <h2 className="font-bold text-lg text-zinc-900 leading-snug mb-2 group-hover:text-zinc-600 transition-colors">
+            <h2 className="font-bold text-lg text-zinc-900 dark:text-zinc-100 leading-snug mb-2 group-hover:text-zinc-600 transition-colors">
               {article.title}
             </h2>
             <p className="text-sm text-zinc-500 leading-relaxed line-clamp-2 mb-3">
@@ -77,7 +77,7 @@ export function ArticleCard({
   return (
     <Link
       href={`/articles/${article.slug}`}
-      className="group block overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100 transition-[box-shadow,transform] hover:shadow-lg hover:-translate-y-0.5"
+      className="group block overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100 transition-[box-shadow,transform] hover:shadow-lg hover:-translate-y-0.5"
     >
       <div className="relative aspect-[16/9] overflow-hidden">
         <Image
@@ -96,7 +96,7 @@ export function ArticleCard({
         </Badge>
       </div>
       <div className="p-4">
-        <h3 className="font-bold text-sm text-zinc-900 leading-snug mb-1.5 group-hover:text-zinc-600 transition-colors line-clamp-2">
+        <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-100 leading-snug mb-1.5 group-hover:text-zinc-600 transition-colors line-clamp-2">
           {article.title}
         </h3>
         <p className="text-xs text-zinc-500 line-clamp-2 mb-2">

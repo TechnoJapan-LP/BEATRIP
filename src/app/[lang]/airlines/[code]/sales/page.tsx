@@ -354,7 +354,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                   </div>
                   <Link
                     href={`/deals?airline=${airlineCode}`}
-                    className="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                    className="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 transition-colors"
                   >
                     すべて見る →
                   </Link>
@@ -571,7 +571,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <Clock className="h-4 w-4 text-zinc-400" />
-            <h2 className="font-bold text-zinc-900 text-sm sm:text-base">
+            <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm sm:text-base">
               セール開催履歴
             </h2>
           </div>

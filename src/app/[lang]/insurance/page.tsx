@@ -504,7 +504,7 @@ export default async function InsurancePage({
                   <p className="text-xs text-zinc-500 mt-1">
                     付帯保険を含むカード一覧
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     クレカ比較へ
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -519,7 +519,7 @@ export default async function InsurancePage({
                   <p className="text-xs text-zinc-500 mt-1">
                     保険＋通信は出発前にまとめて準備
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     eSIM ガイドへ
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -534,7 +534,7 @@ export default async function InsurancePage({
                   <p className="text-xs text-zinc-500 mt-1">
                     米国は医療費高め・保険は手厚めが安心
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ハワイ特集へ
                     <ArrowRight className="h-3 w-3" />
                   </div>

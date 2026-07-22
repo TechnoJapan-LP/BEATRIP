@@ -340,7 +340,7 @@ export default async function CruisePage({
                   <p className="text-xs text-zinc-500 mt-1">
                     クルーズ前後の連泊にも便利
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     都市別ホテル一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -355,7 +355,7 @@ export default async function CruisePage({
                   <p className="text-xs text-zinc-500 mt-1">
                     乗船港までの航空券もBEATRIPで
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     セール一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>

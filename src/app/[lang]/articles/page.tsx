@@ -96,7 +96,7 @@ export default async function ArticlesPage({ params }: { params: Promise<{ lang:
       <Header />
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
         <div className="mb-8">
-          <h1 className="font-heading text-3xl tracking-wide text-zinc-900 uppercase sm:text-4xl lg:text-5xl">
+          <h1 className="font-heading text-3xl tracking-wide text-zinc-900 dark:text-zinc-100 uppercase sm:text-4xl lg:text-5xl">
             Articles
           </h1>
           <p className="mt-1 text-sm text-zinc-500">

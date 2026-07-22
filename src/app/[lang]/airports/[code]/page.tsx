@@ -383,7 +383,7 @@ export default async function AirportPage({ params }: Props) {
                             {dest.name}
                           </div>
                         </div>
-                        <ArrowRight className="h-3 w-3 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
+                        <ArrowRight className="h-3 w-3 text-zinc-300 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100 transition-colors" />
                       </div>
                     </Link>
                   ))}
@@ -420,7 +420,7 @@ export default async function AirportPage({ params }: Props) {
                           {code}
                         </div>
                       </div>
-                      <ArrowUpRight className="ml-auto h-3 w-3 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors" />
+                      <ArrowUpRight className="ml-auto h-3 w-3 text-zinc-300 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100 transition-colors" />
                     </Link>
                   ))}
                 </div>
@@ -505,7 +505,7 @@ export default async function AirportPage({ params }: Props) {
                     <p className="text-xs text-zinc-500 mt-1">
                       エリア別の代表ホテル・最安値検索
                     </p>
-                    <div className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                    <div className="mt-2 inline-flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                       ホテルを見る
                       <ArrowRight className="h-3 w-3" />
                     </div>

@@ -675,7 +675,7 @@ export default async function HotelCityPage({ params }: Props) {
                     {d.nameJa}のベストシーズン
                   </h3>
                   <p className="text-xs text-zinc-500 mt-1">月別おすすめ度・気候・服装</p>
-                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     詳細を見る
                     <ArrowUpRight className="h-3 w-3" />
                   </div>
@@ -688,7 +688,7 @@ export default async function HotelCityPage({ params }: Props) {
                     {d.nameJa}の現地ツアー
                   </h3>
                   <p className="text-xs text-zinc-500 mt-1">日本語ガイドから英語ツアーまで</p>
-                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     詳細を見る
                     <ArrowUpRight className="h-3 w-3" />
                   </div>
@@ -702,7 +702,7 @@ export default async function HotelCityPage({ params }: Props) {
                       {d.nameJa}の eSIM 比較
                     </h3>
                     <p className="text-xs text-zinc-500 mt-1">現地通信の選び方ガイド</p>
-                    <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                    <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                       詳細を見る
                       <ArrowUpRight className="h-3 w-3" />
                     </div>
@@ -858,7 +858,7 @@ export default async function HotelCityPage({ params }: Props) {
                             </div>
                           </div>
                         </div>
-                        <div className="mt-2.5 flex items-center justify-end gap-1 text-[11px] font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors">
+                        <div className="mt-2.5 flex items-center justify-end gap-1 text-[11px] font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100 transition-colors">
                           このディールを見る
                           <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                         </div>

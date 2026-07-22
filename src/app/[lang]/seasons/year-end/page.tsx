@@ -426,7 +426,7 @@ export default async function YearEndSeasonPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     年末年始の沖縄リゾート特集
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     沖縄ガイドを見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -441,7 +441,7 @@ export default async function YearEndSeasonPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     早期予約で差がつくハワイの取り方
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ハワイガイドを見る
                     <ArrowRight className="h-3 w-3" />
                   </div>

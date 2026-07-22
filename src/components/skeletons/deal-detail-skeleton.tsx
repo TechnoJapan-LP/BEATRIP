@@ -44,7 +44,7 @@ export default function DealDetailSkeleton() {
           {/* Left column */}
           <div className="order-2 space-y-6 lg:col-span-2 lg:order-1">
             {/* Price breakdown card */}
-            <div className="animate-pulse rounded-xl border border-zinc-100 bg-white p-4 sm:p-6">
+            <div className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-6">
               <div className="mb-4 h-6 w-40 rounded bg-zinc-200" />
               <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -60,7 +60,7 @@ export default function DealDetailSkeleton() {
             </div>
 
             {/* Chart card */}
-            <div className="animate-pulse rounded-xl border border-zinc-100 bg-white p-4 sm:p-6">
+            <div className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-6">
               <div className="mb-4 flex items-center justify-between">
                 <div className="h-6 w-44 rounded bg-zinc-200" />
                 <div className="h-4 w-20 rounded bg-zinc-200" />
@@ -73,13 +73,13 @@ export default function DealDetailSkeleton() {
           {/* Right column */}
           <div className="order-1 space-y-6 lg:order-2">
             {/* Booking button card */}
-            <div className="animate-pulse rounded-xl border border-zinc-100 bg-white p-5">
+            <div className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
               <div className="h-12 w-full rounded-lg bg-zinc-200" />
               <div className="mt-3 h-3 w-40 mx-auto rounded bg-zinc-100" />
             </div>
 
             {/* Share card */}
-            <div className="animate-pulse rounded-xl border border-zinc-100 bg-white p-5">
+            <div className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
               <div className="flex items-center justify-between">
                 <div className="h-3 w-36 rounded bg-zinc-100" />
                 <div className="flex gap-2">
@@ -91,7 +91,7 @@ export default function DealDetailSkeleton() {
             </div>
 
             {/* Details card */}
-            <div className="animate-pulse rounded-xl border border-zinc-100 bg-white p-5">
+            <div className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
               <div className="mb-4 h-6 w-24 rounded bg-zinc-200" />
               <div className="space-y-3">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -104,7 +104,7 @@ export default function DealDetailSkeleton() {
             </div>
 
             {/* Airline card */}
-            <div className="animate-pulse rounded-xl border border-zinc-100 bg-white p-5">
+            <div className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
               <div className="h-3 w-16 rounded bg-zinc-100" />
               <div className="mt-1 h-5 w-28 rounded bg-zinc-200" />
               <div className="mt-3 h-10 w-full rounded-lg bg-zinc-100" />

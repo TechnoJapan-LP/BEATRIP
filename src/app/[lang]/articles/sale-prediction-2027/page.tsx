@@ -400,7 +400,7 @@ export default async function SalePrediction2027Page({
                   <p className="text-xs text-zinc-500 mt-1">
                     ANA / JAL / Peach / Jetstar 等
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     航空会社一覧へ <ArrowRight className="h-3 w-3" />
                   </div>
                 </Link>
@@ -414,7 +414,7 @@ export default async function SalePrediction2027Page({
                   <p className="text-xs text-zinc-500 mt-1">
                     JAL/ANA マイル特典航空券の取り方
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     マイルガイドを見る <ArrowRight className="h-3 w-3" />
                   </div>
                 </Link>

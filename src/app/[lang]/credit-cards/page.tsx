@@ -512,7 +512,7 @@ export default async function CreditCardsPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     どのカードで何ヶ月で特典航空券に届くか試算
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     シミュレーターを試す
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -527,7 +527,7 @@ export default async function CreditCardsPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     クレカ付帯 vs ネット保険を完全比較
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     保険比較を見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -542,7 +542,7 @@ export default async function CreditCardsPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     現地通信もアプリ完結で
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     eSIM ガイドへ
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -557,7 +557,7 @@ export default async function CreditCardsPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     マイル積算対象のツアーも
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ツアー一覧へ
                     <ArrowRight className="h-3 w-3" />
                   </div>

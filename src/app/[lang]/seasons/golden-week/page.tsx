@@ -418,7 +418,7 @@ export default async function GoldenWeekSeasonPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     海開き直後のベストシーズン
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     沖縄ガイドを見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -433,7 +433,7 @@ export default async function GoldenWeekSeasonPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     7〜8月のピーク回避と早期予約
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     夏休みガイドを見る
                     <ArrowRight className="h-3 w-3" />
                   </div>

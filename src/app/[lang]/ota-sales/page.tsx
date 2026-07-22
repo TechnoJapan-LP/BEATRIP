@@ -674,7 +674,7 @@ export default async function OtaSalesPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     BEATRIP の主要都市別ホテル一覧
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ホテル一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -689,7 +689,7 @@ export default async function OtaSalesPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     航空券＋ホテルでさらにお得
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ツアー一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -704,7 +704,7 @@ export default async function OtaSalesPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     船旅・寄港地ホテルの併せ買いに
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     クルーズ
                     <ArrowRight className="h-3 w-3" />
                   </div>

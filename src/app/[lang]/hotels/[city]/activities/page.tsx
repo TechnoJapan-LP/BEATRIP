@@ -282,7 +282,7 @@ export default async function CityActivitiesPage({ params }: Props) {
                   <p className="text-xs text-zinc-500 mt-1">
                     エリア別の代表的ホテルを比較
                   </p>
-                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     一覧へ
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -297,7 +297,7 @@ export default async function CityActivitiesPage({ params }: Props) {
                   <p className="text-xs text-zinc-500 mt-1">
                     月別おすすめ度カレンダー
                   </p>
-                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     詳細へ
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -313,7 +313,7 @@ export default async function CityActivitiesPage({ params }: Props) {
                     <p className="text-xs text-zinc-500 mt-1">
                       現地通信を快適に
                     </p>
-                    <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                    <div className="mt-2 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                       おすすめ eSIM
                       <ArrowRight className="h-3 w-3" />
                     </div>

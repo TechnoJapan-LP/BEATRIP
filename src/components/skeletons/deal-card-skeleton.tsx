@@ -1,6 +1,6 @@
 export default function DealCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-zinc-100">
+    <div className="overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100">
       {/* Image area with overlay content */}
       <div className="relative aspect-[4/3] animate-pulse bg-zinc-200">
         {/* Badge placeholder */}

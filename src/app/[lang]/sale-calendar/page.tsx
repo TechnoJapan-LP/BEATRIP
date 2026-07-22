@@ -450,7 +450,7 @@ export default async function SaleCalendarPage({
                   </div>
                 </dl>
 
-                <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                   {c.name}のセール実績・予測を見る
                   <ArrowRight className="h-3 w-3" />
                 </span>

@@ -286,7 +286,7 @@ export function DealFilters({
           <button
             type="button"
             onClick={onResetAdvanced}
-            className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+            className="inline-flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100"
           >
             <X className="h-3.5 w-3.5" />
             詳細フィルタをクリア
@@ -453,7 +453,7 @@ export function DealFilters({
               <button
                 type="button"
                 onClick={onClearAll}
-                className="font-medium text-zinc-500 underline hover:text-zinc-900 dark:hover:text-zinc-100"
+                className="font-medium text-zinc-500 underline hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100"
               >
                 すべて表示
               </button>

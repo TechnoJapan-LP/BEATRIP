@@ -168,7 +168,7 @@ export default async function AboutPage({
                   {CONTACT_EMAIL ? (
                     <a
                       href={`mailto:${CONTACT_EMAIL}`}
-                      className="underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-100"
+                      className="underline underline-offset-2 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100"
                     >
                       {CONTACT_EMAIL}
                     </a>

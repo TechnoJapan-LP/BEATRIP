@@ -96,10 +96,10 @@ export function NotificationPanel() {
                 right: "calc(1rem + env(safe-area-inset-right, 0px))",
                 maxWidth: "calc(100vw - 2rem)",
               }}
-              className="fixed z-50 w-[340px] rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-zinc-100 animate-fade-up sm:!bottom-20 sm:!right-6"
+              className="fixed z-50 w-[340px] rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-2xl ring-1 ring-zinc-100 animate-fade-up sm:!bottom-20 sm:!right-6"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-zinc-900">通知設定</h3>
+                <h3 className="font-bold text-zinc-900 dark:text-zinc-100">通知設定</h3>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="rounded-full p-1 text-zinc-400 hover:text-zinc-600 hover:bg-zinc-100"

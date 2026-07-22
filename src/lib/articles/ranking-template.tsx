@@ -260,7 +260,7 @@ export function RankingPage({ seg, lang }: Props) {
                           </span>
                           <Link
                             href={`/hotels/${r.citySlug}`}
-                            className="text-[11px] text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 underline"
+                            className="text-[11px] text-zinc-500 hover:text-zinc-900 dark:text-zinc-100 dark:hover:text-zinc-100 underline"
                           >
                             {r.cityNameJa}
                           </Link>
@@ -365,7 +365,7 @@ export function RankingPage({ seg, lang }: Props) {
                       </h3>
                     </div>
                     <p className="text-xs text-zinc-500 mt-1">{r.desc}</p>
-                    <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                    <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                       ランキングを見る
                       <ArrowRight className="h-3 w-3" />
                     </div>

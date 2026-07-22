@@ -190,7 +190,7 @@ export default async function AirportsIndexPage({
                           就航: {a.airlines.slice(0, 3).join(", ")}
                           {a.airlines.length > 3 && " 他"}
                         </span>
-                        <ArrowRight className="h-3 w-3 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors flex-shrink-0" />
+                        <ArrowRight className="h-3 w-3 text-zinc-300 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100 transition-colors flex-shrink-0" />
                       </div>
                     </Link>
                   );

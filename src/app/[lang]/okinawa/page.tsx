@@ -403,7 +403,7 @@ export default async function OkinawaPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     エリア別の代表的ホテルを比較
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     沖縄のホテル一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -418,7 +418,7 @@ export default async function OkinawaPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     月別のおすすめ度と気候
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     月別カレンダーを見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -433,7 +433,7 @@ export default async function OkinawaPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     オアフ・マウイ・ハワイ島のリゾート総合ガイド
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ハワイ特集を見る
                     <ArrowRight className="h-3 w-3" />
                   </div>

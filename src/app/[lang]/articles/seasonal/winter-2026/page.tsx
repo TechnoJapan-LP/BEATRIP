@@ -413,7 +413,7 @@ export default async function WinterSeasonalPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     12-1 月のピーク予約タイミング
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     年末年始ガイドを見る <ArrowRight className="h-3 w-3" />
                   </div>
                 </Link>
@@ -427,7 +427,7 @@ export default async function WinterSeasonalPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     紅葉・温泉・秋グルメ
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     秋ガイドを見る <ArrowRight className="h-3 w-3" />
                   </div>
                 </Link>

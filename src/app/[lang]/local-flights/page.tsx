@@ -425,7 +425,7 @@ export default async function LocalFlightsPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     各空港の就航路線・航空会社・特徴をハブページから確認
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     空港ハブを見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -440,7 +440,7 @@ export default async function LocalFlightsPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     本島・宮古・石垣・西表・久米の総合ガイドと予約比較
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     沖縄特集を見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -455,7 +455,7 @@ export default async function LocalFlightsPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     航空券＋ホテルセットでさらにお得。地方発ツアーも豊富
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ツアーを見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -470,7 +470,7 @@ export default async function LocalFlightsPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     目的地のホテルも一括予約。航空券との同時手配で時短
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ホテルを探す
                     <ArrowRight className="h-3 w-3" />
                   </div>

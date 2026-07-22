@@ -517,7 +517,7 @@ export default async function PackageTourPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     船旅・客船パッケージの予約ガイド
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     クルーズ一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -532,7 +532,7 @@ export default async function PackageTourPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     オアフ・マウイ・ハワイ島の予約ガイド
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ハワイ特集を見る
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -547,7 +547,7 @@ export default async function PackageTourPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     都市別ホテル比較・予約
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     ホテル一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>
@@ -562,7 +562,7 @@ export default async function PackageTourPage({
                   <p className="text-xs text-zinc-500 mt-1">
                     航空会社別の路線・直販情報
                   </p>
-                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-100">
+                  <div className="mt-3 flex items-center gap-1 text-xs font-bold text-zinc-500 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100">
                     航空会社一覧
                     <ArrowRight className="h-3 w-3" />
                   </div>

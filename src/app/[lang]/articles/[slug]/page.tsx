@@ -403,7 +403,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                               {o} → {d}
                             </span>
                           </span>
-                          <ArrowRight className="h-4 w-4 flex-shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-900 dark:group-hover:text-zinc-100" />
+                          <ArrowRight className="h-4 w-4 flex-shrink-0 text-zinc-400 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-900 dark:text-zinc-100 dark:group-hover:text-zinc-100" />
                         </Link>
                       </li>
                     );

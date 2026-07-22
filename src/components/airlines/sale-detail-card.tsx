@@ -51,7 +51,7 @@ export function SaleDetailCard({
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
         <div>
-          <h3 className="text-lg font-bold text-zinc-900">{sale.saleName}</h3>
+          <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{sale.saleName}</h3>
           <p className="text-sm text-zinc-500 mt-1">{sale.description}</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -119,7 +119,7 @@ export function SaleDetailCard({
                 d.destination_code === route.destinationCode
             );
             const Row = (
-              <div className="flex items-center justify-between px-4 py-3 bg-white hover:bg-zinc-50 transition-colors">
+              <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 text-sm font-bold text-zinc-800">
@@ -146,7 +146,7 @@ export function SaleDetailCard({
                   <span className="hidden sm:inline text-xs text-zinc-400 line-through">
                     ¥{formatPrice(route.originalPrice)}
                   </span>
-                  <span className="text-sm font-bold text-zinc-900">
+                  <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                     ¥{formatPrice(route.price)}
                   </span>
                   <span className="text-xs font-bold text-rose-500">

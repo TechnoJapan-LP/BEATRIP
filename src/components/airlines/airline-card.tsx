@@ -58,7 +58,7 @@ export function AirlineCard({
     >
       <Link
         href={`/airlines/${airline.code}`}
-        className="group block rounded-xl border border-zinc-100 bg-white overflow-hidden transition-[box-shadow,border-color,transform] duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:border-zinc-200"
+        className="group block rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden transition-[box-shadow,border-color,transform] duration-200 hover:shadow-lg hover:-translate-y-0.5 hover:border-zinc-200"
       >
         <div
           className="relative h-16 flex items-center justify-between px-5"
@@ -76,7 +76,7 @@ export function AirlineCard({
               <img src={airline.logo} alt="" className="h-7 w-7 object-contain" />
             </div>
             <div>
-              <h3 className="font-bold text-zinc-900 text-sm leading-tight">
+              <h3 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm leading-tight">
                 {airline.name}
               </h3>
               <span className="text-xs text-zinc-400">{airline.nameEn}</span>

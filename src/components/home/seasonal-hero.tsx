@@ -103,7 +103,7 @@ export function SeasonalHero({
           >
             <span
               aria-hidden
-              className="h-1.5 w-1.5 rounded-full bg-white animate-soft-pulse"
+              className="h-1.5 w-1.5 rounded-full bg-white dark:bg-zinc-900 animate-soft-pulse"
             />
             {copy.keyword} ・ {new Date().getUTCFullYear()}
           </span>

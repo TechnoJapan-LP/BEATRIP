@@ -403,7 +403,7 @@ function highlight(label: string, query: string) {
   return (
     <>
       {label.slice(0, idx)}
-      <mark className="rounded-[2px] bg-amber-200/70 px-0.5 text-zinc-900 dark:bg-amber-300/80">
+      <mark className="rounded-[2px] bg-amber-200/70 px-0.5 text-zinc-900 dark:text-zinc-100 dark:bg-amber-300/80">
         {label.slice(idx, idx + q.length)}
       </mark>
       {label.slice(idx + q.length)}
