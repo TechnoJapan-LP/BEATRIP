@@ -75,7 +75,7 @@ const DESTINATION_IMAGES: Record<string, string> = {
   KMJ: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Mount_Tatsuda-yama_%28Kumamoto%29_1.jpg/960px-Mount_Tatsuda-yama_%28Kumamoto%29_1.jpg",
   NGS: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Nagasaki_City_View_from_Glover_Garden%2C_Nagasaki_2014.jpg/960px-Nagasaki_City_View_from_Glover_Garden%2C_Nagasaki_2014.jpg",
   AOJ: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Aomori_Montage.jpg/960px-Aomori_Montage.jpg",
-  HKD: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Hakodate_montage.jpg/960px-Hakodate_montage.jpg",
+  HKD: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Hakodate-panorama.jpg/1280px-Hakodate-panorama.jpg", // 函館山 夜景 (旧: Hakodate_montage はコラージュで枠に別画像が割り込んで見えた)
   MYJ: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Matsuyama_montage.jpg/960px-Matsuyama_montage.jpg",
   KCZ: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Kochi_montage.jpg/960px-Kochi_montage.jpg",
 
