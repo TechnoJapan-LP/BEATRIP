@@ -13,20 +13,25 @@ export default function DealCardSkeleton() {
           <div className="h-5 w-14 rounded-full bg-zinc-300 sm:h-6 sm:w-16" />
         </div>
 
-        {/* Bottom overlay: route + price */}
+        {/* Bottom overlay: route + price
+            実カード (deal-card.tsx) と同じ「名前列は min-w-0 flex-1 で縮む /
+            価格列は flex-shrink-0 で固定」構造にする。以前は固定幅バー
+            (w-28 + w-20) の合計が狭いカード幅を超え、読み込み中だけ 27px
+            はみ出して overflow-hidden に切られていた ("時々枠を超える" の正体)。
+            プレースホルダ幅は max-w-full で列に追従させ、絶対にはみ出さない。 */}
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="flex items-end justify-between">
-            <div>
+          <div className="flex items-end justify-between gap-3">
+            <div className="min-w-0 flex-1">
               {/* Route code */}
-              <div className="mb-1.5 h-3 w-20 rounded bg-zinc-300/60 sm:h-3.5 sm:w-24" />
+              <div className="mb-1.5 h-3 w-16 max-w-full rounded bg-zinc-300/60 sm:h-3.5 sm:w-24" />
               {/* Destination name */}
-              <div className="h-5 w-28 rounded bg-zinc-300/60 sm:h-7 sm:w-36" />
+              <div className="h-5 w-full max-w-28 rounded bg-zinc-300/60 sm:h-7" />
             </div>
-            <div className="flex flex-col items-end gap-1">
+            <div className="flex flex-shrink-0 flex-col items-end gap-1">
               {/* Original price */}
               <div className="h-2.5 w-14 rounded bg-zinc-300/60 sm:h-3 sm:w-16" />
               {/* Sale price */}
-              <div className="h-5 w-20 rounded bg-zinc-300/60 sm:h-7 sm:w-24" />
+              <div className="h-5 w-16 rounded bg-zinc-300/60 sm:h-7 sm:w-24" />
             </div>
           </div>
         </div>
