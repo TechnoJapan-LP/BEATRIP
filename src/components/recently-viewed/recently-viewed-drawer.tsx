@@ -8,6 +8,7 @@ import {
   useRecentlyViewed,
 } from "@/lib/recently-viewed/use-recently-viewed";
 import { useLocalizedHref } from "@/components/i18n/locale-provider";
+import { FabSlot, FAB_ORDER } from "@/components/fab-stack";
 
 /**
  * 全ページ右下のフローティングボタン + Recently viewed ドロワー。
@@ -43,29 +44,28 @@ export function RecentlyViewedDrawer() {
 
   return (
     <>
-      {/* フローティング起動ボタン
-          z-30 (drawer 内側は z-50)。
-          mobile では FAB スタック 1 段目 (--fab-1, bottom-nav の上)。
-          PC では右下 24px。offset は globals.css の共通トークンで一元管理。 */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={`最近見たアイテム ${count} 件を開く`}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        // 「最近 N」というラベル付きの横長ピルだったが、幅があり Aviasales 等の
-        // コンテンツに被って見えた。他の FAB (通知/チャット) と同じ円形アイコン
-        // ボタンに統一し、件数はベルと同じ右上バッジで示す。文字は出さない
-        // (視覚ラベルは撤去。スクリーンリーダー用 aria-label は残す)。
-        className="fixed right-3 sm:right-6 bottom-[var(--fab-1)] sm:bottom-6 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/30 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-zinc-100/20"
-      >
-        <History className="h-5 w-5" aria-hidden="true" />
-        {count > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
-            {count}
-          </span>
-        )}
-      </button>
+      {/* 起動ボタン。位置は FabStack が決めるので座標は持たない */}
+      <FabSlot order={FAB_ORDER.recentlyViewed}>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label={`最近見たアイテム ${count} 件を開く`}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          // 「最近 N」というラベル付きの横長ピルだったが、幅があり Aviasales 等の
+          // コンテンツに被って見えた。他の FAB (通知/チャット) と同じ円形アイコン
+          // ボタンに統一し、件数はベルと同じ右上バッジで示す。文字は出さない
+          // (視覚ラベルは撤去。スクリーンリーダー用 aria-label は残す)。
+          className="relative flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg shadow-zinc-900/30 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900 dark:shadow-zinc-100/20"
+        >
+          <History className="h-5 w-5" aria-hidden="true" />
+          {count > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+              {count}
+            </span>
+          )}
+        </button>
+      </FabSlot>
 
       {open && (
         <div

@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { MessageCircle, X, Send, Loader2 } from "lucide-react";
 import { useLocalizedHref } from "@/components/i18n/locale-provider";
+import { FabSlot, FAB_ORDER } from "@/components/fab-stack";
 
 /**
  * BEATRIP AI コンシェルジュ — 全ページ右下のフローティング chat widget。
@@ -213,18 +214,19 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* 起動ボタン: PC は右下 24px から 80px 上 / mobile は FAB スタック 3 段目
-          (--fab-3)。offset は globals.css の共通トークンで一元管理。 */}
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="AI コンシェルジュを開く"
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        className="fixed right-3 sm:right-6 bottom-[var(--fab-3)] sm:bottom-20 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-[box-shadow,transform,background-color] hover:-translate-y-0.5 hover:bg-orange-700 hover:shadow-xl active:scale-95 dark:bg-orange-500 dark:hover:bg-orange-600"
-      >
-        <MessageCircle className="h-5 w-5" aria-hidden />
-      </button>
+      {/* 起動ボタン。位置は FabStack が決めるので座標は持たない */}
+      <FabSlot order={FAB_ORDER.chat}>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          aria-label="AI コンシェルジュを開く"
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          className="relative flex h-12 w-12 items-center justify-center rounded-full bg-orange-600 text-white shadow-lg shadow-orange-600/30 transition-[box-shadow,transform,background-color] hover:-translate-y-0.5 hover:bg-orange-700 hover:shadow-xl active:scale-95 dark:bg-orange-500 dark:hover:bg-orange-600"
+        >
+          <MessageCircle className="h-5 w-5" aria-hidden />
+        </button>
+      </FabSlot>
 
       {open && (
         <div

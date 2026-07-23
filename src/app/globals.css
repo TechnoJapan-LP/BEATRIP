@@ -81,29 +81,38 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* --- フローティング要素の縦スタック (モバイル) ---------------------------
-     右下に重なる FAB 群 (Recently viewed / Comparison / Chat) と、
-     全幅の MobileStickyCta / PWA InstallPrompt が衝突しないよう、
-     共通トークンで bottom offset を一元管理する。
+  /* --- フローティング要素の縦位置 -----------------------------------------
+     右下の FAB 群 (履歴 / 通知 / 比較 / チャット) と、全幅の
+     MobileStickyCta / PWA InstallPrompt が衝突しないよう、bottom offset を
+     共通トークンで一元管理する。
 
-     スタック構造 (下 → 上):
-       0           : MobileBottomNav (h ~56px + safe-area, sm:hidden)
-       --fab-1     : Recently viewed FAB
-       --fab-2     : Comparison FAB
-       --fab-3     : Chat FAB
-       --bar-base  : MobileStickyCta / InstallPrompt (全幅バー, FAB の上)
+     以前は --fab-1 / --fab-2 / --fab-3 と「段」を静的に配っていたが、
+     FAB はどれも条件付き描画のため欠番が空白になり、また段を使わない
+     コンポーネント (通知パネル) が直書き座標で他と重なっていた。
+     現在は FabStack (src/components/fab-stack.tsx) が flex で下から詰めるので、
+     ここで決めるのは「列の下端」だけ。
 
-     PC (sm 以上) では bottom-nav が無いので各コンポーネント側で sm:bottom-*
-     を指定して右下 24px 起点の独立スタックに上書きする。 */
+     縦の並び (下 → 上):
+       0           : MobileBottomNav (h 56px + safe-area, sm:hidden)
+       --fab-base  : FAB 列の下端。実際に出ている FAB だけが上に積まれる
+       --bar-base  : MobileStickyCta / InstallPrompt (全幅バー, FAB 列の上) */
   --fab-safe: env(safe-area-inset-bottom, 0px);
   --fab-nav: 56px;            /* MobileBottomNav の高さ */
-  --fab-gap: 12px;            /* nav と最初の FAB の間隔 */
-  --fab-step: 56px;           /* FAB 同士の縦間隔 (44px ボタン + 余白) */
-  --fab-1: calc(var(--fab-safe) + var(--fab-nav) + var(--fab-gap));
-  --fab-2: calc(var(--fab-1) + var(--fab-step));
-  --fab-3: calc(var(--fab-2) + var(--fab-step));
-  /* 全幅バーは FAB スタックの上 (1 段ぶん上) に置いて重なりを防ぐ */
-  --bar-base: calc(var(--fab-3) + var(--fab-step));
+  --fab-gap: 12px;            /* nav と FAB 列の間隔 */
+  --fab-base: calc(var(--fab-safe) + var(--fab-nav) + var(--fab-gap));
+  /* 全幅バーは FAB 3 個ぶん (48px × 3 + gap 12px × 2) の上に逃がす。
+     4 個目 (チャット) は env で無効なため通常は積まれない */
+  --bar-base: calc(var(--fab-base) + 180px);
+}
+
+/* PC には bottom-nav が無いので、列の下端を右下 24px に戻す。
+   以前は各コンポーネントが sm:bottom-* を個別に持っており、
+   値がばらついて (24px / 72px / 80px) PC でだけ重なっていた。 */
+@media (min-width: 640px) {
+  :root {
+    --fab-nav: 0px;
+    --fab-gap: 24px;
+  }
 }
 
 .dark {

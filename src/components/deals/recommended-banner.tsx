@@ -17,7 +17,7 @@ export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
   if (top3.length === 0) return null;
 
   return (
-    <div className="border-t border-zinc-100 bg-zinc-50">
+    <div className="border-t border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
       <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div className="flex items-center gap-2">
@@ -28,7 +28,7 @@ export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
           </div>
           <Link
             href="/"
-            className="flex items-center gap-1 text-xs font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
+            className="flex items-center gap-1 text-xs font-medium text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-200"
           >
             すべてのディールを見る
             <ArrowRight className="h-3 w-3" />
@@ -57,15 +57,15 @@ export function RecommendedBanner({ deals }: { deals: DealSchema[] }) {
                   <span className="font-mono">{deal.origin_code}</span>
                   <Plane className="h-2.5 w-2.5 rotate-45" />
                   <span className="font-mono">{deal.destination_code}</span>
-                  <span className="text-zinc-300">·</span>
+                  <span className="text-zinc-300 dark:text-zinc-600">·</span>
                   <span>{deal.airline_name}</span>
                 </div>
-                <div className="text-sm font-bold text-zinc-800 truncate">
+                <div className="truncate text-sm font-bold text-zinc-800 dark:text-zinc-100">
                   {cityNameJa(deal.origin_code)}→{deal.destination}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-sm font-bold text-zinc-800">
+                <div className="text-sm font-bold text-zinc-800 dark:text-zinc-100">
                   ¥{formatPrice(deal.sale_price)}
                 </div>
                 <div className="flex items-center gap-0.5 justify-end">

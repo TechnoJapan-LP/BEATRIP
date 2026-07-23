@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Bell, X, MessageCircle, Trash2, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { FabSlot, FAB_ORDER } from "@/components/fab-stack";
 
 type NotificationType = "line" | "x";
 
@@ -61,26 +62,26 @@ export function NotificationPanel() {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        aria-label="通知設定を開く"
-        // モバイルでは下部の固定ナビ (56px) と重ならないよう位置を上げ、
-        // iOS のホームインジケータ safe-area も加算
-        style={{
-          bottom: "calc(72px + env(safe-area-inset-bottom, 0px))",
-          right: "calc(1rem + env(safe-area-inset-right, 0px))",
-        }}
-        /* hover は他の FAB (履歴/比較/チャット) と揃える。ここだけ
-           hover:scale-105 で拡大し、同じ位置に並ぶボタンで反応が違っていた。 */
-        className="fixed z-50 flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 sm:!bottom-6 sm:!right-6"
-      >
-        <Bell className="h-5 w-5" />
-        {subscriptions.length > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold">
-            {subscriptions.length}
-          </span>
-        )}
-      </button>
+      {/* 起動ボタン。以前はここだけ座標を直書き (mobile 72px / PC は
+          sm:!bottom-6) しており、共通トークンで置かれている履歴 FAB と
+          ほぼ同座標 (PC では完全に同座標) に重なっていた。
+          位置は FabStack に委ね、自分では座標を持たない。 */}
+      <FabSlot order={FAB_ORDER.notifications}>
+        <button
+          onClick={() => setIsOpen(true)}
+          aria-label="通知設定を開く"
+          /* hover は他の FAB (履歴/比較/チャット) と揃える。ここだけ
+             hover:scale-105 で拡大し、同じ位置に並ぶボタンで反応が違っていた。 */
+          className="relative flex h-12 w-12 items-center justify-center rounded-full bg-zinc-900 text-white shadow-lg transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-xl active:scale-95 dark:bg-zinc-100 dark:text-zinc-900"
+        >
+          <Bell className="h-5 w-5" />
+          {subscriptions.length > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white">
+              {subscriptions.length}
+            </span>
+          )}
+        </button>
+      </FabSlot>
 
       {isOpen && (
           <>
@@ -89,14 +90,11 @@ export function NotificationPanel() {
               onClick={() => setIsOpen(false)}
             />
             <div
-              // モバイルではフロートボタン (bottom 72+safe) のさらに上に出す。
+              // FAB 列の上 (--bar-base) に出す。列の高さは実際に描画された
+              // FAB の数で変わるため、個別の px 直書きはしない。
               // 画面端からはみ出さないよう左右マージンも確保。
-              style={{
-                bottom: "calc(132px + env(safe-area-inset-bottom, 0px))",
-                right: "calc(1rem + env(safe-area-inset-right, 0px))",
-                maxWidth: "calc(100vw - 2rem)",
-              }}
-              className="fixed z-50 w-[340px] rounded-2xl bg-white dark:bg-zinc-900 p-5 shadow-2xl ring-1 ring-zinc-100 animate-fade-up sm:!bottom-20 sm:!right-6"
+              style={{ maxWidth: "calc(100vw - 2rem)" }}
+              className="fixed right-3 bottom-[var(--bar-base)] z-50 w-[340px] animate-fade-up rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-zinc-100 sm:right-6 dark:bg-zinc-900 dark:ring-zinc-800"
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-zinc-900 dark:text-zinc-100">通知設定</h3>
