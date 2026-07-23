@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Plane, CreditCard, Armchair, BadgeCheck, Coins } from "lucide-react";
+import { ArrowUpRight, Plane, CreditCard, Armchair, BadgeCheck, Coins, ChevronDown } from "lucide-react";
 import type {
   MileCard,
   MileDestination,
@@ -43,6 +43,15 @@ const SPEND_PRESETS = [30000, 50000, 100000, 200000] as const;
 
 function yen(n: number): string {
   return `¥${n.toLocaleString("ja-JP")}`;
+}
+
+/**
+ * "ANAマイレージクラブ" → "ANA" / "JALマイレージバンク" → "JAL"。
+ * 移行先の一覧は 1 行に収める必要があり、正式名称だと折り返して比較しづらい。
+ * 正式名称は details を開いた先で必ず出しているので、要約側だけ短縮する。
+ */
+function shortProgram(name: string): string {
+  return name.replace(/マイレージ(クラブ|バンク)/, "");
 }
 
 export function MileSimulator({
@@ -429,92 +438,135 @@ export function MileSimulator({
           </h2>
           <p className="text-xs text-zinc-500 mb-3">
             {current.destination.label}往復
-            {cabin === "economy" ? "エコノミー" : "ビジネス"} (ANAは{SEASON_LABELS[season]}、
-            JALは基本マイル) に届くまでに必要なポイント数の換算です。
-            交換レートは各社の公式ページで確認した現行値 ({verifiedAt}時点)。
+            {cabin === "economy" ? "エコノミー" : "ビジネス"}に必要なポイント数が
+            <span className="font-medium text-zinc-700 dark:text-zinc-300">少ない順</span>。
+            <span className="text-zinc-400">
+              {" "}
+              ANAは{SEASON_LABELS[season]}・JALは基本マイル / 公式レート {verifiedAt} 時点
+            </span>
           </p>
-          <div className="space-y-3">
-            {Object.entries(
-              transferRoutes.reduce<Record<string, TransferRoute[]>>((acc, r) => {
-                (acc[r.pointName] ??= []).push(r);
-                return acc;
-              }, {})
-            ).map(([pointName, routes]) => {
-              // 同じポイントで ANA/JAL のどちらが少ないポイントで届くかを比較
-              const withNeed = routes
-                .map((r) => {
-                  const award = current.awards.find((a) => a.programId === r.programId);
-                  if (!award) return null;
-                  const need = milesForSeason(award, cabin, season);
-                  if (!need) return null;
-                  return {
-                    route: r,
-                    needPoints: Math.ceil(need / (r.rate.miles / r.rate.points)),
-                    programName: award.programName,
-                    allianceName: award.alliance?.name ?? null,
-                  };
+          {/*
+            以前は 10ブランド × 最大2プログラム = 16枚のカードを、各6項目 (名称・
+            バッジ・数値・レート・注記全文・公式リンク) すべて展開して並べていた。
+            情報量が多すぎて「結局どれが得なのか」が読み取れないという指摘を受けた。
+
+            設計方針:
+            1. ブランドを「最少ポイント順」に並べ替え、問い (どれに変える？) に即答させる
+            2. 常時見せるのは 1行だけ — ブランド名 + 最少プログラム + 必要ポイント
+            3. レート・注記・公式リンクは details に格納 (情報は削らず、隠すだけ)
+            4. 「最少」バッジは全体1位のみ。全カードに付けると強調が無意味になる
+          */}
+          <div className="space-y-2">
+            {(() => {
+              const brands = Object.entries(
+                transferRoutes.reduce<Record<string, TransferRoute[]>>((acc, r) => {
+                  (acc[r.pointName] ??= []).push(r);
+                  return acc;
+                }, {})
+              )
+                .map(([pointName, routes]) => {
+                  // 同じポイントで ANA/JAL のどちらが少ないポイントで届くかを比較
+                  const withNeed = routes
+                    .map((r) => {
+                      const award = current.awards.find((a) => a.programId === r.programId);
+                      if (!award) return null;
+                      const need = milesForSeason(award, cabin, season);
+                      if (!need) return null;
+                      return {
+                        route: r,
+                        needPoints: Math.ceil(need / (r.rate.miles / r.rate.points)),
+                        programName: award.programName,
+                        allianceName: award.alliance?.name ?? null,
+                      };
+                    })
+                    .filter((x): x is NonNullable<typeof x> => x !== null)
+                    .sort((a, b) => a.needPoints - b.needPoints);
+                  if (withNeed.length === 0) return null;
+                  return { pointName, withNeed, best: withNeed[0] };
                 })
                 .filter((x): x is NonNullable<typeof x> => x !== null)
-                .sort((a, b) => a.needPoints - b.needPoints);
-              if (withNeed.length === 0) return null;
-              const best = withNeed[0];
-              return (
-                <div
-                  key={pointName}
-                  className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 sm:p-5"
-                >
-                  <div className="flex items-center gap-2 flex-wrap mb-2">
-                    <Coins className="h-4 w-4 text-amber-500" />
-                    <span className="font-medium text-zinc-900 dark:text-zinc-100">{pointName}</span>
-                    <span className="text-[11px] text-zinc-400">{best.route.issuer}</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {withNeed.map((w, i) => (
-                      <div
-                        key={w.route.id}
-                        className={`rounded-xl px-3 py-2 border ${
-                          i === 0 && withNeed.length > 1
-                            ? "border-emerald-300 dark:border-emerald-700 bg-emerald-50/60 dark:bg-emerald-900/20"
-                            : "border-zinc-100 dark:border-zinc-800"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-2 flex-wrap">
-                          <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">
-                            {w.programName}
+                // 必要ポイントが少ない順 = お得な順
+                .sort((a, b) => a.best.needPoints - b.best.needPoints);
+
+              return brands.map(({ pointName, withNeed, best }, idx) => {
+                const alt = withNeed[1];
+                return (
+                  <details
+                    key={pointName}
+                    className="group rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 open:border-zinc-200 dark:open:border-zinc-700"
+                  >
+                    <summary className="flex cursor-pointer list-none items-center gap-3 p-3 sm:p-4 [&::-webkit-details-marker]:hidden">
+                      <Coins className="h-4 w-4 shrink-0 text-amber-500" />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-baseline gap-2">
+                          <span className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                            {pointName}
                           </span>
-                          {i === 0 && withNeed.length > 1 && (
-                            <span className="rounded bg-emerald-600 text-white px-1.5 py-0.5 text-[10px] font-medium">
-                              少ないポイントで届く
+                          {idx === 0 && (
+                            <span className="shrink-0 rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                              最少
                             </span>
                           )}
                         </div>
-                        <div className="mt-1 text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                          {w.needPoints.toLocaleString("ja-JP")}
-                          <span className="text-xs font-normal text-zinc-400 ml-1">ポイント必要</span>
-                        </div>
-                        <div className="text-[11px] text-zinc-400">
-                          {w.route.rateLabel}
-                          {w.allianceName ? ` ・ ${w.allianceName}` : ""}
-                        </div>
-                        <div className="text-[11px] text-zinc-400 mt-1">{w.route.notes}</div>
-                        <a
-                          href={w.route.source}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-1 inline-block text-[11px] text-zinc-400 underline"
-                        >
-                          公式の交換条件
-                        </a>
+                        {/* 対抗プログラムの一言。同数なら「どちらでも同じ」と伝える方が
+                            有用で、"JALなら30,000" と "30,000" を並べる冗長さも消える */}
+                        {alt && (
+                          <div className="mt-0.5 text-[11px] text-zinc-400">
+                            {alt.needPoints === best.needPoints
+                              ? `${shortProgram(best.programName)}・${shortProgram(alt.programName)}とも同数`
+                              : `${shortProgram(alt.programName)}なら ${alt.needPoints.toLocaleString("ja-JP")}`}
+                          </div>
+                        )}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+                      <div className="shrink-0 text-right">
+                        <div className="text-lg font-bold leading-none text-zinc-900 dark:text-zinc-100">
+                          {best.needPoints.toLocaleString("ja-JP")}
+                        </div>
+                        <div className="mt-0.5 text-[10px] text-zinc-400">
+                          pt → {shortProgram(best.programName)}
+                        </div>
+                      </div>
+                      <ChevronDown
+                        className="h-4 w-4 shrink-0 text-zinc-300 transition-transform group-open:rotate-180"
+                        aria-hidden="true"
+                      />
+                    </summary>
+                    {/* 詳細: レート・条件・出所。情報は消さず、既定で畳むだけ */}
+                    <div className="space-y-3 border-t border-zinc-100 px-3 pb-3 pt-3 dark:border-zinc-800 sm:px-4">
+                      <p className="text-[11px] text-zinc-400">{best.route.issuer}</p>
+                      {withNeed.map((w) => (
+                        <div key={w.route.id} className="text-[11px] leading-relaxed">
+                          <div className="flex flex-wrap items-baseline gap-x-2">
+                            <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                              {w.programName}
+                            </span>
+                            <span className="font-bold text-zinc-900 dark:text-zinc-100">
+                              {w.needPoints.toLocaleString("ja-JP")} ポイント
+                            </span>
+                            <span className="text-zinc-400">
+                              {w.route.rateLabel}
+                              {w.allianceName ? ` ・ ${w.allianceName}` : ""}
+                            </span>
+                          </div>
+                          <p className="mt-0.5 text-zinc-400">{w.route.notes}</p>
+                          <a
+                            href={w.route.source}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-0.5 inline-block text-zinc-400 underline"
+                          >
+                            公式の交換条件
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                );
+              });
+            })()}
           </div>
           <p className="mt-3 text-[11px] text-zinc-400">
-            ここに無いポイント (Vポイント・アメックスのメンバーシップ・リワード・JCB Oki Doki 等) は、
-            公式の交換条件を確認できたものから順次追加します。確認できていないレートは掲載していません。
+            公式の交換条件を確認できたポイントのみ掲載しています。確認できていないレートは載せていません。
           </p>
         </div>
       )}
