@@ -19,7 +19,6 @@ import {
   getAirlineSaleStats,
 } from "@/data/sale-history";
 import { resolveSaleHistory, computeSaleStats } from "@/lib/deals/sale-history-resolver";
-import { mockSaleEvents } from "@/data/mock-deals";
 import { SiteFooter } from "@/components/site-footer";
 import { getActiveDeals } from "@/lib/deals/deal-service";
 import { DealCard } from "@/components/deals/deal-card";
@@ -29,6 +28,11 @@ import { OG_IMAGES } from "@/lib/seo/og";
 import { formatPrice } from "@/lib/format";
 
 type Props = { params: Promise<{ code: string; lang: string }> };
+
+// スクレイプは6時間ごと。「いま開催中のセール」とタイトルの更新月表記を
+// 実態より古くしないため、同じ周期で ISR 再生成する (これが無いと build 時
+// 固定になり、更新月を名乗ると嘘になる)。
+export const revalidate = 21600;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { code } = await params;
@@ -45,9 +49,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const stats = history.source === "observed" ? computeSaleStats(history.records) : null;
   // GSCで「{社名} セール 次回/過去/いつ/時期」が主流入クエリ。
   // タイトル/メタはその検索意図にドンピシャで合わせCTRを取りに行く。
+  // 「次回 いつ」系クエリは鮮度への期待が強い。ISR (6h) で再生成されるため
+  // render 時の年月をそのまま出しても古くならない (静的ビルド固定なら嘘になる
+  // ので revalidate とセットで運用すること)。
+  const now = new Date();
+  const stamp = `【${now.getFullYear()}年${now.getMonth() + 1}月更新】`;
   const title = stats
-    ? `${airline.name} 次回セールはいつ？ 過去${stats.totalSales}回の開催実績と予測`
-    : `${airline.name} セール 次回はいつ？ 過去の開催実績と予測`;
+    ? `${airline.name} 次回セールはいつ？ 過去${stats.totalSales}回の開催実績と予測${stamp}`
+    : `${airline.name} セール 次回はいつ？ 過去の開催実績と予測${stamp}`;
   const description = stats
     ? `${airline.name}の過去${stats.totalSales}回のセール開催実績を完全分析。次回タイムセールはいつ？開催月のパターン・平均割引率${stats.avgDiscount}%・過去最安¥${stats.lowestPrice.toLocaleString()}まで。今すぐ買える現セール情報も掲載。`
     : `${airline.name}の過去セール実績と次回開催時期の目安。タイムセール・メガセール等の開催月パターンを分析。今すぐ買える現セール情報も掲載。`;
@@ -122,10 +131,6 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
   // eslint-disable-next-line react-hooks/purity
   const recentThreshold = Date.now() - 90 * 24 * 60 * 60 * 1000;
 
-  const predictions = mockSaleEvents.filter(
-    (e) => e.airline === airline.nameEn || e.airline === airline.name,
-  );
-
   const monthCounts = new Array(12).fill(0);
   records.forEach((r) => {
     monthCounts[new Date(r.startDate).getMonth()]++;
@@ -177,7 +182,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
     });
     faqs.push({
       q: `次回の${airline.name}セールはいつ頃ですか？`,
-      a: `${basis}では${peakMonths[0].month}月の開催が最多（${peakMonths[0].count}回）。${predictions.length > 0 ? `BEATRIPの予測では「${predictions[0].saleName}」が ${new Date(predictions[0].predictedDate).toLocaleDateString("ja-JP", { year: "numeric", month: "long" })} ごろの開催見込み（確度${predictions[0].probability}%）。` : ""}メールで通知を受け取りたい方はBEATRIPの価格アラートをご利用ください。`,
+      a: `${basis}では${peakMonths[0].month}月の開催が最多（${peakMonths[0].count}回）。メールで通知を受け取りたい方はBEATRIPの価格アラートをご利用ください。`,
     });
   }
   if (topSaleTypes.length > 0) {
@@ -305,6 +310,40 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
           </div>
         </div>
 
+        {/* 検索意図への即答 + メール捕捉。
+            GSC実測: このページ群がサイト全クリックの78%で、流入クエリはほぼ
+            「◯◯ セール 次回/いつ」。平均滞在17〜22秒で答えを見て離脱するため、
+            回答とコンバージョン (メール登録) をファーストビューに置く。
+            以前は stats がある社だけ・統計/グラフの下 (463行目付近) にあり、
+            実測が無い社では一切表示されなかった。 */}
+        <div className="mb-8 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/30 sm:p-5">
+          {activeDeals.length > 0 ? (
+            <a
+              href="#active-sales"
+              className="mb-2 flex items-center gap-2 text-sm font-bold text-emerald-700 dark:text-emerald-300"
+            >
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+              </span>
+              いま{airline.name}のセール掲載があります → 開催中のセールを見る
+            </a>
+          ) : (
+            <p className="mb-2 text-sm font-bold text-emerald-900 dark:text-emerald-200">
+              {airline.name}の次回セールは未発表です
+            </p>
+          )}
+          <p className="mb-3 text-xs leading-relaxed text-emerald-800/80 dark:text-emerald-300/80">
+            {peakMonths.length > 0
+              ? `${historySource === "observed" ? "BEATRIPの観測実績" : "参考データ"}では${peakMonths
+                  .map((m) => `${m.month}月`)
+                  .join("・")}の開催が多め。`
+              : "開催パターンは現在集計中。"}
+            タイムセールは数時間〜数日で終わるため、開始を待つより通知を受け取るのが確実です。
+          </p>
+          <NewsletterCTASlim source="airline_sales_top" />
+        </div>
+
         {stats && (
           <>
             {/* Stats overview */}
@@ -341,7 +380,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
 
             {/* 開催中のセール — 「次回いつ?」の訪問者に現物を提示 (主要収益導線) */}
             {activeDeals.length > 0 && (
-              <div className="mb-8">
+              <div className="mb-8 scroll-mt-20" id="active-sales">
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="relative flex h-2.5 w-2.5">
@@ -450,19 +489,6 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
             </div>
             )}
 
-            {/* メール捕捉 — 「次回いつ?」の訪問者を読者化する最重要導線。
-                タイムセールは数時間で終わるため通知の価値提案が刺さる文脈 */}
-            <div className="mb-6 rounded-xl border border-emerald-200 bg-emerald-50/60 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/30 sm:p-5">
-              <p className="mb-3 text-sm font-bold text-emerald-900 dark:text-emerald-200">
-                {airline.name}の次回セールを見逃さない
-              </p>
-              <p className="mb-3 text-xs leading-relaxed text-emerald-800/80 dark:text-emerald-300/80">
-                タイムセールは数時間〜数日で終了することがあります。新着セールを
-                週次まとめでメールにお届けします (無料・いつでも解除可)。
-              </p>
-              <NewsletterCTASlim source="airline_sales" />
-            </div>
-
             {/* Key insights */}
             <div className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 mb-6 sm:p-6">
               <h2 className="font-bold text-zinc-900 dark:text-zinc-100 text-sm mb-3 sm:text-base">
@@ -509,47 +535,9 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               </div>
             </div>
 
-            {/* Next sale prediction */}
-            {predictions.length > 0 && (
-              <div className="rounded-xl border border-emerald-200 dark:border-emerald-900 bg-emerald-50/50 dark:bg-emerald-950/30 p-4 mb-6 sm:p-6">
-                <h2 className="font-bold text-emerald-800 dark:text-emerald-300 text-sm mb-3 sm:text-base">
-                  次回セール予測
-                </h2>
-                <div className="space-y-3">
-                  {predictions.map((p) => (
-                    <div
-                      key={p.id}
-                      className="flex items-center justify-between rounded-lg bg-white dark:bg-zinc-900 px-3 py-2.5 border border-emerald-100 dark:border-emerald-900"
-                    >
-                      <div>
-                        <div className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
-                          {p.saleName}
-                        </div>
-                        <div className="text-xs text-zinc-400">
-                          予測日:{" "}
-                          {new Date(p.predictedDate).toLocaleDateString(
-                            "ja-JP",
-                            { month: "long", day: "numeric" },
-                          )}{" "}
-                          · 平均-{p.avgDiscount}%
-                        </div>
-                      </div>
-                      <Badge
-                        className={`text-[10px] font-bold ${
-                          p.probability >= 80
-                            ? "bg-emerald-500 text-white"
-                            : p.probability >= 60
-                              ? "bg-amber-500 text-white"
-                              : "bg-zinc-400 text-white"
-                        }`}
-                      >
-                        {p.probability}%
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* 「次回セール予測」ブロックは撤去済み。データ源だった
+                mockSaleEvents (捏造予測) が空配列化されて以降、一度も描画されない
+                死にコードだった。予測を再掲する場合は実測由来のみ。 */}
           </>
         )}
 
