@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   Calendar,
   Clock,
@@ -8,11 +7,9 @@ import {
   Users,
   TrendingDown,
   ExternalLink,
-  ArrowRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { AirlineSale } from "@/lib/scrapers/types";
-import { deals } from "@/data/mock-deals-v2";
 import { cityNameJa } from "@/lib/airport-names";
 import { formatPrice } from "@/lib/format";
 
@@ -112,12 +109,11 @@ export function SaleDetailCard({
           対象路線・運賃
         </span>
         <div className="divide-y divide-zinc-100 rounded-lg border border-zinc-100 overflow-hidden">
+          {/* 行の価格は実スクレイプの sale.routes 由来 (実データ)。
+              以前はここで mock-deals-v2 と路線照合し、一致したら架空価格の
+              /deals/{mock-id} へリンクしていた。実セールの行から架空詳細へ
+              飛ばすのは誤誘導なので、照合ごと撤去。予約導線は下の公式リンク */}
           {sale.routes.map((route, i) => {
-            const matchedDeal = deals.find(
-              (d) =>
-                d.origin_code === route.originCode &&
-                d.destination_code === route.destinationCode
-            );
             const Row = (
               <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
@@ -152,19 +148,10 @@ export function SaleDetailCard({
                   <span className="text-xs font-bold text-rose-500">
                     -{route.discount}%
                   </span>
-                  {matchedDeal && (
-                    <ArrowRight className="h-3.5 w-3.5 text-zinc-300" />
-                  )}
                 </div>
               </div>
             );
-            return matchedDeal ? (
-              <Link key={i} href={`/deals/${matchedDeal.id}`}>
-                {Row}
-              </Link>
-            ) : (
-              <div key={i}>{Row}</div>
-            );
+            return <div key={i}>{Row}</div>;
           })}
         </div>
       </div>

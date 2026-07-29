@@ -31,7 +31,7 @@ export async function generateMetadata({
   const isEn = lang === "en";
   const title = isEn
     ? "OTA hotel-sale guide — Booking, Agoda, Trip.com, Rakuten compared"
-    : "OTA セール完全ガイド｜Booking/楽天/Agoda/じゃらん 徹底比較";
+    : `OTA セール完全ガイド｜Booking/楽天/Agoda/じゃらん 徹底比較【${new Date().getFullYear()}年${new Date().getMonth() + 1}月更新】`;
   const description = isEn
     ? "All the major hotel OTA sales in one place. Compare Booking.com, Trip.com, Rakuten Travel, Agoda, Jalan, Yahoo Travel, Ikyu, and Expedia by strengths and reward points, plus a month-by-month sale calendar that tells you when, where, and how to book."
     : "ホテル予約サイト (OTA) のセール時期・料金比較・ポイント還元を 1 ページに集約。Booking.com / Trip.com / 楽天トラベル / Agoda / じゃらん / Yahoo!トラベル / 一休.com / Expedia など主要 OTA の特徴と月別キャンペーンカレンダーで「いつ・どこで・どう予約するか」が分かるガイド。";

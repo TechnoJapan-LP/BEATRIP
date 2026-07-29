@@ -15,7 +15,7 @@ import {
   getArticleBySlug,
   getRelatedArticles,
 } from "@/lib/articles/get-all-articles";
-import { deals } from "@/data/mock-deals-v2";
+import { getActiveDeals } from "@/lib/deals/deal-service";
 import { airlines } from "@/data/airlines";
 import { SiteFooter } from "@/components/site-footer";
 import { NewsletterCTA } from "@/components/newsletter/newsletter-cta";
@@ -214,10 +214,14 @@ export default async function ArticleDetailPage({ params }: Props) {
 
   const related = await getRelatedArticles(slug);
 
-  const linkedDeals = deals.filter(
+  // 関連ディールは実在庫のみ。以前は mock-deals-v2 をタグ照合しており、
+  // 記事の脇に架空の価格が「関連ディール」として出ていた。
+  // 実在庫に一致が無ければセクションごと消える (linkedDeals.length > 0 ガード)。
+  const linkedDeals = (await getActiveDeals()).filter(
     (d) =>
-      article.airline_tags.includes(d.airline_name) ||
-      article.route_tags.includes(`${d.origin_code}-${d.destination_code}`)
+      !d.is_sample &&
+      (article.airline_tags.includes(d.airline_name) ||
+        article.route_tags.includes(`${d.origin_code}-${d.destination_code}`))
   );
 
   const linkedAirlines = airlines.filter((a) =>
