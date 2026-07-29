@@ -39,8 +39,6 @@ const STACK_CLASS =
 export const FAB_ORDER = {
   /** 履歴: 全ページ常設で最も出現頻度が高い */
   recentlyViewed: 1,
-  /** 通知設定: TOP のみ */
-  notifications: 2,
   /** 比較: 比較リストに入れたときだけ */
   comparison: 3,
   /** AI チャット: env で有効化したときだけ */

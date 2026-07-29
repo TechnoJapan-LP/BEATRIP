@@ -23,11 +23,6 @@ import { SectionHeading } from "@/components/ui/section-heading";
 // initial JS chunk. Note: ssr:false is not allowed in Server Components,
 // so we use dynamic() without it; the components still load lazily on the
 // client and live in their own JS chunks.
-const NotificationPanel = dynamic(() =>
-  import("@/components/notifications/notification-panel").then((m) => ({
-    default: m.NotificationPanel,
-  })),
-);
 const NewsletterCTA = dynamic(() =>
   import("@/components/newsletter/newsletter-cta").then((m) => ({
     default: m.NewsletterCTA,
@@ -481,8 +476,6 @@ export default async function Home({
       </main>
 
       <SiteFooter lang={lang} />
-
-      <NotificationPanel />
     </>
   );
 }

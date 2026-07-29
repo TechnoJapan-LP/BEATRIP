@@ -32,6 +32,7 @@ import { fetchBusinessWatchSales } from "@/lib/flights/travelpayouts-prices";
 import type { ChangeDetectionResult } from "@/lib/store/sale-store";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import { writeAuditLog } from "@/lib/audit/audit-log";
+import { submitToIndexNow } from "@/lib/seo/indexnow";
 
 // スクレイプ + 記事生成 + 通知 + 実測蓄積まで行うため既定値では足りない。
 // Hobby の上限は 60 秒。
@@ -111,6 +112,26 @@ export async function GET(request: NextRequest) {
 
     // ニュースレター: 新着セールを累積し、週1かつ累積4件以上のときだけ配信
     const allNewSales: AirlineSale[] = changes.flatMap((c) => c.newSales);
+
+    // IndexNow: 新着セールがあった社のページ + 主要ハブを Bing 系へ即時通知。
+    // 失敗しても本処理は止めない (submitToIndexNow は throw しない)
+    let indexnow: { submitted: number; ok: boolean; error?: string } = {
+      submitted: 0,
+      ok: true,
+    };
+    if (allNewSales.length > 0) {
+      const changedAirlines = [
+        ...new Set(allNewSales.map((sale) => sale.airlineCode)),
+      ].filter((c) => c !== "TP");
+      indexnow = await submitToIndexNow([
+        "/",
+        "/sale-calendar",
+        ...changedAirlines.flatMap((c) => [
+          `/airlines/${c}/sales`,
+          `/airlines/${c}`,
+        ]),
+      ]);
+    }
     let newsletterSent = 0;
     let newsletterPending = 0;
     let newsletterStatus = "skipped";
@@ -297,6 +318,7 @@ export async function GET(request: NextRequest) {
       totalSales: results.reduce((sum, r) => sum + r.sales.length, 0),
       changes: {
         newSales: changes.reduce((sum, c) => sum + c.newSales.length, 0),
+        indexnow,
         endedSales: changes.reduce((sum, c) => sum + c.endedSales.length, 0),
         priceChanges: changes.reduce((sum, c) => sum + c.priceChanges.length, 0),
       },
