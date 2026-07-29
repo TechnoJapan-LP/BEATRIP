@@ -45,6 +45,12 @@ export type AirlineProfile = {
    */
   aliases?: string[];
   name: string;
+  /**
+   * 検索者が実際に打つ日本語表記 (GSC実測)。name が英字の社のみ設定し、
+   * SEO 対象ページの title/h1 では searchNameJa ?? name を使う。
+   * 例: name "Peach Aviation" に対し検索は「ピーチ セール」が月2,500表示超。
+   */
+  searchNameJa?: string;
   nameEn: string;
   logo: string;
   color: string;

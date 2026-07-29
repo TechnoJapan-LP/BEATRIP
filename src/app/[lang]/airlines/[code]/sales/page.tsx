@@ -54,12 +54,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // ので revalidate とセットで運用すること)。
   const now = new Date();
   const stamp = `【${now.getFullYear()}年${now.getMonth() + 1}月更新】`;
+  // GSC実測: 検索者は「ピーチ セール」のように日本語表記で打つ (ピーチ表記だけで
+  // 月2,500表示超)。name が英字の社は searchNameJa を優先して表記一致させる。
+  const displayName = airline.searchNameJa ?? airline.name;
   const title = stats
-    ? `${airline.name} 次回セールはいつ？ 過去${stats.totalSales}回の開催実績と予測${stamp}`
-    : `${airline.name} セール 次回はいつ？ 過去の開催実績と予測${stamp}`;
+    ? `${displayName} 次回セールはいつ？ 過去${stats.totalSales}回の開催実績と予測${stamp}`
+    : `${displayName} セール 次回はいつ？ 過去の開催実績と予測${stamp}`;
   const description = stats
-    ? `${airline.name}の過去${stats.totalSales}回のセール開催実績を完全分析。次回タイムセールはいつ？開催月のパターン・平均割引率${stats.avgDiscount}%・過去最安¥${stats.lowestPrice.toLocaleString()}まで。今すぐ買える現セール情報も掲載。`
-    : `${airline.name}の過去セール実績と次回開催時期の目安。タイムセール・メガセール等の開催月パターンを分析。今すぐ買える現セール情報も掲載。`;
+    ? `${displayName}の過去${stats.totalSales}回のセール開催実績を完全分析。次回タイムセールはいつ？開催月のパターン・平均割引率${stats.avgDiscount}%・過去最安¥${stats.lowestPrice.toLocaleString()}まで。今すぐ買える現セール情報も掲載。`
+    : `${displayName}の過去セール実績と次回開催時期の目安。タイムセール・メガセール等の開催月パターンを分析。今すぐ買える現セール情報も掲載。`;
 
   return {
     title,
@@ -111,6 +114,8 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
   const airlineCode = code.toUpperCase();
   const airline = getAirlineByCode(airlineCode);
   if (!airline) notFound();
+  // title と同じ理由 (検索表記との一致) で h1 等も searchNameJa を優先
+  const displayName = airline.searchNameJa ?? airline.name;
 
   // 実測が貯まった社は実測のみ。まだの社は出所未確認の参考データで橋渡しし、
   // 「参考」であることを画面で必ず明示する (historySource)。
@@ -197,6 +202,15 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
       a: `${basis}における最安値は ¥${stats.lowestPrice.toLocaleString()}（平均割引率 ${stats.avgDiscount}%）です。航路・時期によって変動します。`,
     });
   }
+  // GSC実測: 「ピーチ 値下がり タイミング」(35imp)「zipair 安くなるタイミング」
+  // 「スカイマーク 安くなるタイミング」等の "タイミング" クエリ群が表示されて
+  // いるのにクリック0。ページ内に対応する見出し/回答が無いため追加する。
+  // 回答は BEATRIP のシステムの事実 (6時間ごと観測・急落検出) のみで構成し、
+  // 航空会社の価格アルゴリズムについて根拠のない断定はしない。
+  faqs.push({
+    q: `${airline.name}の航空券が安くなるタイミングはいつですか？`,
+    a: `確実に安いのはセール開始直後です (人気路線は数時間で売り切れることがあります)。BEATRIPは${airline.name}を含む各社の価格を約6時間ごとに観測し、セール以外の値下がり (30%以上の急落) も検出して「超お買い得速報」に掲載しています。${peakMonths.length > 0 ? `${basis}ではセール開催は${peakMonths.map((m) => `${m.month}月`).join("・")}に多い傾向です。` : ""}`,
+  });
   faqs.push({
     q: `${airline.name}のセールを見逃さないにはどうすれば良いですか？`,
     a: `BEATRIP の無料ニュースレターに登録すると、${airline.name}を含む各社の新着セールを週次でまとめてメールで受け取れます。特定路線の値下げ通知が欲しい場合は価格アラート機能をご利用ください。`,
@@ -299,7 +313,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
             </div>
             <div>
               <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 sm:text-2xl">
-                {airline.name} セール時期・実績まとめ
+                {displayName} セール時期・実績まとめ
               </h1>
               <p className="text-xs text-zinc-400 sm:text-sm">
                 {records.length > 0
@@ -326,11 +340,11 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
               </span>
-              いま{airline.name}のセール掲載があります → 開催中のセールを見る
+              いま{displayName}のセール掲載があります → 開催中のセールを見る
             </a>
           ) : (
             <p className="mb-2 text-sm font-bold text-emerald-900 dark:text-emerald-200">
-              {airline.name}の次回セールは未発表です
+              {displayName}の次回セールは未発表です
             </p>
           )}
           <p className="mb-3 text-xs leading-relaxed text-emerald-800/80 dark:text-emerald-300/80">

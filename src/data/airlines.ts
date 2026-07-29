@@ -59,6 +59,7 @@ export const airlines: AirlineProfile[] = [
     // 勝ちページ /airlines/PCH/sales の URL 保護のため据え置き。冒頭の注記参照。
     code: "PCH",
     name: "Peach Aviation",
+    searchNameJa: "ピーチ",
     nameEn: "Peach",
     logo: "/airlines/PCH.png",
     color: "#FF6B9D",
@@ -94,6 +95,7 @@ export const airlines: AirlineProfile[] = [
     // ICAO: SJO。APJ は Peach の ICAO なので使わない (旧 APJ から 301 済み)。
     code: "SJO",
     name: "Spring Japan",
+    searchNameJa: "スプリングジャパン",
     nameEn: "Spring Japan",
     logo: "/airlines/SJO.png",
     color: "#00A651",
@@ -207,6 +209,7 @@ export const airlines: AirlineProfile[] = [
     code: "ZG",
     aliases: ["ZIP"],
     name: "ZIPAIR",
+    searchNameJa: "ZIPAIR（ジップエア）",
     nameEn: "ZIPAIR Tokyo",
     logo: "/airlines/ZG.svg",
     color: "#00A99D",
@@ -238,6 +241,7 @@ export const airlines: AirlineProfile[] = [
     code: "HD",
     aliases: ["AIRDO", "ADO"], // ADO = ICAO
     name: "AIRDO",
+    searchNameJa: "AIRDO（エアドゥ）",
     nameEn: "AIRDO",
     logo: "/airlines/HD.svg",
     color: "#F5A200",
