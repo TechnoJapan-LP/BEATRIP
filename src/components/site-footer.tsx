@@ -1,16 +1,21 @@
 // Server Component:
-// 大型データ (mock-deals-v2 / RecommendedBanner) と辞書ロードは
-// すべてサーバー側で完結させ、クライアント JS バンドルから除外する。
+// 大型データ (RecommendedBanner) と辞書ロードはすべてサーバー側で完結させ、
+// クライアント JS バンドルから除外する。
 // 以前は "use client" 化されており、895行の mock-deals がブラウザに送られていた。
 
 import Link from "next/link";
 import { Plane } from "lucide-react";
 import { RecommendedBanner } from "@/components/deals/recommended-banner";
-import { deals } from "@/data/mock-deals-v2";
+import { getActiveDeals } from "@/lib/deals/deal-service";
 import { getDictionary, hasLocale } from "@/app/[lang]/dictionaries";
 import { localizeHref, type Locale } from "@/lib/i18n/locale";
 
 export async function SiteFooter({ lang = "ja" }: { lang?: string } = {}) {
+  // おすすめディールは実在庫のみ。以前は mock-deals-v2 を直接 import しており、
+  // getActiveDeals の is_sample ラベリングを素通りして、架空の価格・割引率が
+  // 全ページのフッターに無表示のまま出ていた (捏造データ排除ポリシー違反)。
+  // 実在庫ゼロのときはバナーごと消える (RecommendedBanner は空配列で null)。
+  const deals = (await getActiveDeals()).filter((d) => !d.is_sample);
   const locale: Locale = hasLocale(lang) ? lang : "ja";
   // 辞書は実際には部分的にネスト配列やオブジェクトを持つが、フッターでは
   // 文字列フィールドしか参照しない。型を厳密にすると不必要に煩雑になるため
