@@ -103,7 +103,7 @@ export function AirlineCard({
                 return (
                   <div
                     key={sale.id}
-                    className="rounded-lg bg-zinc-50 px-3 py-2"
+                    className="rounded-lg bg-zinc-50 px-3 py-2 dark:bg-zinc-800/60"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-medium text-zinc-700 truncate mr-2">

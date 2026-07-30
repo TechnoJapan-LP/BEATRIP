@@ -7,13 +7,13 @@ export default function ArticleDetailSkeleton() {
       <Header />
 
       {/* ヒーロー画像 */}
-      <div className="relative h-[28vh] min-h-[220px] animate-pulse overflow-hidden bg-zinc-200 sm:h-[35vh] sm:min-h-[280px]">
+      <div className="relative h-[28vh] min-h-[220px] animate-pulse overflow-hidden bg-zinc-200 dark:bg-zinc-800 sm:h-[35vh] sm:min-h-[280px]">
         <div className="absolute bottom-0 left-0 right-0">
           <div className="mx-auto max-w-4xl px-4 pb-8 sm:px-6">
-            <div className="mb-4 h-4 w-48 rounded bg-zinc-300/50" />
-            <div className="mb-3 h-5 w-20 rounded-full bg-zinc-300/50" />
-            <div className="h-7 w-3/4 rounded bg-zinc-300/60 sm:h-9" />
-            <div className="mt-3 h-3 w-32 rounded bg-zinc-300/40" />
+            <div className="mb-4 h-4 w-48 rounded bg-zinc-300 dark:bg-zinc-700/50" />
+            <div className="mb-3 h-5 w-20 rounded-full bg-zinc-300 dark:bg-zinc-700/50" />
+            <div className="h-7 w-3/4 rounded bg-zinc-300/60 dark:bg-zinc-700/60 sm:h-9" />
+            <div className="mt-3 h-3 w-32 rounded bg-zinc-300 dark:bg-zinc-700/40" />
           </div>
         </div>
       </div>
@@ -43,10 +43,10 @@ export default function ArticleDetailSkeleton() {
                 key={i}
                 className="animate-pulse rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5"
               >
-                <div className="h-5 w-28 rounded bg-zinc-200" />
+                <div className="h-5 w-28 rounded bg-zinc-200 dark:bg-zinc-800" />
                 <div className="mt-3 space-y-2">
-                  <div className="h-9 w-full rounded-lg bg-zinc-100" />
-                  <div className="h-9 w-full rounded-lg bg-zinc-100" />
+                  <div className="h-9 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60" />
+                  <div className="h-9 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60" />
                 </div>
               </div>
             ))}

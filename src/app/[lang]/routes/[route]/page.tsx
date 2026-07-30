@@ -555,7 +555,7 @@ export default async function RoutePage({ params }: Props) {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-4">
             {!hasDeals && (
-              <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 p-8 text-center">
+              <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50 p-8 text-center dark:border-zinc-700 dark:bg-zinc-900/50">
                 <Plane className="mx-auto mb-3 h-8 w-8 text-zinc-300" />
                 <h2 className="font-heading text-lg tracking-wide text-zinc-900 dark:text-zinc-100 uppercase mb-1">
                   現在この路線のセールはありません
@@ -797,7 +797,7 @@ export default async function RoutePage({ params }: Props) {
                     <Link
                       key={r.route}
                       href={`/routes/${r.route}`}
-                      className="card-interactive flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 hover:bg-zinc-100"
+                      className="card-interactive flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 hover:bg-zinc-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800"
                     >
                       <span className="text-xs text-zinc-600">
                         <span className="font-medium text-zinc-800">
@@ -830,7 +830,7 @@ export default async function RoutePage({ params }: Props) {
                     <Link
                       key={r.route}
                       href={`/routes/${r.route}`}
-                      className="card-interactive flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 hover:bg-zinc-100"
+                      className="card-interactive flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2 hover:bg-zinc-100 dark:bg-zinc-800/60 dark:hover:bg-zinc-800"
                     >
                       <span className="text-xs text-zinc-600">
                         <span className="font-medium text-zinc-800">

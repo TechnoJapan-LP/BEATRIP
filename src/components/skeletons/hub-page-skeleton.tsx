@@ -30,15 +30,15 @@ export default function HubPageSkeleton({
             {/* セクション見出し + カードグリッド */}
             {Array.from({ length: 2 }).map((_, s) => (
               <section key={s}>
-                <div className="mb-3 h-6 w-48 rounded bg-zinc-200 animate-pulse" />
+                <div className="mb-3 h-6 w-48 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div
                       key={i}
                       className="h-20 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 animate-pulse"
                     >
-                      <div className="h-4 w-2/3 rounded bg-zinc-100" />
-                      <div className="mt-2 h-3 w-1/2 rounded bg-zinc-100" />
+                      <div className="h-4 w-2/3 rounded bg-zinc-100 dark:bg-zinc-800/60" />
+                      <div className="mt-2 h-3 w-1/2 rounded bg-zinc-100 dark:bg-zinc-800/60" />
                     </div>
                   ))}
                 </div>
@@ -53,10 +53,10 @@ export default function HubPageSkeleton({
                 key={i}
                 className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 animate-pulse"
               >
-                <div className="h-5 w-32 rounded bg-zinc-200" />
+                <div className="h-5 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
                 <div className="mt-3 space-y-2">
-                  <div className="h-10 w-full rounded-lg bg-zinc-100" />
-                  <div className="h-10 w-full rounded-lg bg-zinc-100" />
+                  <div className="h-10 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60" />
+                  <div className="h-10 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60" />
                 </div>
               </div>
             ))}

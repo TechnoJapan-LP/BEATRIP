@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import type { AirlineSale } from "@/lib/scrapers/types";
 import { cityNameJa } from "@/lib/airport-names";
+import { cleanScrapedDescription } from "@/lib/scrapers/clean-description";
 import { formatPrice } from "@/lib/format";
 
 
@@ -41,15 +42,17 @@ export function SaleDetailCard({
     <div
       className={`animate-fade-up rounded-xl border p-6 transition-[border-color,background-color] ${
         isUrgent
-          ? "border-rose-200 bg-rose-50/30"
-          : "border-zinc-100 bg-white"
+          ? "border-rose-200 bg-rose-50/30 dark:border-rose-900/60 dark:bg-rose-950/20"
+          : "border-zinc-100 bg-white dark:border-zinc-800 dark:bg-zinc-900"
       }`}
       style={{ animationDelay: `${Math.min(index * 0.08, 0.6)}s` }}
     >
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5">
         <div>
           <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{sale.saleName}</h3>
-          <p className="text-sm text-zinc-500 mt-1">{sale.description}</p>
+          <p className="mt-1 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+            {cleanScrapedDescription(sale.description)}
+          </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {isUrgent && (
@@ -66,39 +69,39 @@ export function SaleDetailCard({
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        <div className="rounded-lg bg-zinc-50 px-3 py-2">
+        <div className="rounded-lg bg-zinc-50 px-3 py-2 dark:bg-zinc-800/60">
           <div className="flex items-center gap-1 text-[10px] text-zinc-400 mb-0.5">
             <Calendar className="h-3 w-3" />
             セール期間
           </div>
-          <span className="text-xs font-medium text-zinc-700">
+          <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
             {formatDate(sale.startDate)} 〜 {formatDate(sale.endDate)}
           </span>
         </div>
-        <div className="rounded-lg bg-zinc-50 px-3 py-2">
+        <div className="rounded-lg bg-zinc-50 px-3 py-2 dark:bg-zinc-800/60">
           <div className="flex items-center gap-1 text-[10px] text-zinc-400 mb-0.5">
             <Clock className="h-3 w-3" />
             予約期限
           </div>
-          <span className="text-xs font-medium text-zinc-700">
+          <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
             {formatDate(sale.bookingDeadline)}
           </span>
         </div>
-        <div className="rounded-lg bg-zinc-50 px-3 py-2">
+        <div className="rounded-lg bg-zinc-50 px-3 py-2 dark:bg-zinc-800/60">
           <div className="flex items-center gap-1 text-[10px] text-zinc-400 mb-0.5">
             <Plane className="h-3 w-3" />
             搭乗期間
           </div>
-          <span className="text-xs font-medium text-zinc-700">
+          <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
             {formatDate(sale.travelPeriodStart)} 〜
           </span>
         </div>
-        <div className="rounded-lg bg-zinc-50 px-3 py-2">
+        <div className="rounded-lg bg-zinc-50 px-3 py-2 dark:bg-zinc-800/60">
           <div className="flex items-center gap-1 text-[10px] text-zinc-400 mb-0.5">
             <TrendingDown className="h-3 w-3" />
             対象路線
           </div>
-          <span className="text-xs font-medium text-zinc-700">
+          <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
             {sale.routes.length}路線
           </span>
         </div>
@@ -108,7 +111,7 @@ export function SaleDetailCard({
         <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
           対象路線・運賃
         </span>
-        <div className="divide-y divide-zinc-100 rounded-lg border border-zinc-100 overflow-hidden">
+        <div className="divide-y divide-zinc-100 overflow-hidden rounded-lg border border-zinc-100 dark:divide-zinc-800 dark:border-zinc-800">
           {/* 行の価格は実スクレイプの sale.routes 由来 (実データ)。
               以前はここで mock-deals-v2 と路線照合し、一致したら架空価格の
               /deals/{mock-id} へリンクしていた。実セールの行から架空詳細へ
@@ -118,9 +121,9 @@ export function SaleDetailCard({
               <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-1.5 text-sm font-bold text-zinc-800">
+                    <div className="flex items-center gap-1.5 text-sm font-bold text-zinc-800 dark:text-zinc-200">
                       <span className="truncate">{cityNameJa(route.originCode)}</span>
-                      <Plane className="h-3 w-3 flex-shrink-0 text-zinc-300 rotate-45" />
+                      <Plane className="h-3 w-3 flex-shrink-0 rotate-45 text-zinc-300 dark:text-zinc-600" />
                       <span className="truncate">{cityNameJa(route.destinationCode)}</span>
                     </div>
                     <div className="text-[10px] font-mono text-zinc-400 mt-0.5">
@@ -163,7 +166,7 @@ export function SaleDetailCard({
           // sale.sourceUrl は通常 航空会社の公式ページだが、提携経路（A8等）に
           // 切り替わる可能性があるため安全側で sponsored も付与（ステマ規制対応）
           rel="sponsored noopener noreferrer"
-          className="flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
+          className="flex items-center gap-1 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-200"
         >
           公式サイトで確認
           <ExternalLink className="h-3 w-3" />

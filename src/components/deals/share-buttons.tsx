@@ -92,7 +92,7 @@ export function ShareButtons({
       </a>
       <button
         onClick={copyLink}
-        className="flex items-center justify-center h-8 w-8 rounded-lg bg-zinc-100 text-zinc-600 transition-colors hover:bg-zinc-200"
+        className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
         title="リンクをコピー"
       >
         {copied ? (

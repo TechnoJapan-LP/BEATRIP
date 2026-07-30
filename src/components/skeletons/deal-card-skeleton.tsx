@@ -2,15 +2,15 @@ export default function DealCardSkeleton() {
   return (
     <div className="overflow-hidden rounded-xl bg-white dark:bg-zinc-900 shadow-sm ring-1 ring-zinc-100">
       {/* Image area with overlay content */}
-      <div className="relative aspect-[4/3] animate-pulse bg-zinc-200">
+      <div className="relative aspect-[4/3] animate-pulse bg-zinc-200 dark:bg-zinc-800">
         {/* Badge placeholder */}
         <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-          <div className="h-4 w-12 rounded-full bg-zinc-300 sm:h-5 sm:w-14" />
+          <div className="h-4 w-12 rounded-full bg-zinc-300 dark:bg-zinc-700 sm:h-5 sm:w-14" />
         </div>
 
         {/* Discount badge placeholder */}
         <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
-          <div className="h-5 w-14 rounded-full bg-zinc-300 sm:h-6 sm:w-16" />
+          <div className="h-5 w-14 rounded-full bg-zinc-300 dark:bg-zinc-700 sm:h-6 sm:w-16" />
         </div>
 
         {/* Bottom overlay: route + price
@@ -23,15 +23,15 @@ export default function DealCardSkeleton() {
           <div className="flex items-end justify-between gap-3">
             <div className="min-w-0 flex-1">
               {/* Route code */}
-              <div className="mb-1.5 h-3 w-16 max-w-full rounded bg-zinc-300/60 sm:h-3.5 sm:w-24" />
+              <div className="mb-1.5 h-3 w-16 max-w-full rounded bg-zinc-300/60 dark:bg-zinc-700/60 sm:h-3.5 sm:w-24" />
               {/* Destination name */}
-              <div className="h-5 w-full max-w-28 rounded bg-zinc-300/60 sm:h-7" />
+              <div className="h-5 w-full max-w-28 rounded bg-zinc-300/60 dark:bg-zinc-700/60 sm:h-7" />
             </div>
             <div className="flex flex-shrink-0 flex-col items-end gap-1">
               {/* Original price */}
-              <div className="h-2.5 w-14 rounded bg-zinc-300/60 sm:h-3 sm:w-16" />
+              <div className="h-2.5 w-14 rounded bg-zinc-300/60 dark:bg-zinc-700/60 sm:h-3 sm:w-16" />
               {/* Sale price */}
-              <div className="h-5 w-16 rounded bg-zinc-300/60 sm:h-7 sm:w-24" />
+              <div className="h-5 w-16 rounded bg-zinc-300/60 dark:bg-zinc-700/60 sm:h-7 sm:w-24" />
             </div>
           </div>
         </div>
@@ -40,10 +40,10 @@ export default function DealCardSkeleton() {
       {/* Bottom bar: airline info */}
       <div className="flex animate-pulse items-center justify-between px-2.5 py-2 sm:px-4 sm:py-2.5">
         <div className="flex items-center gap-2">
-          <div className="h-3 w-16 rounded bg-zinc-200 sm:w-20" />
-          <div className="hidden h-3 w-12 rounded bg-zinc-200 sm:block" />
+          <div className="h-3 w-16 rounded bg-zinc-200 dark:bg-zinc-800 sm:w-20" />
+          <div className="hidden h-3 w-12 rounded bg-zinc-200 dark:bg-zinc-800 sm:block" />
         </div>
-        <div className="h-3 w-20 rounded bg-zinc-200 sm:w-24" />
+        <div className="h-3 w-20 rounded bg-zinc-200 dark:bg-zinc-800 sm:w-24" />
       </div>
     </div>
   );

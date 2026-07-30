@@ -119,13 +119,13 @@ export function PriceAlertForm({ routeKey, currentPrice, dealId }: Props) {
         </div>
       ) : status === "set" ? (
         <div className="space-y-3">
-          <div className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2.5">
+          <div className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2.5 dark:bg-zinc-800/60">
             <span className="text-xs text-zinc-500">通知価格</span>
             <span className="text-sm font-mono font-bold text-zinc-800">
               ¥{threshold.toLocaleString()} 以下
             </span>
           </div>
-          <div className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2.5">
+          <div className="flex items-center justify-between rounded-lg bg-zinc-50 px-3 py-2.5 dark:bg-zinc-800/60">
             <span className="text-xs text-zinc-500">通知先</span>
             <span className="text-xs font-mono text-zinc-600 truncate ml-2">
               {email}

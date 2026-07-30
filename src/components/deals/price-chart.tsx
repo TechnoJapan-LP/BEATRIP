@@ -45,7 +45,7 @@ export function PriceChart({ prediction }: { prediction: BestTimeToBook }) {
           <span className="text-[10px] text-zinc-400">高い</span>
         </div>
       </div>
-      <div className="relative rounded-lg bg-zinc-50 px-3 pt-4 pb-2">
+      <div className="relative rounded-lg bg-zinc-50 px-3 pt-4 pb-2 dark:bg-zinc-800/60">
         <div className="absolute inset-x-3 top-4 bottom-8 flex flex-col justify-between pointer-events-none">
           {[0, 1, 2, 3].map((i) => (
             <div key={i} className="border-b border-zinc-200/70" />
