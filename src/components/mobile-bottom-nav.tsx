@@ -13,21 +13,32 @@ import { useLocalizedHref } from "@/components/i18n/locale-provider";
  */
 const NAV = [
   // ディールは独立一覧ページ /deals へ (ホームも実質ディール一覧のため active 扱い)
-  { href: "/deals", label: "ディール", icon: Plane, match: (p: string) => p === "/" || p === "/en" || p.startsWith("/deals") || p.startsWith("/en/deals") },
+  { href: "/deals", label: "ディール", icon: Plane, match: (p: string) => p === "/" || p.startsWith("/deals") },
   // 「セール予測」: GSC実測で全クリックの78%が airlines/*/sales に着地する
   // 最需要コンテンツ。以前ここにあった「地方便」は実測クリックほぼ0
   // (/local-flights 0c) で、一等地を最も見られない導線が占有していた。
-  { href: "/sale-calendar", label: "セール予測", icon: CalendarDays, match: (p: string) => p.startsWith("/sale-calendar") || p.startsWith("/airlines") || p.startsWith("/hot-deals") || p.startsWith("/en/sale-calendar") || p.startsWith("/en/airlines") },
-  { href: "/hotels", label: "ホテル", icon: BedDouble, match: (p: string) => p.startsWith("/hotels") || p.startsWith("/en/hotels") },
-  { href: "/articles", label: "記事", icon: BookOpen, match: (p: string) => p.startsWith("/articles") || p.startsWith("/en/articles") },
+  { href: "/sale-calendar", label: "セール予測", icon: CalendarDays, match: (p: string) => p.startsWith("/sale-calendar") || p.startsWith("/airlines") || p.startsWith("/hot-deals") },
+  { href: "/hotels", label: "ホテル", icon: BedDouble, match: (p: string) => p.startsWith("/hotels") },
+  { href: "/articles", label: "記事", icon: BookOpen, match: (p: string) => p.startsWith("/articles") },
 ];
 
+/**
+ * usePathname は環境で返り値が揺れる: dev はブラウザの表示パス
+ * (/airlines/BC/sales) だが、本番は middleware のリライト後の内部パス
+ * (/ja/airlines/BC/sales) を返し、ロケール抜きの match が全て外れて
+ * アクティブタブが消えていた。先頭のロケール片を剥がして正規化する。
+ */
+function stripLocale(p: string): string {
+  const stripped = p.replace(/^\/(ja|en)(?=\/|$)/, "");
+  return stripped === "" ? "/" : stripped;
+}
+
 export function MobileBottomNav() {
-  const pathname = usePathname() ?? "/";
+  const pathname = stripLocale(usePathname() ?? "/");
   const lh = useLocalizedHref();
 
   // ディール詳細ページ (StickyCTA がある) は重複を避けるため非表示
-  const onDealDetail = /^\/(?:en\/)?deals\/[^/]+$/.test(pathname);
+  const onDealDetail = /^\/deals\/[^/]+$/.test(pathname);
   if (onDealDetail) return null;
 
   return (
