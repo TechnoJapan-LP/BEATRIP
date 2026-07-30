@@ -53,7 +53,14 @@ function ActiveCard({ h }: { h: HotDeal }) {
           <Zap className="h-3 w-3" />
           {h.cabin === "Business" ? "ビジネスが急落" : "価格急落"}
         </span>
-        <span className="text-[10px] text-zinc-400">{timeAgo(h.detected_at)}に検出</span>
+        {/* last_seen_at = この価格を直近スキャンでも確認できた実時刻。
+            「◯分前にもまだあった」は事実ベースで出せる最も強い鮮度シグナル */}
+        <span className="text-right text-[10px] leading-tight text-zinc-400">
+          {timeAgo(h.detected_at)}に検出
+          <span className="block text-emerald-600 dark:text-emerald-400">
+            {timeAgo(h.last_seen_at)}の観測でも確認
+          </span>
+        </span>
       </div>
       <div className="min-w-0">
         <p className="truncate text-sm font-bold text-zinc-900 dark:text-zinc-100">

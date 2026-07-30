@@ -28,6 +28,7 @@ import {
   TrendingUp,
   BookOpen,
   BookA,
+  Search,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { GlobalSearch } from "@/components/search/global-search";
@@ -55,6 +56,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  // 検索アイコン起点でメニューを開いたときだけ、検索入力に自動フォーカス
+  const [focusSearch, setFocusSearch] = useState(false);
   const nav = useDictionary<Record<string, string>>("nav");
   const lh = useLocalizedHref();
 
@@ -285,8 +288,23 @@ export function Header() {
           <div className="hidden sm:block">
             <ThemeToggle />
           </div>
+          {/* モバイルで検索が隠れていた (ハンバーガー2タップ先)。検索は回遊の
+              起点なのでアイコンで1タップ露出し、開いたら入力に即フォーカス */}
           <button
-            onClick={() => setOpen(!open)}
+            onClick={() => {
+              setFocusSearch(true);
+              setOpen(true);
+            }}
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 active:scale-95 sm:hidden dark:text-zinc-300 dark:hover:bg-zinc-800"
+            aria-label="検索を開く"
+          >
+            <Search className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => {
+              setFocusSearch(false);
+              setOpen(!open);
+            }}
             className="flex h-11 w-11 items-center justify-center rounded-lg text-zinc-600 dark:text-zinc-300 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-95 sm:hidden"
             aria-label={nav.menu}
           >
@@ -299,7 +317,10 @@ export function Header() {
       {open && (
         <nav className="animate-fade-in border-t border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-2 pt-2 sm:hidden max-h-[calc(100vh-3.5rem)] overflow-y-auto" style={{ paddingBottom: "calc(1rem + env(safe-area-inset-bottom, 0px))" }}>
           <div className="px-1 pb-2">
-            <GlobalSearch placeholder="都市・空港・航空会社を検索" />
+            <GlobalSearch
+              placeholder="都市・空港・航空会社を検索"
+              autoFocus={focusSearch}
+            />
           </div>
           {menus.map((menu) => {
             const isExpanded = mobileExpanded === menu.key;

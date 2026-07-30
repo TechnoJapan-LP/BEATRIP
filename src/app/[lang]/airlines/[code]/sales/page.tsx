@@ -742,6 +742,46 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
           </div>
         </div>
 
+        {/* 前後の航空会社ページャー — 「次々に見比べる」閲覧を1タップで続けられる。
+            スワイプ遷移は iOS の戻るエッジジェスチャと衝突するため採用せず、
+            明示的なボタンで同じ連続閲覧体験を提供する */}
+        {(() => {
+          const idx = airlines.findIndex((a) => a.code === airlineCode);
+          const prev = airlines[(idx - 1 + airlines.length) % airlines.length];
+          const next = airlines[(idx + 1) % airlines.length];
+          return (
+            <nav
+              aria-label="前後の航空会社のセールページ"
+              className="mt-8 grid grid-cols-2 gap-3"
+            >
+              <Link
+                href={`/airlines/${prev.code}/sales`}
+                className="flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
+              >
+                <ArrowLeft className="h-4 w-4 flex-shrink-0 text-zinc-400" />
+                <span className="min-w-0">
+                  <span className="block text-[10px] text-zinc-400">前の航空会社</span>
+                  <span className="block truncate text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                    {prev.searchNameJa ?? prev.name}
+                  </span>
+                </span>
+              </Link>
+              <Link
+                href={`/airlines/${next.code}/sales`}
+                className="flex items-center justify-end gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-right transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:border-zinc-600 dark:hover:bg-zinc-800"
+              >
+                <span className="min-w-0">
+                  <span className="block text-[10px] text-zinc-400">次の航空会社</span>
+                  <span className="block truncate text-sm font-bold text-zinc-800 dark:text-zinc-200">
+                    {next.searchNameJa ?? next.name}
+                  </span>
+                </span>
+                <ArrowLeft className="h-4 w-4 flex-shrink-0 rotate-180 text-zinc-400" />
+              </Link>
+            </nav>
+          );
+        })()}
+
         {/* 収益レール: 予約サイト比較 (env 設定済みパートナーのみ表示) */}
         <div className="mt-8">
           <JapanesePartnersPanel

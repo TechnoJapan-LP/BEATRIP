@@ -415,10 +415,15 @@ export function GlobalSearch({
   placeholder,
   className,
   compact,
+  autoFocus,
 }: {
   placeholder?: string;
   className?: string;
   compact?: boolean;
+  /** マウント時に入力へフォーカス (モバイルの検索アイコン起点で使用)。
+      iOS はジェスチャ外の focus() でキーボードを出さないため、
+      setTimeout ではなく React の autoFocus 属性で行う */
+  autoFocus?: boolean;
 }) {
   const router = useRouter();
   const lh = useLocalizedHref();
@@ -539,6 +544,7 @@ export function GlobalSearch({
         <Search className="h-4 w-4 flex-shrink-0 text-zinc-400" aria-hidden />
         <input
           ref={inputRef}
+          autoFocus={autoFocus}
           type="text"
           value={query}
           onChange={(e) => {
