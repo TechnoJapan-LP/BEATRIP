@@ -477,7 +477,7 @@ export default async function RoutePage({ params }: Props) {
           <Breadcrumbs
             currentPath={lang === "en" ? `/en/routes/${route}` : `/routes/${route}`}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: `${origin}→${dest}` },
             ]}
           />

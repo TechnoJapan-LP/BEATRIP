@@ -258,7 +258,7 @@ export default async function AirportPage({ params }: Props) {
                 : `/airports/${airport.iata}`
             }
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "空港", href: "/airports" },
               { label: airport.fullNameJa },
             ]}

@@ -273,7 +273,7 @@ export default async function YearEndSeasonPage({
               lang === "en" ? "/en/seasons/year-end" : "/seasons/year-end"
             }
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "季節特集", href: "/seasons/year-end" },
               { label: "年末年始" },
             ]}

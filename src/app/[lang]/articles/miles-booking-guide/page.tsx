@@ -218,8 +218,8 @@ export default async function MilesBookingGuidePage({
                 : "/articles/miles-booking-guide"
             }
             items={[
-              { label: "Home", href: "/" },
-              { label: "Articles", href: "/articles" },
+              { label: "ホーム", href: "/" },
+              { label: "記事", href: "/articles" },
               { label: "マイル予約ガイド" },
             ]}
           />

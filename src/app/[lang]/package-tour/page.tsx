@@ -307,7 +307,7 @@ export default async function PackageTourPage({
             variant="dark"
             currentPath={lang === "en" ? "/en/package-tour" : "/package-tour"}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "パッケージツアー" },
             ]}
           />

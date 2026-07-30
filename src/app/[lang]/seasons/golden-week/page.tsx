@@ -265,7 +265,7 @@ export default async function GoldenWeekSeasonPage({
               lang === "en" ? "/en/seasons/golden-week" : "/seasons/golden-week"
             }
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "季節特集", href: "/seasons/golden-week" },
               { label: "ゴールデンウィーク" },
             ]}

@@ -231,8 +231,8 @@ export default async function SalePrediction2027Page({
                 : "/articles/sale-prediction-2027"
             }
             items={[
-              { label: "Home", href: "/" },
-              { label: "Articles", href: "/articles" },
+              { label: "ホーム", href: "/" },
+              { label: "記事", href: "/articles" },
               { label: "セール予測 2027" },
             ]}
           />

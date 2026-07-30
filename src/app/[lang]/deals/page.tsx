@@ -90,7 +90,7 @@ export default async function DealsIndexPage({
           <Breadcrumbs
             currentPath={isEn ? "/en/deals" : "/deals"}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: isEn ? "Deals" : "ディール一覧" },
             ]}
           />

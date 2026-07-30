@@ -85,7 +85,7 @@ export default async function OtaCompareHubPage({ params }: Props) {
           <Breadcrumbs
             currentPath={lh("/articles/ota-compare")}
             items={[
-              { label: "Home", href: lh("/") },
+              { label: "ホーム", href: lh("/") },
               { label: "記事", href: lh("/articles") },
               { label: "OTA 比較" },
             ]}

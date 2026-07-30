@@ -166,8 +166,8 @@ export default async function AirlineDetailPage({ params }: Props) {
               lang === "en" ? `/en/airlines/${code}` : `/airlines/${code}`
             }
             items={[
-              { label: "Home", href: "/" },
-              { label: "Airlines", href: "/airlines" },
+              { label: "ホーム", href: "/" },
+              { label: "航空会社", href: "/airlines" },
               { label: airline.name },
             ]}
           />

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Calendar,
   Clock,
@@ -7,6 +8,7 @@ import {
   Users,
   TrendingDown,
   ExternalLink,
+  ChevronRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { AirlineSale } from "@/lib/scrapers/types";
@@ -113,9 +115,9 @@ export function SaleDetailCard({
         </span>
         <div className="divide-y divide-zinc-100 overflow-hidden rounded-lg border border-zinc-100 dark:divide-zinc-800 dark:border-zinc-800">
           {/* 行の価格は実スクレイプの sale.routes 由来 (実データ)。
-              以前はここで mock-deals-v2 と路線照合し、一致したら架空価格の
-              /deals/{mock-id} へリンクしていた。実セールの行から架空詳細へ
-              飛ばすのは誤誘導なので、照合ごと撤去。予約導線は下の公式リンク */}
+              リンク先は自サイトの路線ページ (/routes/{O}-{D})。価格推移と
+              予約導線がありモバイルの回遊起点になる。以前は mock-deals の
+              架空詳細に飛ばしていた時期があり、その反省で実ページのみに繋ぐ */}
           {sale.routes.map((route, i) => {
             const Row = (
               <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">
@@ -151,10 +153,22 @@ export function SaleDetailCard({
                   <span className="text-xs font-bold text-rose-500">
                     -{route.discount}%
                   </span>
+                  <ChevronRight
+                    className="h-4 w-4 text-zinc-300 dark:text-zinc-600"
+                    aria-hidden="true"
+                  />
                 </div>
               </div>
             );
-            return <div key={i}>{Row}</div>;
+            return (
+              <Link
+                key={i}
+                href={`/routes/${route.originCode}-${route.destinationCode}`}
+                aria-label={`${cityNameJa(route.originCode)}発${cityNameJa(route.destinationCode)}行きの路線ページを見る`}
+              >
+                {Row}
+              </Link>
+            );
           })}
         </div>
       </div>

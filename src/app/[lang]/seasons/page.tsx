@@ -133,7 +133,7 @@ export default async function SeasonsIndexPage({ params }: Props) {
           <Breadcrumbs
             currentPath={lh("/seasons")}
             items={[
-              { label: "Home", href: lh("/") },
+              { label: "ホーム", href: lh("/") },
               { label: "シーズン特集" },
             ]}
           />

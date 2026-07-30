@@ -332,7 +332,7 @@ export default async function LocalFlightsRegionPage({ params }: Props) {
                 : `/local-flights/${slug}`
             }
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "地方発の格安航空券", href: "/local-flights" },
               { label: region },
             ]}

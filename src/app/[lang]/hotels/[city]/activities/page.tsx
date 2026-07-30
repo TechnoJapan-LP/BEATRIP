@@ -211,7 +211,7 @@ export default async function CityActivitiesPage({ params }: Props) {
                 : `/hotels/${d.slug}/activities`
             }
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "ホテル", href: "/hotels" },
               { label: d.nameJa, href: `/hotels/${d.slug}` },
               { label: "現地ツアー" },

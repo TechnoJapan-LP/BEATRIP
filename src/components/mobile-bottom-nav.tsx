@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Plane, BedDouble, BookOpen, MapPin } from "lucide-react";
+import { Plane, BedDouble, BookOpen, CalendarDays } from "lucide-react";
 import { useLocalizedHref } from "@/components/i18n/locale-provider";
 
 /**
@@ -14,8 +14,11 @@ import { useLocalizedHref } from "@/components/i18n/locale-provider";
 const NAV = [
   // ディールは独立一覧ページ /deals へ (ホームも実質ディール一覧のため active 扱い)
   { href: "/deals", label: "ディール", icon: Plane, match: (p: string) => p === "/" || p === "/en" || p.startsWith("/deals") || p.startsWith("/en/deals") },
+  // 「セール予測」: GSC実測で全クリックの78%が airlines/*/sales に着地する
+  // 最需要コンテンツ。以前ここにあった「地方便」は実測クリックほぼ0
+  // (/local-flights 0c) で、一等地を最も見られない導線が占有していた。
+  { href: "/sale-calendar", label: "セール予測", icon: CalendarDays, match: (p: string) => p.startsWith("/sale-calendar") || p.startsWith("/airlines") || p.startsWith("/hot-deals") || p.startsWith("/en/sale-calendar") || p.startsWith("/en/airlines") },
   { href: "/hotels", label: "ホテル", icon: BedDouble, match: (p: string) => p.startsWith("/hotels") || p.startsWith("/en/hotels") },
-  { href: "/local-flights", label: "地方便", icon: MapPin, match: (p: string) => p.startsWith("/local-flights") || p.startsWith("/airports") || p.startsWith("/en/local-flights") || p.startsWith("/en/airports") },
   { href: "/articles", label: "記事", icon: BookOpen, match: (p: string) => p.startsWith("/articles") || p.startsWith("/en/articles") },
 ];
 

@@ -251,7 +251,7 @@ export default async function HawaiiPage({
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/hawaii" : "/hawaii"}
-            items={[{ label: "Home", href: "/" }, { label: "ハワイ" }]}
+            items={[{ label: "ホーム", href: "/" }, { label: "ハワイ" }]}
           />
           <div className="mt-4 flex items-center gap-3 mb-2">
             <Sun className="h-7 w-7 text-amber-300" />

@@ -242,8 +242,8 @@ export default async function AutumnSeasonalPage({
                 : "/articles/seasonal/autumn-2026"
             }
             items={[
-              { label: "Home", href: "/" },
-              { label: "Articles", href: "/articles" },
+              { label: "ホーム", href: "/" },
+              { label: "記事", href: "/articles" },
               { label: "シーズン" },
               { label: "2026 秋" },
             ]}

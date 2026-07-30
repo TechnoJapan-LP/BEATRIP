@@ -272,7 +272,7 @@ export default async function SummerSeasonPage({
               lang === "en" ? "/en/seasons/summer" : "/seasons/summer"
             }
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "季節特集", href: "/seasons/summer" },
               { label: "夏休み・お盆" },
             ]}

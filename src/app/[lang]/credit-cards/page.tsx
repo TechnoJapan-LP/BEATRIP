@@ -355,7 +355,7 @@ export default async function CreditCardsPage({
             variant="dark"
             currentPath={lang === "en" ? "/en/credit-cards" : "/credit-cards"}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "クレジットカード比較" },
             ]}
           />

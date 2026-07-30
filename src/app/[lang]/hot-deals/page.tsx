@@ -119,7 +119,7 @@ export default async function HotDealsPage({
           <Breadcrumbs
             currentPath="/hot-deals"
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "超お買い得速報" },
             ]}
           />

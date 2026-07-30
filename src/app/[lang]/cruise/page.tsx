@@ -226,7 +226,7 @@ export default async function CruisePage({
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/cruise" : "/cruise"}
-            items={[{ label: "Home", href: "/" }, { label: "クルーズ" }]}
+            items={[{ label: "ホーム", href: "/" }, { label: "クルーズ" }]}
           />
           <div className="mt-6 flex items-center gap-3 mb-4">
             <Anchor className="h-8 w-8" />

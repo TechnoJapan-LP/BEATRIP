@@ -401,7 +401,7 @@ export default async function GlossaryPage({ params }: Props) {
         <div className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-10">
           <Breadcrumbs
             currentPath={lh("/glossary")}
-            items={[{ label: "Home", href: lh("/") }, { label: "用語集" }]}
+            items={[{ label: "ホーム", href: lh("/") }, { label: "用語集" }]}
           />
           <h1 className="mt-4 font-heading text-2xl sm:text-3xl lg:text-4xl tracking-wide text-zinc-900 dark:text-zinc-100 leading-tight">
             旅行用語集

@@ -299,8 +299,8 @@ export default async function AirlineAirportPage({ params }: Props) {
                 : `/airlines/${airline.code.toLowerCase()}/airports/${airport.iata}`
             }
             items={[
-              { label: "Home", href: "/" },
-              { label: "Airlines", href: "/airlines" },
+              { label: "ホーム", href: "/" },
+              { label: "航空会社", href: "/airlines" },
               {
                 label: airline.name,
                 href: `/airlines/${airline.code.toLowerCase()}`,

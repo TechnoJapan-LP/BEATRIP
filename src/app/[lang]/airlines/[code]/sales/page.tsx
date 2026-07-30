@@ -15,9 +15,6 @@ import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { getAirlineByCode, airlines } from "@/data/airlines";
-import {
-  getAirlineSaleStats,
-} from "@/data/sale-history";
 import { resolveSaleHistory, computeSaleStats } from "@/lib/deals/sale-history-resolver";
 import { SiteFooter } from "@/components/site-footer";
 import { getActiveDeals } from "@/lib/deals/deal-service";
@@ -287,8 +284,8 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
                 : `/airlines/${code}/sales`
             }
             items={[
-              { label: "Home", href: "/" },
-              { label: "Airlines", href: "/airlines" },
+              { label: "ホーム", href: "/" },
+              { label: "航空会社", href: "/airlines" },
               { label: airline.name, href: `/airlines/${code}` },
               { label: "セール実績" },
             ]}
@@ -356,6 +353,38 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
             タイムセールは数時間〜数日で終わるため、開始を待つより通知を受け取るのが確実です。
           </p>
           <NewsletterCTASlim source="airline_sales_top" />
+        </div>
+
+        {/* 他社への横スクロール回遊。従来の回遊ブロックはFAQ・履歴の下
+            (平均滞在17〜22秒では到達しない位置) にしか無かったため、
+            ファーストビュー直下にも軽量なチップ列を置く。
+            overflow-x はこのコンテナ内で完結させ、ページ全体を横に広げない */}
+        <div className="-mx-4 mb-8 px-4 sm:mx-0 sm:px-0">
+          <div className="mb-2 text-[11px] font-medium tracking-wide text-zinc-400">
+            他社の次回セールもチェック
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <Link
+              href="/sale-calendar"
+              className="flex-shrink-0 rounded-full bg-zinc-900 px-3.5 py-2 text-xs font-bold text-white dark:bg-zinc-100 dark:text-zinc-900"
+            >
+              全社カレンダー
+            </Link>
+            {/* 全社に /sales ページが存在する (generateStaticParams が全社分生成)。
+                以前は getAirlineSaleStats!==null で絞っていたが、静的セール履歴の
+                捏造データ削除後は全社 null になり、チップが1つも出ていなかった */}
+            {airlines
+              .filter((a) => a.code !== airlineCode)
+              .map((a) => (
+                <Link
+                  key={a.code}
+                  href={`/airlines/${a.code}/sales`}
+                  className="flex-shrink-0 rounded-full border border-zinc-200 bg-white px-3.5 py-2 text-xs font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
+                >
+                  {a.searchNameJa ?? a.name}
+                </Link>
+              ))}
+          </div>
         </div>
 
         {stats && (
@@ -685,11 +714,7 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
           </p>
           <div className="flex flex-wrap gap-2">
             {airlines
-              .filter(
-                (a) =>
-                  a.code !== airlineCode &&
-                  getAirlineSaleStats(a.code) !== null,
-              )
+              .filter((a) => a.code !== airlineCode)
               .map((a) => (
                 <Link
                   key={a.code}

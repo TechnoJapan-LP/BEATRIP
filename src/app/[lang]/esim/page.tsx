@@ -236,7 +236,7 @@ export default async function EsimPage({
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/esim" : "/esim"}
-            items={[{ label: "Home", href: "/" }, { label: "eSIM" }]}
+            items={[{ label: "ホーム", href: "/" }, { label: "eSIM" }]}
           />
           <div className="mt-6 flex items-center gap-3 mb-4">
             <Smartphone className="h-8 w-8" />

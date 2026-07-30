@@ -263,7 +263,7 @@ export default async function LocalFlightsPage({
             variant="dark"
             currentPath={lang === "en" ? "/en/local-flights" : "/local-flights"}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "地方発の格安航空券" },
             ]}
           />

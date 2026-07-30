@@ -243,7 +243,7 @@ export default async function BestSeasonPage({ params }: Props) {
                 : `/hotels/${d.slug}/best-season`
             }
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "ホテル", href: "/hotels" },
               { label: d.nameJa, href: `/hotels/${d.slug}` },
               { label: "ベストシーズン" },

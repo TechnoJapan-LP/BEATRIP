@@ -125,7 +125,7 @@ export default async function AirportsIndexPage({
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/airports" : "/airports"}
-            items={[{ label: "Home", href: "/" }, { label: "空港" }]}
+            items={[{ label: "ホーム", href: "/" }, { label: "空港" }]}
           />
           <div className="mt-6 flex items-center gap-3 mb-2">
             <Plane className="h-7 w-7" />

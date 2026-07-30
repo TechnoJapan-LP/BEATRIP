@@ -263,7 +263,7 @@ export default async function DealDetailPage({ params }: Props) {
                 variant="dark"
                 currentPath={lang === "en" ? `/en/deals/${id}` : `/deals/${id}`}
                 items={[
-                  { label: "Home", href: "/" },
+                  { label: "ホーム", href: "/" },
                   { label: "Flash Deals", href: "/" },
                   { label: destJa },
                 ]}

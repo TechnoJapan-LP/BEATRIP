@@ -293,7 +293,7 @@ export default async function HotelCityPage({ params }: Props) {
             variant="dark"
             currentPath={lang === "en" ? `/en/hotels/${d.slug}` : `/hotels/${d.slug}`}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "ホテル", href: "/hotels" },
               { label: d.nameJa },
             ]}

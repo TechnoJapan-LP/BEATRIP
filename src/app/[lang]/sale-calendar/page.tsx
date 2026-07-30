@@ -271,7 +271,7 @@ export default async function SaleCalendarPage({
             variant="dark"
             currentPath={currentPath}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "航空券セールカレンダー" },
             ]}
           />

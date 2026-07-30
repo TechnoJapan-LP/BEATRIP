@@ -189,7 +189,7 @@ export default async function CityEsimPage({ params }: Props) {
                 : `/hotels/${d.slug}/esim`
             }
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "ホテル", href: "/hotels" },
               { label: d.nameJa, href: `/hotels/${d.slug}` },
               { label: "eSIM 比較" },

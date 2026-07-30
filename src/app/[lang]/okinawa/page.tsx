@@ -258,7 +258,7 @@ export default async function OkinawaPage({
           <Breadcrumbs
             variant="dark"
             currentPath={lang === "en" ? "/en/okinawa" : "/okinawa"}
-            items={[{ label: "Home", href: "/" }, { label: "沖縄" }]}
+            items={[{ label: "ホーム", href: "/" }, { label: "沖縄" }]}
           />
           <div className="mt-4 flex items-center gap-3 mb-2">
             <Palmtree className="h-7 w-7 text-emerald-300" />

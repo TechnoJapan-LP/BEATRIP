@@ -297,7 +297,7 @@ export default async function InsurancePage({
             variant="dark"
             currentPath={lang === "en" ? "/en/insurance" : "/insurance"}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "海外旅行保険比較" },
             ]}
           />

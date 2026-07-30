@@ -442,7 +442,7 @@ export default async function OtaSalesPage({
             variant="dark"
             currentPath={lang === "en" ? "/en/ota-sales" : "/ota-sales"}
             items={[
-              { label: "Home", href: "/" },
+              { label: "ホーム", href: "/" },
               { label: "OTA セールガイド" },
             ]}
           />

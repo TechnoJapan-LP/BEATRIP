@@ -298,8 +298,8 @@ export default async function ArticleDetailPage({ params }: Props) {
                 variant="dark"
                 currentPath={lang === "en" ? `/en/articles/${slug}` : `/articles/${slug}`}
                 items={[
-                  { label: "Home", href: "/" },
-                  { label: "Articles", href: "/articles" },
+                  { label: "ホーム", href: "/" },
+                  { label: "記事", href: "/articles" },
                   { label: article.title },
                 ]}
               />
