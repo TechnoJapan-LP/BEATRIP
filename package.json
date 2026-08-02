@@ -10,8 +10,8 @@
     "wait-deploy": "scripts/wait-deploy.sh"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.111.0",
-    "@atproto/api": "^0.20.28",
+    "@anthropic-ai/sdk": "^0.115.0",
+    "@atproto/api": "^0.20.35",
     "@base-ui/react": "^1.6.0",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
@@ -19,22 +19,22 @@
     "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "lucide-react": "^1.24.0",
-    "next": "16.2.10",
-    "react": "19.2.7",
-    "react-dom": "19.2.7",
-    "resend": "^6.17.2",
+    "lucide-react": "^1.28.0",
+    "next": "16.2.12",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "resend": "^6.18.1",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.2.10",
+    "@next/bundle-analyzer": "^16.2.12",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.10",
-    "shadcn": "^4.13.0",
+    "eslint-config-next": "16.2.12",
+    "shadcn": "^4.16.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
