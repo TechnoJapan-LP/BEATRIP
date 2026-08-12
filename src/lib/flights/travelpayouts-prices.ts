@@ -87,6 +87,9 @@ async function fetchLatestForOrigin(
       headers: { "X-Access-Token": token, Accept: "application/json" },
       // データは日次でしか変わらないため軽くキャッシュ可。サーバ実行なので no-store でもよい。
       cache: "no-store",
+      // タイムアウト無しだと TP API のハングが cron 関数の maxDuration を
+      // 食い潰し、後続の全 origin 分の観測が失われる。10秒で見切る
+      signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) {
       console.error(`[tp-prices] ${origin} HTTP ${res.status}`);

@@ -35,7 +35,24 @@ export abstract class AirlineScraper {
   /** スクレイパー応答 size 上限 (10 MB)。これを超えると DoS リスクのため中断 */
   protected static readonly MAX_RESPONSE_BYTES = 10 * 1024 * 1024;
 
+  /**
+   * 一時的な失敗 (ネットワーク断・タイムアウト・5xx) は1回だけリトライする。
+   * スクレイプは6時間周期なので、RSS 側の瞬断で1回落ちると6時間分の観測が
+   * 丸ごと欠測になる。4xx は恒久的エラーとみなしリトライしない。
+   */
   protected async fetchHtml(url: string, timeoutMs = 8000): Promise<string> {
+    try {
+      return await this.fetchHtmlOnce(url, timeoutMs);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "";
+      const permanent = /^HTTP 4\d\d/.test(msg) || /too large|size limit/.test(msg);
+      if (permanent) throw e;
+      await new Promise((r) => setTimeout(r, 1500));
+      return this.fetchHtmlOnce(url, timeoutMs);
+    }
+  }
+
+  private async fetchHtmlOnce(url: string, timeoutMs: number): Promise<string> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {

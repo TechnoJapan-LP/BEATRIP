@@ -229,6 +229,10 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    // AI検索 (ChatGPT/Perplexity/Copilot) は鮮度メタデータを引用可否の判断に
+    // 使う。ISR (6h) で再生成されるため render 時刻をそのまま出して嘘にならない
+    dateModified: new Date().toISOString(),
+    inLanguage: "ja",
     name: `${airline.name}（${airline.nameEn}）セール時期・実績まとめ`,
     description: stats
       ? `${airline.name}の過去${stats.totalSales}回のセール実績を分析。平均割引率${stats.avgDiscount}%、最安値¥${stats.lowestPrice.toLocaleString()}。`

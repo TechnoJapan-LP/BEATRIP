@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Plane, BedDouble, BookOpen, CalendarDays } from "lucide-react";
 import { useLocalizedHref } from "@/components/i18n/locale-provider";
+import { stripLocale } from "@/lib/i18n/strip-locale";
 
 /**
  * モバイル下部固定ナビ。主要4セクションへの最短遷移。
@@ -22,16 +23,6 @@ const NAV = [
   { href: "/articles", label: "記事", icon: BookOpen, match: (p: string) => p.startsWith("/articles") },
 ];
 
-/**
- * usePathname は環境で返り値が揺れる: dev はブラウザの表示パス
- * (/airlines/BC/sales) だが、本番は middleware のリライト後の内部パス
- * (/ja/airlines/BC/sales) を返し、ロケール抜きの match が全て外れて
- * アクティブタブが消えていた。先頭のロケール片を剥がして正規化する。
- */
-function stripLocale(p: string): string {
-  const stripped = p.replace(/^\/(ja|en)(?=\/|$)/, "");
-  return stripped === "" ? "/" : stripped;
-}
 
 export function MobileBottomNav() {
   const pathname = stripLocale(usePathname() ?? "/");

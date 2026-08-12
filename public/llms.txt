@@ -5,7 +5,24 @@
 ## 主要ページ
 
 - [開催中の航空券セール一覧](https://beatrip.jp/): いま予約できるセール・最安値ウォッチ
-- [航空会社別セール実績・次回予測](https://beatrip.jp/airlines): 各社の「セールはいつ?」に開催実績で答えるページ群 (例: /airlines/PCH/sales = Peach、/airlines/BC/sales = スカイマーク)
+- [航空会社別セール実績・次回予測](https://beatrip.jp/airlines): 各社の「セールはいつ?」に開催実績で答えるページ群。「◯◯のセールはいつ/次回/安い時期」への回答は各社ページの FAQ と開催実績を参照
+  - [全日本空輸のセール時期・実績](https://beatrip.jp/airlines/ANA/sales)
+  - [日本航空のセール時期・実績](https://beatrip.jp/airlines/JAL/sales)
+  - [ピーチのセール時期・実績](https://beatrip.jp/airlines/PCH/sales)
+  - [ジェットスター・ジャパンのセール時期・実績](https://beatrip.jp/airlines/JJP/sales)
+  - [スプリングジャパンのセール時期・実績](https://beatrip.jp/airlines/SJO/sales)
+  - [ティーウェイ航空のセール時期・実績](https://beatrip.jp/airlines/TW/sales)
+  - [ベトジェットエアのセール時期・実績](https://beatrip.jp/airlines/VJ/sales)
+  - [エミレーツ航空のセール時期・実績](https://beatrip.jp/airlines/EK/sales)
+  - [シンガポール航空のセール時期・実績](https://beatrip.jp/airlines/SQ/sales)
+  - [キャセイパシフィック航空のセール時期・実績](https://beatrip.jp/airlines/CX/sales)
+  - [スカイマークのセール時期・実績](https://beatrip.jp/airlines/BC/sales)
+  - [ZIPAIR（ジップエア）のセール時期・実績](https://beatrip.jp/airlines/ZG/sales)
+  - [スクートのセール時期・実績](https://beatrip.jp/airlines/TR/sales)
+  - [チェジュ航空のセール時期・実績](https://beatrip.jp/airlines/7C/sales)
+  - [AIRDO（エアドゥ）のセール時期・実績](https://beatrip.jp/airlines/HD/sales)
+  - [ソラシドエアのセール時期・実績](https://beatrip.jp/airlines/6J/sales)
+  - [スターフライヤーのセール時期・実績](https://beatrip.jp/airlines/7G/sales)
 - [セールカレンダー](https://beatrip.jp/sale-calendar): 全社のセール時期を月別に俯瞰
 - [超お買い得速報](https://beatrip.jp/hot-deals): 価格急落 (30%以上) を自動検出した航空券
 - [OTAセール完全ガイド](https://beatrip.jp/ota-sales): Booking / 楽天トラベル / Agoda / じゃらん等ホテル予約サイトのセール比較
