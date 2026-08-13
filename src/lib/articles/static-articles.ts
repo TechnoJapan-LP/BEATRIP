@@ -273,6 +273,14 @@ export const STATIC_ARTICLES: StaticArticle[] = [
     keywords: ["マイル", "特典航空券", "JAL", "ANA"],
   },
   {
+    slug: "autumn-sale-2026",
+    href: "/articles/autumn-sale-2026",
+    title: "2026年秋セールカレンダー",
+    description: "9〜11月の開催実績と狙い目 (開催中は自動反映)",
+    category: "feature",
+    keywords: ["秋 セール", "9月 セール", "10月 セール", "航空券 安い時期 秋"],
+  },
+  {
     slug: "sale-prediction-2027",
     href: "/articles/sale-prediction-2027",
     title: "2027 セール予測",
