@@ -7,6 +7,8 @@ import { ArrowLeft, ArrowRight, Plane, TrendingDown, Calendar } from "lucide-rea
 import { Header } from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { PriceChart } from "@/components/deals/price-chart";
+import { RouteJudgeCard } from "@/components/routes/route-judge-card";
+import { judgeRoutePrice } from "@/lib/deals/price-judge";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { NextTripSuggestions } from "@/components/home/next-trip-suggestions";
 import { HotelCrossSell } from "@/components/deals/hotel-cross-sell";
@@ -214,6 +216,8 @@ export default async function RoutePage({ params }: Props) {
   const hasDeals = routeDeals.length > 0;
 
   const routeKey = `${parsed.origin}→${parsed.destination}`;
+  // 「今買うか待つか」裁定。観測8日未満 or 直近観測が7日超は null (=非表示)
+  const judgement = await judgeRoutePrice(parsed.origin, parsed.destination);
   const historicalData = await getHistoricalPrices(routeKey);
   const prediction =
     historicalData.length > 0
@@ -517,6 +521,12 @@ export default async function RoutePage({ params }: Props) {
           </p>
         </div>
 
+        {/* 「今買うか待つか」ジャッジ — 比較サイト離脱の最大理由
+            「もっと安くなるかも」への実測ベースの回答。観測不足なら出ない */}
+        {judgement && (
+          <RouteJudgeCard judgement={judgement} originJa={origin} destJa={dest} />
+        )}
+
         {/* 関連空港・地方ハブへの戻り導線 (deal の有無に関わらず常時表示) */}
         <div className="mb-6 flex flex-wrap gap-2 text-xs">
           <Link
@@ -703,7 +713,7 @@ export default async function RoutePage({ params }: Props) {
             </section>
           </div>
 
-          <div className="space-y-6">
+          <div id="route-booking" className="scroll-mt-20 space-y-6">
             <HotelCrossSell
               destinationCode={parsed.destination}
               destinationLabel={dest}

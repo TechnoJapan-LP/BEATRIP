@@ -18,6 +18,8 @@ import { getAirlineByCode, airlines } from "@/data/airlines";
 import { resolveSaleHistory, computeSaleStats } from "@/lib/deals/sale-history-resolver";
 import { SiteFooter } from "@/components/site-footer";
 import { getActiveDeals } from "@/lib/deals/deal-service";
+import { loadHotDeals } from "@/lib/deals/hot-deals";
+import { Zap } from "lucide-react";
 import { DealCard } from "@/components/deals/deal-card";
 import { NewsletterCTASlim } from "@/components/newsletter/newsletter-cta-slim";
 import { JapanesePartnersPanel } from "@/components/affiliate/japanese-partners-panel";
@@ -127,6 +129,13 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
     .filter((d) => d.airline_id === airlineCode && !d.is_sample)
     .sort((a, b) => a.sale_price - b.sale_price)
     .slice(0, 4);
+  // 「いま買うなら」行の材料: 全社横断の価格急落 (実測ウォッチ)。
+  // この社のセールが無い端境期でも「待つ以外の選択肢」を1つ見せる。
+  // 航空会社別の価格ではないため、表記は必ず「全社の実測から」と明示する
+  const hotPick = (await loadHotDeals().catch(() => []))
+    .filter((h) => h.status === "active" && h.cabin === "Economy")
+    .sort((a, b) => b.drop_percent - a.drop_percent)[0];
+
   // Server Component なので Date.now() を一度だけリクエスト時に評価して使用。
   // React Compiler の purity 警告はクライアントコンポーネント向けで、ここでは
   // 意図的に許可する（リクエストごとに固定の "today" を得るのが目的）。
@@ -356,6 +365,27 @@ export default async function AirlineSaleHistoryPage({ params }: Props) {
               : "開催パターンは現在集計中。"}
             タイムセールは数時間〜数日で終わるため、開始を待つより通知を受け取るのが確実です。
           </p>
+          {hotPick && (
+            <a
+              href="/hot-deals"
+              className="mb-3 flex items-center justify-between gap-2 rounded-lg border border-emerald-200 bg-white/70 px-3 py-2.5 transition-colors hover:bg-white dark:border-emerald-900/60 dark:bg-zinc-900/60 dark:hover:bg-zinc-900"
+            >
+              <span className="flex min-w-0 items-center gap-2">
+                <Zap className="h-4 w-4 flex-shrink-0 text-rose-500" aria-hidden="true" />
+                <span className="min-w-0 truncate text-xs text-zinc-700 dark:text-zinc-300">
+                  待つ間の選択肢:{" "}
+                  <span className="font-bold">
+                    {hotPick.origin}→{hotPick.destination} ¥
+                    {formatPrice(hotPick.price)}
+                  </span>{" "}
+                  (-{hotPick.drop_percent}%・全社の実測ウォッチから)
+                </span>
+              </span>
+              <span className="flex-shrink-0 text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                急落一覧 →
+              </span>
+            </a>
+          )}
           <NewsletterCTASlim source="airline_sales_top" />
         </div>
 

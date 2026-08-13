@@ -76,7 +76,7 @@ describe("submitToIndexNow (fetch をモック)", () => {
   const realFetch = globalThis.fetch;
 
   test("202 Accepted で ok:true・URL は https 絶対形に組み立てられる", async (t) => {
-    let captured: { url: string; body: string } | null = null;
+    let captured = null as { url: string; body: string } | null;
     globalThis.fetch = (async (url: string | URL | Request, init?: RequestInit) => {
       captured = { url: String(url), body: String(init?.body) };
       return new Response("", { status: 202 });
@@ -86,7 +86,7 @@ describe("submitToIndexNow (fetch をモック)", () => {
     const res = await submitToIndexNow(["/airlines/PCH/sales", "/", "/airlines/PCH/sales"]);
     assert.deepEqual(res, { submitted: 2, ok: true }); // 重複は除去される
     assert.ok(captured);
-    const body = JSON.parse(captured!.body);
+    const body = JSON.parse((captured as unknown as { body: string }).body);
     assert.equal(body.host, "beatrip.jp");
     assert.deepEqual(body.urlList, [
       "https://beatrip.jp/airlines/PCH/sales",
