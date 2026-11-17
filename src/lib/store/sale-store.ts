@@ -54,7 +54,15 @@ async function loadFromFs(airlineCode: string): Promise<StoredSaleData | null> {
  * KV (Upstash Redis) は内部で no-store fetch を使うため、ISR ページから
  * 直接呼ぶと「Dynamic server usage」エラーで static generation に失敗する。
  * unstable_cache で wrap して fetch を Next の data cache に乗せ、
- * 60 秒キャッシュ + tag invalidation を可能にする。
+ * 6時間キャッシュ + tag invalidation を可能にする。
+ *
+ * revalidate の値は【ページ側の実効 revalidate を支配する】ことに注意。
+ * Next.js はページ内で使われたデータキャッシュの最小 revalidate を
+ * ルート全体に適用するため、ここを 60 秒にしていた時期は、このストアを
+ * 参照する全 ISR ページ (フッター経由でほぼ全ページ) が毎分再生成になり、
+ * bot クロールと掛け算で ISR Writes 2.3M/月 (無料枠200Kの11.5倍) に達して
+ * Vercel アカウントが停止した (2026-11)。鮮度は cron/scrape が保存後に
+ * revalidateTag("sales", "max") を呼ぶことで担保する。60 に戻さないこと。
  */
 const loadSalesCached = unstable_cache(
   async (airlineCode: string): Promise<StoredSaleData> => {
@@ -72,7 +80,7 @@ const loadSalesCached = unstable_cache(
     return (await loadFromFs(airlineCode)) ?? EMPTY;
   },
   ["sale-store-load"],
-  { revalidate: 60, tags: ["sales"] }
+  { revalidate: 21600, tags: ["sales"] }
 );
 
 export async function loadSales(airlineCode: string): Promise<StoredSaleData> {
@@ -93,7 +101,7 @@ const loadKvIndexCached = unstable_cache(
     }
   },
   ["sale-store-index"],
-  { revalidate: 60, tags: ["sales"] }
+  { revalidate: 21600, tags: ["sales"] }
 );
 
 export async function loadAllSales(): Promise<Record<string, StoredSaleData>> {

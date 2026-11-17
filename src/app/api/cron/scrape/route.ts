@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { scrapeAllAirlines, scrapeAirline } from "@/lib/scrapers";
 import { saveSalesAndDetectChanges } from "@/lib/store/sale-store";
+import { revalidateTag } from "next/cache";
 import { dispatchNotifications } from "@/lib/notifications/notifier";
 import {
   generateArticlesFromChanges,
@@ -112,6 +113,12 @@ export async function GET(request: NextRequest) {
 
     // ニュースレター: 新着セールを累積し、週1かつ累積4件以上のときだけ配信
     const allNewSales: AirlineSale[] = changes.flatMap((c) => c.newSales);
+
+    // セールのデータキャッシュを無効化 (stale-while-revalidate)。
+    // キャッシュ本体は6時間だが、スクレイプ直後だけ次のアクセスで裏側再取得
+    // させることで「新セールの即時反映」と「botクロールで再生成が暴発しない」
+    // を両立する ("max" はこの Next 版で必須の2引数形式)
+    revalidateTag("sales", "max");
 
     // IndexNow: 新着セールがあった社のページ + 主要ハブを Bing 系へ即時通知。
     // 失敗しても本処理は止めない (submitToIndexNow は throw しない)
