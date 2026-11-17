@@ -43,8 +43,14 @@ for key in "${KEYS[@]}"; do
 done
 
 if [ "$missing_required" = "1" ]; then
-  echo "必須の KV_REST_API_URL / KV_REST_API_TOKEN が Vercel 側に見つかりませんでした。" >&2
-  echo "Upstash のコンソールから REST URL / TOKEN を確認して手動で登録してください。" >&2
+  # 変数自体は存在するのに値が空で返ることがある (2026-11: Vercel アカウント停止中は
+  # 全ユーザー変数が "" で pull された)。「無い」と断定せず、元のサービスから入れてもらう
+  echo "KV_REST_API_URL / KV_REST_API_TOKEN の値を Vercel から取得できませんでした" >&2
+  echo "(アカウント停止中などは変数が存在しても空で返ります)。" >&2
+  echo "Upstash のコンソールで REST URL / TOKEN を確認し、次のコマンドで登録してください" >&2
+  echo "(値の入力は画面に表示されません):" >&2
+  echo "  gh secret set KV_REST_API_URL" >&2
+  echo "  gh secret set KV_REST_API_TOKEN" >&2
   exit 1
 fi
 
