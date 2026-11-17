@@ -201,3 +201,22 @@ describe("AirlineScraper.fetchHtml のリトライ (fetch をモック)", () => 
     assert.equal(calls, 2);
   });
 });
+
+// ---------------------------------------------------------------- sale-store standalone
+
+describe("sale-store の standalone 経路 (GitHub Actions の収集用)", () => {
+  test("BEATRIP_STANDALONE=1 なら unstable_cache を通らず読める (Next 外で落ちない)", async () => {
+    // Next ランタイム外で unstable_cache を呼ぶと "incrementalCache missing" で必ず落ちる。
+    // collect.ts はこの経路に依存しているので、退行したら収集が全停止する。
+    const prev = process.env.BEATRIP_STANDALONE;
+    process.env.BEATRIP_STANDALONE = "1";
+    try {
+      const { loadSales } = await import("../src/lib/store/sale-store");
+      const data = await loadSales("PCH");
+      assert.ok(Array.isArray(data.sales));
+    } finally {
+      if (prev === undefined) delete process.env.BEATRIP_STANDALONE;
+      else process.env.BEATRIP_STANDALONE = prev;
+    }
+  });
+});

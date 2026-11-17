@@ -64,8 +64,7 @@ async function loadFromFs(airlineCode: string): Promise<StoredSaleData | null> {
  * Vercel アカウントが停止した (2026-11)。鮮度は cron/scrape が保存後に
  * revalidateTag("sales", "max") を呼ぶことで担保する。60 に戻さないこと。
  */
-const loadSalesCached = unstable_cache(
-  async (airlineCode: string): Promise<StoredSaleData> => {
+async function loadSalesRaw(airlineCode: string): Promise<StoredSaleData> {
     const kv = getKV();
     if (kv) {
       try {
@@ -78,31 +77,49 @@ const loadSalesCached = unstable_cache(
       }
     }
     return (await loadFromFs(airlineCode)) ?? EMPTY;
-  },
-  ["sale-store-load"],
-  { revalidate: 21600, tags: ["sales"] }
-);
+}
+
+const loadSalesCached = unstable_cache(loadSalesRaw, ["sale-store-load"], {
+  revalidate: 21600,
+  tags: ["sales"],
+});
+
+/**
+ * Next.js の外 (GitHub Actions の収集スクリプト scripts/collect.ts) で
+ * 動いているか。unstable_cache は Next のランタイム外では
+ * "Invariant: incrementalCache missing" で必ず落ちるため、外ではキャッシュを
+ * 素通りして KV を直接読む。収集はサイトのホスティングと切り離して
+ * 動かす (サイト停止でデータ収集まで止まった 2026-11 の反省)。
+ */
+function isStandalone(): boolean {
+  return process.env.BEATRIP_STANDALONE === "1";
+}
 
 export async function loadSales(airlineCode: string): Promise<StoredSaleData> {
-  return loadSalesCached(airlineCode);
+  return isStandalone() ? loadSalesRaw(airlineCode) : loadSalesCached(airlineCode);
 }
 
 /** KV index 読み取りも unstable_cache 化して static generation 対応 */
-const loadKvIndexCached = unstable_cache(
-  async (): Promise<string[]> => {
-    const kv = getKV();
-    if (!kv) return [];
-    try {
-      const indexed = await kv.smembers(KV_KEYS.index);
-      return indexed.map((c) => String(c).toUpperCase());
-    } catch (e) {
-      console.warn("[SaleStore] KV index read failed:", e);
-      return [];
-    }
-  },
-  ["sale-store-index"],
-  { revalidate: 21600, tags: ["sales"] }
-);
+async function loadKvIndexRaw(): Promise<string[]> {
+  const kv = getKV();
+  if (!kv) return [];
+  try {
+    const indexed = await kv.smembers(KV_KEYS.index);
+    return indexed.map((c) => String(c).toUpperCase());
+  } catch (e) {
+    console.warn("[SaleStore] KV index read failed:", e);
+    return [];
+  }
+}
+
+const loadKvIndexCachedInner = unstable_cache(loadKvIndexRaw, ["sale-store-index"], {
+  revalidate: 21600,
+  tags: ["sales"],
+});
+
+function loadKvIndexCached(): Promise<string[]> {
+  return isStandalone() ? loadKvIndexRaw() : loadKvIndexCachedInner();
+}
 
 export async function loadAllSales(): Promise<Record<string, StoredSaleData>> {
   const codes = new Set<string>();

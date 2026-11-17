@@ -1,0 +1,58 @@
+# データ収集 (サイトのホスティングから独立)
+#
+# 以前は hot-deal-scan が beatrip.jp/api/cron/scrape (Vercel) を叩いていたため、
+# サイトが止まるとデータ収集まで止まった (2026-11-12〜 課金停止で丸5日欠測)。
+# 今は GitHub Actions 上で scripts/collect.ts を直接実行し、Upstash KV へ
+# 保存する。サイトが落ちていても観測データは貯まり続ける。
+#
+# 収集するのは「データの核」だけ (セール・開催実績・実測運賃・急落検出)。
+# メール/SNS/記事生成などの配信は含まない (理由は scripts/collect.ts 冒頭)。
+#
+# スケジュールが3時間おきなのは GitHub の schedule に発火保証が無く、遅延・
+# スキップが起きるため (冪等なので回数で取りこぼしに耐える)。
+# ★この間隔を変えたら src/lib/deals/hot-deals.ts の
+#   HOT_DEAL_CRITERIA.scanIntervalHours も必ず合わせること
+#   (画面の「◯時間ごとに観測」という説明文があの定数から生成されている)。
+#
+# 必要な Secrets (Settings → Secrets and variables → Actions):
+#   KV_REST_API_URL, KV_REST_API_TOKEN   … 必須 (無ければ collect.ts が即停止)
+#   TRAVELPAYOUTS_API_TOKEN              … 実測運賃の観測に必要
+#   TRAVELPAYOUTS_MARKER, TRIP_COM_AFFILIATE_ID, TRIP_COM_SITE_ID … 予約リンク用 (任意)
+# 登録は scripts/sync-secrets.sh で Vercel から転送できる。
+name: collect
+
+on:
+  schedule:
+    - cron: "0 */3 * * *"
+  workflow_dispatch: {}
+
+# 前の回がまだ走っている間に次が始まって KV に同時書き込みするのを防ぐ
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Collect
+        env:
+          KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+          KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+          TRAVELPAYOUTS_API_TOKEN: ${{ secrets.TRAVELPAYOUTS_API_TOKEN }}
+          TRAVELPAYOUTS_MARKER: ${{ secrets.TRAVELPAYOUTS_MARKER }}
+          TRIP_COM_AFFILIATE_ID: ${{ secrets.TRIP_COM_AFFILIATE_ID }}
+          TRIP_COM_SITE_ID: ${{ secrets.TRIP_COM_SITE_ID }}
+          # 本番と同じモードを明示 (既定の mock は架空データを書き込むため禁止)
+          SCRAPER_MODE: hybrid
+        run: npx tsx scripts/collect.ts
